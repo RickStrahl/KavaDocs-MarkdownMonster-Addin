@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Windows;
@@ -124,8 +125,7 @@ namespace KavaDocsAddin
 
         public override void OnExecuteConfiguration(object sender)
         {
-            MessageBox.Show("Configuration for our sample Addin", "Markdown Addin Sample",
-                            MessageBoxButton.OK, MessageBoxImage.Information);
+            Model.Window.OpenTab(Path.Combine(Model.Configuration.CommonFolder, "KavaDocsAddin.json"));
         }
 
         public override bool OnCanExecute(object sender)

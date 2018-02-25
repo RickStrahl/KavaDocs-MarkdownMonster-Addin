@@ -620,7 +620,7 @@ namespace DocHound.Model
 
             if (string.IsNullOrEmpty(Title))
             {
-                var lines = StringUtils.GetLines(Body);
+                var lines = StringUtils.GetLines(Body,100);
                 var titleLine = lines.FirstOrDefault(l => l.TrimStart().StartsWith("# "));
                 if (!string.IsNullOrEmpty(titleLine) && titleLine.Length > 2)
                     Title = titleLine.Trim().Substring(2);
@@ -634,7 +634,7 @@ namespace DocHound.Model
             {
                 var file = GetExternalFilename();
 
-                if (markdownText == null)
+                if (string.IsNullOrEmpty(markdownText))
                     try
                     {                        
                         File.Delete(file);
@@ -763,11 +763,6 @@ namespace DocHound.Model
         }
         #endregion
 
-        public override string ToString()
-        {
-            return $"{Id} - {Title}";
-        }
-
         #region Error Handling
 
         public string ErrorMessage { get; set; }        
@@ -809,6 +804,11 @@ namespace DocHound.Model
         public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public override string ToString()
+        {
+            return $"{Id} - {Title}";
         }
 
         #endregion

@@ -40,6 +40,8 @@ namespace DocHound.Configuration
         /// </summary>
         public string LastProjectFile { get; set; }
 
+        public bool OpenLastProject { get; set; }
+
         /// <summary>
         /// Last location where an image was opened.
         /// </summary>
@@ -51,6 +53,7 @@ namespace DocHound.Configuration
         
         internal string AddinsFolder => Path.Combine(mmApp.Configuration.CommonFolder, "Addins");
 
+        
 
         #endregion
     

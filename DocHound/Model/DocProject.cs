@@ -477,9 +477,11 @@ namespace DocHound.Model
             fileTopic.LoadTopicFile(doc.Filename);
 
             topic.Body = fileTopic.Body;
-            if (string.IsNullOrEmpty(topic.Title))
+            if (!string.IsNullOrEmpty(fileTopic.Title))
+            {                
                 topic.Title = fileTopic.Title;
-            
+            }
+
             topic.Type = fileTopic.Type;
             if (!string.IsNullOrEmpty(fileTopic.Slug))
                 topic.Slug = fileTopic.Slug;
@@ -694,6 +696,15 @@ namespace DocHound.Model
                     Dispatcher.CurrentDispatcher.Invoke(()=> SetError(DocProjectManager.Current.ErrorMessage));
                 }                
             });
+        }
+
+        /// <summary>
+        /// Cleans up the current project
+        /// </summary>
+        public void CloseProject()
+        {
+            var topic = new DocTopic();            
+            File.Delete(topic.GetKavaDocsEditorFilePath());
         }
 
         #endregion

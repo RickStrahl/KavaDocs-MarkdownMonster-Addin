@@ -6,14 +6,14 @@
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Icon="../../Assets/DocumentationMonster_Icon_256.png"                    
+        Icon="../../icon.png"                    
         Title="New Topic"
         TitleCharacterCasing="Normal"                      
         TitlebarHeight="35"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"                      
         WindowStartupLocation="CenterOwner"         
         Padding="0" 
-        FontSize="{Binding AppModel.Configuration.WindowPosition.WindowFontSize}"             
+        FontSize="16"             
         IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
         Width="650" Height="450" MinWidth="600" MinHeight="320">
     <Window.Resources>
@@ -29,8 +29,8 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Image Source="../../Assets/DocumentationMonster_Icon_256.png"
-               Margin="25,30,5,0"
+        <Image Source="../../icon.png"
+               Margin="20,20,5,20"
                Height="128" VerticalAlignment="Top"></Image>
 
         <StackPanel Margin="20" Grid.Column="1">
