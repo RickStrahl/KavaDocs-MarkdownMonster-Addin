@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using DocHound.Annotations;
+using MarkdownMonster.Utilities;
 
 
 namespace DocHound.Model
@@ -33,6 +34,18 @@ namespace DocHound.Model
         private bool _isSelected;
 
 
+        public bool IsHidden
+        {
+            get => _isHidden;
+            set
+            {
+                if (value == _isHidden) return;
+                _isHidden = value;
+                OnPropertyChanged();
+            }
+        }
+        private bool _isHidden;
+
 
         public bool IsEditing
         {
@@ -59,7 +72,17 @@ namespace DocHound.Model
                 if (string.IsNullOrEmpty(Topic.Project.OutputDirectory))
                     return null;
 
-                return Path.Combine(Topic.Project.OutputDirectory, "icons", Topic.Type.ToLower() + ".png");
+                var type = Topic.Type;
+                if (type == null)
+                {
+                    if (Topic.Topics != null && Topic.Topics.Count > 0)
+                        type = "header";
+                    else
+                        type = "topic";
+
+                }
+
+                return Path.Combine(Topic.Project.OutputDirectory, "icons", type.ToLower() + ".png");
             }
         }
 

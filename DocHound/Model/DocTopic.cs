@@ -134,57 +134,41 @@ namespace DocHound.Model
             }
         }
 
-
-        /// TODO: Add Link
-
-        /// <summary>
-        /// Site relative link to the file. Should include 
-        /// the filename:
-        /// somefile.md
-        /// somefolder/somefile.md
-        /// somewhere/someotherfile.html
-        /// </summary>
-        //public string Link
-        //{
-        //    get
-        //    {
-
-        //        if (string.IsNullOrEmpty(_link))
-        //        {
-        //            _link = Slug;
-        //            if (BodyFormat == TopicBodyFormats.Html)
-        //            _link += "
-
-        //            }
-        //        }
-
-        //            return _link;
-        //    }
-        //    set
-        //    {
-        //        if (value == _link) return;
-        //        _link = value;
-        //        OnPropertyChanged();
-        //    }
-        //}
-        //private string _link;
+        
 
         /// <summary>
         /// The Topic type (ie. topic,header,classheader,classproperty etc.)
         /// </summary>
         public string Type
         {
-            get { return _type?.ToLower(); }
+            get
+            {
+                var type = _type?.ToLower();
+                if (string.IsNullOrEmpty(type))
+                {
+                    if (Topics != null && Topics.Count > 0)
+                        type = "header";
+                    else
+                        type = "topic";
+                }
+
+                return type;
+            }
             set
             {
+                if (value == _type) return;
+
                 // don't empty null types
                 if (string.IsNullOrEmpty(value))
-                    return;
-
-                if (value == _type) return;
-                
-                _type = value;
-                OnPropertyChanged();
+                {
+                    if (Topics != null && Topics.Count > 0)
+                        value= "header";
+                    else
+                        value= "topic";                    
+                }
+                _type = value.ToLower();
+                OnPropertyChanged(nameof(Type));
+                TopicState.OnPropertyChanged(nameof(TopicState.ImageFilename));
             }
         }
         private string _type;
@@ -215,7 +199,6 @@ namespace DocHound.Model
         }
 
         private string _body;
-        
 
         public TopicBodyFormats BodyFormat { get; set; } = TopicBodyFormats.Markdown;
 
@@ -251,11 +234,11 @@ namespace DocHound.Model
 
         public bool IsLink { get; set; }
 
-
         public int SortOrder { get; set; }
 
         public bool Incomplete { get; set; }
 
+        [YamlIgnore]
         public bool IsExpanded
         {
             get { return _isExpanded; }
@@ -265,24 +248,13 @@ namespace DocHound.Model
                 _isExpanded = value;
                 OnPropertyChanged();
                 if (_isExpanded)
-                    IsHidden = true;
+                    TopicState.IsHidden = true;
             }
         }
         private bool _isExpanded;
 
         
 
-        public bool IsHidden
-        {
-            get => _isHidden;
-            set
-            {
-                if (value == _isHidden) return;
-                _isHidden = value;
-                OnPropertyChanged();
-            }
-        }
-        private bool _isHidden;
 
         [YamlIgnore]
         public DateTime Updated { get; set; }
@@ -330,11 +302,6 @@ namespace DocHound.Model
         /// This file is used to edit the active topics
         /// </summary>
         public static string KavaDocsEditorFilename = "KavaDocsTopic.md";
-
-        /// <summary>
-        /// The full path to the KavaDocs editor filename in a temp path
-        /// </summary>
-        public static string KavaDocsEditorFilePath = Path.Combine(Path.GetTempPath(), KavaDocsEditorFilename);
 
         #endregion
 
@@ -527,7 +494,15 @@ namespace DocHound.Model
                 Slug + (BodyFormat == TopicBodyFormats.Html ? ".html" : ".md"));
         }
 
-        
+        /// <summary>
+        /// The full path to the KavaDocs editor filename
+        /// </summary>
+        public string GetKavaDocsEditorFilePath()
+        {
+            return Path.Combine(Project.ProjectDirectory, KavaDocsEditorFilename);
+        }
+
+
 
 
         public static readonly Regex YamlExtractionRegex = new Regex(@"\A---[ \t]*\r?\n[\s\S]+?\r?\n(---|\.\.\.)[ \t]*\r?\n", RegexOptions.Multiline | RegexOptions.Compiled);
@@ -542,14 +517,7 @@ namespace DocHound.Model
             if (!string.IsNullOrEmpty(Project?.ProjectDirectory))
             {
                 if (file == null)
-                {
-                    string filename = Slug;
-                    if (string.IsNullOrEmpty(filename))
-                        filename = "_" + Id;
-
-                    file = Path.Combine(Project.ProjectDirectory, filename + ".md");
-                }
-
+                    file = GetExternalFilename();
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -565,6 +533,7 @@ namespace DocHound.Model
                             return false;
                     }
                 }
+
 
                 if (_body.StartsWith("---\n") || _body.StartsWith("---\r"))
                 {
@@ -610,6 +579,14 @@ namespace DocHound.Model
                     }
                     
                     _body  = _body.Replace(extractedYaml, "");
+
+                    if (string.IsNullOrEmpty(Title))
+                    {
+                        var lines = StringUtils.GetLines(Body);
+                        var titleLine = lines.FirstOrDefault(l => l.TrimStart().StartsWith("# "));
+                        if (!string.IsNullOrEmpty(titleLine) && titleLine.Length > 2)
+                            Title = titleLine.Trim().Substring(2);
+                    }
                 }
 
             }
@@ -622,31 +599,42 @@ namespace DocHound.Model
         /// <summary>
         /// Saves body field content to a Markdown file with the slug as a name
         /// </summary>
-        /// <param name="topicMarkdownText"></param>
+        /// <param name="markdownText"></param>
         /// <returns></returns>
-        public bool SaveTopicFile(string topicMarkdownText = null)
+        public bool SaveTopicFile(string markdownText = null)
         {
-            if (topicMarkdownText == null)
-                topicMarkdownText = Body;
+            if (markdownText == null)
+            {
+                markdownText = Body;
+                if (string.IsNullOrEmpty(markdownText))
+                {
+                    if (LoadTopicFile())
+                        markdownText = Body;
+                }
+            }
 
 
             var serializer = new SerializerBuilder()
-                .WithNamingConvention(new CamelCaseNamingConvention())                
+                .WithNamingConvention(new CamelCaseNamingConvention())                   
                 .Build();
 
+            if (string.IsNullOrEmpty(Title))
+            {
+                var lines = StringUtils.GetLines(Body);
+                var titleLine = lines.FirstOrDefault(l => l.TrimStart().StartsWith("# "));
+                if (!string.IsNullOrEmpty(titleLine) && titleLine.Length > 2)
+                    Title = titleLine.Trim().Substring(2);
+            }
+
             string yaml = serializer.Serialize(this);
-            topicMarkdownText = $"---\n{yaml}kavaDocs: true\n---\n{Body}";
+            markdownText = $"---\n{yaml}kavaDocs: true\n---\n{markdownText}";
+            
             
             if (!string.IsNullOrEmpty(Project?.ProjectDirectory))
             {
-                string filename = Slug;
-                if (string.IsNullOrEmpty(filename))
-                    filename = "_" + Id;
+                var file = GetExternalFilename();
 
-                var file = Path.Combine(Project.ProjectDirectory,
-                    filename + (BodyFormat == TopicBodyFormats.Html ? ".html" : ".md"));
-
-                if (topicMarkdownText == null)
+                if (markdownText == null)
                     try
                     {                        
                         File.Delete(file);
@@ -658,12 +646,12 @@ namespace DocHound.Model
                     {
                         try
                         {
-                            File.WriteAllText(file, topicMarkdownText);
+                            File.WriteAllText(file, markdownText);
                             break;
                         }
                         catch
                         {
-                            _body = topicMarkdownText;
+                            _body = markdownText;
                             Task.Delay(5);
                             if (i > 2)
                                 return false;
@@ -675,6 +663,26 @@ namespace DocHound.Model
                 return false;
 
             return true;
+        }
+
+        private string GetExternalFilename()
+        {
+            string file;
+            if (!string.IsNullOrEmpty(Link) && !(Link.StartsWith("http://") || Link.StartsWith("https://")))
+            {
+                file = FileUtils.NormalizePath(Path.Combine(Project.ProjectDirectory, Link));
+            }
+            else
+            {
+                string filename = Slug;
+                if (string.IsNullOrEmpty(filename))
+                    filename = "_" + Id;
+
+                file = Path.Combine(Project.ProjectDirectory,
+                    filename + (BodyFormat == TopicBodyFormats.Html ? ".html" : ".md"));
+            }
+
+            return file;
         }
 
         #endregion
@@ -762,7 +770,7 @@ namespace DocHound.Model
 
         #region Error Handling
 
-        public string ErrorMessage { get; set; }
+        public string ErrorMessage { get; set; }        
 
         protected void SetError()
         {

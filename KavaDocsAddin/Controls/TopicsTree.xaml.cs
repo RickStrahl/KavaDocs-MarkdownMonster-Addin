@@ -75,7 +75,22 @@ namespace KavaDocsAddin.Controls
 
         #region Selection Handling
 
-        
+
+        private void TreeTopicBrowser_Selected(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true; // don't bubble up through parents
+
+            if (!HandleSelection())
+                return;        
+            
+            var topic = TreeTopicBrowser.SelectedItem as DocTopic;
+            if (topic != null)
+            {
+                TreeViewItem tvi = e.OriginalSource as TreeViewItem;
+                 tvi?.BringIntoView();
+            }            
+        }
+
 
         public bool HandleSelection(DocTopic topic = null)
         {
@@ -84,7 +99,6 @@ namespace KavaDocsAddin.Controls
 
             if (topic == null)
                 return false;
-
             
 
             kavaUi.AddinModel.LastTopic = kavaUi.AddinModel.ActiveTopic;
@@ -94,7 +108,7 @@ namespace KavaDocsAddin.Controls
             kavaUi.AddinModel.RecentTopics.Insert(0, topic);
 
             if (kavaUi.AddinModel.RecentTopics.Count > 15)
-                kavaUi.AddinModel.RecentTopics = new ObservableCollection<DocTopic>(kavaUi.AddinModel.RecentTopics.Take(10));
+                kavaUi.AddinModel.RecentTopics = new ObservableCollection<DocTopic>(kavaUi.AddinModel.RecentTopics.Take(14));
 
             OpenTopicInEditor();
             
@@ -104,38 +118,28 @@ namespace KavaDocsAddin.Controls
         private void OpenTopicInEditor()
         {
             DocTopic topic = TreeTopicBrowser.SelectedItem as DocTopic;
-            if (topic == null)
+             if (topic == null)
                 return;
 
             var file = topic.GetTopicFileName();
-            var editorFile = DocTopic.KavaDocsEditorFilePath;
+            var editorFile = topic.GetKavaDocsEditorFilePath();
             try
             {
                 File.Copy(file, editorFile, true);
             }
             catch 
-            {                
-                File.Copy(file, editorFile, true);
+            {
+                try
+                {
+                    File.Copy(file, editorFile, true);
+                }
+                catch
+                {
+                    return;
+                }
             }
 
             Model.AppModel.Window.OpenTab(editorFile);
-        }
-
-        private void TreeTopicBrowser_Selected(object sender, RoutedEventArgs e)
-        {
-            e.Handled = true; // don't bubble up through parents
-
-            if (!HandleSelection())
-                return;
-
-            var topic = TreeTopicBrowser.SelectedItem as DocTopic;
-            if (topic != null)
-            {
-                TreeViewItem tvi = e.OriginalSource as TreeViewItem;
-                Dispatcher.InvokeAsync(() => tvi?.BringIntoView(), DispatcherPriority.ApplicationIdle);
-            }
-
-            kavaUi.AddinModel.PreviewTopic();
         }
 
       

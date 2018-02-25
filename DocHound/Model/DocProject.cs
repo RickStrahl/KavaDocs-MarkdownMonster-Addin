@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using DocHound.Annotations;
 using DocHound.Razor;
 using MarkdownMonster;
@@ -341,14 +342,11 @@ namespace DocHound.Model
             if (topic == null)
                 return;
 
-            var children = Topics.Where(t => t.ParentId == topic.Id).ToList();
-            for (int i = children.Count-1; i > -1; i--)
-            {
-                var childTopic = children[i];
-                DeleteTopic(childTopic);
-            }
+            if (topic.Parent?.Topics != null)
+                topic.Parent.Topics.Remove(topic);
+            else
+                Topics.Remove(topic);
             
-            Topics.Remove(topic);
             topic = null;            
         }
 
@@ -368,6 +366,10 @@ namespace DocHound.Model
         /// </summary>
         /// <param name="topic"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// Note: This DOES NOT save the topic to disk tree to disk.
+        /// The tree has to be explicitly updated
+        /// </remarks>
         public bool SaveTopic(DocTopic topic = null)
         {
             if (topic == null)
@@ -375,12 +377,15 @@ namespace DocHound.Model
             if (topic == null)
                 return false;
 
-            var loadTopic = Topics.FirstOrDefault(t=> t.Id == topic.Id );
-
-            //if (loadTopic == topic)
-            //{                
-            //    var result = topic.SaveTopicFile();                
-            //}
+            var loadTopic = FindTopicInTree(topic);
+            
+            if (string.IsNullOrEmpty(topic.Title))
+            {
+                var lines = StringUtils.GetLines(topic.Body);
+                var titleLine = lines.FirstOrDefault(l => l.TrimStart().StartsWith("# "));
+                if (!string.IsNullOrEmpty(titleLine) && titleLine.Length > 2)
+                    topic.Title = titleLine.Trim().Substring(2);
+            }
 
             if (loadTopic == null)
             {
@@ -472,7 +477,7 @@ namespace DocHound.Model
             fileTopic.LoadTopicFile(doc.Filename);
 
             topic.Body = fileTopic.Body;
-            if (!string.IsNullOrEmpty(topic.Title))
+            if (string.IsNullOrEmpty(topic.Title))
                 topic.Title = fileTopic.Title;
             
             topic.Type = fileTopic.Type;
@@ -501,19 +506,19 @@ namespace DocHound.Model
             foreach (var topic in topics)
             {
                 if (string.IsNullOrEmpty(searchPhrase))
-                    topic.IsHidden = false;
+                    topic.TopicState.IsHidden = false;
                 else if (topic.Title.IndexOf(searchPhrase, StringComparison.CurrentCultureIgnoreCase) < 0)
-                    topic.IsHidden = true;
+                    topic.TopicState.IsHidden = true;
                 else
-                    topic.IsHidden = false;
+                    topic.TopicState.IsHidden = false;
 
                 // Make parent topics visible and expanded
-                if (topic.IsHidden == false)
+                if (!topic.TopicState.IsHidden)
                 {
                     var parent = topic.Parent;
                     while (parent != null)
                     {
-                        parent.IsHidden = false;
+                        parent.TopicState.IsHidden = false;
                         parent.IsExpanded = true;
                         parent = parent.Parent;
                     }
@@ -676,6 +681,21 @@ namespace DocHound.Model
 
             return true;
         }
+
+        public void SaveProjectAsync(string filename = null)
+        {
+            Task.Run(() =>
+            {
+                if (string.IsNullOrEmpty(filename))
+                    filename = Filename;
+
+                if (!DocProjectManager.Current.SaveProject(this, filename))
+                {
+                    Dispatcher.CurrentDispatcher.Invoke(()=> SetError(DocProjectManager.Current.ErrorMessage));
+                }                
+            });
+        }
+
         #endregion
 
         #region Topic List from Flat List

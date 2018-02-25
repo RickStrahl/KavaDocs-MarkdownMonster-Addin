@@ -105,49 +105,21 @@ namespace KavaDocsAddin
 
             if (string.IsNullOrEmpty(doc.CurrentText) || !doc.Filename.EndsWith(DocTopic.KavaDocsEditorFilename))
                 return;
-            
-            if (!doc.CurrentText.StartsWith("---") || !doc.CurrentText.Contains("kavaDocs: true"))
-                return;
 
-
+            AddinModel.ActiveTopic.Body = doc.CurrentText;
             AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc,AddinModel.ActiveTopic);
+            AddinModel.ActiveProject.SaveProject();
+
         }
 
         public override void OnExecute(object sender)
         {
-            //MessageBox.Show("Hello from your Kava Docs Addin", "Kava Docs",
-            //    MessageBoxButton.OK, MessageBoxImage.Information);
-
-
+            // Activate the Tab
             Model.Window.SidebarContainer.SelectedItem = KavaDocsTab;
 
-            var project = DocProjectManager.Current.LoadProject(@"C:\Temp\markdownmonster_help\_toc.json");
-            
-            //var topic = project.LoadBySlug("Using-the-Editor");
-
-            var model = kavaUi.AddinModel;
-            model.ActiveProject = project;
-            //model.ActiveTopic = topic;
-
-            //this.PreviewTopic();
-
-
-            // *** Some things you can do:
-
-            // // modify selected editor text
-            //var text = GetSelection();
-            //text = "<small>" + text + "</small>";
-            //SetSelection(text);
-            //RefreshPreview();
-
-            // // open a new tab with a file
-            //OpenTab(Path.Combine(mmApp.Configuration.CommonFolder, "KavaDocsAddin.json"));
-
-            // // run a process
-            //var imageFile = GetSelection();  // assume image file is selected
-            //if (!imageFile.Contains(":\\"))
-            //    imageFile = Path.Combine(Path.GetDirectoryName(ActiveDocument.Filename), imageFile);
-            //Process.Start("paint.exe", imageFile);
+            // If no project is open try to open one
+            if (AddinModel.ActiveProject == null)
+                AddinModel.Commands.OpenProjectCommand.Execute(null);            
         }
 
         public override void OnExecuteConfiguration(object sender)

@@ -78,9 +78,9 @@
                         <!-- We have to select the item which is right-clicked on -->
                         <!-- <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="TreeViewItem_PreviewMouseRightButtonDown"/> -->
                         <!-- <Setter Property="Visibility" Value="{Binding IsVisible,Mode=TwoWay,Converter={StaticResource BooleanToVisibilityConverter}}" /> -->
-                        <Setter Property="IsSelected" Value="{Binding IsSelected,Mode=TwoWay}" />
+                        <Setter Property="IsSelected" Value="{Binding TopicState.IsSelected,Mode=TwoWay}" />
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded,Mode=TwoWay}" />
-                        <Setter Property="controls:VisibilityHelper.IsCollapsed" Value="{Binding IsHidden,Mode=TwoWay}" />
+                        <Setter Property="controls:VisibilityHelper.IsCollapsed" Value="{Binding TopicState.IsHidden,Mode=TwoWay}" />
                 </Style>
             </TreeView.ItemContainerStyle>
 
