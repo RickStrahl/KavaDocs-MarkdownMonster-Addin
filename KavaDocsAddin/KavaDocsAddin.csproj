@@ -1,0 +1,673 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{50BEB3B4-4211-465D-BEC6-3FCDC1050DD4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KavaDocsAddin</RootNamespace>
+    <AssemblyName>KavaDocsAddin</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>$(AppData)\Markdown Monster\Addins\KavaDocsAddin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>$(AppData)\Markdown Monster\Addins\KavaDocsAddin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Dragablz">
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Dragablz.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FontAwesome.WPF">
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\FontAwesome.WPF.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MahApps.Metro">
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\MahApps.Metro.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MarkdownMonster">
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\MarkdownMonster.exe</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack">
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions">
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity">
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\System.Windows.Interactivity.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xaml" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="Westwind.Utilities">
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Westwind.Utilities.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="KavaDocsAddin.cs" />
+    <Compile Include="AppCommands.cs" />
+    <Compile Include="Controls\TopicDetail.xaml.cs">
+      <DependentUpon>TopicDetail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TopicEditor.xaml.cs">
+      <DependentUpon>TopicEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TopicEditorModel.cs" />
+    <Compile Include="Controls\TopicsTree.xaml.cs">
+      <DependentUpon>TopicsTree.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TopicsTreeModel.cs" />
+    <Compile Include="KavaApp.cs" />
+    <Compile Include="KavaDocsMenuHandler.cs" />
+    <Compile Include="KavaDocsModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Windows\Dialogs\NewProjectDialog.xaml.cs">
+      <DependentUpon>NewProjectDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Dialogs\NewTopicDialog.xaml.cs">
+      <DependentUpon>NewTopicDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Dialogs\PasteImageDialog.xaml.cs">
+      <DependentUpon>PasteImageDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="_Classes\dmUi.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ProjectTemplates\icons\classconstructor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\classevent.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\classfield.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\classheader.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\classmethod.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\classmethodprotected.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\classproperty.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\classpropertyprotected.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\database.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\datacolumn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\datafunction.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\datastoredproc.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\datatable.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\dataview.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\delegate.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\enum.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\header.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\index.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\interface.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\namespace.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\seealso.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\static.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\style.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\topic.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\topic_old.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\topic_open.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\unknown.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\unknown_open.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\weblink.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\weblink_open.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\webservice.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\webservice_open.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\whatsnew.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\whatsnew_open.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\images\logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\images\vsizegrip.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\images\wwhelp.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\darkhan\wwhelp.css" />
+    <Content Include="ProjectTemplates\Themes\darkhan_noframes\wwhelp.css" />
+    <Content Include="ProjectTemplates\Themes\github\wwhelp.css" />
+    <Content Include="ProjectTemplates\Themes\msdn\wwhelp.css" />
+    <Content Include="ProjectTemplates\Themes\msword\wwhelp.css" />
+    <Content Include="ProjectTemplates\Themes\scripts\bootstrap\dist\css\bootstrap-theme.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\bootstrap\dist\css\bootstrap-theme.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\bootstrap\dist\css\bootstrap.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\bootstrap\dist\css\bootstrap.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\bootstrap\dist\js\bootstrap.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\bootstrap\dist\js\bootstrap.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\bootstrap\dist\js\npm.js" />
+    <Content Include="ProjectTemplates\Themes\scripts\fontawesome\css\font-awesome.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\highlight.pack.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\brown-paper.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\brown-papersq.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\codepen-embed.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\color-brewer.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\dark.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\darkula.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\default.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\dracula.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\far.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\foundation.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\github-gist.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\github.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\googlecode.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\grayscale.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\idea.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\ir-black.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\kimbie.dark.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\kimbie.light.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\magula.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\mono-blue.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\monokai-sublime.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\monokai.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\obsidian.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\paraiso-dark.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\paraiso-light.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\railscasts.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\rainbow.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\school-book.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\school-book.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\solarized-dark.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\solarized-light.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\sunburst.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\twilight.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\vs.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\xcode.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\zenburn.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\jquery\jquery.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\jquery\jquery.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\ww.jquery.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\ww.jquery.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\wwhelp.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Themes\wwhelp.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="version.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icon.png" />
+    <Content Include="build.ps1" />
+    <Content Include="7z.exe" />
+    <Content Include="7z.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ProjectTemplates\Themes\classconstructor.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\classevent.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\classfield.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\classheader.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\classmethod.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\classproperty.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\darkhan.tid">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\darkhan\classconstructor.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\classevent.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\classfield.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\classheader.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\classmethod.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\classproperty.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\darkhan.tid" />
+    <None Include="ProjectTemplates\Themes\darkhan\database.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\datacolumn.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\datastoredproc.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\datatable.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\dataview.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\delegate.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\enum.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\errorpage.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\header.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\index.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\interface.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\namespace.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\notopic.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\tableofcontents.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\topic.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\webservice.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\whatsnew.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\wwhelp.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan\_layout.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\classconstructor.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\classevent.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\classfield.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\classheader.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\classmethod.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\classproperty.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\darkhan_noframes.tid" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\database.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\datacolumn.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\datastoredproc.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\datatable.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\dataview.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\delegate.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\enum.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\errorpage.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\header.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\index.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\interface.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\namespace.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\notopic.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\tableofcontents.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\topic.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\webservice.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\whatsnew.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\wwhelp.wcs" />
+    <None Include="ProjectTemplates\Themes\darkhan_noframes\_layout.wcs" />
+    <None Include="ProjectTemplates\Themes\database.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\datacolumn.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\datastoredproc.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\datatable.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\dataview.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\delegate.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\enum.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\errorpage.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\github\classconstructor.wcs" />
+    <None Include="ProjectTemplates\Themes\github\classevent.wcs" />
+    <None Include="ProjectTemplates\Themes\github\classfield.wcs" />
+    <None Include="ProjectTemplates\Themes\github\classheader.wcs" />
+    <None Include="ProjectTemplates\Themes\github\classmethod.wcs" />
+    <None Include="ProjectTemplates\Themes\github\classproperty.wcs" />
+    <None Include="ProjectTemplates\Themes\github\database.wcs" />
+    <None Include="ProjectTemplates\Themes\github\datacolumn.wcs" />
+    <None Include="ProjectTemplates\Themes\github\datastoredproc.wcs" />
+    <None Include="ProjectTemplates\Themes\github\datatable.wcs" />
+    <None Include="ProjectTemplates\Themes\github\dataview.wcs" />
+    <None Include="ProjectTemplates\Themes\github\delegate.wcs" />
+    <None Include="ProjectTemplates\Themes\github\enum.wcs" />
+    <None Include="ProjectTemplates\Themes\github\errorpage.wcs" />
+    <None Include="ProjectTemplates\Themes\github\github.tid" />
+    <None Include="ProjectTemplates\Themes\github\header.wcs" />
+    <None Include="ProjectTemplates\Themes\github\index.wcs" />
+    <None Include="ProjectTemplates\Themes\github\interface.wcs" />
+    <None Include="ProjectTemplates\Themes\github\namespace.wcs" />
+    <None Include="ProjectTemplates\Themes\github\notopic.wcs" />
+    <None Include="ProjectTemplates\Themes\github\tableofcontents.wcs" />
+    <None Include="ProjectTemplates\Themes\github\topic.wcs" />
+    <None Include="ProjectTemplates\Themes\github\webservice.wcs" />
+    <None Include="ProjectTemplates\Themes\github\whatsnew.wcs" />
+    <None Include="ProjectTemplates\Themes\github\wwhelp.wcs" />
+    <None Include="ProjectTemplates\Themes\github\_layout.wcs" />
+    <None Include="ProjectTemplates\Themes\header.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\index.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\interface.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\msdn\classconstructor.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\classevent.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\classfield.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\classheader.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\classmethod.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\classproperty.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\database.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\datacolumn.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\datastoredproc.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\datatable.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\dataview.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\delegate.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\enum.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\errorpage.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\header.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\index.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\interface.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\msdn.tid" />
+    <None Include="ProjectTemplates\Themes\msdn\namespace.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\notopic.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\tableofcontents.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\topic.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\webservice.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\whatsnew.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\wwhelp.wcs" />
+    <None Include="ProjectTemplates\Themes\msdn\_layout.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\classconstructor.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\classevent.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\classfield.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\classheader.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\classmethod.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\classproperty.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\database.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\datacolumn.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\datastoredproc.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\datatable.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\dataview.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\delegate.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\emptydocument.doc" />
+    <None Include="ProjectTemplates\Themes\msword\enum.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\errorpage.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\header.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\helpbuildertemplate.doc" />
+    <None Include="ProjectTemplates\Themes\msword\index.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\interface.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\msword.tid" />
+    <None Include="ProjectTemplates\Themes\msword\namespace.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\notopic.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\tableofcontents.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\topic.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\webservice.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\whatsnew.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\wwhelp.wcs" />
+    <None Include="ProjectTemplates\Themes\msword\_layout.wcs" />
+    <None Include="ProjectTemplates\Themes\namespace.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\notopic.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\scripts\bootstrap\dist\css\bootstrap-theme.css.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\scripts\bootstrap\dist\css\bootstrap.css.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\scripts\fontawesome\fonts\fontawesome-webfont.eot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\scripts\fontawesome\fonts\fontawesome-webfont.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\scripts\fontawesome\fonts\fontawesome-webfont.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\scripts\fontawesome\fonts\fontawesome-webfont.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\scripts\fontawesome\fonts\FontAwesome.otf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\scripts\highlightjs\LICENSE" />
+    <None Include="ProjectTemplates\Themes\scripts\jquery\jquery.min.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\tableofcontents.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\topic.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\UpdateScripts.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\webservice.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\whatsnew.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\wwhelp.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectTemplates\Themes\_layout.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Controls\TopicDetail.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\TopicEditor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\TopicsTree.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Dialogs\NewProjectDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Dialogs\NewTopicDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Dialogs\PasteImageDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DocHound\DocHound.csproj">
+      <Project>{f7cf7101-6c60-4f3a-8036-ca77351aa2a2}</Project>
+      <Name>DocHound</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Windows\Helpers\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

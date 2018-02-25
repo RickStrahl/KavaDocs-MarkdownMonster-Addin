@@ -1,0 +1,50 @@
+﻿<header class="content-title">
+    <img src="icons/@(Topic.Type).png">    
+    @Topic.Title
+</header>
+
+
+<div class="content-body" id="body">
+    @Topic.MarkdownRaw(Topic.Body)
+</div>
+
+@if(!string.IsNullOrEmpty(Topic.ClassInfo.Syntax)) {
+<pre class="syntaxbox" id="syntax">@Topic.ClassInfo.Syntax</pre>
+}
+
+
+@if(!string.IsNullOrEmpty(Topic.ClassInfo.Returns)) {
+	@Topic.MarkdownRaw(Topic.ClassInfo.Returns)
+}
+
+@if(!string.IsNullOrEmpty(Topic.ClassInfo.Parameters)) {
+<h3 class="outdent" id="parameters">Parameters</h3>
+	@Topic.MarkdownRaw(Topic.ClassInfo.Parameters)
+}
+
+@if(!string.IsNullOrEmpty(Topic.ClassInfo.Exceptions)) {
+	@HtmlUtils.DisplayMemo(Topic.ClassInfo.Exceptions)
+}
+
+@if(!string.IsNullOrEmpty(Topic.ClassInfo.Contract))  {
+    <h3 class="contracts" id="example">Contracts</h3>
+    @Topic.MarkdownRaw(Topic.ClassInfo.Contract)
+}
+
+
+@if(!string.IsNullOrEmpty(Topic.Remarks))  {
+    <h3 class="outdent" id="remarks">Remarks</h3>
+    @Topic.MarkdownRaw(Topic.Remarks)
+} 
+
+@if(!string.IsNullOrEmpty(Topic.Example))  {
+    <h3 class="outdent" id="example">Example</h3>
+    @Topic.MarkdownRaw(Topic.Example)
+} 
+
+@Helpers.InsertMethodOverloads()
+
+@if(!string.IsNullOrEmpty(Topic.SeeAlso))  {
+<h3 class="outdent" id="seealso">See also</h3>
+	@Raw(HtmlUtils.DisplayMemo(Topic.SeeAlso))
+}

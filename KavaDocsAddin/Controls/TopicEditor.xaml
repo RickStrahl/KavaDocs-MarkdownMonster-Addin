@@ -1,0 +1,163 @@
+﻿<UserControl x:Class="KavaDocsAddin.Controls.TopicEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:KavaDocsAddin.Controls"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
+        <dragablz:TabablzControl x:Name="TabControl" Margin="0,5,0,0" FontSize="14" 
+                                 BorderThickness="0" ShowDefaultCloseButton="False"  
+                                 ShowDefaultAddButton="False">
+        
+            <dragablz:TabablzControl.Resources>
+                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="Padding" Value="5,3,5,5" />
+                </Style>
+            </dragablz:TabablzControl.Resources>
+
+
+            <controls:MetroTabItem Name="TabTopic" Header="Topic" Margin="0,0,5,0" CloseButtonEnabled="False"                                   
+                                   controls:ControlsHelper.HeaderFontSize="16" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*"  />
+                            <RowDefinition Height="Auto"  />
+                        </Grid.RowDefinitions>
+
+                        <TextBox Name="TextTitle" 
+                                 Text="{Binding AppModel.ActiveTopic.Title}" 
+                                 Style="{StaticResource HeaderTextBoxStyle}"
+                                 Margin="5,10" 
+                                 controls:TextBoxHelper.Watermark="Topic Title"  
+                                 controls:TextBoxHelper.ClearTextButton="True"/>
+
+                        <Grid Grid.Row="1" Margin="5,0,5,10" HorizontalAlignment="Stretch">
+                            <Grid.Resources>
+                                <ObjectDataProvider x:Key="BodyTypes" MethodName="GetValues"
+                                                    ObjectType="{x:Type System:Enum}">
+                                    <ObjectDataProvider.MethodParameters>
+                                        <x:Type TypeName="model:TopicBodyFormats"/>
+                                    </ObjectDataProvider.MethodParameters>
+                                </ObjectDataProvider>
+                            </Grid.Resources>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <ComboBox Name="ComboTopicType" 
+                                  Grid.Column="0"
+                                  
+                                  ItemsSource="{Binding TopicTypesList}"
+                                  IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False"
+                                  TextSearch.TextPath="Type"
+                                  SelectedValue="{Binding AppModel.ActiveTopic.Type}"                                  
+                                  SelectedValuePath="Type"                                      
+                             >
+
+                                <ComboBox.ItemTemplate>
+                                    <ItemContainerTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{Binding ImageFile}" Margin="3,0,6,0" />
+                                            <TextBlock Text="{Binding Type}" />
+                                        </StackPanel>
+                                    </ItemContainerTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+
+                            <ComboBox Name="ComboBodyType" SelectedValue="{Binding AppModel.ActiveTopic.BodyFormat}"                                 
+                                      Grid.Column="1" ItemsSource="{Binding Source={StaticResource BodyTypes}}"
+                                      Margin="10,0,10,0"
+                                      >
+                            </ComboBox>
+
+                            <TextBox Name="TextSlug"  Text="{Binding AppModel.ActiveTopic.Slug}" Grid.Column="2"/>
+                        </Grid>
+                    </Grid>
+                    
+                    <WebBrowser Name="TopicEditorBrowser" Grid.Row="2" />
+
+                </Grid>
+            </controls:MetroTabItem>
+                        
+
+            <controls:MetroTabItem Name="TabRemarkssAndExample" Header="Remarks &amp; Example" Margin="0,0,5,0" CloseButtonEnabled="False"                                   
+                                   controls:ControlsHelper.HeaderFontSize="16" >
+                <Grid Margin="20,10">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Label>Notes:</Label>
+                    <TextBox Grid.Row="1" 
+                             Text="{Binding AppModel.ActiveTopic.Remarks}" 
+                             FontFamily="{Binding AppModel.Configuration.EditorFont}" 
+                             TextWrapping="Wrap"
+                             AcceptsTab="True"
+                             AcceptsReturn="True"
+                             FontSize="16" />
+
+                    <Label Grid.Row="2" Margin="0,15,0,0">Code Example:</Label>
+                    <TextBox Grid.Row="3" 
+                             Text="{Binding AppModel.ActiveTopic.Example}" 
+                             FontFamily="{Binding AppModel.Configuration.EditorFont}"  
+                             AcceptsTab="True"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap" 
+                             FontSize="16"/>
+                    
+                </Grid>
+            </controls:MetroTabItem>
+            
+            <controls:MetroTabItem Name="TabClassInfo" Header="Class Info" Margin="0,0,5,0" CloseButtonEnabled="False"                                   
+                                   controls:ControlsHelper.HeaderFontSize="16" Visibility="Collapsed" >
+                <Grid>
+                </Grid>
+            </controls:MetroTabItem>
+
+
+            <controls:MetroTabItem Name="TabTopicLinks" Header="Topic Links" Margin="0,0,5,0" CloseButtonEnabled="False"                                   
+                                    controls:ControlsHelper.HeaderFontSize="16"  Visibility="Collapsed"  >
+                <Grid>
+                </Grid>
+            </controls:MetroTabItem>
+            
+            <controls:MetroTabItem Name="TabTopicExtensions" Header="Extensions" Margin="0,0,5,0" CloseButtonEnabled="False"                                   
+                                   controls:ControlsHelper.HeaderFontSize="16" Visibility="Hidden" >
+                <Grid>
+                </Grid>
+            </controls:MetroTabItem>
+            
+        </dragablz:TabablzControl>
+
+    </Grid>
+</UserControl>
