@@ -94,6 +94,12 @@ namespace KavaDocsAddin.Controls
             }
         }
 
+        private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            TreeTopicBrowser_Selected(sender, e);            
+            Model.AppModel.ActiveMarkdownEditor.SetEditorFocus();
+        }
+
 
         public bool HandleSelection(DocTopic topic = null)
         {
@@ -143,19 +149,22 @@ namespace KavaDocsAddin.Controls
                 }
             }
 
+            // Will also open the tab if not open yet
+            Model.AppModel.Window.RefreshTabFromFile(editorFile);
 
-            var tab = Model.AppModel.Window.GetTabFromFilename(editorFile);
-            if (tab != null)
-            {
-                var doc = tab.Tag as MarkdownDocumentEditor;
-                doc.MarkdownDocument.Load(editorFile);
-                //doc.LoadDocument(doc.MarkdownDocument);
-                doc.SetScrollPosition(0);
-                doc.SetMarkdown(doc.MarkdownDocument.CurrentText);
 
-            }
-            else
-                Model.AppModel.Window.OpenTab(editorFile);
+            //var tab = Model.AppModel.Window.GetTabFromFilename(editorFile);
+            //if (tab != null)
+            //{
+            //    var doc = tab.Tag as MarkdownDocumentEditor;
+            //    doc.MarkdownDocument.Load(editorFile);
+            //    //doc.LoadDocument(doc.MarkdownDocument);
+            //    doc.SetScrollPosition(0);
+            //    doc.SetMarkdown(doc.MarkdownDocument.CurrentText);
+
+            //}
+            //else
+            //    Model.AppModel.Window.OpenTab(editorFile);
         }
 
 
@@ -216,7 +225,9 @@ public void SelectTopic(DocTopic topic)
         bool _isDragging = false;
         internal DragMoveResult _dragMoveResult;
         ContextMenu _dragContextMenu;
-        private Point _lastMouseDown;
+        private Point _lastMouseDownPoint;
+        private DateTime _lastMouseDown;
+
 
         public CommandBase MoveTopicCommand { get; set; }
 
@@ -225,7 +236,8 @@ public void SelectTopic(DocTopic topic)
         {
             if (e.ChangedButton == MouseButton.Left)
             {
-                _lastMouseDown = e.GetPosition(TreeTopicBrowser);
+                _lastMouseDownPoint = e.GetPosition(TreeTopicBrowser);
+                _lastMouseDown = DateTime.UtcNow;
             }
         }
 
@@ -234,10 +246,19 @@ public void SelectTopic(DocTopic topic)
 
             if (!_isDragging && e.LeftButton == MouseButtonState.Pressed)
             {
+                var time = DateTime.UtcNow;
+
+                Console.WriteLine($"drag checks {time}");
+                
+                // At least 400 ms before dragging and less than 2secs to start dragging
+                if (_lastMouseDown > time.AddMilliseconds(-300) && _lastMouseDown > time.AddSeconds(-2))
+                    return;
+                
+
                 Point currentPosition = e.GetPosition(TreeTopicBrowser);
 
-                if ((Math.Abs(currentPosition.X - _lastMouseDown.X) > 30.0) ||
-                    (Math.Abs(currentPosition.Y - _lastMouseDown.Y) > 20.0))
+                if ((Math.Abs(currentPosition.X - _lastMouseDownPoint.X) > 30.0) ||
+                    (Math.Abs(currentPosition.Y - _lastMouseDownPoint.Y) > 20.0))
                 {
 
                     _isDragging = true;
@@ -312,12 +333,21 @@ public void SelectTopic(DocTopic topic)
                     DropLocation = DropLocations.After
                 }
             });
+            _dragContextMenu.Items.Add(new Separator());
+            _dragContextMenu.Items.Add(new MenuItem
+            {
+                Header = "Cancel topic move",
+                Tag = _dragContextMenu,
+                Command = MoveTopicCommand,
+                CommandParameter = null
+            });
 
+            WindowUtilities.DoEvents();
             _dragContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse;
-            _dragContextMenu.PlacementTarget = tvItem;
+            _dragContextMenu.PlacementTarget = tvItem;            
             _dragContextMenu.Visibility = Visibility.Visible;
             _dragContextMenu.IsOpen = true;
-            
+            WindowUtilities.DoEvents();
         }
 
         void CreateMoveTopicCommand()
@@ -327,8 +357,13 @@ public void SelectTopic(DocTopic topic)
 
                 _dragContextMenu.Visibility = Visibility.Collapsed;
                 WindowUtilities.DoEvents();
-
+                
                 var dragResult = parameter as DragMoveResult;
+                if (dragResult == null)
+                    return;
+               
+                if (dragResult.TargetTopic == dragResult.SourceTopic)
+                    return;
 
                 var targetTopics = dragResult.TargetTopic?.Topics;
                 if (targetTopics == null)
@@ -395,6 +430,8 @@ public void SelectTopic(DocTopic topic)
         }
 
         #endregion
+
+      
     }
 
 
@@ -409,7 +446,8 @@ public void SelectTopic(DocTopic topic)
     {
         Below,
         Before,
-        After
+        After,
+        None
     }
 
 

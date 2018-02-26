@@ -86,6 +86,28 @@ namespace DocHound.Model
             }
         }
 
+        public string OpenImageFilename
+        {
+            get
+            {
+                string outfolder = Topic.Project.OutputDirectory;
+
+                if (string.IsNullOrEmpty(Topic.Project.OutputDirectory))
+                    return null;
+
+                var type = Topic.Type;
+                if (type == null)
+                {
+                    if (Topic.Topics != null && Topic.Topics.Count > 0)
+                        type = "header";
+                    else
+                        type = "topic";
+                }
+
+                return Path.Combine(Topic.Project.OutputDirectory, "icons", type.ToLower() + "_open.png");
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

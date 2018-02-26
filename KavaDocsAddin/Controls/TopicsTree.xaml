@@ -18,27 +18,41 @@
 
         <HierarchicalDataTemplate x:Key="TopicsTemplate" ItemsSource="{Binding Topics}"  >
             <StackPanel >
-                <StackPanel Orientation="Horizontal" Focusable="true" KeyUp="TreeViewItem_KeyDown">
-                    <Image Source="{Binding TopicState.ImageFilename}" Height="16"/>
+                <StackPanel Orientation="Horizontal" KeyUp="TreeViewItem_KeyDown" >
+                    <Image Height="16" Width="Auto" Margin="5,0,5,0" >
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                        <Setter Property="Source"  Value="{Binding TopicState.OpenImageFilename}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsExpanded}" Value="False">
+                                        <Setter Property="Source"  Value="{Binding TopicState.ImageFilename}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
                     <TextBlock Name="TextTopicTitle" Text="{Binding Title, Mode=OneWay}"
                                        Padding="5,3,25,3" />
+                    <TextBox Name="TextEditTopicTitle" 
+                             Text="{Binding Title, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Padding="6,5,10,5"
+                             Visibility="{Binding TopicState.IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding TopicState.IsEditing}" Value="True">
+                                        <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}"/>
+                                        <Setter Property="Background" Value="#444" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                 </StackPanel>
-                <TextBox Name="TextEditTopicTitle" 
-                                 Text="{Binding Title, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Padding="6,5,10,5"
-                                 Visibility="{Binding TopicState.IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-
-                    <TextBox.Style>
-                        <Style TargetType="TextBox">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding TopicState.IsEditing}" Value="True">
-                                    <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}"/>
-                                    <Setter Property="Background" Value="#444" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBox.Style>
-                </TextBox>
+               
             </StackPanel>
         </HierarchicalDataTemplate>
 
@@ -86,6 +100,7 @@
                     <EventSetter Event="DragOver" Handler="TreeViewItem_DragOver" />
                     <EventSetter Event="Drop" Handler="TreeViewItem_Drop" />
                     <EventSetter Event="MouseMove" Handler="TreeViewItem_MouseMove"/>
+                    <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick" />
 
                 </Style>
             </TreeView.ItemContainerStyle>
