@@ -137,40 +137,47 @@ namespace DocHound.Windows.Dialogs
         public DocTopic CreateTopic()
         {
             ButtonCreateTopic.Focus();
-
+            
             if (RadioButtonBelow.IsChecked.Value)
             {
                 Topic.ParentId = AppModel.ActiveTopic.Id;
+                Topic.Parent = AppModel.ActiveTopic;
+
                 AppModel.ActiveTopic.Topics.Insert(0, Topic);
                 AppModel.ActiveTopic.IsExpanded = true;
             }
             else if (RadioButtonCurrent.IsChecked.Value)
             {
-                Topic.ParentId = AppModel.ActiveTopic.ParentId;
-                Topic.SortOrder = AppModel.ActiveTopic.SortOrder + 1;
+
+                var parentTopic = AppModel.ActiveTopic.Parent;
+                string parentId = null;
+                if (parentTopic != null)
+                    parentId = parentTopic.Id;
+
+
+                Topic.ParentId = parentId;
+                Topic.Parent = parentTopic;
+                if(AppModel.ActiveTopic.SortOrder > 0)
+                    Topic.SortOrder = AppModel.ActiveTopic.SortOrder + 1;
                 Topic.Type = AppModel.ActiveTopic.Type;
-                if (!string.IsNullOrEmpty(Topic.ParentId))
-                {
-                    var parentTopic = AppModel.ActiveProject.Topics.FirstOrDefault(t=> t.Id == Topic.ParentId);
-                    if (parentTopic != null)
-                    {
-                        parentTopic.Topics.Insert(0, Topic);
-                    }
-                    else
-                    {
-                        AppModel.ActiveProject.Topics.Add(Topic);                        
-                    }
-                }
+
+                if (parentTopic != null)                
+                    parentTopic.Topics.Insert(0, Topic);
+                else
+                    AppModel.ActiveProject.Topics.Add(Topic);                        
+                
             }
             else if (RadioButtonTop.IsChecked.Value)
             {
                 Topic.ParentId = null;
+                Topic.Parent = null;
                 AppModel.ActiveProject.Topics.Add(Topic);
-                
-                // HACK: Filtered Collection won't update on its
-                AppModel.TopicsTree.Model.OnPropertyChanged(nameof(TopicsTreeModel.FilteredTopicTree));
-                //CollectionViewSource.GetDefaultView(Window.TopicsTree.Model.FilteredTopicTree).Refresh();
+                  
             }
+
+            // HACK: Filtered Collection won't update on its
+            AppModel.TopicsTree.Model.OnPropertyChanged(nameof(TopicsTreeModel.FilteredTopicTree));
+            //CollectionViewSource.GetDefaultView(Window.TopicsTree.Model.FilteredTopicTree).Refresh();
 
             Topic.TopicState.IsSelected = true;
 
@@ -179,7 +186,7 @@ namespace DocHound.Windows.Dialogs
             AppModel.ActiveProject.SaveProject();
 
             AppModel.ActiveTopic = Topic;
-            AppModel.TopicEditor.FocusEditor();
+            AppModel.Window.PreviewMarkdownAsync();
 
             return Topic;
         }

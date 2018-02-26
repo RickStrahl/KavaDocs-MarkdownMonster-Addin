@@ -26,7 +26,7 @@ namespace KavaDocsAddin.Core.Configuration
 
         static KavaApp()
         {
-            Configuration = new KavaDocsConfiguration();
+            Configuration = KavaDocsConfiguration.Current;            
         }
 
     }

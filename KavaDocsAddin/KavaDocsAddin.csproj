@@ -106,7 +106,7 @@
     <Compile Include="Windows\Dialogs\PasteImageDialog.xaml.cs">
       <DependentUpon>PasteImageDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="_Classes\dmUi.cs" />
+    <Compile Include="_Classes\kavaUi.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ProjectTemplates\icons\classconstructor.png">

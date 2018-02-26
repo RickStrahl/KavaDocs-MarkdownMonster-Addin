@@ -13,18 +13,20 @@ namespace DocHound.Configuration
 {
     public class KavaDocsConfiguration : BaseAddinConfiguration<KavaDocsConfiguration>
     {
+        /// <summary>
+        /// Current Singleton instance of this configuration  object
+        /// </summary>
+        //public static KavaDocsConfiguration Current { get; set; }
+
         
+
         public KavaDocsConfiguration()
         {
-
-            this.
-            // uses this file for storing settings in `%appdata%\Markdown Monster`
-            // to persist settings call `KavaDocsAddinConfiguration.Current.Write()`
-            // at any time or when the addin is shut down
             ConfigurationFilename = "KavaDocsAddin.json";
-            
-            DocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Documentation Monster");
+            DocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Documentation Monster");            
         }
+
+        
 
         #region Static Configuration Options
         public static string AllowedTopicFileExtensions { get; } =
@@ -53,10 +55,27 @@ namespace DocHound.Configuration
         
         internal string AddinsFolder => Path.Combine(mmApp.Configuration.CommonFolder, "Addins");
 
-        
 
         #endregion
-    
+
+
+
+        //protected override IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)
+        //{
+        //    var provider = new JsonFileConfigurationProvider<KavaDocsConfiguration>()
+        //    {
+        //        JsonConfigurationFile = Path.Combine(mmApp.Configuration.CommonFolder, "KavaDocsAddin.json")
+        //    };
+
+        //    if (!File.Exists(provider.JsonConfigurationFile))
+        //    {
+        //        if (!Directory.Exists(Path.GetDirectoryName(provider.JsonConfigurationFile)))
+        //            Directory.CreateDirectory(Path.GetDirectoryName(provider.JsonConfigurationFile));
+        //    }
+
+        //    return provider;
+        //}
+
 
         #region UI features
         /// <summary>
@@ -65,6 +84,8 @@ namespace DocHound.Configuration
         public int StatusMessageTimeout { get; set; } = 6000;
 
         #endregion
+
+
 
     }
 }

@@ -30,6 +30,7 @@ namespace KavaDocsAddin
 
         public TopicsTree Tree { get; set; }
 
+        #region Initialization
         public override void OnApplicationStart()
         {
             base.OnApplicationStart();
@@ -95,11 +96,26 @@ namespace KavaDocsAddin
             KavaDocsMenu = new KavaDocsMenuHandler();
             KavaDocsMenu.CreateKavaDocsMenu();
 
-            //AddinModel.ActiveProject = DocProjectManager.Current.LoadProject(@"C:\Temp\markdownmonster_help\_toc.json");
-            //Model.Window.Dispatcher.Delay(10, p => Tree.LoadProject(AddinModel.ActiveProject));
-        }
-    
+            if (Configuration.OpenLastProject)
+            {
+                AddinModel.ActiveProject = DocProjectManager.Current.LoadProject(Configuration.LastProjectFile);
+                if (AddinModel.ActiveProject != null)
+                    Model.Window.Dispatcher.Delay(10, p => Tree.LoadProject(AddinModel.ActiveProject));
+            }
 
+        }
+
+
+        public override void OnApplicationShutdown()
+        {
+            base.OnApplicationShutdown();
+            
+            AddinModel.ActiveProject?.CloseProject();
+            AddinModel.Configuration.Write();                       
+        }
+        #endregion
+
+        #region Interception Hooks
         public override void OnAfterSaveDocument(MarkdownDocument doc)
         {
             base.OnAfterSaveDocument(doc);
@@ -132,6 +148,7 @@ namespace KavaDocsAddin
         {
             return true;
         }
+        #endregion
 
 
         #region Previewing

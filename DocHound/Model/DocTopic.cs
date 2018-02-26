@@ -499,6 +499,8 @@ namespace DocHound.Model
         /// </summary>
         public string GetKavaDocsEditorFilePath()
         {
+            if (Project.ProjectDirectory == null)
+                return null;
             return Path.Combine(Project.ProjectDirectory, KavaDocsEditorFilename);
         }
 

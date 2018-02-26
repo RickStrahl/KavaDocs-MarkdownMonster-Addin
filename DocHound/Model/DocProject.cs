@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using DocHound.Annotations;
+using DocHound.Configuration;
 using DocHound.Razor;
 using MarkdownMonster;
 using Newtonsoft.Json;
@@ -703,8 +704,10 @@ namespace DocHound.Model
         /// </summary>
         public void CloseProject()
         {
-            var topic = new DocTopic();            
-            File.Delete(topic.GetKavaDocsEditorFilePath());
+
+            KavaDocsConfiguration.Current.LastProjectFile = Filename;
+
+            File.Delete(Path.Combine(ProjectDirectory, DocTopic.KavaDocsEditorFilename));
         }
 
         #endregion
