@@ -17,7 +17,7 @@ namespace KavaDocsAddin
         {
             Model = kavaUi.AddinModel;
         }
-        public MenuItem CreateKavaDocsMenu()
+        public MenuItem CreateKavaDocsMainMenu()
         {
             var mi = new MenuItem
             {

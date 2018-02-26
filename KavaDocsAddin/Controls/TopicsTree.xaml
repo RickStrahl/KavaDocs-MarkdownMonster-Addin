@@ -11,7 +11,7 @@
        
         <ContextMenu x:Key="TopicContextMenu" Name="TopicContextMenu">
             <MenuItem Name="MenuNewTopic" Header="_New Topic" InputGestureText="ctrl-n" 
-                      Command="{Binding AppModel.Commands.NewTopicCommand}"/>
+                      Command="{Binding AppModel.Commands.NewTopicCommand}" />
             <MenuItem Name="MenuDeleteTopic" Header="Delete Topic" InputGestureText="del" 
                       Command="{Binding AppModel.Commands.DeleteTopicCommand}"/>
         </ContextMenu>
@@ -57,8 +57,7 @@
         <TreeView Grid.Row="1" Name="TreeTopicBrowser" 
                   ItemTemplate="{StaticResource TopicsTemplate}" 
                   ItemsSource="{Binding FilteredTopicTree}"    BorderThickness="0"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"                  
                   VirtualizingPanel.IsVirtualizing="True"
                   ContextMenu="{StaticResource TopicContextMenu}" 
                   TreeViewItem.Selected="TreeTopicBrowser_Selected"  
@@ -81,6 +80,13 @@
                         <Setter Property="IsSelected" Value="{Binding TopicState.IsSelected,Mode=TwoWay}" />
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded,Mode=TwoWay}" />
                         <Setter Property="controls:VisibilityHelper.IsCollapsed" Value="{Binding TopicState.IsHidden,Mode=TwoWay}" />
+
+                    <EventSetter Event="MouseDown" Handler="TreeViewItem_MouseDown"  />
+                    <EventSetter Event="MouseMove" Handler="TreeViewItem_MouseMove"  />
+                    <EventSetter Event="DragOver" Handler="TreeViewItem_DragOver" />
+                    <EventSetter Event="Drop" Handler="TreeViewItem_Drop" />
+                    <EventSetter Event="MouseMove" Handler="TreeViewItem_MouseMove"/>
+
                 </Style>
             </TreeView.ItemContainerStyle>
 

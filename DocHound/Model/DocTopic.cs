@@ -248,7 +248,7 @@ namespace DocHound.Model
                 _isExpanded = value;
                 OnPropertyChanged();
                 if (_isExpanded)
-                    TopicState.IsHidden = true;
+                    TopicState.IsHidden = false;
             }
         }
         private bool _isExpanded;
@@ -314,7 +314,7 @@ namespace DocHound.Model
 
         public DocTopic(DocProject project)  
         {
-            Id = "_" + DataUtils.GenerateUniqueId(9);
+            Id = DataUtils.GenerateUniqueId(10);
             TopicState = new TopicState(this);
             Project = project;
         }
@@ -629,7 +629,7 @@ namespace DocHound.Model
             }
 
             string yaml = serializer.Serialize(this);
-            markdownText = $"---\n{yaml}kavaDocs: true\n---\n{markdownText}";
+            markdownText = $"---\n{yaml}---\n{markdownText}";
             
             
             if (!string.IsNullOrEmpty(Project?.ProjectDirectory))

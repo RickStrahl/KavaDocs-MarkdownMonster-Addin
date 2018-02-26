@@ -94,7 +94,7 @@ namespace KavaDocsAddin
             Model.Window.AddSidebarPanelTabItem(tabItem);
       
             KavaDocsMenu = new KavaDocsMenuHandler();
-            KavaDocsMenu.CreateKavaDocsMenu();
+            KavaDocsMenu.CreateKavaDocsMainMenu();
 
             if (Configuration.OpenLastProject)
             {
@@ -123,9 +123,10 @@ namespace KavaDocsAddin
             if (string.IsNullOrEmpty(doc.CurrentText) || !doc.Filename.EndsWith(DocTopic.KavaDocsEditorFilename))
                 return;
 
-            AddinModel.ActiveTopic.Body = doc.CurrentText;
-            AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc,AddinModel.ActiveTopic);
-            AddinModel.ActiveProject.SaveProject();
+            var topic = AddinModel.ActiveTopic;
+            topic.Body = doc.CurrentText;
+            AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc,topic);
+            AddinModel.ActiveProject.SaveProject();       
 
         }
 

@@ -15,7 +15,7 @@
         Padding="0" 
         FontSize="16"             
         IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
-        Width="650" Height="450" MinWidth="600" MinHeight="320">
+        Width="800" Height="450" MinWidth="640" MinHeight="320">
     <Window.Resources>
         <Style TargetType="TextBox">
             <Setter Property="FontSize" Value="{Binding AppModel.Configuration.WindowPosition.WindowFontSize}" />
@@ -29,11 +29,11 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Image Source="../../icon.png"
-               Margin="20,20,5,20"
-               Height="128" VerticalAlignment="Top"></Image>
+        <Image Source="../../assets/KavaDocs.png"
+               Margin="30,35,0,20"
+               Width="275" VerticalAlignment="Top"></Image>
 
-        <StackPanel Margin="20" Grid.Column="1">
+        <StackPanel Margin="0,20,20,20" Grid.Column="1">
             <Label>New Topic Title</Label>
             <TextBox Name="TextTopicTitle" Text="{Binding Topic.Title}"></TextBox>
 

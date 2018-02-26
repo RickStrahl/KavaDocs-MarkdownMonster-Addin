@@ -97,12 +97,7 @@ namespace DocHound
 				        {
 				            using (var writer = new StreamWriter(stream))
 				            using (var jsonTextWriter = new JsonTextWriter(writer))
-				            {
-				                // force output to be written out order by slug to make file more easily comparable
-				                docProject.Topics = new ObservableCollection<DocTopic>(docProject.Topics
-				                    .OrderBy(t => t.ParentId)
-				                    .ThenBy(t => t.Type)
-				                    .ThenBy(t => t.Slug));
+				            {				               
 				                try
 				                {
 				                    Serializer.Serialize(jsonTextWriter, docProject);

@@ -49,12 +49,15 @@
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
       <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Microsoft.WindowsAPICodePack.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack.Shell">
       <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions">
       <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -80,6 +83,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\TreeDragAndDrop.cs" />
     <Compile Include="KavaDocsAddin.cs" />
     <Compile Include="AppCommands.cs" />
     <Compile Include="Controls\TopicDetail.xaml.cs">
@@ -109,6 +113,8 @@
     <Compile Include="_Classes\kavaUi.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\icon_128.png" />
+    <Resource Include="Assets\KavaDocs.png" />
     <Content Include="ProjectTemplates\icons\classconstructor.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

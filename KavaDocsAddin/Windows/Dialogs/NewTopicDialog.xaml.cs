@@ -143,7 +143,7 @@ namespace DocHound.Windows.Dialogs
                 Topic.ParentId = AppModel.ActiveTopic.Id;
                 Topic.Parent = AppModel.ActiveTopic;
 
-                AppModel.ActiveTopic.Topics.Insert(0, Topic);
+                AppModel.ActiveTopic.Topics.Add(Topic);
                 AppModel.ActiveTopic.IsExpanded = true;
             }
             else if (RadioButtonCurrent.IsChecked.Value)
@@ -182,7 +182,7 @@ namespace DocHound.Windows.Dialogs
             Topic.TopicState.IsSelected = true;
 
             // make sure it gets written to disk
-            AppModel.ActiveProject.SaveTopic(Topic);
+            //AppModel.ActiveProject.SaveTopic(Topic);
             AppModel.ActiveProject.SaveProject();
 
             AppModel.ActiveTopic = Topic;

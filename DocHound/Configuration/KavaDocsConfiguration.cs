@@ -13,12 +13,6 @@ namespace DocHound.Configuration
 {
     public class KavaDocsConfiguration : BaseAddinConfiguration<KavaDocsConfiguration>
     {
-        /// <summary>
-        /// Current Singleton instance of this configuration  object
-        /// </summary>
-        //public static KavaDocsConfiguration Current { get; set; }
-
-        
 
         public KavaDocsConfiguration()
         {

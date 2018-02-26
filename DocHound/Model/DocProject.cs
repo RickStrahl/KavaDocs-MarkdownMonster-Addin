@@ -115,18 +115,12 @@ namespace DocHound.Model
                 return Path.Combine(ProjectDirectory, "wwwroot");
             }
         }
-
-        /// <summary>
-        /// The base folder where the project is located.
-        /// Used as the base folder to find related Markdown content files
-        /// </summary>
-        public string Location { get; set; }
-
-       
+      
 
         /// <summary>
         /// Determines how HTML is rendered when rendering topics
         /// </summary>
+        [JsonIgnore]
         public HtmlRenderModes ActiveRenderMode { get; set; } = HtmlRenderModes.Html;
 
         /// <summary>
@@ -146,7 +140,7 @@ namespace DocHound.Model
 
         
         /// <summary>
-        /// Help Builder Version used to create this file
+        /// Kava Docs Version used to create this file
         /// </summary>
         public string Version
         {
@@ -159,6 +153,20 @@ namespace DocHound.Model
             }
         }
         private string _version;
+
+
+        public bool NoSorting
+        {
+            get { return _noSorting; }
+            set
+            {
+                if (value == _noSorting) return;
+                _noSorting = value;
+                OnPropertyChanged(nameof(NoSorting));
+            }
+        }
+        private bool _noSorting;
+        
 
 
         /// <summary>
@@ -184,9 +192,18 @@ namespace DocHound.Model
         /// </summary>
         public Dictionary<string, string> CustomFields { get; set; }
 
+
+        /// <summary>
+        /// Configured Topic Types that can be used with this project
+        /// </summary>
         public Dictionary<string,string> TopicTypes { get; set; }
 
 
+        /// <summary>
+        /// Kava Docs menu items for the Web site
+        /// </summary>
+        public List<SiteMenuItem> Menu { get; set; }
+        
         [JsonIgnore]
         public DocTopic Topic { get; set; }
 
@@ -241,7 +258,7 @@ namespace DocHound.Model
                 { "datafunction", "Data function" },
                 { "datastoredproc", "Data stored procedure" },
                 {"datatable", "dataview" }
-            };
+            };            
         }
 
         public DocProject(string filename = null)
@@ -378,7 +395,7 @@ namespace DocHound.Model
             if (topic == null)
                 return false;
 
-            var loadTopic = FindTopicInTree(topic);
+            var loadTopic = FindTopicInTree(topic,Topics);
             
             if (string.IsNullOrEmpty(topic.Title))
             {
@@ -392,28 +409,37 @@ namespace DocHound.Model
             {
                 using(var updateLock = new TopicFileUpdateLock())
                 {
-                    Topics.Add(topic);
+                    if (topic.Parent != null)
+                        topic.Parent.Topics.Add(topic);
+                    else
+                        Topics.Add(topic);
+
                     return topic.SaveTopicFile();                    
                 }
             }
             if (loadTopic.Id == topic.Id)
             {
-                for (int i = 0; i < Topics.Count; i++)
+                var topics = loadTopic.Parent.Topics;
+                if (topic == null)
+                    topics = Topics;
+
+                // Replace topic
+                for (int i = 0; i < topics.Count; i++)
                 {
-                    var tpc = Topics[i];
+                    var tpc = topics[i];
                     if (tpc == null)
                     {
                         using (var updateLock = new TopicFileUpdateLock())
                         {
-                            Topics.RemoveAt(i);
+                            topics.RemoveAt(i);
                         }
                         continue;
                     }
-                    if (Topics[i].Id == topic.Id)
+                    if (topics[i].Id == topic.Id)
                     {
                         using (var updateLock = new TopicFileUpdateLock())
                         {
-                            Topics[i] = topic;
+                            topics[i] = topic;
                             return topic.SaveTopicFile();
                         }
                     }
@@ -522,7 +548,8 @@ namespace DocHound.Model
                     while (parent != null)
                     {
                         parent.TopicState.IsHidden = false;
-                        parent.IsExpanded = true;
+                        if (!string.IsNullOrEmpty(searchPhrase))
+                            parent.IsExpanded = true;
                         parent = parent.Parent;
                     }
                 }
@@ -782,10 +809,16 @@ namespace DocHound.Model
             if (topics == null)
                 topics = new ObservableCollection<DocTopic>();
 
-            var children = topics.Where(t => t.ParentId == topic.Id)
-                .OrderByDescending(t => t.SortOrder)
-                .ThenBy(t => t.Type)
-                .ThenBy(t => t.Title).ToList();
+            var query= topics.Where(t => t.ParentId == topic.Id);
+
+            if (!NoSorting)
+            {    query = query
+                    .OrderByDescending(t => t.SortOrder)
+                    .ThenBy(t => t.Type)
+                    .ThenBy(t => t.Title);
+            }
+
+            var children = query.ToList();            
 
             if (topic.Topics != null)
                 topic.Topics.Clear();
@@ -818,10 +851,14 @@ namespace DocHound.Model
 
             var list = new ObservableCollection<DocTopic>();
 
-            var topicList = topics
-                .OrderByDescending(t => t.SortOrder)
-                .ThenBy(t => t.Type)
-                .ThenBy(t => t.Title).ToList();
+            var query = topics
+                .OrderByDescending(t => t.SortOrder);
+
+            if (!NoSorting)
+                query = query.ThenBy(t => t.Type).ThenBy(t => t.Title);
+
+            var topicList = query.ToList();
+                                                   
 
             topics.Clear();
             foreach (var top in topicList)
@@ -873,7 +910,7 @@ namespace DocHound.Model
         public DocTopic FindTopicInTree( DocTopic topic, ObservableCollection<DocTopic> rootTopics = null)
         {
             if (rootTopics == null)
-                rootTopics =Topics;
+                rootTopics = Topics;
             
             if (rootTopics == null)
                     return null;
@@ -973,5 +1010,11 @@ namespace DocHound.Model
         Preview, 
         Print,
         None
+    }
+
+    public class SiteMenuItem
+    {
+        public string Title { get; set; }
+        public string Link { get; set; }
     }
 }
