@@ -1,5 +1,4 @@
 ﻿{
-  {
     "id": "KavaDocsAddin",
     "name": "KavaDocsAddin",
     "summary": "Descript KavaDocsAddin in a short paragraph",
@@ -7,6 +6,5 @@
     "version": "0.1",
     "minVersion": "1.9.6",
     "author": "© West Wind Technologies, 2018",
-    "updated": "2017-2-26T12:00:00Z"
-  }
+    "updated": "2017-2-26T12:00:00Z" 
 }
