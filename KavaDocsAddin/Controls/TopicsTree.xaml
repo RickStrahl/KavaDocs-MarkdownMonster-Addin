@@ -22,13 +22,16 @@
         </ContextMenu>
 
         <MenuItem x:Key="MainMenuKavaDocsMenu" Header="_Kava Docs">
-            <MenuItem Header="_New Project" Command="{Binding AppModel.Commands.NewProjectCommand}" IsEnabled="False" />
-            <MenuItem Header="_Open Project" Command="{Binding AppModel.Commands.OpenProjectCommand}" />
+            <MenuItem Header="_New Project" Command="{Binding AppModel.Commands.NewProjectCommand}" IsEnabled="False" InputGestureText="alt-k-n" />
+            <MenuItem Header="_Open Project" Command="{Binding AppModel.Commands.OpenProjectCommand}" InputGestureText="alt-k-o" />
             <MenuItem Header="Recent Projects" Name="MenuRecentItems" SubmenuOpened="MenuRecentItems_SubmenuOpened"  >
                 <MenuItem />
             </MenuItem>
-            <MenuItem Header="_Save Project" Command="{Binding AppModel.Commands.SaveProjectCommand}" />
             <MenuItem Header="_Close Project" Command="{Binding AppModel.Commands.CloseProjectCommand}" />
+            <MenuItem Header="_Save Project" Command="{Binding AppModel.Commands.SaveProjectCommand}"  InputGestureText="alt-k-s" />
+            <Separator />
+            <MenuItem Header="Project Settings" Command="{Binding AppModel.Commands.ProjectSettingsCommand}" />
+            <MenuItem Header="Kava Docs Settings" IsEnabled="False" />
         </MenuItem>
 
 

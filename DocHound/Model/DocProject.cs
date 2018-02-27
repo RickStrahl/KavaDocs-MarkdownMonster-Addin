@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -17,7 +18,14 @@ using Westwind.Utilities;
 
 namespace DocHound.Model
 {
-        
+
+
+    /// <summary>
+    /// A Kava Docs Project File that contains
+    /// the project header and a hierarchical 
+    /// Topics collection
+    /// </summary>
+    [DebuggerDisplay("{Title} - {Filename}")]
     public class DocProject : INotifyPropertyChanged
     {
         

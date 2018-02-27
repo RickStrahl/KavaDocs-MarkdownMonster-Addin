@@ -74,14 +74,11 @@ namespace KavaDocsAddin.Controls
             //project.WriteTopicTree(project.Topics, 0, sb);
 
             if (project.Topics != null && project.Topics.Count > 0)
-            {
                 Model.AppModel.ActiveTopic = project.Topics[0];
-                ;
-            }
 
             Model.TopicTree = project.Topics;
 
-            Model.AppModel.Configuration.AddRecentProjectItem(project.Filename,projectName: project.Title);
+            Model.AppModel.Configuration.AddRecentProjectItem(project.Filename,projectTitle: project.Title);
         }
 
         #endregion
@@ -457,7 +454,7 @@ public void SelectTopic(DocTopic topic)
             menu.Items.Clear();
             foreach (var recent in Model.AppModel.Configuration.RecentProjects)
             {
-                var header = recent.ProjectName;
+                var header = recent.ProjectTitle;
                 if (!String.IsNullOrEmpty(header))
                     header += $" ({FileUtils.GetCompactPath(recent.ProjectFile)})";
                 else

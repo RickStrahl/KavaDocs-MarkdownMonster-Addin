@@ -47,6 +47,7 @@ namespace KavaDocsAddin
 
             // Tools
             Command_Settings();
+            Command_ProjectSettings();
 
             // Views
             Command_PreviewBrowser();
@@ -171,6 +172,18 @@ namespace KavaDocsAddin
                 ShellUtils.GoUrl(Path.Combine(mmApp.Configuration.CommonFolder, "KavaDocsAddin.json"));
             }, (p, c) => true);
         }
+
+
+        public CommandBase ProjectSettingsCommand { get; set; }
+
+        void Command_ProjectSettings()
+        {
+            ProjectSettingsCommand = new CommandBase((parameter, command) =>
+                {
+                    Model.Window.OpenTab(Model.ActiveProject.Filename,rebindTabHeaders:true);
+                }, (p, c) => true);
+        }
+
         #endregion
 
 

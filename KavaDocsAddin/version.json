@@ -3,10 +3,10 @@
     "id": "KavaDocsAddin",
     "name": "KavaDocsAddin",
     "summary": "Descript KavaDocsAddin in a short paragraph",
-    "description": "Describe KavaDocsAddin with a long description",    
-    "version": "0.01",
-    "minVersion": "1.0",
-    "author": "© your comany",
-    "updated": "2017-1-10T12:00:00Z"
+    "description": "Kava Docs Documentation provides an interactive environment for editing a Kava Docs documentation site",    
+    "version": "0.1",
+    "minVersion": "1.9.6",
+    "author": "© West Wind Technologies, 2018",
+    "updated": "2017-2-26T12:00:00Z"
   }
 }
