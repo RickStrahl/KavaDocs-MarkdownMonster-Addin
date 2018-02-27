@@ -52,6 +52,13 @@ namespace KavaDocsAddin.Controls
 
         public void LoadProject(DocProject project)
         {
+
+            if (Model.Project != null)
+            {                
+                Model.AppModel.Configuration.AddRecentProjectItem(Model.Project.Filename,
+                    Model.AppModel.ActiveTopic?.Id);
+            }
+
             Model.Project = project;
 
             if (Model.Project == null)
@@ -72,6 +79,8 @@ namespace KavaDocsAddin.Controls
             }
 
             Model.TopicTree = project.Topics;
+
+            Model.AppModel.Configuration.AddRecentProjectItem(project.Filename);
         }
 
         #endregion
@@ -151,20 +160,6 @@ namespace KavaDocsAddin.Controls
 
             // Will also open the tab if not open yet
             Model.AppModel.Window.RefreshTabFromFile(editorFile);
-
-
-            //var tab = Model.AppModel.Window.GetTabFromFilename(editorFile);
-            //if (tab != null)
-            //{
-            //    var doc = tab.Tag as MarkdownDocumentEditor;
-            //    doc.MarkdownDocument.Load(editorFile);
-            //    //doc.LoadDocument(doc.MarkdownDocument);
-            //    doc.SetScrollPosition(0);
-            //    doc.SetMarkdown(doc.MarkdownDocument.CurrentText);
-
-            //}
-            //else
-            //    Model.AppModel.Window.OpenTab(editorFile);
         }
 
 
@@ -385,6 +380,9 @@ public void SelectTopic(DocTopic topic)
                     targetTopics.Add(dragResult.SourceTopic);
 
                     dragResult.TargetTopic.IsExpanded = true;
+
+                    dragResult.SourceTopic.Parent = dragResult.TargetTopic;
+                    dragResult.SourceTopic.ParentId = dragResult.TargetTopic.Id;
                 }
                 else if (dragResult.DropLocation == DropLocations.Before)
                 {
@@ -399,6 +397,9 @@ public void SelectTopic(DocTopic topic)
 
                     // required to ensure items get removed before adding
                     targetParentTopics.Insert(idx, dragResult.SourceTopic);
+                    
+                    dragResult.SourceTopic.Parent = dragResult.TargetTopic.Parent;
+                    dragResult.SourceTopic.ParentId = dragResult.TargetTopic.ParentId;
                 }
                 else if (dragResult.DropLocation == DropLocations.After)
                 {
@@ -413,10 +414,11 @@ public void SelectTopic(DocTopic topic)
                     
                     idx++;
                     targetParentTopics.Insert(idx, dragResult.SourceTopic);
-                }
 
-                dragResult.SourceTopic.Parent = dragResult.TargetTopic.Parent;
-                dragResult.SourceTopic.ParentId = dragResult.TargetTopic.ParentId;     
+                    dragResult.SourceTopic.Parent = dragResult.TargetTopic.Parent;
+                    dragResult.SourceTopic.ParentId = dragResult.TargetTopic.ParentId;
+                }
+    
 
                 Model.AppModel.ActiveProject.SaveProject();
             }, (p, c) => true);
@@ -424,14 +426,45 @@ public void SelectTopic(DocTopic topic)
 
         private void TreeViewItem_DragOver(object sender, DragEventArgs e)
         {
+
+            var targetTv = sender as TreeViewItem;
+            if (sender == null)
+                e.Effects = DragDropEffects.None;
             if (!e.Data.GetDataPresent(typeof(DocTopic)))
-                return;
-            e.Effects = DragDropEffects.Move;
+                e.Effects = DragDropEffects.None;
+            else
+            {
+                var targetTopic = targetTv.DataContext as DocTopic;
+                var sourceTopic = e.Data as DocTopic;
+
+                if (targetTopic == sourceTopic)
+                    e.Effects = DragDropEffects.None;
+                else
+                    e.Effects = DragDropEffects.Link;
+            }
         }
+
 
         #endregion
 
-      
+        private void MenuRecentItems_SubmenuOpened(object sender, RoutedEventArgs e)
+        {
+            var menu = sender as MenuItem;
+            if (menu == null)
+                return;
+
+            menu.Items.Clear();
+            foreach (var recent in Model.AppModel.Configuration.RecentProjects)
+            {
+                var mi = new MenuItem()
+                {
+                    Header = recent.ProjectFile,
+                    Command=Model.AppModel.Commands.OpenRecentProjectCommand,
+                    CommandParameter = recent
+                };
+                menu.Items.Add(mi);
+            }
+        }
     }
 
 

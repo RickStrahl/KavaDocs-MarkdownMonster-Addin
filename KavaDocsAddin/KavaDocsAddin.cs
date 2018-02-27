@@ -28,6 +28,8 @@ namespace KavaDocsAddin
 
         public KavaDocsMenuHandler KavaDocsMenu { get; set; }
 
+        public bool HasUiLoaded = false;
+
         public TopicsTree Tree { get; set; }
 
         #region Initialization
@@ -72,37 +74,45 @@ namespace KavaDocsAddin
             MenuItems.Add(menuItem);
         }
 
-
+        
         
         public override void OnWindowLoaded()
         {
-            base.OnWindowLoaded();
-
-            kavaUi.Addin = this;
-            AddinModel = kavaUi.AddinModel;
-            AddinModel.Addin = this;
-
-            Configuration = kavaUi.Configuration;
+            base.OnWindowLoaded();            
+        }
 
 
-            var tabItem = new TabItem() { Name="KavaDocsTree", Header = " Kava Docs " };
-            KavaDocsTab = tabItem;
-
-            Tree = new TopicsTree();            
-            tabItem.Content = Tree;   
-            
-            Model.Window.AddSidebarPanelTabItem(tabItem);
-      
-            KavaDocsMenu = new KavaDocsMenuHandler();
-            KavaDocsMenu.CreateKavaDocsMainMenu();
-
-            if (Configuration.OpenLastProject)
+        public void InitializeKavaDocs()
+        {
+            if (!HasUiLoaded)
             {
-                AddinModel.ActiveProject = DocProjectManager.Current.LoadProject(Configuration.LastProjectFile);
-                if (AddinModel.ActiveProject != null)
-                    Model.Window.Dispatcher.Delay(10, p => Tree.LoadProject(AddinModel.ActiveProject));
-            }
 
+                kavaUi.Addin = this;
+                AddinModel = kavaUi.AddinModel;
+                AddinModel.Addin = this;
+
+                Configuration = kavaUi.Configuration;
+
+
+                var tabItem = new TabItem() {Name = "KavaDocsTree", Header = " Kava Docs "};
+                KavaDocsTab = tabItem;
+
+                Tree = new TopicsTree();
+                tabItem.Content = Tree;
+
+                Model.Window.AddSidebarPanelTabItem(tabItem);
+
+                KavaDocsMenu = new KavaDocsMenuHandler();
+                KavaDocsMenu.CreateKavaDocsMainMenu();
+
+                if (Configuration.OpenLastProject)
+                {
+                    AddinModel.ActiveProject = DocProjectManager.Current.LoadProject(Configuration.LastProjectFile);
+                    if (AddinModel.ActiveProject != null)
+                        Model.Window.Dispatcher.Delay(10, p => Tree.LoadProject(AddinModel.ActiveProject));
+                }
+                HasUiLoaded = true;
+            }
         }
 
 
@@ -116,6 +126,21 @@ namespace KavaDocsAddin
         #endregion
 
         #region Interception Hooks
+
+
+        public override void OnExecute(object sender)
+        {
+            InitializeKavaDocs();  // will check if already loaded
+
+            // Activate the Tab
+            Model.Window.SidebarContainer.SelectedItem = KavaDocsTab;
+
+            // If no project is open try to open one
+            if (AddinModel.ActiveProject == null)
+                AddinModel.Commands.OpenProjectCommand.Execute(null);
+        }
+
+
         public override void OnAfterSaveDocument(MarkdownDocument doc)
         {
             base.OnAfterSaveDocument(doc);
@@ -130,15 +155,6 @@ namespace KavaDocsAddin
 
         }
 
-        public override void OnExecute(object sender)
-        {
-            // Activate the Tab
-            Model.Window.SidebarContainer.SelectedItem = KavaDocsTab;
-
-            // If no project is open try to open one
-            if (AddinModel.ActiveProject == null)
-                AddinModel.Commands.OpenProjectCommand.Execute(null);            
-        }
 
         public override void OnExecuteConfiguration(object sender)
         {

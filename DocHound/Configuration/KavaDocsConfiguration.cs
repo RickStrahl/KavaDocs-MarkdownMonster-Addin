@@ -1,8 +1,11 @@
 ﻿
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 using MarkdownMonster;
@@ -17,10 +20,9 @@ namespace DocHound.Configuration
         public KavaDocsConfiguration()
         {
             ConfigurationFilename = "KavaDocsAddin.json";
-            DocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Documentation Monster");            
+            DocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Documentation Monster");         
+            RecentProjects = new ObservableCollection<RecentProjectItem>();        
         }
-
-        
 
         #region Static Configuration Options
         public static string AllowedTopicFileExtensions { get; } =
@@ -50,7 +52,22 @@ namespace DocHound.Configuration
         internal string AddinsFolder => Path.Combine(mmApp.Configuration.CommonFolder, "Addins");
 
 
+        public ObservableCollection<RecentProjectItem> RecentProjects
+        {
+            get { return _RecentProjects; }
+            set
+            {
+                if (value == _RecentProjects) return;
+                _RecentProjects = value;
+                OnPropertyChanged(nameof(RecentProjects));
+            }
+        }
+        private ObservableCollection<RecentProjectItem> _RecentProjects;
+
+
         #endregion
+
+
 
 
 
@@ -79,7 +96,27 @@ namespace DocHound.Configuration
 
         #endregion
 
+        public void AddRecentProjectItem(string filename, string topicId = null)
+        {
+            var recent = RecentProjects.FirstOrDefault(rec => rec.ProjectFile == filename);
+            if (recent != null)
+                RecentProjects.Remove(recent);
+            else
+                recent = new RecentProjectItem();
 
+            recent.ProjectFile = filename;
+            if (topicId != null)
+                recent.LastTopicId = topicId;
 
+            RecentProjects.Insert(0, recent);
+            Write();
+        }
+
+    }
+
+    public class RecentProjectItem
+    {
+        public string ProjectFile { get; set; }
+        public string LastTopicId { get; set; }
     }
 }

@@ -19,25 +19,33 @@ namespace KavaDocsAddin
         }
         public MenuItem CreateKavaDocsMainMenu()
         {
-            var mi = new MenuItem
-            {
-                Header = "_Kava Docs",                
-            };
-            mi.Items.Add(new MenuItem
-            {
-                Header = "_Open Project",
-                Command = Model.Commands.OpenProjectCommand
-            });
-            mi.Items.Add(new MenuItem
-            {
-                Header = "_Save Project",
-                Command = Model.Commands.SaveProjectCommand
-            });
-            mi.Items.Add(new MenuItem
-            {
-                Header = "_Close Project",
-                Command = Model.Commands.CloseProjectCommand
-            });
+
+            var mi = Model.TopicsTree.Resources["MainMenuKavaDocsMenu"] as MenuItem;
+            mi.DataContext = Model.TopicsTree.Model;
+
+            //var item = Model.TopicsTree.FindResource("MainMenuKavaDocsMenu");
+            //if (item == null)
+                
+
+            //var mi = new MenuItem
+            //{
+            //    Header = "_Kava Docs",                
+            //};
+            //mi.Items.Add(new MenuItem
+            //{
+            //    Header = "_Open Project",
+            //    Command = Model.Commands.OpenProjectCommand
+            //});
+            //mi.Items.Add(new MenuItem
+            //{
+            //    Header = "_Save Project",
+            //    Command = Model.Commands.SaveProjectCommand
+            //});
+            //mi.Items.Add(new MenuItem
+            //{
+            //    Header = "_Close Project",
+            //    Command = Model.Commands.CloseProjectCommand
+            //});
 
             // insert Item after MainMenuEdit item on Main menu
             Model.Addin.AddMenuItem(mi, "MainMenuTools",mode: 0);

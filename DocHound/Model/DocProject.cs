@@ -732,7 +732,10 @@ namespace DocHound.Model
         public void CloseProject()
         {
 
-            KavaDocsConfiguration.Current.LastProjectFile = Filename;
+            var config = KavaDocsConfiguration.Current;
+            config.LastProjectFile = Filename;
+
+            config.AddRecentProjectItem(Filename, Topic?.Id);
 
             File.Delete(Path.Combine(ProjectDirectory, DocTopic.KavaDocsEditorFilename));
         }

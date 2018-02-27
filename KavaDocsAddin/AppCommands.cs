@@ -38,6 +38,8 @@ namespace KavaDocsAddin
 
             Command_NewTopic();
             Command_DeleteTopic();
+            Command_OpenTopicFileExplicitly();
+            Command_OpenRecentProject();
 
 
             // Generic Edit Toolbar Insertion features
@@ -119,7 +121,7 @@ namespace KavaDocsAddin
         public void Command_NewProject()
         {
             NewProjectCommand = new CommandBase((parameter, command) =>
-            {
+            {                                
                 var dialog = new NewProjectDialog(Model.Window);
                 dialog.ShowDialog();                
             }, (p, c) => true);
@@ -222,6 +224,37 @@ namespace KavaDocsAddin
 
                 // reload the tree - slowish but easiest
                 Model.TopicsTree.LoadProject(Model.ActiveProject);                
+            }, (p, c) => true);
+        }
+
+
+        public CommandBase OpenTopicFileExplicitlyCommand { get; set; }
+
+        void Command_OpenTopicFileExplicitly()
+        {
+            OpenTopicFileExplicitlyCommand = new CommandBase((parameter, command) =>
+            {
+                var topic = Model.ActiveTopic;
+                if (topic == null)
+                    return;
+
+                Model.Window.OpenTab(topic.GetTopicFileName());
+            }, (p, c) => true);
+        }
+
+
+
+        public CommandBase OpenRecentProjectCommand { get; set; }
+
+        void Command_OpenRecentProject()
+        {
+            OpenRecentProjectCommand = new CommandBase((parameter, command) =>
+            {
+                var recent = parameter as RecentProjectItem;
+                if (recent == null)
+                    return;
+
+                Model.OpenProject(recent.ProjectFile);
             }, (p, c) => true);
         }
 

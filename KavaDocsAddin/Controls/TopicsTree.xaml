@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:markdownMonster="clr-namespace:MarkdownMonster;assembly=MarkdownMonster"
              mc:Ignorable="d"              
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -14,7 +15,22 @@
                       Command="{Binding AppModel.Commands.NewTopicCommand}" />
             <MenuItem Name="MenuDeleteTopic" Header="Delete Topic" InputGestureText="del" 
                       Command="{Binding AppModel.Commands.DeleteTopicCommand}"/>
+            <Separator/>
+            <MenuItem Name="MenuOpenExternalTopicFile" Header="Open Topic File Explicitly"
+                      Command="{Binding AppModel.Commands.OpenTopicFileExplicitlyCommand}"/>
+            <Separator/>
         </ContextMenu>
+
+        <MenuItem x:Key="MainMenuKavaDocsMenu" Header="_Kava Docs">
+            <MenuItem Header="_New Project" Command="{Binding AppModel.Commands.NewProjectCommand}" IsEnabled="False" />
+            <MenuItem Header="_Open Project" Command="{Binding AppModel.Commands.OpenProjectCommand}" />
+            <MenuItem Header="Recent Projects" Name="MenuRecentItems" SubmenuOpened="MenuRecentItems_SubmenuOpened"  >
+                <MenuItem />
+            </MenuItem>
+            <MenuItem Header="_Save Project" Command="{Binding AppModel.Commands.SaveProjectCommand}" />
+            <MenuItem Header="_Close Project" Command="{Binding AppModel.Commands.CloseProjectCommand}" />
+        </MenuItem>
+
 
         <HierarchicalDataTemplate x:Key="TopicsTemplate" ItemsSource="{Binding Topics}"  >
             <StackPanel >
