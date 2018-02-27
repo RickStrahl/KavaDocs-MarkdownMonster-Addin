@@ -22,6 +22,7 @@ using DocHound.Utilities;
 using KavaDocsAddin.Core.Configuration;
 using MarkdownMonster;
 using MarkdownMonster.Windows;
+using Westwind.Utilities;
 
 namespace KavaDocsAddin.Controls
 {
@@ -56,7 +57,7 @@ namespace KavaDocsAddin.Controls
             if (Model.Project != null)
             {                
                 Model.AppModel.Configuration.AddRecentProjectItem(Model.Project.Filename,
-                    Model.AppModel.ActiveTopic?.Id);
+                    Model.AppModel.ActiveTopic?.Id,Model.Project.Title);
             }
 
             Model.Project = project;
@@ -80,7 +81,7 @@ namespace KavaDocsAddin.Controls
 
             Model.TopicTree = project.Topics;
 
-            Model.AppModel.Configuration.AddRecentProjectItem(project.Filename);
+            Model.AppModel.Configuration.AddRecentProjectItem(project.Filename,projectName: project.Title);
         }
 
         #endregion
@@ -456,10 +457,18 @@ public void SelectTopic(DocTopic topic)
             menu.Items.Clear();
             foreach (var recent in Model.AppModel.Configuration.RecentProjects)
             {
+                var header = recent.ProjectName;
+                if (!String.IsNullOrEmpty(header))
+                    header += $" ({FileUtils.GetCompactPath(recent.ProjectFile)})";
+                else
+                {
+                    header = $"{System.IO.Path.GetFileNameWithoutExtension(recent.ProjectFile)} ({FileUtils.GetCompactPath(recent.ProjectFile)})";
+                }
+
                 var mi = new MenuItem()
                 {
-                    Header = recent.ProjectFile,
-                    Command=Model.AppModel.Commands.OpenRecentProjectCommand,
+                    Header =  header,
+                    Command = Model.AppModel.Commands.OpenRecentProjectCommand,
                     CommandParameter = recent
                 };
                 menu.Items.Add(mi);

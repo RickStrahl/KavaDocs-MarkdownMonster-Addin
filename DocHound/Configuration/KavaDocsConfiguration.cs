@@ -96,7 +96,7 @@ namespace DocHound.Configuration
 
         #endregion
 
-        public void AddRecentProjectItem(string filename, string topicId = null)
+        public void AddRecentProjectItem(string filename, string topicId = null, string projectName = null)
         {
             var recent = RecentProjects.FirstOrDefault(rec => rec.ProjectFile == filename);
             if (recent != null)
@@ -117,6 +117,8 @@ namespace DocHound.Configuration
     public class RecentProjectItem
     {
         public string ProjectFile { get; set; }
+
+        public string ProjectName { get; set; }
         public string LastTopicId { get; set; }
     }
 }
