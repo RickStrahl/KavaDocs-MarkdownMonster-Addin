@@ -1,10 +1,10 @@
 ﻿{
-    "id": "KavaDocs",
-    "name": "Kava Docs",
-    "summary": "Kava Docs Documentation Helper",
-    "description": "Kava Docs Documentation provides an interactive environment for editing a Kava Docs documentation site",    
-    "version": "0.1.3",
-    "minVersion": "1.9.6",
-    "author": "© West Wind Technologies, 2018",
-    "updated": "2017-2-26T12:00:00Z" 
+  "id": "KavaDocs",
+  "name": "Kava Docs",
+  "summary": "Kava Docs Documentation Helper",
+  "description": "Kava Docs lets you build documentation the easy way using the tools you already use today and let Kava Docs sniff out your content for you. Using simple Markdown or HTML text and an online store like GitHub, VSTS or a Web site is all you need to create great looking, highly functional documentation.\r\n\r\nThis addin provides an easy way to edit the table of contents, import and embed custom content types like class or service imports, VSTS workitems and much more.",
+  "version": "0.1.3",
+  "minVersion": "1.9.6",
+  "author": "© West Wind Technologies, 2018",
+  "updated": "2017-2-26T12:00:00Z"
 }
