@@ -145,14 +145,31 @@ namespace KavaDocsAddin
         {
             base.OnAfterSaveDocument(doc);
 
-            if (string.IsNullOrEmpty(doc.CurrentText) || !doc.Filename.EndsWith(DocTopic.KavaDocsEditorFilename))
-                return;
-
             var topic = AddinModel.ActiveTopic;
-            topic.Body = doc.CurrentText;
-            AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc,topic);
-            AddinModel.ActiveProject.SaveProject();       
+            var lowerFilename = doc.Filename.ToLower();
 
+            // Saving the KavaDocs.md file
+            if (!string.IsNullOrEmpty(doc.CurrentText) && topic != null &&  
+                lowerFilename == (topic.GetKavaDocsEditorFilePath()).ToLower())                
+            {                
+                topic.Body = doc.CurrentText;
+                AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, topic);
+                AddinModel.ActiveProject.SaveProject();
+            }
+            // Save the underlying topic file
+            if (!string.IsNullOrEmpty(doc.CurrentText) && topic != null &&
+                lowerFilename == topic.GetTopicFileName().ToLower())
+            {
+                topic.Body = doc.CurrentText;
+                AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, topic);
+                AddinModel.ActiveProject.SaveProject();
+            }
+            // Save Project File
+            else if (AddinModel.ActiveProject != null && doc.Filename.ToLower() == AddinModel.ActiveProject.Filename.ToLower())
+            {
+                // reload the project
+                AddinModel.LoadProject(AddinModel.ActiveProject.Filename);
+            }
         }
 
 

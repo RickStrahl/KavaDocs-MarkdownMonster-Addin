@@ -123,13 +123,37 @@ namespace DocHound.Model
                 return Path.Combine(ProjectDirectory, "wwwroot");
             }
         }
-      
+
+
+        /// <summary>
+        /// Kava Docs Version used to create this file
+        /// </summary>
+        public string Version
+        {
+            get { return _version; }
+            set
+            {
+                if (value == _version) return;
+                _version = value;
+                OnPropertyChanged();
+            }
+        }
+        private string _version;
+
+        #region Options
 
         /// <summary>
         /// Determines how HTML is rendered when rendering topics
         /// </summary>
         [JsonIgnore]
         public HtmlRenderModes ActiveRenderMode { get; set; } = HtmlRenderModes.Html;
+
+        public bool AutoSortTopics { get; set; }
+        
+        /// <summary>
+        /// If true stores Yaml information in each topic
+        /// </summary>
+        public bool StoreYamlInTopics { get; set; }
 
         /// <summary>
         /// Language of the help file
@@ -146,36 +170,22 @@ namespace DocHound.Model
         }
         private string _language = "en-US";
 
-        
         /// <summary>
-        /// Kava Docs Version used to create this file
+        /// Configured Topic Types that can be used with this project
         /// </summary>
-        public string Version
-        {
-            get { return _version; }
-            set
-            {
-                if (value == _version) return;
-                _version = value;
-                OnPropertyChanged();
-            }
-        }
-        private string _version;
+        public Dictionary<string,string> TopicTypes { get; set; }
 
+        /// <summary>
+        /// Kava Docs menu items for the Web site
+        /// </summary>
+        public List<SiteMenuItem> Menu { get; set; }
 
-        public bool NoSorting
-        {
-            get { return _noSorting; }
-            set
-            {
-                if (value == _noSorting) return;
-                _noSorting = value;
-                OnPropertyChanged(nameof(NoSorting));
-            }
-        }
-        private bool _noSorting;
-        
+        #endregion
 
+        #region Related Entities
+
+        [JsonIgnore]
+        public DocTopic Topic { get; set; }
 
         /// <summary>
         /// Topic list
@@ -192,30 +202,16 @@ namespace DocHound.Model
         }
         private ObservableCollection<DocTopic> _topics = new ObservableCollection<DocTopic>();
 
-
-
-
         /// <summary>
         /// A list of custom topics that are available in this help file
         /// </summary>
         public Dictionary<string, string> CustomFields { get; set; }
 
-
-        /// <summary>
-        /// Configured Topic Types that can be used with this project
-        /// </summary>
-        public Dictionary<string,string> TopicTypes { get; set; }
+        #endregion
 
 
-        /// <summary>
-        /// Kava Docs menu items for the Web site
-        /// </summary>
-        public List<SiteMenuItem> Menu { get; set; }
-        
-        [JsonIgnore]
-        public DocTopic Topic { get; set; }
 
-        
+
         [JsonIgnore]
         /// <summary>
         /// Template Renderer used to render topic templates
@@ -822,7 +818,7 @@ namespace DocHound.Model
 
             var query= topics.Where(t => t.ParentId == topic.Id);
 
-            if (!NoSorting)
+            if (AutoSortTopics)
             {    query = query
                     .OrderByDescending(t => t.SortOrder)
                     .ThenBy(t => t.Type)
@@ -865,7 +861,7 @@ namespace DocHound.Model
             var query = topics
                 .OrderByDescending(t => t.SortOrder);
 
-            if (!NoSorting)
+            if (AutoSortTopics)
                 query = query.ThenBy(t => t.Type).ThenBy(t => t.Title);
 
             var topicList = query.ToList();

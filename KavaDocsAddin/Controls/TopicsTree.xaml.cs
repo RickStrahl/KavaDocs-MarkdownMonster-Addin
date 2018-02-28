@@ -103,8 +103,13 @@ namespace KavaDocsAddin.Controls
 
         private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            TreeTopicBrowser_Selected(sender, e);            
-            Model.AppModel.ActiveMarkdownEditor.SetEditorFocus();
+            TreeTopicBrowser_Selected(sender, e);
+            var topic = TreeTopicBrowser.SelectedItem as DocTopic;
+            if (topic != null)
+            {
+                Model.AppModel.Window.RefreshTabFromFile(topic.GetTopicFileName());
+            }
+            
         }
 
 

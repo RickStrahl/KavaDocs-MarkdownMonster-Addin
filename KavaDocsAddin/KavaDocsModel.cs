@@ -273,6 +273,14 @@ namespace KavaDocsAddin
         }
         #endregion
 
-
+        /// <summary>
+        /// Loads or reloads a project by filename
+        /// </summary>
+        /// <param name="activeProjectFilename"></param>
+        public void LoadProject(string activeProjectFilename)
+        {
+            var proj = DocProject.LoadProject(activeProjectFilename);
+            TopicsTree.LoadProject(proj);
+        }
     }
 }

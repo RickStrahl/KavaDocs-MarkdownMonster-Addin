@@ -566,10 +566,10 @@ namespace DocHound.Model
                             Id = yamlObject.Id;
 
                         Title = yamlObject.Title;
-                        Link = yamlObject.Link;
-                        Slug = yamlObject.Slug;
-                        Keywords = yamlObject.Keywords;
                         Type = yamlObject.Type;
+                        Slug = yamlObject.Slug;
+                        Link = yamlObject.Link;                        
+                        Keywords = yamlObject.Keywords;                        
                         SeeAlso = yamlObject.SeeAlso;
                         Properties = yamlObject.Properties;
                         ClassInfo = yamlObject.ClassInfo;
@@ -582,6 +582,7 @@ namespace DocHound.Model
                     
                     _body  = _body.Replace(extractedYaml, "");
 
+                    // Read the title out of the MD body
                     if (string.IsNullOrEmpty(Title))
                     {
                         var lines = StringUtils.GetLines(Body);
@@ -628,10 +629,13 @@ namespace DocHound.Model
                     Title = titleLine.Trim().Substring(2);
             }
 
-            string yaml = serializer.Serialize(this);
-            markdownText = $"---\n{yaml}---\n{markdownText}";
-            
-            
+            if (Project != null && Project.StoreYamlInTopics)
+            {
+                string yaml = serializer.Serialize(this);
+                markdownText = $"---\n{yaml}---\n{markdownText}";
+            }
+
+
             if (!string.IsNullOrEmpty(Project?.ProjectDirectory))
             {
                 var file = GetExternalFilename();
