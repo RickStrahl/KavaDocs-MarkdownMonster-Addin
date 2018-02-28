@@ -115,6 +115,7 @@
   <ItemGroup>
     <Resource Include="Assets\icon_128.png" />
     <Resource Include="Assets\KavaDocs.png" />
+    <Resource Include="Assets\icon_16.png" />
     <Content Include="ProjectTemplates\icons\classconstructor.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -223,14 +224,6 @@
     <Content Include="ProjectTemplates\images\vsizegrip.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="ProjectTemplates\images\wwhelp.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectTemplates\Themes\darkhan\wwhelp.css" />
-    <Content Include="ProjectTemplates\Themes\darkhan_noframes\wwhelp.css" />
-    <Content Include="ProjectTemplates\Themes\github\wwhelp.css" />
-    <Content Include="ProjectTemplates\Themes\msdn\wwhelp.css" />
-    <Content Include="ProjectTemplates\Themes\msword\wwhelp.css" />
     <Content Include="ProjectTemplates\Themes\scripts\bootstrap\dist\css\bootstrap-theme.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -415,58 +408,6 @@
     <None Include="ProjectTemplates\Themes\darkhan.tid">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ProjectTemplates\Themes\darkhan\classconstructor.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\classevent.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\classfield.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\classheader.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\classmethod.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\classproperty.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\darkhan.tid" />
-    <None Include="ProjectTemplates\Themes\darkhan\database.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\datacolumn.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\datastoredproc.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\datatable.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\dataview.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\delegate.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\enum.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\errorpage.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\header.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\index.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\interface.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\namespace.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\notopic.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\tableofcontents.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\topic.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\webservice.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\whatsnew.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\wwhelp.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan\_layout.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\classconstructor.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\classevent.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\classfield.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\classheader.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\classmethod.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\classproperty.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\darkhan_noframes.tid" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\database.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\datacolumn.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\datastoredproc.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\datatable.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\dataview.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\delegate.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\enum.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\errorpage.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\header.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\index.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\interface.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\namespace.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\notopic.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\tableofcontents.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\topic.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\webservice.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\whatsnew.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\wwhelp.wcs" />
-    <None Include="ProjectTemplates\Themes\darkhan_noframes\_layout.wcs" />
     <None Include="ProjectTemplates\Themes\database.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -491,32 +432,6 @@
     <None Include="ProjectTemplates\Themes\errorpage.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ProjectTemplates\Themes\github\classconstructor.wcs" />
-    <None Include="ProjectTemplates\Themes\github\classevent.wcs" />
-    <None Include="ProjectTemplates\Themes\github\classfield.wcs" />
-    <None Include="ProjectTemplates\Themes\github\classheader.wcs" />
-    <None Include="ProjectTemplates\Themes\github\classmethod.wcs" />
-    <None Include="ProjectTemplates\Themes\github\classproperty.wcs" />
-    <None Include="ProjectTemplates\Themes\github\database.wcs" />
-    <None Include="ProjectTemplates\Themes\github\datacolumn.wcs" />
-    <None Include="ProjectTemplates\Themes\github\datastoredproc.wcs" />
-    <None Include="ProjectTemplates\Themes\github\datatable.wcs" />
-    <None Include="ProjectTemplates\Themes\github\dataview.wcs" />
-    <None Include="ProjectTemplates\Themes\github\delegate.wcs" />
-    <None Include="ProjectTemplates\Themes\github\enum.wcs" />
-    <None Include="ProjectTemplates\Themes\github\errorpage.wcs" />
-    <None Include="ProjectTemplates\Themes\github\github.tid" />
-    <None Include="ProjectTemplates\Themes\github\header.wcs" />
-    <None Include="ProjectTemplates\Themes\github\index.wcs" />
-    <None Include="ProjectTemplates\Themes\github\interface.wcs" />
-    <None Include="ProjectTemplates\Themes\github\namespace.wcs" />
-    <None Include="ProjectTemplates\Themes\github\notopic.wcs" />
-    <None Include="ProjectTemplates\Themes\github\tableofcontents.wcs" />
-    <None Include="ProjectTemplates\Themes\github\topic.wcs" />
-    <None Include="ProjectTemplates\Themes\github\webservice.wcs" />
-    <None Include="ProjectTemplates\Themes\github\whatsnew.wcs" />
-    <None Include="ProjectTemplates\Themes\github\wwhelp.wcs" />
-    <None Include="ProjectTemplates\Themes\github\_layout.wcs" />
     <None Include="ProjectTemplates\Themes\header.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -526,60 +441,6 @@
     <None Include="ProjectTemplates\Themes\interface.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ProjectTemplates\Themes\msdn\classconstructor.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\classevent.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\classfield.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\classheader.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\classmethod.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\classproperty.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\database.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\datacolumn.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\datastoredproc.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\datatable.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\dataview.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\delegate.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\enum.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\errorpage.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\header.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\index.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\interface.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\msdn.tid" />
-    <None Include="ProjectTemplates\Themes\msdn\namespace.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\notopic.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\tableofcontents.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\topic.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\webservice.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\whatsnew.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\wwhelp.wcs" />
-    <None Include="ProjectTemplates\Themes\msdn\_layout.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\classconstructor.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\classevent.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\classfield.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\classheader.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\classmethod.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\classproperty.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\database.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\datacolumn.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\datastoredproc.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\datatable.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\dataview.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\delegate.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\emptydocument.doc" />
-    <None Include="ProjectTemplates\Themes\msword\enum.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\errorpage.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\header.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\helpbuildertemplate.doc" />
-    <None Include="ProjectTemplates\Themes\msword\index.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\interface.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\msword.tid" />
-    <None Include="ProjectTemplates\Themes\msword\namespace.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\notopic.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\tableofcontents.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\topic.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\webservice.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\whatsnew.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\wwhelp.wcs" />
-    <None Include="ProjectTemplates\Themes\msword\_layout.wcs" />
     <None Include="ProjectTemplates\Themes\namespace.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

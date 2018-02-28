@@ -57,7 +57,7 @@ namespace KavaDocsAddin
             try
             {
                 menuItem.IconImageSource = new ImageSourceConverter()
-                    .ConvertFromString("pack://application:,,,/KavaDocsAddin;component/icon.png") as ImageSource;
+                    .ConvertFromString("pack://application:,,,/KavaDocsAddin;component/Assets/icon_16.png") as ImageSource;
             }
             catch
             {
