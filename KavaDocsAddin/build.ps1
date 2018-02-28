@@ -26,6 +26,7 @@ copy "$src\version.json" $dist
 copy "$src\version.json" $tgt
 copy "$src\icon.png" $tgt
 copy "$src\icon.png" $dist
+copy "$src\..\screenshot.png" "$tgt\screenshot.png"
 #copy "$src\screenshot.png" $tgt
 
 "Zipping up setup file..."

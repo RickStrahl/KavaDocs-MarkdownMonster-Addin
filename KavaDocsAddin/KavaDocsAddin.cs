@@ -72,14 +72,7 @@ namespace KavaDocsAddin
 
             // Must add the menu to the collection to display menu and toolbar items            
             MenuItems.Add(menuItem);
-        }
-
-        
-        
-        public override void OnWindowLoaded()
-        {
-            base.OnWindowLoaded();            
-        }
+        }      
 
 
         public void InitializeKavaDocs()
