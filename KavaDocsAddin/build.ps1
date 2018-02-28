@@ -6,7 +6,7 @@ cd "$PSScriptRoot"
 $src = "."
 
 # you may have to fix this target path if you rename the addin
-$dlls = "$env:appdata\Markdown Monster\Addins\KavaDocsAddin"
+$dlls = "$env:appdata\Markdown Monster\Addins\KavaDocs"
 $tgt = "..\Build"
 $dist = "..\Build\Distribution"
 
@@ -19,12 +19,14 @@ md $dist
 
 "Copying files for zip file..."
 copy "$dlls\*.dll" $dist
+robocopy "$dlls\ProjectTemplates" "$dist\ProjectTemplates" /MIR
 copy "$src\version.json" $dist
 
 "Copying files for Build folder..."
 copy "$src\version.json" $tgt
 copy "$src\icon.png" $tgt
+copy "$src\icon.png" $dist
 #copy "$src\screenshot.png" $tgt
 
 "Zipping up setup file..."
-.\7z a -tzip  $tgt\addin.zip $dist\*.* $src\icon.png
+.\7z a -tzip  $tgt\addin.zip $dist\*.* 
