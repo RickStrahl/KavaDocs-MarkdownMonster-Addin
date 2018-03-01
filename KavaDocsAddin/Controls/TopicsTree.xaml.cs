@@ -121,9 +121,10 @@ namespace KavaDocsAddin.Controls
             if (topic == null)
                 return false;
 
-
             kavaUi.AddinModel.LastTopic = kavaUi.AddinModel.ActiveTopic;
             kavaUi.AddinModel.ActiveTopic = topic;
+
+            // TODO: Move to function
             if (kavaUi.AddinModel.RecentTopics.Contains(topic))
                 kavaUi.AddinModel.RecentTopics.Remove(topic);
             kavaUi.AddinModel.RecentTopics.Insert(0, topic);
@@ -141,14 +142,25 @@ namespace KavaDocsAddin.Controls
             return true;
         }
 
-        private void OpenTopicInEditor()
+        public TabItem OpenTopicInEditor()
         {
             DocTopic topic = TreeTopicBrowser.SelectedItem as DocTopic;
             if (topic == null)
-                return;
+                return null;
 
+            var window = Model.AppModel.Window;
             var file = topic.GetTopicFileName();
             var editorFile = topic.GetKavaDocsEditorFilePath();
+
+            // is tab open already as a file? If so use that
+            var tab = window.GetTabFromFilename(file);
+            if (tab != null)
+            {
+                window.TabControl.SelectedItem = tab;
+                window.CloseTab(editorFile);
+                return tab;
+            }
+            
             try
             {
                 File.Copy(file, editorFile, true);
@@ -161,22 +173,12 @@ namespace KavaDocsAddin.Controls
                 }
                 catch
                 {
-                    return;
+                    return null;
                 }
             }
 
             // Will also open the tab if not open yet
-            var tab = Model.AppModel.Window.RefreshTabFromFile(editorFile);
-
-            WindowUtilities.DoEvents();
-
-            
-            Dispatcher.InvokeAsync(() =>
-            {
-                var editor = tab.Tag as MarkdownDocumentEditor;
-                editor.AceEditor.setReadOnly(true);
-            },DispatcherPriority.ApplicationIdle);
-
+            return Model.AppModel.Window.RefreshTabFromFile(editorFile,readOnly:true);            
         }
 
 

@@ -172,6 +172,10 @@ namespace KavaDocsAddin
                 var file = AddinModel.ActiveTopic.GetTopicFileName();
                 if (file == null)
                     return;
+
+                var editorFileName = AddinModel.ActiveTopic.GetKavaDocsEditorFilePath();
+                CloseTab(editorFileName);
+
                 Model.Window.RefreshTabFromFile(file); // refresh or open
             }
         }

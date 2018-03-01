@@ -221,7 +221,7 @@ namespace KavaDocsAddin
                     return;
 
 
-                var parentTopics = topic.Parent.Topics;
+                var parentTopics = topic.Parent?.Topics;
                 if (parentTopics == null)
                     parentTopics = Model.ActiveProject.Topics;
                 int topicIndex = -1;
