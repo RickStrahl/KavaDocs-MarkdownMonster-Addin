@@ -77,10 +77,13 @@ namespace KavaDocsAddin
             {
 
                 if (ActiveProject == null)
-                    return;
+                    return;                
 
-                ActiveTopic?.SaveTopicFile();
                 ActiveProject.Topic = value;
+
+                // always load the topic file
+                ActiveTopic?.LoadTopicFile();
+
                 OnPropertyChanged();
             }
         }
@@ -281,6 +284,7 @@ namespace KavaDocsAddin
         {
             var proj = DocProject.LoadProject(activeProjectFilename);
             TopicsTree.LoadProject(proj);
+            ActiveProject = proj;
         }
     }
 }

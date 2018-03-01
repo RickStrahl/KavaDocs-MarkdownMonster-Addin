@@ -272,7 +272,7 @@ namespace DocHound.Model
             Filename = filename;            
         }
 
-        #region Loading and Saving of Topics
+        #region Topic Loading
 
         /// <summary>
         /// Loads a topic by id
@@ -281,21 +281,8 @@ namespace DocHound.Model
         /// <returns></returns>
         public DocTopic LoadTopic(string topicId)
         {
-            Topic = Topics.FirstOrDefault(t => t.Id == topicId);
-            if (Topic == null)
-            {
-                SetError("Topic not found.");
-                return null;
-            }
-            Topic.Project = this;
-
-            if (!Topic.LoadTopicFile()) // load disk content
-            {
-                SetError("Topic body content not found.");
-                return null;
-            }
-
-            return Topic;
+            Topic = Topics.FirstOrDefault(t => t.Id == topicId);            
+            return AfterTopicLoaded(Topic);
         }
 
 
@@ -306,22 +293,8 @@ namespace DocHound.Model
         /// <returns></returns>
         public DocTopic LoadByTitle(string title)
         {
-            Topic = Topics.FirstOrDefault(t => !string.IsNullOrEmpty(t.Title) && t.Title.ToLower() == title.ToLower());
-            if (Topic == null)
-            {
-                SetError("Topic not found.");
-                Topic = null;
-                return null;
-            }
-            Topic.Project = this;
-
-            if (!Topic.LoadTopicFile())
-            {
-                SetError("Topic body content not found.");
-                return null;
-            }
-
-            return Topic;
+            Topic = Topics.FirstOrDefault(t => !string.IsNullOrEmpty(t.Title) && t.Title.ToLower() == title.ToLower());            
+            return AfterTopicLoaded(Topic);
         }
 
 
@@ -335,25 +308,36 @@ namespace DocHound.Model
             if (slug.StartsWith("_"))
                 slug = slug.Substring(1);
 
-            Topic = Topics.FirstOrDefault(t => t.Slug.ToLower() == slug.ToLower());
-            if (Topic == null)
-            {
-                SetError("Topic not found.");
-                Topic = null;
-                return null;
-            }
-            Topic.Project = this;
+            Topic = Topics.FirstOrDefault(t => t.Slug.ToLower() == slug.ToLower());            
+            return AfterTopicLoaded(Topic);
+        }
 
-            if (!Topic.LoadTopicFile())
+        /// <summary>
+        /// Common code that performs after topic loading logic
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <returns></returns>
+        protected DocTopic AfterTopicLoaded(DocTopic topic)
+        {
+            if (topic == null)
+            {
+                Topic = null;
+                SetError("Topic not found.");
+            }
+
+            topic.Project = this;
+
+            if (!topic.LoadTopicFile()) // load disk content
             {
                 SetError("Topic body content not found.");
                 return null;
             }
 
-            return Topic;
+            return topic;
         }
+        #endregion
 
-
+        #region Topic Crud
         /// <summary>
         /// Removes an item from collection
         /// </summary>
@@ -382,6 +366,8 @@ namespace DocHound.Model
             return Topic;
         }
 
+
+      
 
         /// <summary>
         /// Saves a topic safely into the topic list.
@@ -499,20 +485,17 @@ namespace DocHound.Model
         /// <summary>
         /// Updates a topic from a markdown document
         /// </summary>
-        /// <param name="doc"></param>
-        /// <param name="topic"></param>
-        public void UpdateTopicFromMarkdown(MarkdownDocument doc, DocTopic topic)
+        /// <param name="doc">document to update from (from disk)</param>
+        /// <param name="topic">topic to update</param>
+        public void UpdateTopicFromMarkdown(MarkdownDocument doc, DocTopic topic, bool noBody = false)
         {
             var fileTopic = new DocTopic();
             fileTopic.Project = this;
-            fileTopic.LoadTopicFile(doc.Filename);
+            fileTopic.LoadTopicFile(doc.Filename); // make sure we have latest
 
-            topic.Body = fileTopic.Body;
+
             if (!string.IsNullOrEmpty(fileTopic.Title))
-            {                
                 topic.Title = fileTopic.Title;
-            }
-
             topic.Type = fileTopic.Type;
             if (!string.IsNullOrEmpty(fileTopic.Slug))
                 topic.Slug = fileTopic.Slug;
@@ -520,7 +503,8 @@ namespace DocHound.Model
             if (!string.IsNullOrEmpty(fileTopic.Link))
                 topic.Link = fileTopic.Link;
 
-            topic.SaveTopicFile();
+            if (!noBody)
+                topic.Body = fileTopic.Body;
         }
 
 

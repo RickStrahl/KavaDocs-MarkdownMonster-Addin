@@ -104,7 +104,6 @@ namespace DocHound.Utilities
                     topic.BodyFormat = TopicBodyFormats.Html;
 
                 topic.Body = File.ReadAllText(file);
-                topic.SaveTopicFile();
                 
                 if (parentTopic != null)
                     parentTopic.Topics.Add(topic);

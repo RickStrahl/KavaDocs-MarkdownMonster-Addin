@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -194,6 +195,7 @@ namespace DocHound.Model
             {
                 if (value == _body) return;
                 _body = value;
+                SaveTopicFile();
                 OnPropertyChanged();
             }
         }
@@ -507,8 +509,7 @@ namespace DocHound.Model
 
 
 
-        public static readonly Regex YamlExtractionRegex = new Regex(@"\A---[ \t]*\r?\n[\s\S]+?\r?\n(---|\.\.\.)[ \t]*\r?\n", RegexOptions.Multiline | RegexOptions.Compiled);
-
+        
         /// <summary>
         /// Loads a topic file from disk and loads it into the topic body
         /// and other fields that are managed externally
@@ -536,68 +537,83 @@ namespace DocHound.Model
                     }
                 }
 
+                // normalize line feeds
+                _body = _body.Replace("\r\n", "\n");
+                
+                return UpdateTopicFromYaml(_body,this);
+            }
 
-                if (_body.StartsWith("---\n") || _body.StartsWith("---\r"))
+            return false;
+        }
+
+
+        /// <summary>
+        /// Updates the provided topic with the Yaml that is embedded
+        /// in the markdown. Also updates the _body field with just the
+        /// raw markdown text stripping off the yaml.
+        /// </summary>
+        /// <param name="markdown">markdown that may or may not contain yaml</param>
+        /// <param name="topic"></param>
+        /// <returns></returns>
+        public bool UpdateTopicFromYaml(string markdown, DocTopic topic = null)
+        {
+            if (topic == null)
+                topic = this;
+
+            string extractedYaml = GetYaml(markdown);
+
+            if (!string.IsNullOrEmpty(extractedYaml))
+            {
+                var yaml = StringUtils.ExtractString(extractedYaml, "---", "\n---", returnDelimiters: false).Trim();
+                var sr = new StringReader(yaml);
+                var deserializer = new DeserializerBuilder()
+                    .IgnoreUnmatchedProperties()
+                    .WithNamingConvention(new CamelCaseNamingConvention())
+                    .Build();
+
+                try
                 {
-                    string extractedYaml = null;
+                    // TODO: Better parsing of YAML data
+                    var yamlObject = deserializer.Deserialize<DocTopic>(sr);
 
-                    var match = MarkdownUtilities.YamlExtractionRegex.Match(_body);
-                    if (match.Success)
-                        extractedYaml = match.Value;
+                    if (string.IsNullOrEmpty(Id))
+                        Id = yamlObject.Id;
 
-                    //var extractedYaml = StringUtils.ExtractString(markdown.TrimStart(), "---\n", "\n---\n",returnDelimiters: true);
-                    if (string.IsNullOrEmpty(extractedYaml))
-                        return true;
-
-                    var yaml = StringUtils.ExtractString(_body, "---", "\n---", returnDelimiters: false).Trim();
-                    var sr = new StringReader(yaml);
-                    var deserializer = new DeserializerBuilder()
-                        .IgnoreUnmatchedProperties()
-                        .WithNamingConvention(new CamelCaseNamingConvention())
-                        .Build();
-
-                    DocTopic imported;
-                    try
-                    {
-                        // TODO: Better parsing of YAML data
-                        var yamlObject = deserializer.Deserialize<DocTopic>(sr);
-
-                        if (string.IsNullOrEmpty(Id))
-                            Id = yamlObject.Id;
-
+                    if (!string.IsNullOrEmpty(yamlObject.Title))
                         Title = yamlObject.Title;
-                        Type = yamlObject.Type;
-                        Slug = yamlObject.Slug;
-                        Link = yamlObject.Link;                        
-                        Keywords = yamlObject.Keywords;                        
-                        SeeAlso = yamlObject.SeeAlso;
-                        Properties = yamlObject.Properties;
-                        ClassInfo = yamlObject.ClassInfo;
-                        SortOrder = yamlObject.SortOrder;
-                    }
-                    catch
-                    {
-                        return false;
-                    }
-                    
-                    _body  = _body.Replace(extractedYaml, "");
 
-                    // Read the title out of the MD body
-                    if (string.IsNullOrEmpty(Title))
-                    {
-                        var lines = StringUtils.GetLines(Body);
-                        var titleLine = lines.FirstOrDefault(l => l.TrimStart().StartsWith("# "));
-                        if (!string.IsNullOrEmpty(titleLine) && titleLine.Length > 2)
-                            Title = titleLine.Trim().Substring(2);
-                    }
+                    if (!string.IsNullOrEmpty(yamlObject.Type))
+                        Type = yamlObject.Type;
+                    if (!string.IsNullOrEmpty(yamlObject.Slug))
+                        Slug = yamlObject.Slug;
+                    if (!string.IsNullOrEmpty(yamlObject.Link))
+                        Link = yamlObject.Link;
+                    if (!string.IsNullOrEmpty(yamlObject.Keywords))
+                        Keywords = yamlObject.Keywords;
+                    if (!string.IsNullOrEmpty(yamlObject.SeeAlso))
+                        SeeAlso = yamlObject.SeeAlso;
+                    if (yamlObject.SortOrder > 0 || SortOrder == 0)
+                        SortOrder = yamlObject.SortOrder;
+
+                    if (Properties.Count < 1 || yamlObject.Properties.Count > 0)
+                        Properties = yamlObject.Properties;
+
+                    ClassInfo = yamlObject.ClassInfo;
+                }
+                catch
+                {
+                    return false;
                 }
 
+                _body = _body.Replace(extractedYaml, "");
+
+                if (string.IsNullOrEmpty(Title))
+                    Title = GetTitleHeader(_body);                
             }
-            else
-                return false;
 
             return true;
         }
+
 
         /// <summary>
         /// Saves body field content to a Markdown file with the slug as a name
@@ -616,18 +632,15 @@ namespace DocHound.Model
                 }
             }
 
-
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(new CamelCaseNamingConvention())                   
                 .Build();
+             
+            
+            markdownText = StripYaml(markdownText);
 
             if (string.IsNullOrEmpty(Title))
-            {
-                var lines = StringUtils.GetLines(Body,100);
-                var titleLine = lines.FirstOrDefault(l => l.TrimStart().StartsWith("# "));
-                if (!string.IsNullOrEmpty(titleLine) && titleLine.Length > 2)
-                    Title = titleLine.Trim().Substring(2);
-            }
+                Title = GetTitleHeader(markdownText);
 
             if (Project != null && Project.StoreYamlInTopics)
             {
@@ -635,10 +648,10 @@ namespace DocHound.Model
                 markdownText = $"---\n{yaml}---\n{markdownText}";
             }
 
-
+            string file = null;
             if (!string.IsNullOrEmpty(Project?.ProjectDirectory))
             {
-                var file = GetExternalFilename();
+                file = GetExternalFilename();
 
                 if (string.IsNullOrEmpty(markdownText))
                     try
@@ -668,7 +681,74 @@ namespace DocHound.Model
             else
                 return false;
 
+            Debug.WriteLine($"Save TopicFile done: {this} {file}");
             return true;
+        }
+
+        #endregion
+
+        #region Topic Body Helpers
+
+        public static readonly Regex YamlExtractionRegex = new Regex(@"\A---[ \t]*\r?\n[\s\S]+?\r?\n(---|\.\.\.)[ \t]*\r?\n", RegexOptions.Multiline | RegexOptions.Compiled);
+        public static readonly Regex YamlExtractionTextOnlyRegex = new Regex(@"\A---[ \t]*\r?\n[\s\S]+?\r?\n(---|\.\.\.)[ \t]*\r?\n", RegexOptions.Multiline | RegexOptions.Compiled);
+        /// <summary>
+        /// Extracts Yaml as a string from a markdown block
+        /// </summary>
+        /// <param name="markdown"></param>
+        /// <returns></returns>
+        public string GetYaml(string markdown, bool noDelimiters = false)
+        {
+            if (!markdown.StartsWith("---\n") && !markdown.StartsWith("---\r"))
+                return null;
+
+            string extractedYaml = null;
+
+            var match = MarkdownUtilities.YamlExtractionRegex.Match(markdown);
+            if (match.Success)            
+                extractedYaml = match.Value;                            
+
+            if (noDelimiters)
+                return StringUtils.ExtractString(extractedYaml, "---", "\n---")?.Trim();
+
+            return extractedYaml;
+        }
+
+        /// <summary>
+        /// Strips a Yaml Block from markdown and returns the
+        /// markdown without Yaml.
+        /// </summary>
+        /// <param name="markdownText"></param>
+        /// <returns></returns>
+        public string StripYaml(string markdownText)
+        {
+            if (string.IsNullOrEmpty(markdownText))
+                return markdownText;
+
+            string extractedYaml = GetYaml(markdownText);
+            if (!string.IsNullOrEmpty(extractedYaml))
+            {
+                extractedYaml = StringUtils.ExtractString(extractedYaml, "---", "\n---", returnDelimiters: true);
+
+                if (!string.IsNullOrEmpty(extractedYaml))
+                    markdownText = markdownText.Replace(extractedYaml, "").Trim();
+            }
+
+            return markdownText;
+        }
+
+        public string GetTitleHeader(string markdown)
+        {
+            string title = null;
+
+            // Read the title out of the MD body
+            if (string.IsNullOrEmpty(markdown))
+            {
+                var lines = StringUtils.GetLines(markdown);
+                var titleLine = lines.FirstOrDefault(l => l.TrimStart().StartsWith("# "));
+                if (!string.IsNullOrEmpty(titleLine) && titleLine.Length > 2)
+                    title = titleLine.Trim().Substring(2);
+            }
+            return title;
         }
 
         private string GetExternalFilename()

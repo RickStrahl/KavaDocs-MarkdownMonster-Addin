@@ -134,6 +134,10 @@ namespace KavaDocsAddin.Controls
 
             OpenTopicInEditor();
 
+            var file = topic.GetTopicFileName();
+            var doc = new MarkdownDocument();
+            doc.Load(file);
+            
             return true;
         }
 
@@ -162,7 +166,17 @@ namespace KavaDocsAddin.Controls
             }
 
             // Will also open the tab if not open yet
-            Model.AppModel.Window.RefreshTabFromFile(editorFile);
+            var tab = Model.AppModel.Window.RefreshTabFromFile(editorFile);
+
+            WindowUtilities.DoEvents();
+
+            
+            Dispatcher.InvokeAsync(() =>
+            {
+                var editor = tab.Tag as MarkdownDocumentEditor;
+                editor.AceEditor.setReadOnly(true);
+            },DispatcherPriority.ApplicationIdle);
+
         }
 
 
@@ -244,6 +258,10 @@ public void SelectTopic(DocTopic topic)
 
             if (!_isDragging && e.LeftButton == MouseButtonState.Pressed)
             {
+                var topic = TreeTopicBrowser.SelectedItem as DocTopic;
+                if (topic == null)
+                    return;
+
                 var time = DateTime.UtcNow;
 
                 Console.WriteLine($"drag checks {time}");

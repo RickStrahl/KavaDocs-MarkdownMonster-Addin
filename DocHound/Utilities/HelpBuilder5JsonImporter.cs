@@ -64,13 +64,12 @@ namespace DocHound.Utilities
 
                 };
                 newTopic.Project = project;                
-                newTopic.Body = oldTopic.body;
+                
 
                 int format = oldTopic.viewmode;
                 newTopic.BodyFormat = format == 2 ? TopicBodyFormats.Markdown : TopicBodyFormats.HelpBuilder;
+                newTopic.Body = oldTopic.body;
 
-                newTopic.SaveTopicFile();
-                
                 // Properties have to be parsed out
                 // BodyFormats
                 project.Topics.Add(newTopic);

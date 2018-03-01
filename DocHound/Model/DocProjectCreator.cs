@@ -179,8 +179,7 @@ Time to get going!
                 Body = body,
                 Type = "index"
             };
-            project.Topics.Add(topic);
-            project.SaveTopic(topic);
+            project.Topics.Add(topic);            
             project.SaveProject();
 
             return project;

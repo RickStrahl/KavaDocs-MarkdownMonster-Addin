@@ -126,6 +126,7 @@ namespace KavaDocsAddin
             InitializeKavaDocs();  // will check if already loaded
 
             // Activate the Tab
+            Model.Window.ShowFolderBrowser();
             Model.Window.SidebarContainer.SelectedItem = KavaDocsTab;
 
             // If no project is open try to open one
@@ -152,8 +153,7 @@ namespace KavaDocsAddin
             // Save the underlying topic file
             if (!string.IsNullOrEmpty(doc.CurrentText) && topic != null &&
                 lowerFilename == topic.GetTopicFileName().ToLower())
-            {
-                topic.Body = doc.CurrentText;
+            {                
                 AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, topic);
                 AddinModel.ActiveProject.SaveProject();
             }
@@ -162,6 +162,17 @@ namespace KavaDocsAddin
             {
                 // reload the project
                 AddinModel.LoadProject(AddinModel.ActiveProject.Filename);
+            }
+        }
+
+        public override void OnNotifyAddin(string command, object parameter)
+        {
+            if (command == "ReadOnlyEditorDoubleClick")
+            {
+                var file = AddinModel.ActiveTopic.GetTopicFileName();
+                if (file == null)
+                    return;
+                Model.Window.RefreshTabFromFile(file); // refresh or open
             }
         }
 

@@ -19,6 +19,7 @@
             <MenuItem Name="MenuOpenExternalTopicFile" Header="Open Topic File Explicitly"
                       Command="{Binding AppModel.Commands.OpenTopicFileExplicitlyCommand}"/>
             <Separator/>
+            <MenuItem Name="MenuRefresh" Header="Reload Tree" Command="{Binding AppModel.Commands.ReloadTreeCommand}" />
         </ContextMenu>
 
         <MenuItem x:Key="MainMenuKavaDocsMenu" Header="_Kava Docs">

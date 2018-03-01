@@ -38,8 +38,11 @@ namespace KavaDocsAddin
 
             Command_NewTopic();
             Command_DeleteTopic();
+            Command_RefreshTree();
+
             Command_OpenTopicFileExplicitly();
             Command_OpenRecentProject();
+
 
 
             // Generic Edit Toolbar Insertion features
@@ -215,28 +218,35 @@ namespace KavaDocsAddin
                 if (MessageBox.Show($"You are about to delete topic\r\n\r\n{topic.Title}\r\n\r\nAre you sure?",
                         "Delete Topic",
                         MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.No)
-                    return;                
+                    return;
 
+
+                var parentTopics = topic.Parent.Topics;
+                if (parentTopics == null)
+                    parentTopics = Model.ActiveProject.Topics;
+                int topicIndex = -1;
+                if(parentTopics != null)
+                    topicIndex = parentTopics.IndexOf(topic);
 
                 Model.ActiveProject.DeleteTopic(topic);
 
-                // select previous topic or parent
-                if (!string.IsNullOrEmpty(topic.ParentId))
+                var parent = topic.Parent;                    
+                if (parent != null)
                 {
-                    var parent = Model.ActiveProject.Topics.FirstOrDefault(t => t.Id == topic.ParentId);
-                    if (parent != null)
-                    {
-                        int topicIndex = parent.Topics.IndexOf(topic);
-                        if (topicIndex == 0)
+                        if (topicIndex < 1)
                             parent.TopicState.IsSelected = true;
                         else
-                            parent.Topics[topicIndex - 1].TopicState.IsSelected = true;
-                    }
+                            parent.Topics[topicIndex - 1].TopicState.IsSelected = true;                
+                }
+                // root topic / project
+                else
+                {
+                    if (topicIndex > -0)                                            
+                        parentTopics[topicIndex - 1].TopicState.IsSelected = true;
                 }
 
 
-                // reload the tree - slowish but easiest
-                Model.TopicsTree.LoadProject(Model.ActiveProject);                
+                             
             }, (p, c) => true);
         }
 
@@ -254,6 +264,19 @@ namespace KavaDocsAddin
                 Model.Window.OpenTab(topic.GetTopicFileName());
             }, (p, c) => true);
         }
+
+
+
+        public CommandBase RefreshTreeCommand { get; set; }
+
+        void Command_RefreshTree()
+        {
+            RefreshTreeCommand = new CommandBase((parameter, command) =>
+                {
+                    Model.TopicsTree.LoadProject(Model.ActiveProject);
+                }, (p, c) => true);
+        }
+
 
 
 
