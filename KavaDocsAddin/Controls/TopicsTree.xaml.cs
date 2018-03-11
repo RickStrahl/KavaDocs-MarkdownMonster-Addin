@@ -43,10 +43,8 @@ namespace KavaDocsAddin.Controls
         }
 
         private void TopicsTree_Loaded(object sender, RoutedEventArgs e)
-        {
-
-
-
+        {           
+            
         }
 
         #region Main Operations

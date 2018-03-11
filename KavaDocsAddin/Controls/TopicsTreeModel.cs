@@ -18,7 +18,6 @@ namespace KavaDocsAddin.Controls
     public class TopicsTreeModel : INotifyPropertyChanged
     {
         
-
         public string TopicsFilter
         {
             get { return _topicsFilter; }
