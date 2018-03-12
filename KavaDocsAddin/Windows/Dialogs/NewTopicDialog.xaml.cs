@@ -42,7 +42,7 @@ namespace DocHound.Windows.Dialogs
         private MarkdownMonster.MainWindow _window;
 
 
-        public AddinModel AppModel
+        public KavaDocsModel AppModel
         {
             get { return _appModel; }
             set
@@ -52,7 +52,7 @@ namespace DocHound.Windows.Dialogs
                 OnPropertyChanged(nameof(AppModel));
             }
         }
-        private AddinModel _appModel = kavaUi.AddinModel;
+        private KavaDocsModel _appModel = kavaUi.AddinModel;
 
         
         public DocTopic Topic

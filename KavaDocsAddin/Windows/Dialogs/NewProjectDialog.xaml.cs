@@ -21,7 +21,7 @@ using MahApps.Metro.Controls;
 using MarkdownMonster;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Westwind.Utilities;
-using AddinModel = KavaDocsAddin.AddinModel;
+using KavaDocsModel = KavaDocsAddin.KavaDocsModel;
 
 namespace DocHound.Windows.Dialogs
 {
@@ -32,7 +32,7 @@ namespace DocHound.Windows.Dialogs
     {
         public DocProjectCreator ProjectCreator { get; set; }
 
-        public AddinModel AppModel { get; set; } 
+        public KavaDocsModel AppModel { get; set; } 
 
         public MainWindow Window { get; set; } 
         

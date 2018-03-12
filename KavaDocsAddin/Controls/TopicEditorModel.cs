@@ -15,7 +15,7 @@ namespace KavaDocsAddin.Controls
     {
         
 
-        public AddinModel AppModel
+        public KavaDocsModel AppModel
         {
             get { return _appModel; }
             set
@@ -27,7 +27,7 @@ namespace KavaDocsAddin.Controls
                 OnPropertyChanged(nameof(Project));
             }
         }
-        private AddinModel _appModel;
+        private KavaDocsModel _appModel;
 
         public DocTopic Topic
         {

@@ -23,7 +23,7 @@ using Westwind.Utilities;
 
 namespace KavaDocsAddin
 {
-    public class AddinModel : INotifyPropertyChanged
+    public class KavaDocsModel : INotifyPropertyChanged
     {
 
         #region Top Level Model Properties
@@ -119,7 +119,7 @@ namespace KavaDocsAddin
 
         #region Initialization
 
-        public AddinModel(MainWindow window)
+        public KavaDocsModel(MainWindow window)
         {
             Configuration = KavaApp.Configuration;
             Window = window;            

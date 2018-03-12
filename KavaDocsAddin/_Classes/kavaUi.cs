@@ -18,7 +18,7 @@ namespace KavaDocsAddin
         /// <summary>
         /// This addin's model
         /// </summary>
-        public static AddinModel AddinModel { get; set; }
+        public static KavaDocsModel AddinModel { get; set; }
 
                 
         /// <summary>
@@ -38,7 +38,7 @@ namespace KavaDocsAddin
         static kavaUi()
         {
             MarkdownMonsterModel = mmApp.Model;
-            AddinModel = new AddinModel(mmApp.Model.Window);
+            AddinModel = new KavaDocsModel(mmApp.Model.Window);
             Configuration = KavaApp.Configuration;
         }
 

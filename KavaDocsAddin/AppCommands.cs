@@ -17,10 +17,10 @@ namespace KavaDocsAddin
 {
     public class AppCommands
     {
-        private AddinModel Model;
+        private KavaDocsModel Model;
         
 
-        public AppCommands(AddinModel model)
+        public AppCommands(KavaDocsModel model)
         {
             Model = model;
             CreateCommands();

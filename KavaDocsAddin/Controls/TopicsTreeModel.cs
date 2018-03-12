@@ -129,7 +129,7 @@ namespace KavaDocsAddin.Controls
             return topicList;
         }
 
-        public AddinModel AppModel { get; }
+        public KavaDocsModel AppModel { get; }
 
         public TopicsTreeModel(DocProject project)
         {

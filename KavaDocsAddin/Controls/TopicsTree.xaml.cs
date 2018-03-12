@@ -105,7 +105,10 @@ namespace KavaDocsAddin.Controls
             var topic = TreeTopicBrowser.SelectedItem as DocTopic;
             if (topic != null)
             {
-                Model.AppModel.Window.RefreshTabFromFile(topic.GetTopicFileName());
+                var tab = Model.AppModel.Window.RefreshTabFromFile(topic.GetTopicFileName());
+                var editor = tab.Tag as MarkdownDocumentEditor;
+                if (editor != null)
+                    editor.Identifier = "KavaDocsDocument";
             }
             
         }
@@ -121,7 +124,7 @@ namespace KavaDocsAddin.Controls
 
             kavaUi.AddinModel.LastTopic = kavaUi.AddinModel.ActiveTopic;
             kavaUi.AddinModel.ActiveTopic = topic;
-
+            
             // TODO: Move to function
             if (kavaUi.AddinModel.RecentTopics.Contains(topic))
                 kavaUi.AddinModel.RecentTopics.Remove(topic);
@@ -155,15 +158,9 @@ namespace KavaDocsAddin.Controls
             if (tab != null)
             {
                 window.TabControl.SelectedItem = tab;
-                window.CloseTab(editorFile);
-                return tab;
+                window.CloseTab(editorFile);             
             }
-            
-            try
-            {
-                File.Copy(file, editorFile, true);
-            }
-            catch
+            else
             {
                 try
                 {
@@ -171,15 +168,51 @@ namespace KavaDocsAddin.Controls
                 }
                 catch
                 {
-                    return null;
+                    try
+                    {
+                        File.Copy(file, editorFile, true);
+                    }
+                    catch
+                    {
+                        return null;
+                    }
                 }
+
+                // Will also open the tab if not open yet
+                tab = Model.AppModel.Window.RefreshTabFromFile(editorFile, readOnly: true);
             }
 
-            // Will also open the tab if not open yet
-            return Model.AppModel.Window.RefreshTabFromFile(editorFile,readOnly:true);            
+            if(tab != null)
+                SetEditorWithTopic(tab.Tag as MarkdownDocumentEditor, kavaUi.AddinModel.ActiveTopic);
+            
+            return tab;
         }
 
 
+        /// <summary>
+        /// Attaches a KavaDocs Topic to the current document and sets the Identifier to
+        /// `KavaDocsDocument' so that you can easily retrieve the topic associated with 
+        /// an open document.
+        /// 
+        /// Used to allow for syncing back topics to the underlying topic.
+        /// </summary>
+        /// <param name="editor"></param>
+        /// <param name="topic"></param>
+        public static void SetEditorWithTopic(MarkdownDocumentEditor editor, DocTopic topic)
+        {
+            if (editor == null)
+                return;
+            if (topic == null)
+            {
+                editor.Identifier = null;
+                editor.Properties.Remove("KavaDocsTopic");
+            }
+            else
+            {
+                editor.Identifier = "KavaDocsDocument";
+                editor.Properties["KavaDocsTopic"] = topic;
+            }
+        }
 
 
         private void TreeViewItem_KeyDown(object sender, KeyEventArgs e)

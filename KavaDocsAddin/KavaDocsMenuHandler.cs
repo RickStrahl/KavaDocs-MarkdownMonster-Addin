@@ -9,7 +9,7 @@ namespace KavaDocsAddin
 {
     public class KavaDocsMenuHandler
     {
-        public AddinModel Model { get; set; }
+        public KavaDocsModel Model { get; set; }
 
         public MenuItem KavaDocsMenuItem { get; set; }
 

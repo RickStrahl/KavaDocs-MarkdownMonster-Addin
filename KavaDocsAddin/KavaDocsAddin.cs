@@ -22,7 +22,7 @@ namespace KavaDocsAddin
 
         public KavaDocsConfiguration Configuration { get; set; }
 
-        public AddinModel AddinModel { get; set; }
+        public KavaDocsModel AddinModel { get; set; }
 
        public TabItem KavaDocsTab { get; set; }
 
@@ -140,29 +140,44 @@ namespace KavaDocsAddin
             base.OnAfterSaveDocument(doc);
 
             var topic = AddinModel.ActiveTopic;
+            var editor = AddinModel.ActiveMarkdownEditor;
+            var projectFilename = topic?.Project?.Filename;
+
             var lowerFilename = doc.Filename.ToLower();
 
-            // Saving the KavaDocs.md file
-            if (!string.IsNullOrEmpty(doc.CurrentText) && topic != null &&  
-                lowerFilename == (topic.GetKavaDocsEditorFilePath()).ToLower())                
-            {                
+
+            // Save Project File
+            if (projectFilename != null && lowerFilename == projectFilename.ToLower())
+            {
+                // reload the project
+                AddinModel.LoadProject(AddinModel.ActiveProject.Filename);
+                return;
+            }
+
+            // Check for explicit KavaDocs Documents
+            if (topic == null || string.IsNullOrEmpty(doc.CurrentText))
+                return;
+
+            // Save the underlying topic file
+            if (lowerFilename == topic.GetTopicFileName().ToLower())
+            {
+                AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, topic);
+                AddinModel.ActiveProject.SaveProject();
+            }
+            // READ-ONLY this shouldn't really happen any more
+            // Saving the KavaDocs.md file - assume we're on the active topic 
+            else if (lowerFilename == topic.GetKavaDocsEditorFilePath().ToLower())
+            {
                 topic.Body = doc.CurrentText;
                 AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, topic);
                 AddinModel.ActiveProject.SaveProject();
             }
-            // Save the underlying topic file
-            if (!string.IsNullOrEmpty(doc.CurrentText) && topic != null &&
-                lowerFilename == topic.GetTopicFileName().ToLower())
-            {                
-                AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, topic);
-                AddinModel.ActiveProject.SaveProject();
-            }
-            // Save Project File
-            else if (AddinModel.ActiveProject != null && doc.Filename.ToLower() == AddinModel.ActiveProject.Filename.ToLower())
+            // Any previously activated document file
+            else if (editor.Identifier == "KavaDocsDocument" && editor.Properties.TryGetValue("KavaDocsTopic", out object objTopic))
             {
-                // reload the project
-                AddinModel.LoadProject(AddinModel.ActiveProject.Filename);
+                AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, objTopic as DocTopic);
             }
+
         }
 
         public override void OnNotifyAddin(string command, object parameter)
@@ -176,7 +191,11 @@ namespace KavaDocsAddin
                 var editorFileName = AddinModel.ActiveTopic.GetKavaDocsEditorFilePath();
                 CloseTab(editorFileName);
 
-                Model.Window.RefreshTabFromFile(file); // refresh or open
+                var tab = Model.Window.RefreshTabFromFile(file); // refresh or open                
+                var editor = tab.Tag as MarkdownDocumentEditor;
+                if (editor != null)                
+                    TopicsTree.SetEditorWithTopic(editor, AddinModel.ActiveTopic);                    
+                
             }
         }
 
