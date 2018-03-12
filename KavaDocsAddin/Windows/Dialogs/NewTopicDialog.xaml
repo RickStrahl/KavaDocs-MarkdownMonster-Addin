@@ -29,7 +29,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Image Source="../../assets/KavaDocs.png"
+        <Image Source="../../Assets/KavaDocs.png"
                Margin="30,35,0,20"
                Width="275" VerticalAlignment="Top"></Image>
 

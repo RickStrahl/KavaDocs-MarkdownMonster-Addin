@@ -22,9 +22,21 @@ namespace KavaDocsAddin
 
         public KavaDocsConfiguration Configuration { get; set; }
 
-        public KavaDocsModel AddinModel { get; set; }
+        private KavaDocsModel _addinModel;
 
-       public TabItem KavaDocsTab { get; set; }
+        public KavaDocsModel AddinModel
+        {
+            get
+            {
+                return _addinModel;
+            }
+            set
+            {
+                _addinModel = value;
+            }
+        }
+
+        public TabItem KavaDocsTab { get; set; }
 
         public KavaDocsMenuHandler KavaDocsMenu { get; set; }
 
@@ -93,7 +105,7 @@ namespace KavaDocsAddin
                 Tree = new TopicsTree();
                 tabItem.Content = Tree;
 
-                Model.Window.AddSidebarPanelTabItem(tabItem);
+                Model.Window.AddLeftSidebarPanelTabItem(tabItem);
 
                 KavaDocsMenu = new KavaDocsMenuHandler();
                 KavaDocsMenu.CreateKavaDocsMainMenu();
@@ -111,11 +123,15 @@ namespace KavaDocsAddin
 
         public override void OnApplicationShutdown()
         {
-            base.OnApplicationShutdown();
-            
-            AddinModel.ActiveProject?.CloseProject();
-            AddinModel.Configuration.Write();                       
+            if (AddinModel != null)
+            {
+                AddinModel.ActiveProject?.CloseProject();
+                AddinModel.Configuration.Write();
+            }
+
+            base.OnApplicationShutdown();                   
         }
+        
         #endregion
 
         #region Interception Hooks
@@ -139,13 +155,14 @@ namespace KavaDocsAddin
         {
             base.OnAfterSaveDocument(doc);
 
-            var topic = AddinModel.ActiveTopic;
+            if (doc == null || AddinModel?.ActiveTopic == null)
+                return;
+
+            var topic = AddinModel.ActiveTopic;           
             var editor = AddinModel.ActiveMarkdownEditor;
             var projectFilename = topic?.Project?.Filename;
-
             var lowerFilename = doc.Filename.ToLower();
-
-
+            
             // Save Project File
             if (projectFilename != null && lowerFilename == projectFilename.ToLower())
             {
@@ -173,7 +190,7 @@ namespace KavaDocsAddin
                 AddinModel.ActiveProject.SaveProject();
             }
             // Any previously activated document file
-            else if (editor.Identifier == "KavaDocsDocument" && editor.Properties.TryGetValue("KavaDocsTopic", out object objTopic))
+            else if (editor.Properties.TryGetValue("KavaDocsTopic", out object objTopic))
             {
                 AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, objTopic as DocTopic);
             }
