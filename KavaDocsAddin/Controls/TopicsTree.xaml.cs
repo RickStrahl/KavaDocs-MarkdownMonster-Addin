@@ -316,12 +316,12 @@ public void SelectTopic(DocTopic topic)
 
         #region Drag and Drop
 
-        bool _isDragging = false;
+        
         internal DragMoveResult _dragMoveResult;
         ContextMenu _dragContextMenu;
         private Point _lastMouseDownPoint;
-        private DateTime _lastMouseDown;
-
+        //private DateTime _lastMouseDown;
+        //bool _isDragging = false;
 
         public CommandBase MoveTopicCommand { get; set; }
 
@@ -330,43 +330,39 @@ public void SelectTopic(DocTopic topic)
             if (e.ChangedButton == MouseButton.Left)
             {
                 _lastMouseDownPoint = e.GetPosition(TreeTopicBrowser);
-                _lastMouseDown = DateTime.UtcNow;
-                _isDragging = false;
-                Debug.WriteLine($"Mouse down intially assigned... - {_lastMouseDown:HH:mm:ss:ms}");
+                //_lastMouseDown = DateTime.UtcNow;
+                //_isDragging = false;                
             }
         }
 
         private void TreeViewItem_MouseMove(object sender, MouseEventArgs e)
         {
             var time = DateTime.UtcNow;
-            Debug.WriteLine($"drag checks {time:HH:mm:ss:ms} {_lastMouseDown:HH:mm:ss:ms} {_isDragging}");
-
-            if (!_isDragging && e.LeftButton == MouseButtonState.Pressed)
+            
+            if (e.LeftButton == MouseButtonState.Pressed)
             {               
                 var topic = TreeTopicBrowser.SelectedItem as DocTopic;
                 if (topic == null)
                     return;
                 
-                Debug.WriteLine($"drag checks {time:HH:mm:ss:ms} {_lastMouseDown:HH:mm:ss:ms} {_isDragging}");
                 
-                // At least 400 ms before dragging and less than 1.5secs to start dragging
-                if (time < _lastMouseDown.AddMilliseconds(200) || time > _lastMouseDown.AddMilliseconds(1500))
-                {
-                    Debug.WriteLine($"Not dragging: {time:HH:mm:ss:ms} {_lastMouseDown:HH:mm:ss:ms}");
-                    _isDragging = false;
-                    _lastMouseDown = DateTime.MinValue;                    
-                    return;
+                //// At least 400 ms before dragging and less than 1.5secs to start dragging
+                //if (time < _lastMouseDown.AddMilliseconds(200) || time > _lastMouseDown.AddMilliseconds(1500))
+                //{
+                //    Debug.WriteLine($"Not dragging: {time:HH:mm:ss:ms} {_lastMouseDown:HH:mm:ss:ms}");
+                //    _isDragging = false;
+                //    _lastMouseDown = DateTime.MinValue;                    
+                //    return;
                     
-                }
+                //}
 
 
                 Point currentPosition = e.GetPosition(TreeTopicBrowser);
 
-                if ((Math.Abs(currentPosition.X - _lastMouseDownPoint.X) > 20) ||
-                    (Math.Abs(currentPosition.Y - _lastMouseDownPoint.Y) > 15))
+                if ((Math.Abs(currentPosition.X - _lastMouseDownPoint.X) > 25) ||
+                    (Math.Abs(currentPosition.Y - _lastMouseDownPoint.Y) > 20))
                 {
-                    _isDragging = true;
-                    DragDrop.DoDragDrop(TreeTopicBrowser, TreeTopicBrowser.SelectedItem, DragDropEffects.Move);
+                    DragDrop.DoDragDrop(TreeTopicBrowser, TreeTopicBrowser.SelectedItem, DragDropEffects.Move | DragDropEffects.None);
                 }
             }
         }
@@ -374,9 +370,7 @@ public void SelectTopic(DocTopic topic)
 
 
         private void TreeViewItem_Drop(object sender, DragEventArgs e)
-        {
-            _isDragging = false;
-
+        {            
             if (!e.Data.GetDataPresent(typeof(DocTopic)))
                 return;
 
@@ -547,9 +541,9 @@ public void SelectTopic(DocTopic topic)
             else
             {
                 var targetTopic = targetTv.DataContext as DocTopic;
-                var sourceTopic = e.Data as DocTopic;
-
-                if (targetTopic == sourceTopic)
+                var sourceTopic = (DocTopic)e.Data.GetData(typeof(DocTopic));
+                    
+                if (targetTopic == sourceTopic)                    
                     e.Effects = DragDropEffects.None;
                 else
                     e.Effects = DragDropEffects.Link;

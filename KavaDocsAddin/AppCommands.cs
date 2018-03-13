@@ -39,6 +39,7 @@ namespace KavaDocsAddin
             Command_NewTopic();
             Command_DeleteTopic();
             Command_RefreshTree();
+            
 
             Command_OpenTopicFileExplicitly();
             Command_OpenRecentProject();
@@ -54,7 +55,9 @@ namespace KavaDocsAddin
 
             // Views
             Command_PreviewBrowser();
-            
+            Command_CloseRightSidebarCommand();
+
+
         }
 
         #region File Commands
@@ -206,6 +209,10 @@ namespace KavaDocsAddin
         }
 
 
+        
+
+
+
         public CommandBase DeleteTopicCommand { get; set; }
 
         public void Command_DeleteTopic()
@@ -298,6 +305,18 @@ namespace KavaDocsAddin
         #endregion
 
         #region View Commands
+
+
+        public CommandBase CloseRightSidebarCommand { get; set; }
+
+        void Command_CloseRightSidebarCommand()
+        {
+            CloseRightSidebarCommand= new CommandBase((parameter, command) =>
+            {
+                Model.Window.ShowRightSidebar(true);
+            }, (p, c) => true);
+        }
+
 
 
         public CommandBase PreviewBrowserCommand { get; set; }

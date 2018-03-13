@@ -37,6 +37,8 @@ namespace KavaDocsAddin.Controls
             DataContext = Model;
             
             Loaded += TopicEditor_Loaded;            
+
+            
         }
 
 

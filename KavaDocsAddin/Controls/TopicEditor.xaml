@@ -12,6 +12,10 @@
              mc:Ignorable="d" 
              FontSize="14"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.InputBindings>
+        <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding KavaDocsModel.Commands.SaveProjectCommand}" />
+    </UserControl.InputBindings>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -40,7 +44,7 @@
                             Foreground="{DynamicResource BlueItem}" Padding="5,0,5,0"
                             Name="ButtonSaveTopic" BorderThickness="0"  FontSize="12"
                             ToolTip="Save Topic" BorderBrush="Transparent"
-                            Command="{Binding KavaDocsModel.Commands.SaveTopicCommand}" />
+                            Command="{Binding KavaDocsModel.Commands.SaveProjectCommand}" />
 
 
 
@@ -50,7 +54,7 @@
 			             Foreground="{DynamicResource BlueItem}" Padding="7,0,7,0"  
 			             Name="ButtonClosePanel" BorderThickness="0" FontSize="12"
 			             ToolTip="Close Kava Docs Topic Panel" BorderBrush="Transparent"
-			             Command="{Binding MarkdownMonsterModel.ShowFolderBrowserCommand}" />
+			             Command="{Binding KavaDocsModel.Commands.CloseRightSidebarCommand}" />
             </Grid>
 
 
@@ -61,8 +65,7 @@
             <TextBox Name="TextTitle" 
                                  Text="{Binding KavaDocsModel.ActiveTopic.Title}" 
                                  Style="{StaticResource HeaderTextBoxStyle}"   FontSize="15"                              
-                                 controls:TextBoxHelper.Watermark="Topic Title"  
-                                 controls:TextBoxHelper.ClearTextButton="True"/>
+                                 controls:TextBoxHelper.Watermark="Topic Title"  />
 
             <Grid  Margin="0,10,0,0" HorizontalAlignment="Stretch">
                 <Grid.Resources>
@@ -117,19 +120,15 @@
                              FontFamily="{Binding AppModel.Configuration.SeeAlso}" 
                              TextWrapping="Wrap"
                              AcceptsTab="True"
-                             AcceptsReturn="True"
-                             FontSize="16"
+                             AcceptsReturn="True"                             
                              Height="55"
                     />
-
-            <Separator Margin="0,6,0,0"/>
 
             <Label  Margin="0,6,0,0">Notes:</Label>
             <TextBox Text="{Binding KavaDocsModel.ActiveTopic.Remarks}"                              
                              TextWrapping="Wrap"
                              AcceptsTab="True"
-                             AcceptsReturn="True"
-                             FontSize="16"
+                             AcceptsReturn="True"                             
                              Height="70"
                              />
 
@@ -141,8 +140,22 @@
                              AcceptsTab="True"
                              AcceptsReturn="True"
                              TextWrapping="Wrap"                              
-                             Height="120"
-                             FontSize="16"/>
+                             Height="120" />
+
+            <Grid Margin="0,15,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <CheckBox IsChecked="{Binding KavaDocsModel.ActiveTopic.IsLink}">Topic is a link</CheckBox>
+                <CheckBox IsChecked="{Binding KavaDocsModel.ActiveTopic.Incomplete}" Grid.Column="1">Topic is incomplete</CheckBox>
+                <StackPanel Orientation="Horizontal" Grid.Column="2">
+                    <Label>Sort order:</Label>
+                    <TextBox Width="30" Text="{Binding KavaDocsModel.ActiveTopic.SortOrder}"></TextBox>
+                </StackPanel>
+            </Grid>
 
             <Label  Margin="0,6,0,0">Body:</Label>
             <TextBox  
