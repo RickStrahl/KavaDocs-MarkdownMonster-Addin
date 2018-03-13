@@ -202,6 +202,7 @@ namespace KavaDocsAddin
             else if (editor.Properties.TryGetValue("KavaDocsTopic", out object objTopic))
             {
                 AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, objTopic as DocTopic);
+                AddinModel.ActiveProject.SaveProject();
             }
 
         }

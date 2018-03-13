@@ -9,53 +9,76 @@
              xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              xmlns:model="clr-namespace:DocHound.Model;assembly=DocHound"
-
              mc:Ignorable="d" 
+             FontSize="14"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          
         </Grid.RowDefinitions>
 
 
-        <dragablz:TabablzControl x:Name="TabControl" Margin="0,5,0,0" FontSize="14" 
-                                 BorderThickness="0" ShowDefaultCloseButton="False"  
-                                 ShowDefaultAddButton="False">
-        
-            <dragablz:TabablzControl.Resources>
-                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
-                    <Setter Property="FontSize" Value="14" />
-                    <Setter Property="Padding" Value="5,3,5,5" />
-                </Style>
-            </dragablz:TabablzControl.Resources>
+            <Grid Background="{StaticResource FolderBrowserHeaderBackground}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <!--<ColumnDefinition Width="Auto" />-->
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="../Assets/icon_16.png" Width="16" Height="16" Margin="4,0,0,0"/>
+                    <TextBlock Height="Auto" 
+					   Text="Kava Docs Topic"  
+					   FontWeight="Medium" FontSize="11"  Padding="4,5,2,5" />
+                </StackPanel>
+
+                <Button fa:Awesome.Content="CheckCircle" Grid.Column="1" Background="Transparent" 
+                            Foreground="{DynamicResource BlueItem}" Padding="5,0,5,0"
+                            Name="ButtonSaveTopic" BorderThickness="0"  FontSize="12"
+                            ToolTip="Save Topic" BorderBrush="Transparent"
+                            Command="{Binding KavaDocsModel.Commands.SaveTopicCommand}" />
 
 
-            <controls:MetroTabItem Name="TabTopic" Header="Topic" Margin="0,0,5,0" CloseButtonEnabled="False"                                   
-                                   controls:ControlsHelper.HeaderFontSize="16" >
-                <StackPanel Margin="5,10">
-                    
-                    <TextBox Name="TextTitle" 
+
+
+                <Button  Grid.Column="3"
+                         fa:Awesome.Content="ChevronCircleRight" Background="Transparent" 
+			             Foreground="{DynamicResource BlueItem}" Padding="7,0,7,0"  
+			             Name="ButtonClosePanel" BorderThickness="0" FontSize="12"
+			             ToolTip="Close Kava Docs Topic Panel" BorderBrush="Transparent"
+			             Command="{Binding MarkdownMonsterModel.ShowFolderBrowserCommand}" />
+            </Grid>
+
+
+
+
+        <StackPanel Margin="5,10" Grid.Row="1">
+
+            <TextBox Name="TextTitle" 
                                  Text="{Binding KavaDocsModel.ActiveTopic.Title}" 
                                  Style="{StaticResource HeaderTextBoxStyle}"   FontSize="15"                              
                                  controls:TextBoxHelper.Watermark="Topic Title"  
                                  controls:TextBoxHelper.ClearTextButton="True"/>
 
-                    <Grid  Margin="0,10,0,0" HorizontalAlignment="Stretch">
-                        <Grid.Resources>
-                            <ObjectDataProvider x:Key="BodyTypes" MethodName="GetValues"
+            <Grid  Margin="0,10,0,0" HorizontalAlignment="Stretch">
+                <Grid.Resources>
+                    <ObjectDataProvider x:Key="BodyTypes" MethodName="GetValues"
                                                     ObjectType="{x:Type System:Enum}">
-                                <ObjectDataProvider.MethodParameters>
-                                    <x:Type TypeName="model:TopicBodyFormats"/>
-                                </ObjectDataProvider.MethodParameters>
-                            </ObjectDataProvider>
-                        </Grid.Resources>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition  />
-                            <ColumnDefinition  />
-                        </Grid.ColumnDefinitions>
+                        <ObjectDataProvider.MethodParameters>
+                            <x:Type TypeName="model:TopicBodyFormats"/>
+                        </ObjectDataProvider.MethodParameters>
+                    </ObjectDataProvider>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  />
+                    <ColumnDefinition  />
+                </Grid.ColumnDefinitions>
 
-                        <ComboBox Name="ComboTopicType" 
+                <ComboBox Name="ComboTopicType" 
                                   Grid.Column="0"                                  
                                   ItemsSource="{Binding TopicTypesList}"
                                   IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False"
@@ -64,33 +87,33 @@
                                   SelectedValuePath="Type"                                      
                              >
 
-                            <ComboBox.ItemTemplate>
-                                <ItemContainerTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="{Binding ImageFile}" Margin="3,0,6,0" Width="16" Height="16"/>
-                                        <TextBlock Text="{Binding Type}" />
-                                    </StackPanel>
-                                </ItemContainerTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
+                    <ComboBox.ItemTemplate>
+                        <ItemContainerTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="{Binding ImageFile}" Margin="3,0,6,0" Width="16" Height="16"/>
+                                <TextBlock Text="{Binding Type}" />
+                            </StackPanel>
+                        </ItemContainerTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
-                        <ComboBox Name="ComboBodyType" SelectedValue="{Binding KavaDocsModel.ActiveTopic.BodyFormat}"                                 
+                <ComboBox Name="ComboBodyType" SelectedValue="{Binding KavaDocsModel.ActiveTopic.BodyFormat}"                                 
                                       Grid.Column="1" ItemsSource="{Binding Source={StaticResource BodyTypes}}"
                                       Margin="10,0,0,0">
-                        </ComboBox>
-                    </Grid>
+                </ComboBox>
+            </Grid>
 
-                    <Label Margin="0,6,0,0">Slug:</Label>
-                    <TextBox Name="TextSlug"  Text="{Binding KavaDocsModel.ActiveTopic.Slug}" />
+            <Label Margin="0,6,0,0">Slug:</Label>
+            <TextBox Name="TextSlug"  Text="{Binding KavaDocsModel.ActiveTopic.Slug}" />
 
-                    <Label Margin="0,6,0,0">File Link:</Label>
-                    <TextBox Name="TextLink"  Text="{Binding KavaDocsModel.ActiveTopic.Link}" />
+            <Label Margin="0,6,0,0">Link:</Label>
+            <TextBox Name="TextLink"  Text="{Binding KavaDocsModel.ActiveTopic.Link}" />
 
-                    <Label Margin="0,6,0,0">Keywords: (comma delimited)</Label>
-                    <TextBox Name="TextKeywords"  Text="{Binding KavaDocsModel.ActiveTopic.Keywords}" />
+            <Label Margin="0,6,0,0">Keywords: (comma delimited)</Label>
+            <TextBox Name="TextKeywords"  Text="{Binding KavaDocsModel.ActiveTopic.Keywords}" />
 
-                    <Label  Margin="0,6,0,0">See Also: (one per line: title, link or slug)</Label>
-                    <TextBox Text="{Binding KavaDocsModel.ActiveTopic.Remarks}" 
+            <Label  Margin="0,6,0,0">See Also: (one per line: title, link or slug)</Label>
+            <TextBox Text="{Binding KavaDocsModel.ActiveTopic.SeeAlso}" 
                              FontFamily="{Binding AppModel.Configuration.SeeAlso}" 
                              TextWrapping="Wrap"
                              AcceptsTab="True"
@@ -99,21 +122,20 @@
                              Height="55"
                     />
 
-                    <Separator Margin="0,6,0,0"/>
+            <Separator Margin="0,6,0,0"/>
 
-                    <Label  Margin="0,6,0,0">Notes:</Label>
-                    <TextBox Text="{Binding KavaDocsModel.ActiveTopic.Remarks}" 
-                             FontFamily="{Binding AppModel.Configuration.EditorFont}" 
+            <Label  Margin="0,6,0,0">Notes:</Label>
+            <TextBox Text="{Binding KavaDocsModel.ActiveTopic.Remarks}"                              
                              TextWrapping="Wrap"
                              AcceptsTab="True"
                              AcceptsReturn="True"
                              FontSize="16"
                              Height="70"
                              />
-                    
 
-                    <Label  Margin="0,6,0,0">Code Example:</Label>
-                    <TextBox  
+
+            <Label  Margin="0,6,0,0">Code Example:</Label>
+            <TextBox  
                              Text="{Binding KavaDocsModel.ActiveTopic.Example}" 
                              FontFamily="{Binding AppModel.Configuration.EditorFont}"  
                              AcceptsTab="True"
@@ -122,39 +144,16 @@
                              Height="120"
                              FontSize="16"/>
 
-                    <Label  Margin="0,6,0,0">Body:</Label>
-                    <TextBox  
+            <Label  Margin="0,6,0,0">Body:</Label>
+            <TextBox  
                         Text="{Binding KavaDocsModel.ActiveTopic.Body}" 
                         FontFamily="{Binding AppModel.Configuration.EditorFont}"  
                         AcceptsTab="True"
                         AcceptsReturn="True"
-                        TextWrapping="Wrap"                              
+                        TextWrapping="Wrap" VerticalAlignment="Stretch"                              
                         Height="120"
                         FontSize="16"/>
 
-                </StackPanel>
-            </controls:MetroTabItem>
-            
-            <controls:MetroTabItem Name="TabClassInfo" Header="Class Info" Margin="0,0,5,0" CloseButtonEnabled="False"                                   
-                                   controls:ControlsHelper.HeaderFontSize="16" Visibility="Collapsed" >
-                <Grid>
-                </Grid>
-            </controls:MetroTabItem>
-
-
-            <controls:MetroTabItem Name="TabTopicLinks" Header="Topic Links" Margin="0,0,5,0" CloseButtonEnabled="False"                                   
-                                    controls:ControlsHelper.HeaderFontSize="16"  Visibility="Collapsed"  >
-                <Grid>
-                </Grid>
-            </controls:MetroTabItem>
-            
-            <controls:MetroTabItem Name="TabTopicExtensions" Header="Extensions" Margin="0,0,5,0" CloseButtonEnabled="False"                                   
-                                   controls:ControlsHelper.HeaderFontSize="16" Visibility="Hidden" >
-                <Grid>
-                </Grid>
-            </controls:MetroTabItem>
-            
-        </dragablz:TabablzControl>
-
+        </StackPanel>
     </Grid>
 </UserControl>

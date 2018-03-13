@@ -441,25 +441,26 @@ namespace DocHound.Model
             if (html==null)
                 return null;
 
-            if (filename == null)
+            int written = 0;
+            while (written < 4)
             {
-                filename = RenderTopicFilename;
-            }
-            try
-            {
-                File.WriteAllText(filename,html);
-            }
-            catch
-            {
-                Thread.Sleep(2);
+                if (filename == null)
+                    filename = RenderTopicFilename;
+
                 try
-                {
-                    File.WriteAllText(filename,html);
+                {                    
+                    File.WriteAllText(filename, html, Encoding.UTF8);
+                    written = 10;
                 }
                 catch(Exception ex)
-                {
-                    SetError("Failed to render topic file: " + ex.Message + "\r\n" + filename);
-                    return null;
+                {                    
+                    Thread.Sleep(50);
+                    written++;
+                    if (written == 4)
+                    {
+                        mmApp.Log("Warning: Unable to write output file: " + filename + "\r\n" + ex.Message);
+                        return null;
+                    }
                 }
             }
 
@@ -617,7 +618,7 @@ namespace DocHound.Model
                     }
                     catch
                     {
-                        Task.Delay(5);
+                        Task.Delay(50);
                         if (i > 2)
                             return false;
                     }
@@ -751,14 +752,14 @@ namespace DocHound.Model
                     {
                         try
                         {
-                            File.WriteAllText(file, markdownText);
+                            File.WriteAllText(file, markdownText, Encoding.UTF8);
                             break;
                         }
                         catch
                         {
                             _body = markdownText;
-                            Task.Delay(5);
-                            if (i > 2)
+                            Task.Delay(50);
+                            if (i > 3)
                                 return false;
                         }
                     }

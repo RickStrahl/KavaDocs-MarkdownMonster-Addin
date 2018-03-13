@@ -237,11 +237,7 @@ namespace KavaDocsAddin.Controls
                 }
 
                 if (body != topic.Body)
-                {
                     editor.SetMarkdown(topic.Body);
-                }
-
-                
             }
 
             return tab;
@@ -281,13 +277,7 @@ namespace KavaDocsAddin.Controls
             {
                 var tvi = e.OriginalSource as TreeViewItem;
                 if (tvi == null)
-                    return;
-
-                if (kavaUi.AddinModel.TopicEditor.TabTopic.IsSelected)
-                {
-                    Model.KavaDocsModel.ActiveMarkdownEditor.GotoLine(0);
-                    Model.KavaDocsModel.ActiveMarkdownEditor.SetEditorFocus();
-                }
+                    return;                
             }
 
             // this works without a selection
@@ -335,40 +325,46 @@ public void SelectTopic(DocTopic topic)
 
         public CommandBase MoveTopicCommand { get; set; }
 
-        private void TreeViewItem_MouseDown
-            (object sender, MouseButtonEventArgs e)
+        private void TreeViewItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
             {
                 _lastMouseDownPoint = e.GetPosition(TreeTopicBrowser);
                 _lastMouseDown = DateTime.UtcNow;
+                _isDragging = false;
+                Debug.WriteLine($"Mouse down intially assigned... - {_lastMouseDown:HH:mm:ss:ms}");
             }
         }
 
         private void TreeViewItem_MouseMove(object sender, MouseEventArgs e)
         {
+            var time = DateTime.UtcNow;
+            Debug.WriteLine($"drag checks {time:HH:mm:ss:ms} {_lastMouseDown:HH:mm:ss:ms} {_isDragging}");
 
             if (!_isDragging && e.LeftButton == MouseButtonState.Pressed)
-            {
+            {               
                 var topic = TreeTopicBrowser.SelectedItem as DocTopic;
                 if (topic == null)
                     return;
-
-                var time = DateTime.UtcNow;
-
-                Console.WriteLine($"drag checks {time}");
                 
-                // At least 400 ms before dragging and less than 2secs to start dragging
-                if (_lastMouseDown > time.AddMilliseconds(-300) && _lastMouseDown > time.AddSeconds(-2))
+                Debug.WriteLine($"drag checks {time:HH:mm:ss:ms} {_lastMouseDown:HH:mm:ss:ms} {_isDragging}");
+                
+                // At least 400 ms before dragging and less than 1.5secs to start dragging
+                if (time < _lastMouseDown.AddMilliseconds(200) || time > _lastMouseDown.AddMilliseconds(1500))
+                {
+                    Debug.WriteLine($"Not dragging: {time:HH:mm:ss:ms} {_lastMouseDown:HH:mm:ss:ms}");
+                    _isDragging = false;
+                    _lastMouseDown = DateTime.MinValue;                    
                     return;
-                
+                    
+                }
+
 
                 Point currentPosition = e.GetPosition(TreeTopicBrowser);
 
-                if ((Math.Abs(currentPosition.X - _lastMouseDownPoint.X) > 30.0) ||
-                    (Math.Abs(currentPosition.Y - _lastMouseDownPoint.Y) > 20.0))
+                if ((Math.Abs(currentPosition.X - _lastMouseDownPoint.X) > 20) ||
+                    (Math.Abs(currentPosition.Y - _lastMouseDownPoint.Y) > 15))
                 {
-
                     _isDragging = true;
                     DragDrop.DoDragDrop(TreeTopicBrowser, TreeTopicBrowser.SelectedItem, DragDropEffects.Move);
                 }
@@ -393,6 +389,9 @@ public void SelectTopic(DocTopic topic)
                 return;
             var targetTopic = tvItem.DataContext as DocTopic;
             if (targetTopic == null)
+                return;
+
+            if (sourceTopic == targetTopic)
                 return;
 
             if (MoveTopicCommand == null)
