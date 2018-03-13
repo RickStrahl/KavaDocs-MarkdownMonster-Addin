@@ -13,26 +13,26 @@
        
         <ContextMenu x:Key="TopicContextMenu" Name="TopicContextMenu">
             <MenuItem Name="MenuNewTopic" Header="_New Topic" InputGestureText="ctrl-n" 
-                      Command="{Binding AppModel.Commands.NewTopicCommand}" />
+                      Command="{Binding KavaDocsModel.Commands.NewTopicCommand}" />
             <MenuItem Name="MenuDeleteTopic" Header="Delete Topic" InputGestureText="del" 
-                      Command="{Binding AppModel.Commands.DeleteTopicCommand}"/>
+                      Command="{Binding KavaDocsModel.Commands.DeleteTopicCommand}"/>
             <Separator/>
             <MenuItem Name="MenuOpenExternalTopicFile" Header="Open Topic File Explicitly"
-                      Command="{Binding AppModel.Commands.OpenTopicFileExplicitlyCommand}"/>
+                      Command="{Binding KavaDocsModel.Commands.OpenTopicFileExplicitlyCommand}"/>
             <Separator/>
-            <MenuItem Name="MenuRefresh" Header="Reload Tree" Command="{Binding AppModel.Commands.ReloadTreeCommand}" />
+            <MenuItem Name="MenuRefresh" Header="Reload Tree" Command="{Binding KavaDocsModel.Commands.ReloadTreeCommand}" />
         </ContextMenu>
 
         <MenuItem x:Key="MainMenuKavaDocsMenu" Header="_Kava Docs">
-            <MenuItem Header="_New Project" Command="{Binding AppModel.Commands.NewProjectCommand}" IsEnabled="False" InputGestureText="alt-k-n" />
-            <MenuItem Header="_Open Project" Command="{Binding AppModel.Commands.OpenProjectCommand}" InputGestureText="alt-k-o" />
+            <MenuItem Header="_New Project" Command="{Binding KavaDocsModel.Commands.NewProjectCommand}" IsEnabled="False" InputGestureText="alt-k-n" />
+            <MenuItem Header="_Open Project" Command="{Binding KavaDocsModel.Commands.OpenProjectCommand}" InputGestureText="alt-k-o" />
             <MenuItem Header="Recent Projects" Name="MenuRecentItems" SubmenuOpened="MenuRecentItems_SubmenuOpened"  >
                 <MenuItem />
             </MenuItem>
-            <MenuItem Header="_Close Project" Command="{Binding AppModel.Commands.CloseProjectCommand}" />
-            <MenuItem Header="_Save Project" Command="{Binding AppModel.Commands.SaveProjectCommand}"  InputGestureText="alt-k-s" />
+            <MenuItem Header="_Close Project" Command="{Binding KavaDocsModel.Commands.CloseProjectCommand}" />
+            <MenuItem Header="_Save Project" Command="{Binding KavaDocsModel.Commands.SaveProjectCommand}"  InputGestureText="alt-k-s" />
             <Separator />
-            <MenuItem Header="Project Settings" Command="{Binding AppModel.Commands.ProjectSettingsCommand}" />
+            <MenuItem Header="Project Settings" Command="{Binding KavaDocsModel.Commands.ProjectSettingsCommand}" />
             <MenuItem Header="Kava Docs Settings" IsEnabled="False" />
         </MenuItem>
 
@@ -85,7 +85,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Background="{StaticResource  FolderBrowserHeaderBackground}">
+        <Grid Background="{StaticResource FolderBrowserHeaderBackground}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -105,7 +105,7 @@
                     Foreground="{DynamicResource BlueItem}" Padding="5,0,5,0"
                     Name="ButtonSelecttFolder" BorderThickness="0"  FontSize="12"
                     ToolTip="Open Project" BorderBrush="Transparent"
-                    Command="{Binding AppModel.Commands.OpenProjectCommand}" />
+                    Command="{Binding KavaDocsModel.Commands.OpenProjectCommand}" />
 
 
             <!--<Button Grid.Column="2" 
@@ -114,14 +114,14 @@
                     Foreground="{DynamicResource BlueItem}" Padding="5,0,5,0"
                     Name="ButtonNewProject" BorderThickness="0"  FontSize="12"
                     ToolTip="New Project" BorderBrush="Transparent"
-                    Command="{Binding AppModel.Commands.NewProjectCommand}" />-->
+                    Command="{Binding KavaDocsModel.Commands.NewProjectCommand}" />-->
 
             <Button  Grid.Column="2"
                      fa:Awesome.Content="Refresh" Background="Transparent" 
 			         Foreground="{DynamicResource BlueItem}" Padding="6,0,6,0"   
 			         Name="ButtonRefreshFolder" BorderThickness="0"  FontSize="12"
 			         ToolTip="Refresh Project Tree" BorderBrush="Transparent"
-                     Command="{Binding AppModel.Commands.ReloadTreeCommand}"
+                     Command="{Binding KavaDocsModel.Commands.ReloadTreeCommand}"
 			         />
 
             <Button  Grid.Column="3"
@@ -129,7 +129,7 @@
 			         Foreground="{DynamicResource BlueItem}" Padding="7,0,7,0"  
 			         Name="ButtonClosePanel" BorderThickness="0" FontSize="12"
 			         ToolTip="Close Kava Docs Panel" BorderBrush="Transparent"
-			         Command="{Binding AppModel.Window.Model.ShowFolderBrowserCommand}" />
+			         Command="{Binding MarkdownMonsterModel.ShowFolderBrowserCommand}" />
         </Grid>
 
         <TextBox Grid.Row="2" Name="TextSearchText" Text="{Binding TopicsFilter,UpdateSourceTrigger=PropertyChanged,Delay=500}"

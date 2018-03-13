@@ -52,8 +52,19 @@ namespace DocHound.Model
 
         /// <summary>
         /// The generated id for this topic - ids start with an underscore
-        /// </summary>        
-        public string Id { get; set; }
+        /// </summary>                
+        public string Id
+        {
+            get { return _Id; }
+            set
+            {
+                if (value == _Id) return;
+                _Id = value;
+                OnPropertyChanged(nameof(Id));
+            }
+        }
+        private string _Id;
+
 
 
         /// <summary>
@@ -63,7 +74,18 @@ namespace DocHound.Model
         /// children easily.
         /// </summary>
         [YamlIgnore]
-        public string ParentId { get; set; }
+        public string ParentId
+        {
+            get { return _ParentId; }
+            set
+            {
+                if (value == _ParentId) return;
+                _ParentId = value;
+                OnPropertyChanged(nameof(ParentId));
+            }
+        }
+        private string _ParentId;
+
 
 
         private DocTopic _parent;
@@ -110,16 +132,23 @@ namespace DocHound.Model
         }
         private string _slug;
 
-        
+
         /// <summary>
         /// Optional link if it's different than the RenderTopicFilename
         /// </summary>
+
         public string Link
         {
-            get { return _link; }
-            set { _link = value; }
+            get { return _Link; }
+            set
+            {
+                if (value == _Link) return;
+                _Link = value;
+                OnPropertyChanged(nameof(Link));
+            }
         }
-        private string _link;
+        private string _Link;
+
 
 
         [YamlIgnore]
@@ -193,7 +222,7 @@ namespace DocHound.Model
             }
             set
             {
-                if (value == _body) return;
+                if (value.Equals(_body)) return;
                 _body = value;
                 SaveTopicFile();
                 OnPropertyChanged();
@@ -232,13 +261,58 @@ namespace DocHound.Model
         private string _remarks;
 
         [YamlIgnore]
-        public string Example { get; set; }
 
-        public bool IsLink { get; set; }
+        public string Example
+        {
+            get { return _Example; }
+            set
+            {
+                if (value == _Example) return;
+                _Example = value;
+                OnPropertyChanged(nameof(Example));
+            }
+        }
+        private string _Example;
 
-        public int SortOrder { get; set; }
 
-        public bool Incomplete { get; set; }
+        public bool IsLink
+        {
+            get { return _IsLink; }
+            set
+            {
+                if (value == _IsLink) return;
+                _IsLink = value;
+                OnPropertyChanged(nameof(IsLink));
+            }
+        }
+        private bool _IsLink;
+
+
+        public int SortOrder
+        {
+            get { return _SortOrder; }
+            set
+            {
+                if (value == _SortOrder) return;
+                _SortOrder = value;
+                OnPropertyChanged(nameof(SortOrder));
+            }
+        }
+        private int _SortOrder;
+
+
+        public bool Incomplete
+        {
+            get { return _Incomplete; }
+            set
+            {
+                if (value == _Incomplete) return;
+                _Incomplete = value;
+                OnPropertyChanged(nameof(Incomplete));
+            }
+        }
+        private bool _Incomplete;
+
 
         [YamlIgnore]
         public bool IsExpanded
@@ -260,10 +334,22 @@ namespace DocHound.Model
 
         [YamlIgnore]
         public DateTime Updated { get; set; }
-        
-        [YamlIgnore]
-        public string HelpId { get; set; }
 
+
+        [YamlIgnore]
+        public string HelpId
+        {
+            get { return _HelpId; }
+            set
+            {
+                if (value == _HelpId) return;
+                _HelpId = value;
+                OnPropertyChanged(nameof(HelpId));
+            }
+        }
+        private string _HelpId;
+
+        
         public ClassInfo ClassInfo { get; set; }
 
         [YamlIgnore]
@@ -275,7 +361,7 @@ namespace DocHound.Model
             {
                 if (Equals(value, _topicState)) return;
                 _topicState = value;
-                OnPropertyChanged();
+               // OnPropertyChanged();
             }
         }
         private TopicState _topicState;
@@ -881,7 +967,13 @@ namespace DocHound.Model
         }
         #endregion
 
-        
+
+
+        public override string ToString()
+        {
+            return $"{Id} - {Title}";
+        }
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -890,13 +982,9 @@ namespace DocHound.Model
         public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            TopicState.IsDirty = true;
         }
-
-        public override string ToString()
-        {
-            return $"{Id} - {Title}";
-        }
-
+        
         #endregion
 
         

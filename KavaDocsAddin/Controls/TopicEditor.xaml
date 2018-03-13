@@ -8,7 +8,8 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
-             
+             xmlns:model="clr-namespace:DocHound.Model;assembly=DocHound"
+
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -32,110 +33,106 @@
 
             <controls:MetroTabItem Name="TabTopic" Header="Topic" Margin="0,0,5,0" CloseButtonEnabled="False"                                   
                                    controls:ControlsHelper.HeaderFontSize="16" >
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Grid>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*"  />
-                            <RowDefinition Height="Auto"  />
-                        </Grid.RowDefinitions>
-
-                        <TextBox Name="TextTitle" 
-                                 Text="{Binding AppModel.ActiveTopic.Title}" 
-                                 Style="{StaticResource HeaderTextBoxStyle}"
-                                 Margin="5,10" 
+                <StackPanel Margin="5,10">
+                    
+                    <TextBox Name="TextTitle" 
+                                 Text="{Binding KavaDocsModel.ActiveTopic.Title}" 
+                                 Style="{StaticResource HeaderTextBoxStyle}"   FontSize="15"                              
                                  controls:TextBoxHelper.Watermark="Topic Title"  
                                  controls:TextBoxHelper.ClearTextButton="True"/>
 
-                        <Grid Grid.Row="1" Margin="5,0,5,10" HorizontalAlignment="Stretch">
-                            <Grid.Resources>
-                                <ObjectDataProvider x:Key="BodyTypes" MethodName="GetValues"
+                    <Grid  Margin="0,10,0,0" HorizontalAlignment="Stretch">
+                        <Grid.Resources>
+                            <ObjectDataProvider x:Key="BodyTypes" MethodName="GetValues"
                                                     ObjectType="{x:Type System:Enum}">
-                                    <ObjectDataProvider.MethodParameters>
-                                        <x:Type TypeName="model:TopicBodyFormats"/>
-                                    </ObjectDataProvider.MethodParameters>
-                                </ObjectDataProvider>
-                            </Grid.Resources>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200" />
-                                <ColumnDefinition Width="200" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+                                <ObjectDataProvider.MethodParameters>
+                                    <x:Type TypeName="model:TopicBodyFormats"/>
+                                </ObjectDataProvider.MethodParameters>
+                            </ObjectDataProvider>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition  />
+                            <ColumnDefinition  />
+                        </Grid.ColumnDefinitions>
 
-                            <ComboBox Name="ComboTopicType" 
-                                  Grid.Column="0"
-                                  
+                        <ComboBox Name="ComboTopicType" 
+                                  Grid.Column="0"                                  
                                   ItemsSource="{Binding TopicTypesList}"
                                   IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False"
                                   TextSearch.TextPath="Type"
-                                  SelectedValue="{Binding AppModel.ActiveTopic.Type}"                                  
+                                  SelectedValue="{Binding KavaDocsModel.ActiveTopic.Type}"                                  
                                   SelectedValuePath="Type"                                      
                              >
 
-                                <ComboBox.ItemTemplate>
-                                    <ItemContainerTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image Source="{Binding ImageFile}" Margin="3,0,6,0" />
-                                            <TextBlock Text="{Binding Type}" />
-                                        </StackPanel>
-                                    </ItemContainerTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
+                            <ComboBox.ItemTemplate>
+                                <ItemContainerTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{Binding ImageFile}" Margin="3,0,6,0" Width="16" Height="16"/>
+                                        <TextBlock Text="{Binding Type}" />
+                                    </StackPanel>
+                                </ItemContainerTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
 
-
-                            <ComboBox Name="ComboBodyType" SelectedValue="{Binding AppModel.ActiveTopic.BodyFormat}"                                 
+                        <ComboBox Name="ComboBodyType" SelectedValue="{Binding KavaDocsModel.ActiveTopic.BodyFormat}"                                 
                                       Grid.Column="1" ItemsSource="{Binding Source={StaticResource BodyTypes}}"
-                                      Margin="10,0,10,0"
-                                      >
-                            </ComboBox>
-
-                            <TextBox Name="TextSlug"  Text="{Binding AppModel.ActiveTopic.Slug}" Grid.Column="2"/>
-                        </Grid>
+                                      Margin="10,0,0,0">
+                        </ComboBox>
                     </Grid>
-                    
-                    <WebBrowser Name="TopicEditorBrowser" Grid.Row="2" />
 
-                </Grid>
-            </controls:MetroTabItem>
-                        
+                    <Label Margin="0,6,0,0">Slug:</Label>
+                    <TextBox Name="TextSlug"  Text="{Binding KavaDocsModel.ActiveTopic.Slug}" />
 
-            <controls:MetroTabItem Name="TabRemarkssAndExample" Header="Remarks &amp; Example" Margin="0,0,5,0" CloseButtonEnabled="False"                                   
-                                   controls:ControlsHelper.HeaderFontSize="16" >
-                <Grid Margin="20,10">
+                    <Label Margin="0,6,0,0">File Link:</Label>
+                    <TextBox Name="TextLink"  Text="{Binding KavaDocsModel.ActiveTopic.Link}" />
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+                    <Label Margin="0,6,0,0">Keywords: (comma delimited)</Label>
+                    <TextBox Name="TextKeywords"  Text="{Binding KavaDocsModel.ActiveTopic.Keywords}" />
 
-                    <Label>Notes:</Label>
-                    <TextBox Grid.Row="1" 
-                             Text="{Binding AppModel.ActiveTopic.Remarks}" 
+                    <Label  Margin="0,6,0,0">See Also: (one per line: title, link or slug)</Label>
+                    <TextBox Text="{Binding KavaDocsModel.ActiveTopic.Remarks}" 
+                             FontFamily="{Binding AppModel.Configuration.SeeAlso}" 
+                             TextWrapping="Wrap"
+                             AcceptsTab="True"
+                             AcceptsReturn="True"
+                             FontSize="16"
+                             Height="55"
+                    />
+
+                    <Separator Margin="0,6,0,0"/>
+
+                    <Label  Margin="0,6,0,0">Notes:</Label>
+                    <TextBox Text="{Binding KavaDocsModel.ActiveTopic.Remarks}" 
                              FontFamily="{Binding AppModel.Configuration.EditorFont}" 
                              TextWrapping="Wrap"
                              AcceptsTab="True"
                              AcceptsReturn="True"
-                             FontSize="16" />
+                             FontSize="16"
+                             Height="70"
+                             />
+                    
 
-                    <Label Grid.Row="2" Margin="0,15,0,0">Code Example:</Label>
-                    <TextBox Grid.Row="3" 
-                             Text="{Binding AppModel.ActiveTopic.Example}" 
+                    <Label  Margin="0,6,0,0">Code Example:</Label>
+                    <TextBox  
+                             Text="{Binding KavaDocsModel.ActiveTopic.Example}" 
                              FontFamily="{Binding AppModel.Configuration.EditorFont}"  
                              AcceptsTab="True"
                              AcceptsReturn="True"
-                             TextWrapping="Wrap" 
+                             TextWrapping="Wrap"                              
+                             Height="120"
                              FontSize="16"/>
-                    
-                </Grid>
+
+                    <Label  Margin="0,6,0,0">Body:</Label>
+                    <TextBox  
+                        Text="{Binding KavaDocsModel.ActiveTopic.Body}" 
+                        FontFamily="{Binding AppModel.Configuration.EditorFont}"  
+                        AcceptsTab="True"
+                        AcceptsReturn="True"
+                        TextWrapping="Wrap"                              
+                        Height="120"
+                        FontSize="16"/>
+
+                </StackPanel>
             </controls:MetroTabItem>
             
             <controls:MetroTabItem Name="TabClassInfo" Header="Class Info" Margin="0,0,5,0" CloseButtonEnabled="False"                                   

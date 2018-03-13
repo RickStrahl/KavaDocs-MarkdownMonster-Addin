@@ -241,28 +241,32 @@ namespace DocHound.Model
         {
             TopicTypes = new Dictionary<string, string>
             {
-                { "index", "Top level topic for the documentation." },
-                { "header", "Header topic for sub-topics" },
-                { "topic", "Generic topic" },
-                { "whatsnew", "What's new" },
-                { "weblink", "External link" },
-                { "classheader", "Class Header" },
-                { "interface", "Interface" },
-                { "namespace", "Namespace" },
-                { "classmethod", "Class method" },
-                {"classproperty", "Class properyty" },
-                {"classfield", "Class field" },
-                {"classevent", "Class event" },
-                { "classconstructor","Class constructor" },
-                {"enum", "Enumeration" },
-                {"delegate", "Delegate" },
-                { "webservice", "Web Service" },
-                {"database", "Database" },
-                { "datacolumn", "Data columns" },
-                { "datafunction", "Data function" },
-                { "datastoredproc", "Data stored procedure" },
-                {"datatable", "dataview" }
-            };            
+                {"index", "Top level topic for the documentation."},
+                {"header", "Header topic for sub-topics"},
+                {"topic", "Generic topic"},
+                {"whatsnew", "What's new"},
+                {"weblink", "External link"},
+                {"classheader", "Class Header"},
+                {"interface", "Interface"},
+                {"namespace", "Namespace"},
+                {"classmethod", "Class method"},
+                {"classproperty", "Class properyty"},
+                {"classfield", "Class field"},
+                {"classevent", "Class event"},
+                {"classconstructor", "Class constructor"},
+                {"enum", "Enumeration"},
+                {"delegate", "Delegate"},
+                {"webservice", "Web Service"},
+                {"database", "Database"},
+                {"datacolumn", "Data columns"},
+                {"datafunction", "Data function"},
+                {"datastoredproc", "Data stored procedure"},
+                {"datatable", "Data table"},
+                {"dataview", "Data view"},
+                {"vstsworkitem", "VSTS work item"},
+                {"vstsworkitemquery", "VSTS work item query"}
+            };
+
         }
 
         public DocProject(string filename = null)
@@ -326,6 +330,7 @@ namespace DocHound.Model
             }
 
             topic.Project = this;
+            topic.TopicState.IsDirty = false;
 
             if (!topic.LoadTopicFile()) // load disk content
             {
@@ -409,7 +414,7 @@ namespace DocHound.Model
             }
             if (loadTopic.Id == topic.Id)
             {
-                var topics = loadTopic.Parent.Topics;
+                var topics = loadTopic.Parent?.Topics;
                 if (topic == null)
                     topics = Topics;
 

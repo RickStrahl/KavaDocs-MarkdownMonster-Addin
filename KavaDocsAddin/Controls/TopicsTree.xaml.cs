@@ -54,8 +54,8 @@ namespace KavaDocsAddin.Controls
 
             if (Model.Project != null)
             {                
-                Model.AppModel.Configuration.AddRecentProjectItem(Model.Project.Filename,
-                    Model.AppModel.ActiveTopic?.Id,Model.Project.Title);
+                Model.KavaDocsModel.Configuration.AddRecentProjectItem(Model.Project.Filename,
+                    Model.KavaDocsModel.ActiveTopic?.Id,Model.Project.Title);
             }
 
             Model.Project = project;
@@ -72,11 +72,11 @@ namespace KavaDocsAddin.Controls
             //project.WriteTopicTree(project.Topics, 0, sb);
 
             if (project.Topics != null && project.Topics.Count > 0)
-                Model.AppModel.ActiveTopic = project.Topics[0];
+                Model.KavaDocsModel.ActiveTopic = project.Topics[0];
 
             Model.TopicTree = project.Topics;
 
-            Model.AppModel.Configuration.AddRecentProjectItem(project.Filename,projectTitle: project.Title);
+            Model.KavaDocsModel.Configuration.AddRecentProjectItem(project.Filename,projectTitle: project.Title);
         }
 
         #endregion
@@ -105,7 +105,7 @@ namespace KavaDocsAddin.Controls
             var topic = TreeTopicBrowser.SelectedItem as DocTopic;
             if (topic != null)
             {
-                var tab = Model.AppModel.Window.RefreshTabFromFile(topic.GetTopicFileName());
+                var tab = Model.KavaDocsModel.Window.RefreshTabFromFile(topic.GetTopicFileName());
                 var editor = tab.Tag as MarkdownDocumentEditor;
                 if (editor != null)
                     editor.Identifier = "KavaDocsDocument";
@@ -116,14 +116,24 @@ namespace KavaDocsAddin.Controls
 
         public bool HandleSelection(DocTopic topic = null)
         {
+            bool selectTopic = false;
             if (topic == null)
                 topic = TreeTopicBrowser.SelectedItem as DocTopic;
+            else
+                selectTopic = true;
 
             if (topic == null)
                 return false;
 
             kavaUi.AddinModel.LastTopic = kavaUi.AddinModel.ActiveTopic;
+
+            bool result = SaveProjectFileForTopic(kavaUi.AddinModel.LastTopic);
+            if (!result)
+                return false;
+
+            
             kavaUi.AddinModel.ActiveTopic = topic;
+
             
             // TODO: Move to function
             if (kavaUi.AddinModel.RecentTopics.Contains(topic))
@@ -135,12 +145,35 @@ namespace KavaDocsAddin.Controls
                     new ObservableCollection<DocTopic>(kavaUi.AddinModel.RecentTopics.Take(14));
 
             OpenTopicInEditor();
-
+            
             var file = topic.GetTopicFileName();
             var doc = new MarkdownDocument();
             doc.Load(file);
-            
+
+            // set topic state to selected and unchanged
+            if (selectTopic)
+                topic.TopicState.IsSelected = true;
+            topic.TopicState.IsDirty = false;
+
             return true;
+        }
+
+        public bool SaveProjectFileForTopic(DocTopic topic, DocProject project = null)
+        {
+            if (topic == null)
+                return false;
+
+            if (!topic.TopicState.IsDirty)
+                return true;
+
+            if (project == null)
+                project = kavaUi.AddinModel.ActiveProject;
+
+            bool result =  project.SaveProject();
+            if (result)
+                topic.TopicState.IsDirty = false;
+
+            return result;
         }
 
         public TabItem OpenTopicInEditor()
@@ -149,7 +182,7 @@ namespace KavaDocsAddin.Controls
             if (topic == null)
                 return null;
 
-            var window = Model.AppModel.Window;
+            var window = Model.KavaDocsModel.Window;
             var file = topic.GetTopicFileName();
             var editorFile = topic.GetKavaDocsEditorFilePath();
 
@@ -179,12 +212,38 @@ namespace KavaDocsAddin.Controls
                 }
 
                 // Will also open the tab if not open yet
-                tab = Model.AppModel.Window.RefreshTabFromFile(editorFile, readOnly: true);
+                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(editorFile, readOnly: true);
             }
 
-            if(tab != null)
+            if (tab != null)
+            {
                 SetEditorWithTopic(tab.Tag as MarkdownDocumentEditor, kavaUi.AddinModel.ActiveTopic);
-            
+
+                // Explicitly read in the current text from an open tab and save to body
+                var editor = tab.Tag as MarkdownDocumentEditor;
+                var body = editor.GetMarkdown();
+                if (!string.IsNullOrEmpty(body))                
+                    topic.Body = topic.StripYaml(body);
+
+                if (string.IsNullOrEmpty(topic.Link))
+                {
+                    var relative = FileUtils.GetRelativePath(topic.GetTopicFileName(), topic.Project.ProjectDirectory);
+                    if (!string.IsNullOrEmpty(relative))
+                    {
+                        topic.Link = FileUtils.NormalizePath(relative);
+                        if (String.IsNullOrEmpty(topic.Link))
+                            topic.Link = topic.Link.Replace("\\", "/");
+                    }
+                }
+
+                if (body != topic.Body)
+                {
+                    editor.SetMarkdown(topic.Body);
+                }
+
+                
+            }
+
             return tab;
         }
 
@@ -226,19 +285,19 @@ namespace KavaDocsAddin.Controls
 
                 if (kavaUi.AddinModel.TopicEditor.TabTopic.IsSelected)
                 {
-                    Model.AppModel.ActiveMarkdownEditor.GotoLine(0);
-                    Model.AppModel.ActiveMarkdownEditor.SetEditorFocus();
+                    Model.KavaDocsModel.ActiveMarkdownEditor.GotoLine(0);
+                    Model.KavaDocsModel.ActiveMarkdownEditor.SetEditorFocus();
                 }
             }
 
             // this works without a selection
             if (e.Key == Key.N && Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                Model.AppModel.Commands.NewTopicCommand.Execute(null);
+                Model.KavaDocsModel.Commands.NewTopicCommand.Execute(null);
             }
             else if (e.Key == Key.Delete)
             {
-                Model.AppModel.Commands.DeleteTopicCommand.Execute(null);
+                Model.KavaDocsModel.Commands.DeleteTopicCommand.Execute(null);
             }
         }
 
@@ -416,15 +475,15 @@ public void SelectTopic(DocTopic topic)
 
                 var targetTopics = dragResult.TargetTopic?.Topics;
                 if (targetTopics == null)
-                    targetTopics = Model.AppModel.ActiveProject.Topics;
+                    targetTopics = Model.KavaDocsModel.ActiveProject.Topics;
 
                 var targetParentTopics = dragResult.TargetTopic.Parent?.Topics;
                 if (targetParentTopics == null)
-                    targetParentTopics = Model.AppModel.ActiveProject.Topics;
+                    targetParentTopics = Model.KavaDocsModel.ActiveProject.Topics;
 
                 var sourceTopics = dragResult.SourceTopic?.Parent?.Topics;
                 if (sourceTopics == null)
-                    sourceTopics = Model.AppModel.ActiveProject.Topics;   
+                    sourceTopics = Model.KavaDocsModel.ActiveProject.Topics;   
 
                 if (dragResult.DropLocation == DropLocations.Below)
                 {
@@ -474,7 +533,7 @@ public void SelectTopic(DocTopic topic)
                 }
     
 
-                Model.AppModel.ActiveProject.SaveProject();
+                Model.KavaDocsModel.ActiveProject.SaveProject();
             }, (p, c) => true);
         }
 
@@ -508,7 +567,7 @@ public void SelectTopic(DocTopic topic)
                 return;
 
             menu.Items.Clear();
-            foreach (var recent in Model.AppModel.Configuration.RecentProjects)
+            foreach (var recent in Model.KavaDocsModel.Configuration.RecentProjects)
             {
                 var header = recent.ProjectTitle;
                 if (!String.IsNullOrEmpty(header))
@@ -521,7 +580,7 @@ public void SelectTopic(DocTopic topic)
                 var mi = new MenuItem()
                 {
                     Header =  header,
-                    Command = Model.AppModel.Commands.OpenRecentProjectCommand,
+                    Command = Model.KavaDocsModel.Commands.OpenRecentProjectCommand,
                     CommandParameter = recent
                 };
                 menu.Items.Add(mi);

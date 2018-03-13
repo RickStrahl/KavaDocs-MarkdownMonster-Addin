@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DocHound.Annotations;
 using DocHound.Model;
+using MarkdownMonster;
 
 namespace KavaDocsAddin.Controls
 {
@@ -15,7 +16,7 @@ namespace KavaDocsAddin.Controls
     {
         
 
-        public KavaDocsModel AppModel
+        public KavaDocsModel KavaDocsModel
         {
             get { return _appModel; }
             set
@@ -29,9 +30,14 @@ namespace KavaDocsAddin.Controls
         }
         private KavaDocsModel _appModel;
 
+        public AppModel AppModel
+        {
+            get; set;
+        }
+
         public DocTopic Topic
         {
-            get { return AppModel.ActiveTopic; }
+            get { return KavaDocsModel.ActiveTopic; }
         }
 
         
@@ -60,16 +66,18 @@ namespace KavaDocsAddin.Controls
 
         public DocProject Project
         {
-            get { return AppModel.ActiveProject; }
+            get { return KavaDocsModel.ActiveProject; }
         }
 
         public TopicEditorModel()
         {
-            AppModel = kavaUi.AddinModel;
-            AppModel.PropertyChanged += AppModel_PropertyChanged;
+            KavaDocsModel = kavaUi.AddinModel;
+            AppModel = kavaUi.MarkdownMonsterModel;
+
+            KavaDocsModel.PropertyChanged += KavaDocsModel_PropertyChanged;
         }
 
-        private void AppModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void KavaDocsModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "ActiveTopic")
             {

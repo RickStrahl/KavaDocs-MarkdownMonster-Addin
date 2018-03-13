@@ -59,6 +59,19 @@ namespace DocHound.Model
         }
         private bool _isEditing;
 
+        
+        public bool IsDirty
+        {
+            get { return _IsDirty; }
+            set
+            {
+                if (value == _IsDirty) return;
+                _IsDirty = value;
+                OnPropertyChanged(nameof(IsDirty));
+            }
+        }
+        private bool _IsDirty = false;
+
 
         public bool IsPreview { get; set; }
 

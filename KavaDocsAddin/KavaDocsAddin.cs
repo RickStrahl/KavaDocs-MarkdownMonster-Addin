@@ -42,6 +42,8 @@ namespace KavaDocsAddin
 
         public bool HasUiLoaded = false;
 
+        public TabItem KavaDocsTopicTab { get; private set; }
+        public TopicEditor TopicEditor { get; private set; }
         public TopicsTree Tree { get; set; }
 
         #region Initialization
@@ -91,7 +93,6 @@ namespace KavaDocsAddin
         {
             if (!HasUiLoaded)
             {
-
                 kavaUi.Addin = this;
                 AddinModel = kavaUi.AddinModel;
                 AddinModel.Addin = this;
@@ -104,8 +105,16 @@ namespace KavaDocsAddin
 
                 Tree = new TopicsTree();
                 tabItem.Content = Tree;
-
                 Model.Window.AddLeftSidebarPanelTabItem(tabItem);
+
+
+                tabItem = new TabItem() { Name = "KavaDocsTopic", Header = " Topic " };
+                KavaDocsTopicTab = tabItem;
+
+                TopicEditor = new TopicEditor();
+                tabItem.Content = TopicEditor;
+                Model.Window.AddRightSidebarPanelTabItem(tabItem);
+
 
                 KavaDocsMenu = new KavaDocsMenuHandler();
                 KavaDocsMenu.CreateKavaDocsMainMenu();

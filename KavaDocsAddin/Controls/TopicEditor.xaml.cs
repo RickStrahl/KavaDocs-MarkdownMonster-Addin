@@ -24,45 +24,40 @@ namespace KavaDocsAddin.Controls
     {
         private TopicEditorModel Model;
 
-        public MarkdownDocumentEditor BodyEditor { get; set; }
-
-        public MarkdownDocumentEditor ActiveMarkdownEditor => BodyEditor;
+        public MarkdownDocumentEditor ActiveMarkdownEditor => mmApp.Model.ActiveEditor;
 
         #region Initialization
 
         public TopicEditor()
         {            
             InitializeComponent();
-            
 
             Model = new TopicEditorModel();
+
             DataContext = Model;
-
-            BodyEditor = new MarkdownDocumentEditor();
-            BodyEditor.Identifier = "KavaDocsDocument";
-
+            
             Loaded += TopicEditor_Loaded;            
         }
 
 
         private void TopicEditor_Loaded(object sender, RoutedEventArgs e)
-        {
-            BodyEditor.LoadDocument();
-            kavaUi.AddinModel.PropertyChanged += AddinModel_PropertyChanged;
-            TextTitle.Focus();
+        {            
+            //kavaUi.AddinModel.PropertyChanged += AddinModel_PropertyChanged;            
         }
-        
+
+        public void LoadTopic(DocTopic topic)
+        {
+            Model.KavaDocsModel.ActiveTopic = topic;
+            topic.TopicState.IsSelected = true;
+        }
+
         #endregion
 
-        public void FocusEditor()
-        {
-            BodyEditor.SetEditorFocus();
-        }
-
+        
         private void AddinModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(KavaDocsModel.ActiveTopic))
-            {
+            {                                                                         
                 //BodyEditor.Identifier = "KavaDocsDocument";
                 //var topicId = Model.AppModel.ActiveTopic?.Id;
                 //if (topicId != null)

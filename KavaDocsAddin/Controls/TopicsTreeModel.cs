@@ -12,6 +12,7 @@ using DocHound.Model;
 using DocHound.Annotations;
 using DocHound.Utilities;
 using MarkdownMonster.Windows;
+using MarkdownMonster;
 
 namespace KavaDocsAddin.Controls
 {
@@ -121,7 +122,7 @@ namespace KavaDocsAddin.Controls
             
             while(!string.IsNullOrEmpty(topic.ParentId))
             {
-                var parentTopic = AppModel.ActiveProject.Topics.First(tp => tp.Id == topic.ParentId);
+                var parentTopic = KavaDocsModel.ActiveProject.Topics.First(tp => tp.Id == topic.ParentId);
                 topicList.Add(parentTopic);
                 topic = parentTopic;
             }
@@ -129,11 +130,14 @@ namespace KavaDocsAddin.Controls
             return topicList;
         }
 
-        public KavaDocsModel AppModel { get; }
+        public KavaDocsModel KavaDocsModel { get; }
+
+        public AppModel MarkdownMonsterModel { get;  }
 
         public TopicsTreeModel(DocProject project)
         {
-            AppModel = kavaUi.AddinModel;
+            KavaDocsModel = kavaUi.AddinModel;
+            MarkdownMonsterModel = kavaUi.MarkdownMonsterModel;
 
             Project = project;
             if (project != null)
