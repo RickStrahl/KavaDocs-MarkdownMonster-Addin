@@ -210,11 +210,14 @@ namespace KavaDocsAddin
         public override void OnDocumentActivated(MarkdownDocument doc)
         {
             base.OnDocumentActivated(doc);
-                        
-            var topic = Model.ActiveEditor.Properties["KavaDocsTopic"] as DocTopic;
-            if (topic == null)
+            if (AddinModel == null || Model?.ActiveEditor == null)
                 return;
+            
+            if (!Model.ActiveEditor.Properties.TryGetValue("KavaDocsTopic", out object objTopic))                                                    
+                 return;            
 
+            var topic = objTopic as DocTopic;
+            AddinModel.ActiveTopic = topic;
             topic.TopicState.IsSelected = true;
         }
 
