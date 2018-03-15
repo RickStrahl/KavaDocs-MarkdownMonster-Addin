@@ -68,41 +68,40 @@
                                  controls:TextBoxHelper.Watermark="Topic Title"  />
 
             <Grid  Margin="0,10,0,0" HorizontalAlignment="Stretch">
-                <Grid.Resources>
-                    <ObjectDataProvider x:Key="BodyTypes" MethodName="GetValues"
+                <!--<Grid.Resources>
+                    <ObjectDataProvider x:Key="BodyTypes"  MethodName="GetValues"
                                                     ObjectType="{x:Type System:Enum}">
                         <ObjectDataProvider.MethodParameters>
                             <x:Type TypeName="model:TopicBodyFormats"/>
                         </ObjectDataProvider.MethodParameters>
                     </ObjectDataProvider>
-                </Grid.Resources>
+                </Grid.Resources>-->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition  />
                     <ColumnDefinition  />
                 </Grid.ColumnDefinitions>
 
                 <ComboBox Name="ComboTopicType" 
-                                  Grid.Column="0"                                  
-                                  ItemsSource="{Binding TopicTypesList}"
+                                  Grid.Column="1"                                  
+                                  ItemsSource="{Binding DisplayTypesList}"
                                   IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False"
-                                  TextSearch.TextPath="Type"
-                                  SelectedValue="{Binding KavaDocsModel.ActiveTopic.Type}"                                  
-                                  SelectedValuePath="Type"                                      
-                             >
-
+                                  TextSearch.TextPath="DisplayType"
+                                  SelectedValuePath="DisplayType"  
+                                  SelectedValue="{Binding KavaDocsModel.ActiveTopic.DisplayType}">
                     <ComboBox.ItemTemplate>
                         <ItemContainerTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="{Binding ImageFile}" Margin="3,0,6,0" Width="16" Height="16"/>
-                                <TextBlock Text="{Binding Type}" />
+                                <TextBlock Text="{Binding DisplayType}" />
                             </StackPanel>
                         </ItemContainerTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
-                <ComboBox Name="ComboBodyType" SelectedValue="{Binding KavaDocsModel.ActiveTopic.BodyFormat}"                                 
-                                      Grid.Column="1" ItemsSource="{Binding Source={StaticResource BodyTypes}}"
-                                      Margin="10,0,0,0">
+                <ComboBox Name="ComboBodyType" SelectedValue="{Binding KavaDocsModel.ActiveTopic.Type}"                                 
+                                      Grid.Column="0" 
+                                      ItemsSource="{Binding Source={x:Static model:TopicBodyFormats.TopicBodyFormatsList}}"
+                                      Margin="0,0,10,0">
                 </ComboBox>
             </Grid>
 

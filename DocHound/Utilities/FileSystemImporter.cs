@@ -52,8 +52,8 @@ namespace DocHound.Utilities
                 var topic = new DocTopic(project)
                 {
                     Title = Path.GetFileName(folder),
-                    Type = "header",
-                    BodyFormat = TopicBodyFormats.Markdown,
+                    DisplayType = "header",
+                    Type = TopicBodyFormats.Markdown,
                     Project = project,
                     ParentId = parentTopic?.Id,
                     Topics = new ObservableCollection<DocTopic>()
@@ -94,14 +94,14 @@ namespace DocHound.Utilities
                 var topic = new DocTopic(project)
                 {
                     Title = title,
-                    Type = "topic",
-                    BodyFormat = TopicBodyFormats.Markdown,
+                    DisplayType = "topic",
+                    Type = TopicBodyFormats.Markdown,
                     Project = project,
                     ParentId = parentTopic?.Id
                 };
 
                 if (ext == ".htm" || ext == ".html")
-                    topic.BodyFormat = TopicBodyFormats.Html;
+                    topic.Type = TopicBodyFormats.Html;
 
                 topic.Body = File.ReadAllText(file);
                 

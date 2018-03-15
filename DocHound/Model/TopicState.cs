@@ -85,7 +85,7 @@ namespace DocHound.Model
                 if (string.IsNullOrEmpty(Topic.Project.OutputDirectory))
                     return null;
 
-                var type = Topic.Type;
+                var type = Topic.DisplayType;
                 if (type == null)
                 {
                     if (Topic.Topics != null && Topic.Topics.Count > 0)
@@ -108,7 +108,7 @@ namespace DocHound.Model
                 if (string.IsNullOrEmpty(Topic.Project.OutputDirectory))
                     return null;
 
-                var type = Topic.Type;
+                var type = Topic.DisplayType;
                 if (type == null)
                 {
                     if (Topic.Topics != null && Topic.Topics.Count > 0)

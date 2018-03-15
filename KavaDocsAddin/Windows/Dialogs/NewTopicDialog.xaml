@@ -43,17 +43,17 @@
            <ComboBox Name="ComboTopicType"                           
                           ItemsSource="{Binding TopicTypesList}"
                           IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False"
-                          TextSearch.TextPath="Type"
+                          TextSearch.TextPath="DisplayType"
                           FontSize="{Binding AppModel.Configuration.WindowPosition.WindowFontSize}" Padding="3"
-                          SelectedValue="{Binding Topic.Type}"                                  
-                          SelectedValuePath="Type"                          
+                          SelectedValue="{Binding Topic.DisplayType}"                                  
+                          SelectedValuePath="DisplayType"                          
                 >
 
                     <ComboBox.ItemTemplate>
                         <ItemContainerTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="{Binding ImageFile}" Margin="3,0,6,0" />
-                                <TextBlock Text="{Binding Type}" />
+                                <TextBlock Text="{Binding DisplayType}" />
                             </StackPanel>
                         </ItemContainerTemplate>
                     </ComboBox.ItemTemplate>

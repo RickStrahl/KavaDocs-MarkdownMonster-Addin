@@ -177,7 +177,7 @@ Time to get going!
             {
                 Title = Title,
                 Body = body,
-                Type = "index"
+                DisplayType = "index"
             };
             project.Topics.Add(topic);            
             project.SaveProject();

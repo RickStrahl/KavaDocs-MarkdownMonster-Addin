@@ -69,7 +69,7 @@ namespace DocumentationMonster.Core.Tests
             
             Assert.NotNull(project);
             Assert.True(project.Topics.Count > 0);
-            var topics = project.Topics.Where(t => t.Type.ToLower() == "topic");
+            var topics = project.Topics.Where(t => t.DisplayType.ToLower() == "topic");
 
             int x = 0;
             foreach (var topic in topics)

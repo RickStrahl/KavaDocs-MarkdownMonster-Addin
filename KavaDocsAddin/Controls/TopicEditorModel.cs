@@ -46,7 +46,7 @@ namespace KavaDocsAddin.Controls
         {
             get
             {                
-                return Topic?.BodyFormat.ToString();               
+                return Topic?.Type.ToString();               
             }
             set
             {
@@ -56,10 +56,8 @@ namespace KavaDocsAddin.Controls
 
                 if (Topic == null)
                     return;
-
-                TopicBodyFormats format; 
-                Enum.TryParse<TopicBodyFormats>(value,out format);
-                Topic.BodyFormat = format;
+                
+                Topic.Type = value;
             }
         }
         private string _topicType;
@@ -82,7 +80,7 @@ namespace KavaDocsAddin.Controls
             if (e.PropertyName == "ActiveTopic")
             {
                 OnPropertyChanged(nameof(Topic));
-                OnPropertyChanged(nameof(TopicTypesList));
+                OnPropertyChanged(nameof(DisplayTypesList));
             }
             if (e.PropertyName == "ActiveProject")
             {
@@ -91,20 +89,20 @@ namespace KavaDocsAddin.Controls
             }
         }
 
-        public List<TopicTypeListItem> TopicTypesList
+        public List<DisplayTypeItem> DisplayTypesList
         {
             get
             {
                 if (Project == null)
                     return null;
 
-                var list = new List<TopicTypeListItem>();
+                var list = new List<DisplayTypeItem>();
 
                 foreach (var type in Project.TopicTypes)
                 {
-                    var item = new TopicTypeListItem()
+                    var item = new DisplayTypeItem()
                     {
-                        Type = type.Key
+                        DisplayType = type.Key
                     };
                     list.Add(item);
                 }
@@ -126,19 +124,18 @@ namespace KavaDocsAddin.Controls
         #endregion
     }
 
-    public class TopicTypeListItem
+    public class DisplayTypeItem
     {
-
-        public string Type { get; set; }
+        public string DisplayType { get; set; }
 
         public string ImageFile
         {
             get
             {
-                if (Type == null || kavaUi.AddinModel.ActiveProject == null)
+                if (DisplayType == null || kavaUi.AddinModel.ActiveProject == null)
                     return null;
 
-                return Path.Combine(kavaUi.AddinModel.ActiveProject.ProjectDirectory, "wwwroot", "icons", Type + ".png");
+                return Path.Combine(kavaUi.AddinModel.ActiveProject.ProjectDirectory, "wwwroot", "icons", DisplayType + ".png");
             }
         }
 

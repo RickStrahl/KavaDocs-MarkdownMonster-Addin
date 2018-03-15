@@ -83,20 +83,20 @@ namespace DocHound.Windows.Dialogs
         public string NewTopicLevel { get; set; }
 
 
-        public List<TopicTypeListItem> TopicTypesList
+        public List<DisplayTypeItem> TopicTypesList
         {
             get
             {
                 if (AppModel.ActiveProject == null)
                     return null;
 
-                var list = new List<TopicTypeListItem>();
+                var list = new List<DisplayTypeItem>();
 
                 foreach (var type in AppModel.ActiveProject.TopicTypes)
                 {
-                    var item = new TopicTypeListItem()
+                    var item = new DisplayTypeItem()
                     {
-                        Type = type.Key
+                        DisplayType = type.Key
                     };
                     list.Add(item);
                 }
@@ -159,7 +159,7 @@ namespace DocHound.Windows.Dialogs
                 Topic.Parent = parentTopic;
                 if(AppModel.ActiveTopic.SortOrder > 0)
                     Topic.SortOrder = AppModel.ActiveTopic.SortOrder + 1;
-                Topic.Type = AppModel.ActiveTopic.Type;
+                Topic.DisplayType = AppModel.ActiveTopic.DisplayType;
 
                 if (parentTopic != null)                
                     parentTopic.Topics.Insert(0, Topic);
@@ -195,15 +195,15 @@ namespace DocHound.Windows.Dialogs
         {
             if (topic != null)
             {
-                if (topic.Type == "header" ||
-                    topic.Type == "classheader" || topic.Type== "index")
+                if (topic.DisplayType == "header" ||
+                    topic.DisplayType == "classheader" || topic.DisplayType== "index")
                 {
                     Topic.ParentId = topic.Id;
                     ParentTopicTitle = topic.Title;
-                    Topic.Type = "topic";
+                    Topic.DisplayType = "topic";
                     NewTopicLevel = "Below";
-                    if (topic.Type == "classheader")
-                        Topic.Type = "classmethod";
+                    if (topic.DisplayType == "classheader")
+                        Topic.DisplayType = "classmethod";
 
                     RadioButtonBelow.IsChecked = true;
                 }
@@ -213,7 +213,7 @@ namespace DocHound.Windows.Dialogs
                     Topic.ParentId = topic.ParentId;
                     ParentTopicTitle = AppModel.ActiveProject.Topics
                         .FirstOrDefault(t => t.Id == Topic.ParentId)?.Title;
-                    Topic.Type = topic.Type;
+                    Topic.DisplayType = topic.DisplayType;
                     RadioButtonCurrent.IsChecked = true;
                 }
             }

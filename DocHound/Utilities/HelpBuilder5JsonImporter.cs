@@ -35,7 +35,7 @@ namespace DocHound.Utilities
                     Id = oldTopic.pk,
                     ParentId = oldTopic.parentpk,
                     Title = oldTopic.topic,                                        
-                    Type = oldTopic.type?.ToLower(),
+                    DisplayType = oldTopic.type?.ToLower(),
                     Keywords = oldTopic.keywords,
                     Remarks = oldTopic.remarks,
                     Example = oldTopic.example,
@@ -67,7 +67,7 @@ namespace DocHound.Utilities
                 
 
                 int format = oldTopic.viewmode;
-                newTopic.BodyFormat = format == 2 ? TopicBodyFormats.Markdown : TopicBodyFormats.HelpBuilder;
+                newTopic.Type = format == 2 ? TopicBodyFormats.Markdown : TopicBodyFormats.HelpBuilder;
                 newTopic.Body = oldTopic.body;
 
                 // Properties have to be parsed out

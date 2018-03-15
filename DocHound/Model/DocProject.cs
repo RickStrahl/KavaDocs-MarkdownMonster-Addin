@@ -501,7 +501,7 @@ namespace DocHound.Model
 
             if (!string.IsNullOrEmpty(fileTopic.Title))
                 topic.Title = fileTopic.Title;
-            topic.Type = fileTopic.Type;
+            topic.DisplayType = fileTopic.DisplayType;
             if (!string.IsNullOrEmpty(fileTopic.Slug))
                 topic.Slug = fileTopic.Slug;
 
@@ -748,7 +748,7 @@ namespace DocHound.Model
             return Topics
                 .OrderBy(t=> t.ParentId)
                 .ThenByDescending(t => t.SortOrder)
-                .ThenBy(t => t.Type)
+                .ThenBy(t => t.DisplayType)
                 .ThenBy(t => t.Title)
                 .ToList();
         }
@@ -775,7 +775,7 @@ namespace DocHound.Model
             
             var topicsList = topics.Where(t => string.IsNullOrEmpty(t.ParentId))
                 .OrderByDescending(t => t.SortOrder)
-                .ThenByDescending(t => t.Type)
+                .ThenByDescending(t => t.DisplayType)
                 .ThenBy(t => t.Title)
                 .ToList();
 
@@ -810,7 +810,7 @@ namespace DocHound.Model
             if (AutoSortTopics)
             {    query = query
                     .OrderByDescending(t => t.SortOrder)
-                    .ThenBy(t => t.Type)
+                    .ThenBy(t => t.DisplayType)
                     .ThenBy(t => t.Title);
             }
 
@@ -851,7 +851,7 @@ namespace DocHound.Model
                 .OrderByDescending(t => t.SortOrder);
 
             if (AutoSortTopics)
-                query = query.ThenBy(t => t.Type).ThenBy(t => t.Title);
+                query = query.ThenBy(t => t.DisplayType).ThenBy(t => t.Title);
 
             var topicList = query.ToList();
                                                    
@@ -884,7 +884,7 @@ namespace DocHound.Model
 
             var children = topic.Topics
                 .OrderByDescending(t => t.SortOrder)
-                .ThenBy(t => t.Type)
+                .ThenBy(t => t.DisplayType)
                 .ThenBy(t => t.Title).ToList();
 
             foreach (var childTopic in children)

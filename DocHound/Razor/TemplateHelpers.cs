@@ -59,7 +59,7 @@ namespace DocHound.Razor
             string descriptionLabel = "Description"
             )
         {
-            var childTopics = Topic.Topics.Where(t => GenericUtils.Inlist(t.Type, "classproperty", "classmethod",
+            var childTopics = Topic.Topics.Where(t => GenericUtils.Inlist(t.DisplayType, "classproperty", "classmethod",
                 "classevent", "classfield", "classconstructor"));
 
 
@@ -74,7 +74,7 @@ namespace DocHound.Razor
             {
                 sb.AppendLine("<tr" + (alternate ? " class='alternaterow'>" : ">"));
 
-                string icon = childTopic.Type;
+                string icon = childTopic.DisplayType;
                 if (childTopic.ClassInfo.Scope == "protected")
                     icon += "protected";
 
@@ -87,7 +87,7 @@ namespace DocHound.Razor
                 sb.AppendLine($"\t<td>{link}</td>");
                 sb.AppendLine($"\t<td class='col-detail'>{HtmlUtils.HtmlAbstract(childTopic.Body, 200)}");
 
-                if (childTopic.Type == "classmethod")
+                if (childTopic.DisplayType == "classmethod")
                 {
                     sb.AppendLine($"\t\t<div><small><b>{childTopic.ClassInfo.Syntax}</b></small></div>");
 
@@ -123,7 +123,7 @@ namespace DocHound.Razor
             var topicTypes = topicTypesList.Split();
             List<DocTopic> childTopics;
             if (topicTypes.Length > 0)
-                childTopics = Topic.Topics.Where(t => GenericUtils.Inlist<string>(t.Type, topicTypes)).ToList();
+                childTopics = Topic.Topics.Where(t => GenericUtils.Inlist<string>(t.DisplayType, topicTypes)).ToList();
             else
                 childTopics = Topic.Topics.ToList();
 
@@ -134,7 +134,7 @@ namespace DocHound.Razor
 
             foreach (var childTopic in childTopics)
             {
-                sb.AppendLine($@"<li><img src='icons/{childTopic.Type}.png' /> {HtmlUtils.HtmlEncode(childTopic.Title)}</li>");
+                sb.AppendLine($@"<li><img src='icons/{childTopic.DisplayType}.png' /> {HtmlUtils.HtmlEncode(childTopic.Title)}</li>");
             }
             sb.AppendLine("</ul>");
 
@@ -159,7 +159,7 @@ namespace DocHound.Razor
 
             var overloads = Project.GetTopics()
                 .Where(t => t.ClassInfo != null &&
-                            t.Type == "classmethod" &&
+                            t.DisplayType == "classmethod" &&
                             t.ClassInfo.Signature != null &&
                             t.ClassInfo.Signature.StartsWith(signature) &&
                             t.Id != Topic.Id)

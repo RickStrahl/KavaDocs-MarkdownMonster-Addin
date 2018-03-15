@@ -92,8 +92,8 @@ namespace DocHound
 				{
 				    // retry multiple times on any write failure
 				    for (int i = 0; i < 4; i++)
-				    {
-				        using (var stream = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Write))
+				    {				        
+				        using (var stream = new FileStream(filename, FileMode.Create, FileAccess.Write, FileShare.None))
 				        {
 				            using (var writer = new StreamWriter(stream))
 				            using (var jsonTextWriter = new JsonTextWriter(writer))
@@ -101,6 +101,7 @@ namespace DocHound
 				                try
 				                {
 				                    Serializer.Serialize(jsonTextWriter, docProject);
+				                    jsonTextWriter.Flush();
 				                    break;
 				                }
 				                catch(Exception ex)

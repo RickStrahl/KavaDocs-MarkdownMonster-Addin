@@ -169,11 +169,11 @@ namespace DocHound.Model
         /// <summary>
         /// The Topic type (ie. topic,header,classheader,classproperty etc.)
         /// </summary>
-        public string Type
+        public string DisplayType
         {
             get
             {
-                var type = _type?.ToLower();
+                var type = _displayType?.ToLower();
                 if (string.IsNullOrEmpty(type))
                 {
                     if (Topics != null && Topics.Count > 0)
@@ -186,7 +186,7 @@ namespace DocHound.Model
             }
             set
             {
-                if (value == _type) return;
+                if (value == _displayType) return;
 
                 // don't empty null types
                 if (string.IsNullOrEmpty(value))
@@ -196,12 +196,12 @@ namespace DocHound.Model
                     else
                         value= "topic";                    
                 }
-                _type = value.ToLower();
-                OnPropertyChanged(nameof(Type));
+                _displayType = value.ToLower();
+                OnPropertyChanged(nameof(DisplayType));
                 TopicState.OnPropertyChanged(nameof(TopicState.ImageFilename));
             }
         }
-        private string _type;
+        private string _displayType;
 
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace DocHound.Model
 
         private string _body;
 
-        public TopicBodyFormats BodyFormat { get; set; } = TopicBodyFormats.Markdown;
+        public string Type { get; set; } = TopicBodyFormats.Markdown;
 
         public string Keywords
         {
@@ -416,7 +416,7 @@ namespace DocHound.Model
         public string RenderTopic(bool addPragmaLines = false, bool renderExternalLinks = false)
         {
             string error;
-            string html = Project.TemplateRenderer.RenderTemplate(Type + ".cshtml", this, out error);
+            string html = Project.TemplateRenderer.RenderTemplate(DisplayType + ".cshtml", this, out error);
             
             if (string.IsNullOrEmpty(html))
             {
@@ -580,7 +580,7 @@ namespace DocHound.Model
             }
 
             return Path.Combine(Project.ProjectDirectory,
-                Slug + (BodyFormat == TopicBodyFormats.Html ? ".html" : ".md"));
+                Slug + (Type == TopicBodyFormats.Html ? ".html" : ".md"));
         }
 
         /// <summary>
@@ -669,8 +669,8 @@ namespace DocHound.Model
                     if (!string.IsNullOrEmpty(yamlObject.Title))
                         Title = yamlObject.Title;
 
-                    if (!string.IsNullOrEmpty(yamlObject.Type))
-                        Type = yamlObject.Type;
+                    if (!string.IsNullOrEmpty(yamlObject.DisplayType))
+                        DisplayType = yamlObject.DisplayType;
                     if (!string.IsNullOrEmpty(yamlObject.Slug))
                         Slug = yamlObject.Slug;
                     if (!string.IsNullOrEmpty(yamlObject.Link))
@@ -852,7 +852,7 @@ namespace DocHound.Model
                     filename = "_" + Id;
 
                 file = Path.Combine(Project.ProjectDirectory,
-                    filename + (BodyFormat == TopicBodyFormats.Html ? ".html" : ".md"));
+                    filename + (Type == TopicBodyFormats.Html ? ".html" : ".md"));
             }
 
             return file;
@@ -1026,13 +1026,34 @@ namespace DocHound.Model
     }
 
 
-    public enum TopicBodyFormats
+
+    public class TopicBodyFormats
     {
-        Markdown,
-        Html,
-        HelpBuilder,
-        PlainText,
-        None        
+        public static List<string> TopicBodyFormatsList => new List<string>()
+            {
+                Markdown,
+                Html,
+                HelpBuilder,
+                ImageUrl,                
+                VstsWorkItem,
+                VstsWorkItemQuery,
+                VstsWorkItemQueries,
+                VstsWorkItemQueryToc,
+                VstsWorkItemQueriesToc,
+            };
+
+        public static string Markdown => "markdown";
+        public static string Html => "html";
+        public static string ImageUrl => "imageurl";
+        public static string HelpBuilder => "helpbuilder";
+        public static string VstsWorkItemQueries => "vsts-workitem-queries";
+        public static string VstsWorkItem => "vsts-workitem";
+        public static string VstsWorkItemQuery => "vsts-workitem-query";
+        public static string VstsWorkItemQueryToc => "vsts-workitem-query:toc";
+        public static string VstsWorkItemQueriesToc => "vsts-workitem-queries:toc";
     }
+
+    
+    
 }
 
