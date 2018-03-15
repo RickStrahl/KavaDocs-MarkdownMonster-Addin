@@ -204,8 +204,20 @@ namespace KavaDocsAddin
                 AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, objTopic as DocTopic);
                 AddinModel.ActiveProject.SaveProject();
             }
-
         }
+
+
+        public override void OnDocumentActivated(MarkdownDocument doc)
+        {
+            base.OnDocumentActivated(doc);
+                        
+            var topic = Model.ActiveEditor.Properties["KavaDocsTopic"] as DocTopic;
+            if (topic == null)
+                return;
+
+            topic.TopicState.IsSelected = true;
+        }
+
 
         public override void OnNotifyAddin(string command, object parameter)
         {
