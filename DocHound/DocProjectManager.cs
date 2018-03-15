@@ -100,14 +100,13 @@ namespace DocHound
 				            {				               
 				                try
 				                {
-				                    Serializer.Serialize(jsonTextWriter, docProject);
-				                    jsonTextWriter.Flush();
+				                    Serializer.Serialize(jsonTextWriter, docProject);				                    
 				                    break;
 				                }
 				                catch(Exception ex)
 				                {
 				                    // retry
-				                    Task.Delay(5);
+				                    Task.Delay(15);
 				                }
 				            }
 				        }

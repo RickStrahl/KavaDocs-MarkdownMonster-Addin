@@ -156,7 +156,7 @@
                 </StackPanel>
             </Grid>
 
-            <Label  Margin="0,6,0,0">Body:</Label>
+            <!--<Label  Margin="0,6,0,0">Body:</Label>
             <TextBox  
                         Text="{Binding KavaDocsModel.ActiveTopic.Body}" 
                         FontFamily="{Binding AppModel.Configuration.EditorFont}"  
@@ -164,7 +164,7 @@
                         AcceptsReturn="True"
                         TextWrapping="Wrap" VerticalAlignment="Stretch"                              
                         Height="120"
-                        FontSize="16"/>
+                        FontSize="16"/>-->
 
         </StackPanel>
     </Grid>
