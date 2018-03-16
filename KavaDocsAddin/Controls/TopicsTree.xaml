@@ -85,7 +85,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Background="{StaticResource FolderBrowserHeaderBackground}">
+        <Grid Background="{StaticResource SidebarHeaderBackground}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />

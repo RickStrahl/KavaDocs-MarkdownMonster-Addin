@@ -16,7 +16,7 @@
         <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding KavaDocsModel.Commands.SaveProjectCommand}" />
     </UserControl.InputBindings>
 
-    <Grid>
+    <Grid Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -24,7 +24,7 @@
         </Grid.RowDefinitions>
 
 
-            <Grid Background="{StaticResource FolderBrowserHeaderBackground}">
+            <Grid Background="{StaticResource SidebarHeaderBackground}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -81,13 +81,20 @@
                     <ColumnDefinition  />
                 </Grid.ColumnDefinitions>
 
+                <ComboBox Name="ComboBodyType" SelectedValue="{Binding KavaDocsModel.ActiveTopic.Type}"                                 
+                          Grid.Column="0" ToolTip="Topic source type that input format"
+                          ItemsSource="{Binding Source={x:Static model:TopicBodyFormats.TopicBodyFormatsList}}"
+                          Margin="0,0,10,0">
+                </ComboBox>
+
                 <ComboBox Name="ComboTopicType" 
                                   Grid.Column="1"                                  
                                   ItemsSource="{Binding DisplayTypesList}"
                                   IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False"
                                   TextSearch.TextPath="DisplayType"
                                   SelectedValuePath="DisplayType"  
-                                  SelectedValue="{Binding KavaDocsModel.ActiveTopic.DisplayType}">
+                                  SelectedValue="{Binding KavaDocsModel.ActiveTopic.DisplayType}"
+                                  ToolTip="Display format that determines the icon and optional template to use for output rendering.">
                     <ComboBox.ItemTemplate>
                         <ItemContainerTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -98,11 +105,7 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
-                <ComboBox Name="ComboBodyType" SelectedValue="{Binding KavaDocsModel.ActiveTopic.Type}"                                 
-                                      Grid.Column="0" 
-                                      ItemsSource="{Binding Source={x:Static model:TopicBodyFormats.TopicBodyFormatsList}}"
-                                      Margin="0,0,10,0">
-                </ComboBox>
+              
             </Grid>
 
             <Label Margin="0,6,0,0">Slug:</Label>
