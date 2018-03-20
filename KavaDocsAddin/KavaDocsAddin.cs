@@ -387,8 +387,6 @@ namespace KavaDocsAddin
             var model = kavaUi.AddinModel;            
             var topic = model.ActiveTopic;
 
-
-            string html = null;
             try
             {
                 if (model.ActiveTopic == null)

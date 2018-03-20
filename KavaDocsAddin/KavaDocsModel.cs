@@ -212,11 +212,8 @@ namespace KavaDocsAddin
         [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
         public void PreviewTopic(bool keepScrollPosition = false, bool usePragmaLines = true, bool showInBrowser = false)
         {
-            
             var topic = ActiveTopic;
-            var project = ActiveProject;
-
-            string html = null;
+           
             try
             {
                 // only render if the preview is actually visible and rendering in Preview Browser

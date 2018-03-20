@@ -1,13 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Windows;
-using KavaDocsAddin.Controls;
-using DocHound;
 using DocHound.Configuration;
-using DocHound.Model;
 using DocHound.Windows.Dialogs;
-using DocHound.Configuration;
 using KavaDocsAddin.Core.Configuration;
 using MarkdownMonster;
 using Microsoft.Win32;

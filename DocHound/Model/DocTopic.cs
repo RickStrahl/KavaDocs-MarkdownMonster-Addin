@@ -87,9 +87,6 @@ namespace DocHound.Model
         private string _ParentId;
 
 
-
-        private DocTopic _parent;
-
         [YamlIgnore]
         [JsonIgnore]
         public DocTopic Parent { get; set; }

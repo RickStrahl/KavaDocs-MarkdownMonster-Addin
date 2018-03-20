@@ -316,8 +316,8 @@ public void SelectTopic(DocTopic topic)
 
         #region Drag and Drop
 
-        
-        internal DragMoveResult _dragMoveResult;
+
+        internal DragMoveResult DragMoveResult = null;
         ContextMenu _dragContextMenu;
         private Point _lastMouseDownPoint;
         //private DateTime _lastMouseDown;
@@ -393,7 +393,7 @@ public void SelectTopic(DocTopic topic)
 
             _dragContextMenu = new ContextMenu()
             {
-                DataContext = _dragMoveResult
+                DataContext = DragMoveResult
             };
 
             var mi = new MenuItem

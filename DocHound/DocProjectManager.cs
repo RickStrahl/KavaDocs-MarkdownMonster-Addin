@@ -103,7 +103,7 @@ namespace DocHound
 				                    Serializer.Serialize(jsonTextWriter, docProject);				                    
 				                    break;
 				                }
-				                catch(Exception ex)
+				                catch
 				                {
 				                    // retry
 				                    Task.Delay(15);
