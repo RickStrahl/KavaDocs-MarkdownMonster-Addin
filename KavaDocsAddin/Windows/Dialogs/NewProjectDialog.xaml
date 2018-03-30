@@ -14,12 +14,6 @@
         Icon="../../Assets/icon_128.png"            
         FontSize="{Binding AppModel.Configuration.WindowPosition.WindowFontSize}"
         Height="450" Width="750" >
-    <Window.Resources>
-        <Style TargetType="TextBox">
-            <Setter Property="FontSize" Value="{Binding AppModel.Configuration.WindowPosition.WindowFontSize}" />
-            <Setter Property="Padding" Value="3" />
-        </Style>
-    </Window.Resources>
     <Grid>
 
         <Grid.ColumnDefinitions>

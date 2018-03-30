@@ -15,12 +15,7 @@
         Padding="0" 
         FontSize="16"             
         IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
-        Width="800" Height="450" MinWidth="640" MinHeight="320">
-    <Window.Resources>
-        <Style TargetType="TextBox" >
-            <Setter Property="FontSize" Value="{Binding AppModel.Model.Configuration.WindowPosition.WindowFontSize}" />
-        </Style>
-    </Window.Resources>
+        Width="800" Height="490" MinWidth="640" MinHeight="320">
     <Grid>
         
         <Grid.ColumnDefinitions>
