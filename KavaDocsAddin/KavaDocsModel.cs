@@ -27,6 +27,7 @@ namespace KavaDocsAddin
     {
 
         #region Top Level Model Properties
+
         /// <summary>
         /// An instance of the main Markdown Monster application WPF form
         /// </summary>
@@ -50,6 +51,17 @@ namespace KavaDocsAddin
 
         public double LastScrollPosition { get; set; }
 
+        /// <summary>
+        /// The Markdown Monster Model
+        /// </summary>
+        public AppModel Model { get; set; }
+
+
+
+        /// <summary>
+        /// Determines whether a project is active
+        /// </summary>
+        public bool IsProjectActive => ActiveProject != null;
 
         /// <summary>
         /// The currently Active Project 
@@ -63,9 +75,10 @@ namespace KavaDocsAddin
                 _activeProject = value;
                 OnPropertyChanged(nameof(ActiveProject));
                 OnPropertyChanged(nameof(ActiveTopic));
+                OnPropertyChanged(nameof(IsProjectActive));
             }
         }
-        private DocProject _activeProject;
+
 
         /// <summary>
         /// The currently Active Topic
@@ -77,7 +90,7 @@ namespace KavaDocsAddin
             {
 
                 if (ActiveProject == null)
-                    return;                
+                    return;
 
                 ActiveProject.Topic = value;
 
@@ -87,6 +100,8 @@ namespace KavaDocsAddin
                 OnPropertyChanged();
             }
         }
+
+        private DocProject _activeProject;
 
 
         public DocTopic LastTopic
@@ -99,6 +114,7 @@ namespace KavaDocsAddin
                 OnPropertyChanged();
             }
         }
+
         private DocTopic _lastTopic;
 
         public ObservableCollection<DocTopic> RecentTopics { get; set; } = new ObservableCollection<DocTopic>();
@@ -113,8 +129,8 @@ namespace KavaDocsAddin
         #endregion
 
 
-        
-        
+
+
 
 
         #region Initialization
@@ -122,9 +138,10 @@ namespace KavaDocsAddin
         public KavaDocsModel(MainWindow window)
         {
             Configuration = KavaApp.Configuration;
-            Window = window;            
-            Commands = new AppCommands(this);            
-            kavaUi.AddinModel = this;            
+            Window = window;
+            Model = window.Model;
+            Commands = new AppCommands(this);
+            kavaUi.AddinModel = this;
         }
 
 
@@ -153,13 +170,14 @@ namespace KavaDocsAddin
         {
             ActiveTopic = ActiveProject.LoadTopic(topicId);
         }
+
         #endregion
 
         #region Project Operations
 
         public void OpenProject(string projectFile, bool noErrorDisplay = false)
         {
-            
+
             Window.ShowStatus("Opening project file...");
             ActiveProject = null;
 
@@ -192,6 +210,7 @@ namespace KavaDocsAddin
                             KavaApp.Configuration.StatusMessageTimeout);
                         Window.SetStatusIcon(FontAwesomeIcon.Warning, Colors.Red);
                     }
+
                     Window.ShowStatus();
                     return;
                 }
@@ -210,10 +229,11 @@ namespace KavaDocsAddin
         // IMPORTANT: for browser COM CSE errors which can happen with script errors
         [HandleProcessCorruptedStateExceptions]
         [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-        public void PreviewTopic(bool keepScrollPosition = false, bool usePragmaLines = true, bool showInBrowser = false)
+        public void PreviewTopic(bool keepScrollPosition = false, bool usePragmaLines = true,
+            bool showInBrowser = false)
         {
             var topic = ActiveTopic;
-           
+
             try
             {
                 // only render if the preview is actually visible and rendering in Preview Browser
@@ -264,6 +284,7 @@ namespace KavaDocsAddin
 
 
         #region INotifyPropertyChanged
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -271,6 +292,7 @@ namespace KavaDocsAddin
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
         #endregion
 
         /// <summary>

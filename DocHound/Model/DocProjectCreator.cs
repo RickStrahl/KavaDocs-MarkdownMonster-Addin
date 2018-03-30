@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using DocHound.Annotations;
 using DocHound.Utilities;
@@ -78,7 +79,7 @@ namespace DocHound.Model
 
         
         /// <summary>
-        /// Optional install folder
+        /// Installation folder of the Application/Addin
         /// </summary>
         public string InstallFolder
         {
@@ -96,7 +97,7 @@ namespace DocHound.Model
         public DocProjectCreator()
         {
             if (string.IsNullOrEmpty(InstallFolder))
-                InstallFolder = Environment.CurrentDirectory;
+                InstallFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
 
 
@@ -138,22 +139,12 @@ namespace DocHound.Model
                 return null;                
             }
 
-            string folder =ProjectFolder;
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
-
-            string wwwFolder = Path.Combine(folder, "wwwroot");
-            if (!Directory.Exists(wwwFolder))
-                Directory.CreateDirectory(wwwFolder);
-            
-            KavaUtils.CopyDirectory(Path.Combine(InstallFolder,"ProjectTemplates"), wwwFolder);
-
             string filename = Filename;
             if (string.IsNullOrEmpty(filename))
-                filename = Path.Combine(ProjectFolder, FileUtils.SafeFilename(Title) + ".dmjson");
+                filename = Path.Combine(ProjectFolder, "_toc.kavadocs");
             else
             {
-                Path.ChangeExtension(filename, "dmjson");
+                Path.ChangeExtension(filename, "kavadocs");
                 filename = Path.Combine(ProjectFolder, filename);
             }
 
@@ -164,6 +155,20 @@ namespace DocHound.Model
                 Owner = Company
             };
 
+            if (!CopyProjectAssets(project))
+                return null;
+
+            //string folder = ProjectFolder;
+            //if (!Directory.Exists(folder))
+            //    Directory.CreateDirectory(folder);
+
+            //string wwwFolder = Path.Combine(folder, "wwwroot");
+            //if (!Directory.Exists(wwwFolder))
+            //    Directory.CreateDirectory(wwwFolder);
+            
+            //KavaUtils.CopyDirectory(Path.Combine(InstallFolder,"ProjectTemplates"), wwwFolder);
+            
+           
             string body = @"### Welcome your new Documentation Project
 
 Here are a few tips to get started:
@@ -183,6 +188,30 @@ Time to get going!
             project.SaveProject();
 
             return project;
+        }
+
+        public bool CopyProjectAssets(DocProject project)
+        {
+
+            try
+            {
+                string folder = project.ProjectDirectory;
+                if (!Directory.Exists(folder))
+                    Directory.CreateDirectory(folder);
+
+                string wwwFolder = Path.Combine(folder, "wwwroot");
+                if (!Directory.Exists(wwwFolder))
+                    Directory.CreateDirectory(wwwFolder);
+
+                KavaUtils.CopyDirectory(Path.Combine(InstallFolder, "ProjectTemplates"), wwwFolder);
+            }
+            catch (Exception ex)
+            {
+                SetError("Failed to copy project assets: " + ex.GetBaseException().Message);
+                return false;
+            }
+
+            return true;
         }
 
         #region Error Handling

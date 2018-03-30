@@ -114,7 +114,7 @@ namespace DocHound.Windows.Dialogs
             SetTopicLevel(AppModel.ActiveTopic);
             DataContext = this;
 
-            TextTopicTitle.Focus();
+            TextTopicTitle.Focus();            
         }
 
         #endregion
@@ -135,7 +135,6 @@ namespace DocHound.Windows.Dialogs
             }
             else if (RadioButtonCurrent.IsChecked.Value)
             {
-
                 var parentTopic = AppModel.ActiveTopic.Parent;
                 string parentId = null;
                 if (parentTopic != null)
@@ -144,12 +143,30 @@ namespace DocHound.Windows.Dialogs
 
                 Topic.ParentId = parentId;
                 Topic.Parent = parentTopic;
+
                 if(AppModel.ActiveTopic.SortOrder > 0)
                     Topic.SortOrder = AppModel.ActiveTopic.SortOrder + 1;
                 Topic.DisplayType = AppModel.ActiveTopic.DisplayType;
 
-                if (parentTopic != null)                
-                    parentTopic.Topics.Insert(0, Topic);
+                
+                if (parentTopic != null)
+                {
+                    var topicIndex = 0;
+                    if (AppModel.ActiveTopic != null)
+                    {
+                        topicIndex = parentTopic.Topics.IndexOf(AppModel.ActiveTopic);
+                        if (topicIndex < 0)
+                            topicIndex = 0;
+                    }
+
+                    if (topicIndex < parentTopic.Topics.Count)
+                    {
+                        topicIndex++;
+                        parentTopic.Topics.Insert(topicIndex, Topic);
+                    }
+                    else
+                        parentTopic.Topics.Add(Topic);
+                }
                 else
                     AppModel.ActiveProject.Topics.Add(Topic);                        
                 
@@ -167,13 +184,16 @@ namespace DocHound.Windows.Dialogs
             //CollectionViewSource.GetDefaultView(Window.TopicsTree.Model.FilteredTopicTree).Refresh();
 
             Topic.TopicState.IsSelected = true;
+            Topic.Body = "# " + Topic.Title;
+            Topic.SaveTopicFile();
 
             // make sure it gets written to disk
             //AppModel.ActiveProject.SaveTopic(Topic);
             AppModel.ActiveProject.SaveProject();
 
             AppModel.ActiveTopic = Topic;
-            AppModel.Window.PreviewMarkdownAsync();
+            //AppModel.Window.PreviewMarkdownAsync();
+            AppModel.TopicsTree.OpenTopicInMMEditor(Topic);
 
             return Topic;
         }

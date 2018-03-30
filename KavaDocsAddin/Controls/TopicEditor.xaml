@@ -148,16 +148,16 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <CheckBox IsChecked="{Binding KavaDocsModel.ActiveTopic.IsLink}">Topic is a link</CheckBox>
-                <CheckBox IsChecked="{Binding KavaDocsModel.ActiveTopic.Incomplete}" Grid.Column="1">Topic is incomplete</CheckBox>
-                <StackPanel Orientation="Horizontal" Grid.Column="2">
-                    <Label>Sort order:</Label>
-                    <TextBox Width="30" Text="{Binding KavaDocsModel.ActiveTopic.SortOrder}"></TextBox>
-                </StackPanel>
+                <CheckBox IsChecked="{Binding KavaDocsModel.ActiveTopic.Incomplete}" Grid.Column="1">Incomplete</CheckBox>
             </Grid>
+
+            <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                <Label>Sort order:</Label>
+                <TextBox Width="30" Text="{Binding KavaDocsModel.ActiveTopic.SortOrder}"></TextBox>
+            </StackPanel>
 
             <!--<Label  Margin="0,6,0,0">Body:</Label>
             <TextBox  

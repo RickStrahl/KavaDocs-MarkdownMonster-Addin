@@ -69,7 +69,7 @@ namespace DocHound.Windows.Dialogs
 
 exists already. 
 
-Documentation Monster requires a new project folder. Please choose another folder for your new project or delete this folder and try again.
+Kava Docs requires a new project folder. Please choose another folder for your new project or delete this folder and try again.
 ";
                 MessageBox.Show(msg, "New Project Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
@@ -117,7 +117,7 @@ Documentation Monster requires a new project folder. Please choose another folde
             else
             {
 
-                ProjectCreator.Filename = FileUtils.CamelCaseSafeFilename(ProjectCreator.Title) + ".dmjson";
+               ProjectCreator.Filename = FileUtils.CamelCaseSafeFilename(ProjectCreator.Title) + ".kavadocs";
                 ProjectCreator.ProjectFolder = System.IO.Path.Combine(KavaApp.Configuration.DocumentsFolder,                    
                     FileUtils.SafeFilename(ProjectCreator.Title));
             }

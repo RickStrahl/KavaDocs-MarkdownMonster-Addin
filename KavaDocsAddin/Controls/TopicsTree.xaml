@@ -6,11 +6,13 @@
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:markdownMonster="clr-namespace:MarkdownMonster;assembly=MarkdownMonster"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
-             mc:Ignorable="d"              
+             xmlns:windows="clr-namespace:MarkdownMonster.Windows;assembly=MarkdownMonster"
+             mc:Ignorable="d"                
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-       
+        <windows:UriToCachedImageConverter x:Key="UriToCachedImageConverter"/>
+
         <ContextMenu x:Key="TopicContextMenu" Name="TopicContextMenu">
             <MenuItem Name="MenuNewTopic" Header="_New Topic" InputGestureText="ctrl-n" 
                       Command="{Binding KavaDocsModel.Commands.NewTopicCommand}" />
@@ -24,7 +26,7 @@
         </ContextMenu>
 
         <MenuItem x:Key="MainMenuKavaDocsMenu" Header="_Kava Docs">
-            <MenuItem Header="_New Project" Command="{Binding KavaDocsModel.Commands.NewProjectCommand}" IsEnabled="False" InputGestureText="alt-k-n" />
+            <MenuItem Header="_New Project" Command="{Binding KavaDocsModel.Commands.NewProjectCommand}"  InputGestureText="alt-k-n" />
             <MenuItem Header="_Open Project" Command="{Binding KavaDocsModel.Commands.OpenProjectCommand}" InputGestureText="alt-k-o" />
             <MenuItem Header="Recent Projects" Name="MenuRecentItems" SubmenuOpened="MenuRecentItems_SubmenuOpened"  >
                 <MenuItem />
@@ -32,28 +34,32 @@
             <MenuItem Header="_Close Project" Command="{Binding KavaDocsModel.Commands.CloseProjectCommand}" />
             <MenuItem Header="_Save Project" Command="{Binding KavaDocsModel.Commands.SaveProjectCommand}"  InputGestureText="alt-k-s" />
             <Separator />
-            <MenuItem Header="Project Settings" Command="{Binding KavaDocsModel.Commands.ProjectSettingsCommand}" />
-            <MenuItem Header="Kava Docs Settings" IsEnabled="False" />
+            <MenuItem Header="Settings">
+                <MenuItem Header="Project Settings"  Click="MenuProjectSettings_Click" IsEnabled="{Binding }"/>
+                <MenuItem Header="Kava Docs Settings"  Click="MenuKavaDocsSettings_Click" />
+            </MenuItem>
+            
         </MenuItem>
 
 
         <HierarchicalDataTemplate x:Key="TopicsTemplate" ItemsSource="{Binding Topics}"  >
             <StackPanel >
                 <StackPanel Orientation="Horizontal" KeyUp="TreeViewItem_KeyDown" >
-                    <Image Height="16" Width="Auto" Margin="5,0,5,0" >
+                    <Image Height="16" Width="Auto" Margin="5,0,5,0">
                         <Image.Style>
                             <Style TargetType="Image">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsExpanded}" Value="True">
-                                        <Setter Property="Source"  Value="{Binding TopicState.OpenImageFilename}" />
+                                        <Setter Property="Source"  Value="{Binding TopicState.OpenImageFilename, Converter={StaticResource UriToCachedImageConverter}}" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding IsExpanded}" Value="False">
-                                        <Setter Property="Source"  Value="{Binding TopicState.ImageFilename}"/>
+                                        <Setter Property="Source"  Value="{Binding TopicState.ImageFilename, Converter={StaticResource UriToCachedImageConverter}}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Image.Style>
                     </Image>
+
                     <TextBlock Name="TextTopicTitle" Text="{Binding Title, Mode=OneWay}"
                                        Padding="5,3,25,3" />
                     <TextBox Name="TextEditTopicTitle" 

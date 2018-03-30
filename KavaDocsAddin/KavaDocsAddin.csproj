@@ -100,11 +100,11 @@
     <Compile Include="Windows\Dialogs\NewProjectDialog.xaml.cs">
       <DependentUpon>NewProjectDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Dialogs\ProjectSettings.xaml.cs">
+      <DependentUpon>ProjectSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Dialogs\NewTopicDialog.xaml.cs">
       <DependentUpon>NewTopicDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\Dialogs\PasteImageDialog.xaml.cs">
-      <DependentUpon>PasteImageDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="_Classes\kavaUi.cs" />
   </ItemGroup>
@@ -161,6 +161,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ProjectTemplates\icons\header.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\icons\header_open.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ProjectTemplates\icons\index.png">
@@ -490,11 +493,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\Dialogs\NewTopicDialog.xaml">
+    <Page Include="Windows\Dialogs\ProjectSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\Dialogs\PasteImageDialog.xaml">
+    <Page Include="Windows\Dialogs\NewTopicDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

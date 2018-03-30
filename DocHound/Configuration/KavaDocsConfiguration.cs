@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using MarkdownMonster;
@@ -20,8 +21,9 @@ namespace DocHound.Configuration
         public KavaDocsConfiguration()
         {
             ConfigurationFilename = "KavaDocsAddin.json";
-            DocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Documentation Monster");         
-            RecentProjects = new ObservableCollection<RecentProjectItem>();        
+            DocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Kava Docs");         
+            RecentProjects = new ObservableCollection<RecentProjectItem>();
+            HomeFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
 
         #region Static Configuration Options
@@ -33,12 +35,34 @@ namespace DocHound.Configuration
        
 
         #region Folder Locations
+
+        /// <summary>
+        /// Folder from which the addin was started
+        /// </summary>
+        public string HomeFolder { get;  }
+
+        /// <summary>
+        /// Generic Addins Folder location
+        /// </summary>
+        public string AddinsFolder => Path.Combine(mmApp.Configuration.CommonFolder, "Addins");
+
         /// <summary>
         /// Last folder used when opening a document
         /// </summary>
         public string LastProjectFile { get; set; }
 
+        /// <summary>
+        /// Causes last project to be automatically opened when KavaDocs
+        /// is started. If false empty project is shown.
+        /// </summary>
         public bool OpenLastProject { get; set; }
+
+        /// <summary>
+        /// Determines whether the addin automatically loads itself
+        /// when Mardown Monster starts. Default is false which means
+        /// it loads only when you click on the addin icon.
+        /// </summary>
+        public bool AutoOpen { get; set; }
 
         /// <summary>
         /// Last location where an image was opened.
@@ -49,9 +73,7 @@ namespace DocHound.Configuration
 
         public string CommonFolder { get => mmApp.Configuration.CommonFolder; }
         
-        internal string AddinsFolder => Path.Combine(mmApp.Configuration.CommonFolder, "Addins");
-
-
+        
         public ObservableCollection<RecentProjectItem> RecentProjects
         {
             get { return _RecentProjects; }

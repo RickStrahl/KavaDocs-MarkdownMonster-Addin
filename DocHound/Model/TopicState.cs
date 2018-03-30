@@ -92,9 +92,8 @@ namespace DocHound.Model
                         type = "header";
                     else
                         type = "topic";
-
                 }
-
+                
                 return Path.Combine(Topic.Project.OutputDirectory, "icons", type.ToLower() + ".png");
             }
         }

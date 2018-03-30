@@ -1,0 +1,50 @@
+﻿<controls:MetroWindow  x:Class="DocHound.Windows.Dialogs.ProjectSettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        mc:Ignorable="d"
+        Icon="../../icon.png"                    
+        Title="New Topic"
+        TitleCharacterCasing="Normal"                      
+        TitlebarHeight="35"
+        WindowStyle="SingleBorderWindow" ResizeMode="NoResize"                      
+        WindowStartupLocation="CenterOwner"         
+        IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
+        Width="800" Height="450" MinWidth="640" MinHeight="320">
+    <Window.Resources>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Image Source="../../Assets/KavaDocs.png"
+               Margin="10"
+               Width="200" VerticalAlignment="Top"></Image>
+
+        <StackPanel Margin="0,20,20,20" Grid.Column="1">
+            <Label>Project Title</Label>
+            <TextBox Name="TextProjectTitle" Text="{Binding Project.Title}"  />
+  
+           <Label Margin="0,10,0,0">Owner</Label>
+           <TextBox Name="TextProjectOwner" Text="{Binding Project.Owner}"  />
+
+            <Label Margin="0,10,0,0">Base Project Url</Label>
+            <TextBox Name="TextProjectBaseUrl" Text="{Binding Project.BaseUrl}"  />
+
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <Button Name="ButtonUpdateProjectTemplate" Margin="0,20" Height="40" FontSize="15" Width="220"
+                        HorizontalAlignment="Left"   IsDefault="True" Click="Button_UpdateProjectTemplate"  >
+                    <StackPanel Orientation="Horizontal">
+                        <fa:FontAwesome  Icon="ArrowCircleRight"  FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" Foreground="#FF0E7E28" FontSize="20" />
+                        <TextBlock Margin="10,0,0,0" FontSize="14">Update Project Template</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</controls:MetroWindow>

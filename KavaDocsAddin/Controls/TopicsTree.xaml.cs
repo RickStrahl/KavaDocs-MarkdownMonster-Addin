@@ -19,6 +19,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using DocHound.Model;
 using DocHound.Utilities;
+using DocHound.Windows.Dialogs;
 using KavaDocsAddin.Core.Configuration;
 using MarkdownMonster;
 using MarkdownMonster.Windows;
@@ -101,17 +102,25 @@ namespace KavaDocsAddin.Controls
 
         private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            TreeTopicBrowser_Selected(sender, e);
-            var topic = TreeTopicBrowser.SelectedItem as DocTopic;
-            if (topic != null)
-            {
-                var tab = Model.KavaDocsModel.Window.RefreshTabFromFile(topic.GetTopicFileName());
-                var editor = tab.Tag as MarkdownDocumentEditor;
-                if (editor != null)
-                    editor.Identifier = "KavaDocsDocument";
-            }
-            
+            OpenTopicInMMEditor();
+
+            //TreeTopicBrowser_Selected(sender, e);
+            //var topic = TreeTopicBrowser.SelectedItem as DocTopic;
+            //if (topic != null)
+            //{
+            //    var file = topic.GetTopicFileName();
+            //    if (!File.Exists(file))
+            //        File.WriteAllText(file,"");
+
+            //    var tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file);
+            //    var editor = tab.Tag as MarkdownDocumentEditor;
+            //    if (editor != null)
+            //        editor.Identifier = "KavaDocsDocument";
+            //}            
         }
+
+
+       
 
 
         public bool HandleSelection(DocTopic topic = null)
@@ -174,6 +183,35 @@ namespace KavaDocsAddin.Controls
                 topic.TopicState.IsDirty = false;
 
             return result;
+        }
+
+
+        /// <summary>
+        /// Opens a topic for editing in a standard Markdown Monster
+        /// tab (not the preview Tab)
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <returns></returns>
+        public TabItem OpenTopicInMMEditor(DocTopic topic = null)
+        {
+            if (topic == null)
+                topic = TreeTopicBrowser.SelectedItem as DocTopic;
+
+            TabItem tab = null;
+
+            if (topic != null)
+            {
+                var file = topic.GetTopicFileName();
+                if (!File.Exists(file))
+                    File.WriteAllText(file, "");
+
+                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file);
+                var editor = tab.Tag as MarkdownDocumentEditor;
+                if (editor != null)
+                    editor.Identifier = "KavaDocsDocument";
+            }
+
+            return tab;
         }
 
         public TabItem OpenTopicInEditor()
@@ -578,6 +616,17 @@ public void SelectTopic(DocTopic topic)
                 };
                 menu.Items.Add(mi);
             }
+        }
+
+        private void MenuProjectSettings_Click(object sender, RoutedEventArgs e)
+        {
+            var form = new ProjectSettingsDialog(Model.MarkdownMonsterModel.Window);
+            form.Show();
+        }
+
+        private void MenuKavaDocsSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Model.MarkdownMonsterModel.Window.OpenTab(System.IO.Path.Combine(Model.MarkdownMonsterModel.Configuration.CommonFolder,"KavaDocsAddin.json"));
         }
     }
 

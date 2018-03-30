@@ -96,7 +96,6 @@ namespace KavaDocsAddin
                 kavaUi.Addin = this;
                 AddinModel = kavaUi.AddinModel;
                 AddinModel.Addin = this;
-
                 Configuration = kavaUi.Configuration;
 
 
@@ -140,10 +139,16 @@ namespace KavaDocsAddin
 
             base.OnApplicationShutdown();                   
         }
-        
+
         #endregion
 
         #region Interception Hooks
+
+        public override void OnWindowLoaded()
+        {
+            if (kavaUi.Configuration.AutoOpen)
+                OnExecute(null);
+        }
 
 
         public override void OnExecute(object sender)

@@ -7,11 +7,11 @@
         xmlns:local="clr-namespace:DocHound.Windows.Dialogs"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Title="New Documentation Monster Project" 
+        Title="New Kava Docs Project" 
         TitleCharacterCasing="Normal"
         WindowStyle="SingleBorderWindow"  ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
-        Icon="../../Assets/DocumentationMonster_Icon_256.png"            
+        Icon="../../Assets/icon_128.png"            
         FontSize="{Binding AppModel.Configuration.WindowPosition.WindowFontSize}"
         Height="450" Width="750" >
     <Window.Resources>
@@ -27,9 +27,9 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         
-        <Image Source="../../Assets/DocumentationMonster_Icon_256.png"
-               Margin="25,30,5,0"
-               Height="128" VerticalAlignment="Top"></Image>
+        <Image Source="../../Assets/KavaDocs.png"
+               Margin="15,30,5,0"
+               Width="250" VerticalAlignment="Top"></Image>
         
         <StackPanel Margin="20" Grid.Column="1">
             <Label>Project Title</Label>

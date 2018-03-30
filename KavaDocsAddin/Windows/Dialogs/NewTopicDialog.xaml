@@ -17,9 +17,8 @@
         IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
         Width="800" Height="450" MinWidth="640" MinHeight="320">
     <Window.Resources>
-        <Style TargetType="TextBox">
-            <Setter Property="FontSize" Value="{Binding AppModel.Configuration.WindowPosition.WindowFontSize}" />
-            <Setter Property="Padding" Value="3" />
+        <Style TargetType="TextBox" >
+            <Setter Property="FontSize" Value="{Binding AppModel.Model.Configuration.WindowPosition.WindowFontSize}" />
         </Style>
     </Window.Resources>
     <Grid>
@@ -31,11 +30,11 @@
 
         <Image Source="../../Assets/KavaDocs.png"
                Margin="30,35,0,20"
-               Width="275" VerticalAlignment="Top"></Image>
+               Width="250" VerticalAlignment="Top"></Image>
 
         <StackPanel Margin="0,20,20,20" Grid.Column="1">
             <Label>New Topic Title</Label>
-            <TextBox Name="TextTopicTitle" Text="{Binding Topic.Title}"></TextBox>
+            <TextBox Name="TextTopicTitle" Text="{Binding Topic.Title}"  />
 
 
   
@@ -43,11 +42,9 @@
            <ComboBox Name="ComboTopicType"                           
                           ItemsSource="{Binding TopicTypesList}"
                           IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False"
-                          TextSearch.TextPath="DisplayType"
-                          FontSize="{Binding AppModel.Configuration.WindowPosition.WindowFontSize}" Padding="3"
+                          TextSearch.TextPath="DisplayType"                          
                           SelectedValue="{Binding Topic.DisplayType}"                                  
-                          SelectedValuePath="DisplayType"                          
-                >
+                          SelectedValuePath="DisplayType">
 
                     <ComboBox.ItemTemplate>
                         <ItemContainerTemplate>

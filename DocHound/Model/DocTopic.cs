@@ -395,6 +395,7 @@ namespace DocHound.Model
         public DocTopic()
         {
             TopicState = new TopicState(this);
+            Topics = new ObservableCollection<DocTopic>();
         }
 
         public DocTopic(DocProject project)  
@@ -402,6 +403,7 @@ namespace DocHound.Model
             Id = DataUtils.GenerateUniqueId(10);
             TopicState = new TopicState(this);
             Project = project;
+            Topics = new ObservableCollection<DocTopic>();
         }
 
         /// <summary>
@@ -980,7 +982,8 @@ namespace DocHound.Model
         public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            TopicState.IsDirty = true;
+            if(TopicState != null)
+                TopicState.IsDirty = true;
         }
         
         #endregion
