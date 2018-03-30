@@ -10,12 +10,11 @@
         Title="New Topic"
         TitleCharacterCasing="Normal"                      
         TitlebarHeight="35"
-        WindowStyle="SingleBorderWindow" ResizeMode="NoResize"                      
-        WindowStartupLocation="CenterOwner"         
-        Padding="0" 
-        FontSize="16"             
+        WindowStyle="SingleBorderWindow" ResizeMode="NoResize"  
+                       Padding="4"
+        WindowStartupLocation="CenterOwner"                                   
         IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
-        Width="800" Height="490" MinWidth="640" MinHeight="320">
+        Width="800" Height="485" MinWidth="640" MinHeight="320">
     <Grid>
         
         <Grid.ColumnDefinitions>
@@ -23,28 +22,30 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Image Source="../../Assets/KavaDocs.png"
-               Margin="30,35,0,20"
-               Width="250" VerticalAlignment="Top"></Image>
+        <StackPanel Margin="25,25,40,0">
+            <Image Source="../../Assets/KavaDocs.png"                   
+                   Width="180" VerticalAlignment="Top" />
+            
+            <Separator Margin="0,20,0,15" />
+            <TextBlock FontWeight="DemiBold" FontSize="20" >New Topic</TextBlock>
+        </StackPanel>
 
         <StackPanel Margin="0,20,20,20" Grid.Column="1">
-            <Label>New Topic Title</Label>
-            <TextBox Name="TextTopicTitle" Text="{Binding Topic.Title}"  />
-
-
+            <TextBox Name="TextTopicTitle" Text="{Binding Topic.Title}"  Style="{StaticResource HeaderTextBoxStyle}" controls:TextBoxHelper.Watermark="New Topic Title" />
   
-           <Label Margin="0,10,0,0">Topic Type</Label>
-           <ComboBox Name="ComboTopicType"                           
+            <Label Margin="0,15,0,0">Topic Type</Label>
+            <ComboBox Name="ComboTopicType" Padding="8"                            
                           ItemsSource="{Binding TopicTypesList}"
                           IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False"
-                          TextSearch.TextPath="DisplayType"                          
+                          TextSearch.TextPath="DisplayType"      
+
                           SelectedValue="{Binding Topic.DisplayType}"                                  
                           SelectedValuePath="DisplayType">
 
                     <ComboBox.ItemTemplate>
                         <ItemContainerTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="{Binding ImageFile}" Margin="3,0,6,0" />
+                                <Image Source="{Binding ImageFile}" Height="16" Width="auto" Margin="3,0,6,0" />
                                 <TextBlock Text="{Binding DisplayType}" />
                             </StackPanel>
                         </ItemContainerTemplate>
@@ -52,35 +53,35 @@
                 </ComboBox>
 
             <Label Margin="0,10,0,0">Parent Topic</Label>
-            <TextBox Text="{Binding AppModel.ActiveTopic.Title}" IsReadOnly="True"></TextBox>
+            <TextBox Text="{Binding AppModel.ActiveTopic.Title}" IsReadOnly="True" Padding="3"></TextBox>
 
             <Label Margin="0,10,0,0">Topic Insertion:</Label>
             <StackPanel Margin="25,5,0,15">
                 <RadioButton Name="RadioButtonCurrent" 
-                             GroupName="A" FontSize="{Binding AppModel.Configuration.WindowPosition.WindowFontSize}"
+                             GroupName="A" 
                              IsChecked="true" >at the same level as _Current topic</RadioButton>
                 <RadioButton Name="RadioButtonBelow"  
-                             GroupName="A" FontSize="{Binding AppModel.Configuration.WindowPosition.WindowFontSize}"
+                             GroupName="A" 
                              Margin="0,6,0,0">_Below the current topic</RadioButton>
-                <RadioButton Name="RadioButtonTop"  FontSize="{Binding AppModel.Configuration.WindowPosition.WindowFontSize}"
+                <RadioButton Name="RadioButtonTop" 
                              GroupName="A" Margin="0,6,0,0">at the _Top level</RadioButton>
             </StackPanel>
 
 
             <StackPanel Orientation="Horizontal">
-                <Button Name="ButtonCreateTopic" Margin="0,20" Height="40" FontSize="15" Width="175"
+                <Button Name="ButtonCreateTopic" Margin="0,20" Height="40" FontSize="15" Width="160"
                         HorizontalAlignment="Left"   IsDefault="True" Click="Button_CreateTopicClick"  >
                     <StackPanel Orientation="Horizontal">
                         <fa:FontAwesome  Icon="Upload"  FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" Foreground="#FF0E7E28" FontSize="20" />
-                        <TextBlock Margin="10,0,0,0" FontSize="14">Create Topic</TextBlock>
+                        <TextBlock Margin="10,0,0,0">Create Topic</TextBlock>
                     </StackPanel>
                 </Button>
 
-                <Button Name="ButtonCancel" Margin="10,20" Height="40" FontSize="15" Width="175" 
+                <Button Name="ButtonCancel" Margin="10,20" Height="40" FontSize="15" Width="160" 
                         HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" >
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" >
                         <fa:FontAwesome Icon="Remove" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" Foreground="DarkRed"  FontSize="20"/>
-                        <TextBlock Margin="10,0,0,0" FontSize="14">Cancel</TextBlock>
+                        <TextBlock Margin="10,0,0,0">Cancel</TextBlock>
                     </StackPanel>
                 </Button>
             </StackPanel>

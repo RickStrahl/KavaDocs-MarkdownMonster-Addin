@@ -51,7 +51,8 @@ namespace DocHound.Windows.Dialogs
         public ProjectSettingsDialog(MainWindow window)
         {
             InitializeComponent();
-            
+            mmApp.SetThemeWindowOverride(this);
+
             Owner = window;
             Window = window;
             AppModel = kavaUi.AddinModel;

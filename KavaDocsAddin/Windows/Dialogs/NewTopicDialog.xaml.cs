@@ -97,7 +97,7 @@ namespace DocHound.Windows.Dialogs
         public NewTopicDialog(MainWindow window)
         {
             InitializeComponent();
-            
+            mmApp.SetThemeWindowOverride(this);
 
             Owner = window;
             Window = window;
