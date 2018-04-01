@@ -70,6 +70,38 @@ namespace DocHound.Windows.Dialogs
         public string NewTopicLevel { get; set; }
 
 
+        // TODO: FIX UP NEW TOPIC PATH TO MATCH OLD TOPIC PATH
+        //public string OldTopicPath
+        //{
+        //    get
+        //    {
+        //        var path = AppModel.ActiveTopic?.Link;
+        //        if (path == null)
+        //            return null;
+
+        //        var ext = 
+
+        //        return;
+        //    }
+        //}
+
+
+
+        public bool IsHeaderTopic
+        {
+            get
+            {
+                if (Topic == null ||
+                    Topic.DisplayType != "header" &&
+                    Topic.DisplayType != "classheader")
+                    return false;                
+
+                return true;
+            }
+        }
+
+        private bool _isHeaderTopic;
+
         public List<DisplayTypeItem> TopicTypesList
         {
             get
@@ -203,7 +235,8 @@ namespace DocHound.Windows.Dialogs
             if (topic != null)
             {
                 if (topic.DisplayType == "header" ||
-                    topic.DisplayType == "classheader" || topic.DisplayType== "index")
+                    topic.DisplayType == "classheader" ||
+                    topic.DisplayType== "index")
                 {
                     Topic.ParentId = topic.Id;
                     ParentTopicTitle = topic.Title;
@@ -225,10 +258,10 @@ namespace DocHound.Windows.Dialogs
                 }
             }
         }
-        
+
 
         #endregion
-        
+
 
         #region INotifyPropertyChanged
 
@@ -251,6 +284,30 @@ namespace DocHound.Windows.Dialogs
         private void Button_CancelClick(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void ComboTopicType_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            // force refresh
+            OnPropertyChanged(nameof(IsHeaderTopic));
+        }
+
+        private void TextTopicTitle_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (string.IsNullOrEmpty(Topic.Title))
+            {
+                Topic.Slug = null;
+                Topic.Link = null;
+            }
+            else
+            {
+                Topic.Slug = Topic.CreateSlug();
+                if (IsHeaderTopic)
+                    Topic.Link = Topic.Slug + "/" + Topic.Slug + ".md";
+                else
+                    Topic.Link = Topic.Slug + ".md";
+            }
+
         }
     }
 }

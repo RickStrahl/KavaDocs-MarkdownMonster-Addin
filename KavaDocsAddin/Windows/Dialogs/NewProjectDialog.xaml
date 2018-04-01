@@ -9,10 +9,10 @@
         mc:Ignorable="d"
         Title="New Kava Docs Project" 
         TitleCharacterCasing="Normal"
-        WindowStyle="SingleBorderWindow"  ResizeMode="NoResize"
+        WindowStyle="SingleBorderWindow"  ResizeMode="CanResize"
         WindowStartupLocation="CenterOwner"
         Icon="../../Assets/icon_128.png"                                           
-        Height="480" Width="800" >
+        Height="500" Width="800" >
     <Grid>
 
         <Grid.ColumnDefinitions>

@@ -102,7 +102,7 @@ namespace DocHound.Model
             {
                 if (_title == value) return;
                 _title = value;
-                OnPropertyChanged();
+                OnPropertyChanged();                
                 if (Slug == null)
                     Slug = CreateSlug(_title);
             }
@@ -571,8 +571,7 @@ namespace DocHound.Model
                 return null;
 
             if (!string.IsNullOrEmpty(Link))
-            {
-                
+            {                
                 string file = Path.Combine(Project.ProjectDirectory, Link);
                 if (File.Exists(file))
                     return file;

@@ -115,7 +115,7 @@ namespace DocHound.Model
                     else
                         type = "topic";
                 }
-                if( type == "header")
+                if( type == "header" || type== "index")
                     return Path.Combine(Topic.Project.OutputDirectory, "icons", type.ToLower() + "_open.png");
 
                 return Path.Combine(Topic.Project.OutputDirectory, "icons", type.ToLower() + ".png");
