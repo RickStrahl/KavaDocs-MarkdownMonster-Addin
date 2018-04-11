@@ -10,7 +10,6 @@
              mc:Ignorable="d"                
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <windows:UriToCachedImageConverter x:Key="UriToCachedImageConverter"/>
 
         <ContextMenu x:Key="TopicContextMenu" Name="TopicContextMenu">
@@ -34,6 +33,9 @@
             <MenuItem Header="_Close Project" Command="{Binding KavaDocsModel.Commands.CloseProjectCommand}" />
             <MenuItem Header="_Save Project" Command="{Binding KavaDocsModel.Commands.SaveProjectCommand}"  InputGestureText="alt-k-s" />
             <Separator />
+            <MenuItem Name="MenuLinkTopic" Header="Link to another Topic" 
+                      Command="{Binding KavaDocsModel.Commands.LinkTopicDialogCommand}" />
+            <Separator/>
             <MenuItem Header="Settings">
                 <MenuItem Header="Project Settings"  Click="MenuProjectSettings_Click" IsEnabled="{Binding }"/>
                 <MenuItem Header="Kava Docs Settings"  Click="MenuKavaDocsSettings_Click" />
@@ -45,7 +47,7 @@
         <HierarchicalDataTemplate x:Key="TopicsTemplate" ItemsSource="{Binding Topics}"  >
             <StackPanel >
                 <StackPanel Orientation="Horizontal" KeyUp="TreeViewItem_KeyDown" >
-                    <Image Height="16" Width="Auto" Margin="5,0,5,0">
+                    <Image Height="16" Width="Auto" Margin="4,0,4,0" SnapsToDevicePixels="True">
                         <Image.Style>
                             <Style TargetType="Image">
                                 <Style.Triggers>
@@ -61,11 +63,10 @@
                     </Image>
 
                     <TextBlock Name="TextTopicTitle" Text="{Binding Title, Mode=OneWay}"
-                                       Padding="5,3,25,3" />
+                                       Padding="5,3,25,3"  controls:VisibilityHelper.IsCollapsed="{Binding TopicState.IsEditing}"/>
                     <TextBox Name="TextEditTopicTitle" 
                              Text="{Binding Title, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Padding="6,5,10,5"
-                             Visibility="{Binding TopicState.IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
-
+                             controls:VisibilityHelper.IsVisible="{Binding TopicState.IsEditing}">
 
                         <TextBox.Style>
                             <Style TargetType="TextBox">
@@ -174,7 +175,6 @@
                     <EventSetter Event="MouseMove" Handler="TreeViewItem_MouseMove"  />
                     <EventSetter Event="DragOver" Handler="TreeViewItem_DragOver" />
                     <EventSetter Event="Drop" Handler="TreeViewItem_Drop" />
-                    <EventSetter Event="MouseMove" Handler="TreeViewItem_MouseMove"/>
                     <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick" />
 
                 </Style>

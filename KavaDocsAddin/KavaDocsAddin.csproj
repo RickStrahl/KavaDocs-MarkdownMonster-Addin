@@ -83,8 +83,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\TopicPicker.xaml.cs">
+      <DependentUpon>TopicPicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="KavaDocsAddin.cs" />
-    <Compile Include="AppCommands.cs" />
+    <Compile Include="_Classes\AppCommands.cs" />
     <Compile Include="Controls\TopicEditor.xaml.cs">
       <DependentUpon>TopicEditor.xaml</DependentUpon>
     </Compile>
@@ -99,6 +102,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows\Dialogs\NewProjectDialog.xaml.cs">
       <DependentUpon>NewProjectDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Dialogs\PasteTopicBookmark.xaml.cs">
+      <DependentUpon>PasteTopicBookmark.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Dialogs\ProjectSettings.xaml.cs">
       <DependentUpon>ProjectSettings.xaml</DependentUpon>
@@ -492,6 +498,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\TopicPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\TopicsTree.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -499,6 +509,10 @@
     <Page Include="Windows\Dialogs\NewProjectDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Dialogs\PasteTopicBookmark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\Dialogs\ProjectSettings.xaml">
       <Generator>MSBuild:Compile</Generator>

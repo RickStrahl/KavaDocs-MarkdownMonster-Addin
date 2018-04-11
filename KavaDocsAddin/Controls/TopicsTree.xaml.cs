@@ -66,7 +66,7 @@ namespace KavaDocsAddin.Controls
                 Model.TopicTree = new ObservableCollection<DocTopic>();
                 return;
             }
-
+            
             project.GetTopicTree();
 
             //StringBuilder sb = new StringBuilder();

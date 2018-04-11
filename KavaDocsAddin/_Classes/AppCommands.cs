@@ -3,7 +3,9 @@ using System.IO;
 using System.Windows;
 using DocHound.Configuration;
 using DocHound.Windows.Dialogs;
+using KavaDocsAddin.Controls;
 using KavaDocsAddin.Core.Configuration;
+using KavaDocsAddin.Windows.Dialogs;
 using MarkdownMonster;
 using Microsoft.Win32;
 using Westwind.Utilities;
@@ -52,7 +54,8 @@ namespace KavaDocsAddin
             Command_PreviewBrowser();
             Command_CloseRightSidebarCommand();
 
-
+            // Editing
+            Command_LinkTopicDialog();
         }
 
         #region File Commands
@@ -214,6 +217,9 @@ namespace KavaDocsAddin
         {
             DeleteTopicCommand = new CommandBase((parameter, command) =>
             {
+                if (!mmApp.Model.IsEditorActive)
+                    return;
+
                 var topic = Model.ActiveTopic;
                 if (topic == null)
                     return;
@@ -327,8 +333,56 @@ namespace KavaDocsAddin
             }, (p, c) => true);
         }
 
-        
 
+
+
+        #endregion
+
+        #region Editing
+
+
+        public CommandBase LinkTopicDialogCommand { get; set; }
+
+        void Command_LinkTopicDialog()
+        {
+            LinkTopicDialogCommand = new CommandBase((parameter, command) =>
+            {
+                var form = new PasteTopicBookmark();
+                form.Owner = mmApp.Model.Window;
+                form.ShowDialog();
+
+                if (!form.Cancelled && form.SelectedTopic != null && mmApp.Model.ActiveEditor != null)
+                {
+                    var selText = mmApp.Model.ActiveEditor.GetSelection();
+                    var link = form.SelectedTopic.Link;
+                    if (string.IsNullOrEmpty(link))
+                        link = form.SelectedTopic.Slug;
+
+                    string origLink = link;
+
+                    if (!File.Exists(link))
+                    {
+                        if (!link.EndsWith(".md"))
+                            link += ".md";
+
+                        if (!File.Exists(link))
+                        {
+                            if (!link.EndsWith(".html"))
+                                link += ".html";
+                            if (!File.Exists(link))
+                                link = origLink;
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(selText))
+                        selText = form.SelectedTopic.Title;
+
+                    string md = $"[{selText}]({link})";
+
+                    mmApp.Model.ActiveEditor.SetSelectionAndFocus(md);
+                }
+            }, (p, c) => true);
+        }
 
         #endregion
 
