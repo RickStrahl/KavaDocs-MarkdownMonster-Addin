@@ -227,27 +227,22 @@ namespace KavaDocsAddin
             topic.TopicState.IsSelected = true;
         }
 
-
-        public override void OnNotifyAddin(string command, object parameter)
+        public override void OnDocumentUpdated()
         {
-            if (command == "ReadOnlyEditorDoubleClick")
-            {
-                var file = AddinModel.ActiveTopic.GetTopicFileName();
-                if (file == null)
-                    return;
+            if (AddinModel == null || Model?.ActiveEditor == null || Model.ActiveEditor.Identifier != "KavaDocsDocument")
+                return;
 
-                var tab = Model.Window.OpenTab(file); // refresh or open                
-                var editor = tab.Tag as MarkdownDocumentEditor;
-                if (editor != null)
-                {
-                    editor.SetReadOnly(false);
-                    editor.Identifier = null;
-                    TopicsTree.SetEditorWithTopic(editor, AddinModel.ActiveTopic);
-                }          
-                    
-                
-            }
+            Model.ActiveEditor.Properties["KavaDocsUnEdited"] = false;
         }
+
+
+        //public override void OnNotifyAddin(string command, object parameter)
+        //{
+        //    if (command == "ReadOnlyEditorDoubleClick")
+        //    {
+        //        Tree.OpenTopicInMMEditor(AddinModel.ActiveTopic);
+        //    }
+        //}
 
 
         public override void OnExecuteConfiguration(object sender)

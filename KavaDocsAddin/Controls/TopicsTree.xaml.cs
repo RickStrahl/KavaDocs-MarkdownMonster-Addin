@@ -214,12 +214,8 @@ namespace KavaDocsAddin.Controls
                     File.WriteAllText(file, "");
 
                 tab = Model.KavaDocsModel.Window.OpenTab(file);
-                var editor = tab.Tag as MarkdownDocumentEditor;
-                if (editor != null)
-                {
-                    editor.Identifier = null; //"KavaDocsDocument";
-                    editor.SetReadOnly(false);
-                }
+                if (tab.Tag is MarkdownDocumentEditor editor)                
+                    editor.Properties["KavaDocsUnEdited"] = false;                
             }
 
             return tab;
@@ -238,27 +234,23 @@ namespace KavaDocsAddin.Controls
 
             var window = Model.KavaDocsModel.Window;
             var file = topic.GetTopicFileName();
-            var editorFile = topic.GetKavaDocsEditorFilePath();
+            //var editorFile = topic.GetKavaDocsEditorFilePath();
 
             // is tab open already as a file? If so use that
             var tab = window.GetTabFromFilename(file);
             if (tab != null)
             {
+                // Is the tab already open?
                 window.TabControl.SelectedItem = tab;
-                window.CloseTab(editorFile);             
+                ((MarkdownDocumentEditor)tab.Tag).Identifier = null;
             }
             else
             {
-                // Is the tab already open?
-                tab = Model.KavaDocsModel.Window.GetTabFromFilename(file);
-                if (tab != null)
-                {
-                    Model.KavaDocsModel.Window.TabControl.SelectedItem = tab;
-                    return tab; // yup activate and done
-                }
-
+                
                 // Will also open the tab if not open yet
-                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, readOnly: true);
+                tab = Model.KavaDocsModel.Window.OpenTab(file);
+                
+                //tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, readOnly: true);
                 if (tab == null)
                    return null;
                 
@@ -278,14 +270,19 @@ namespace KavaDocsAddin.Controls
                     if (ed == null)
                         continue;
 
-                    if (ed.IsReadOnly && ed.Identifier == "KavaDocsDocument" && tabItem != tab)
-                        itemsToClose.Add(tabItem);
+                    if (ed.Identifier == "KavaDocsDocument" && tabItem != tab)
+                    {                      
+                        if( ed.Properties.TryGetValue("KavaDocsUnEdited", out object IsUnEdited) && (bool) IsUnEdited)
+                            itemsToClose.Add(tabItem);
+                    }
+                        
                 }
 
                 foreach (var item in itemsToClose)
                     Model.KavaDocsModel.Addin.CloseTab(item);
 
                 editor.Properties["KavaDocsTopic"] = topic;
+                editor.Properties["KavaDocsUnEdited"] = true;
             }
 
             if (tab != null)
