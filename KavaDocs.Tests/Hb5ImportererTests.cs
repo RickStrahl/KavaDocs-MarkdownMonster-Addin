@@ -34,6 +34,21 @@ namespace Westwind.HtmlHelpBuilder.Tests
         }
 
         [Test]
+        public void ImportWebSurgeHb5()
+        {
+            string outputFolder = @"c:\temp\websurge_help";
+            if (Directory.Exists(outputFolder))
+                try
+                {
+                    Directory.Delete(outputFolder);
+                }
+                catch { }
+            
+            var importer = new HelpBuilder5JsonImporter();
+            Assert.True(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\west wind websurge\west wind websurge.json", outputFolder));
+        }
+
+        [Test]
         public void ImportMarkdownMonsterHb5()
         {
             string outputFolder = @"c:\temp\markdownmonster_help";

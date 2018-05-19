@@ -81,7 +81,8 @@ namespace DocHound.Utilities
 
             // Copy images
             string sourceFolder = Path.GetDirectoryName(inputFile);
-            KavaUtils.CopyDirectory(Path.Combine(sourceFolder, "Images"), Path.Combine(outputFolder, "wwwroot", "images"));
+
+            KavaUtils.CopyDirectory(Path.Combine(sourceFolder, "Images"), Path.Combine(outputFolder, "images"));
 
             project.GetTopicTreeFromFlatList(project.Topics);
 

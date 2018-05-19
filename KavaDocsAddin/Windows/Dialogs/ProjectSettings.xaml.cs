@@ -9,6 +9,7 @@ using DocHound.Model;
 using KavaDocsAddin;
 using KavaDocsAddin.Controls;
 using MarkdownMonster;
+using MarkdownMonster.Windows;
 
 namespace DocHound.Windows.Dialogs
 {
@@ -89,7 +90,10 @@ namespace DocHound.Windows.Dialogs
                 AppModel.Window.ShowStatus(creator.ErrorMessage, 6000);
             }
             else
+            {
+                UriToCachedImageConverter.ClearCachedImages();
                 AppModel.Window.ShowStatus("Templates have been updated.", 6000);
+            }
         }
     }
 }

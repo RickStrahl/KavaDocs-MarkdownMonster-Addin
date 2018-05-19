@@ -28,8 +28,6 @@ namespace DocHound.Model
     [DebuggerDisplay("{Title} - {Filename}")]
     public class DocProject : INotifyPropertyChanged
     {
-        
-
         /// <summary>
         ///  The descriptive name of the project
         /// </summary>
@@ -140,20 +138,7 @@ namespace DocHound.Model
         }
         private string _version;
 
-        #region Options
 
-        /// <summary>
-        /// Determines how HTML is rendered when rendering topics
-        /// </summary>
-        [JsonIgnore]
-        public HtmlRenderModes ActiveRenderMode { get; set; } = HtmlRenderModes.Html;
-
-        public bool AutoSortTopics { get; set; }
-        
-        /// <summary>
-        /// If true stores Yaml information in each topic
-        /// </summary>
-        public bool StoreYamlInTopics { get; set; }
 
         /// <summary>
         /// Language of the help file
@@ -170,18 +155,7 @@ namespace DocHound.Model
         }
         private string _language = "en-US";
 
-        /// <summary>
-        /// Configured Topic Types that can be used with this project
-        /// </summary>
-        public Dictionary<string,string> TopicTypes { get; set; }
-
-        /// <summary>
-        /// Kava Docs menu items for the Web site
-        /// </summary>
-        public List<SiteMenuItem> Menu { get; set; }
-
-        #endregion
-
+        
         #region Related Entities
 
         [JsonIgnore]
@@ -206,6 +180,20 @@ namespace DocHound.Model
         /// A list of custom topics that are available in this help file
         /// </summary>
         public Dictionary<string, string> CustomFields { get; set; }
+
+
+        /// <summary>
+        /// KavaDocs Project Settings
+        /// </summary>
+        [JsonIgnore]
+        public DocProjectSettings ProjectSettings { get; set; }
+
+        /// <summary>
+        /// KavaDocs online processing settings
+        /// </summary>
+        public Dictionary<string,object> Settings { get; set; }
+
+    
 
         #endregion
 
@@ -236,40 +224,18 @@ namespace DocHound.Model
         }
         private RazorTemplates _templateRender;
 
+        //public DocProjectConfiguration Configuration { get; set; }
+
 
         public DocProject()
-        {
-            TopicTypes = new Dictionary<string, string>
-            {
-                {"index", "Top level topic for the documentation."},
-                {"header", "Header topic for sub-topics"},
-                {"topic", "Generic topic"},
-                {"whatsnew", "What's new"},
-                {"weblink", "External link"},
-                {"classheader", "Class Header"},
-                {"interface", "Interface"},
-                {"namespace", "Namespace"},
-                {"classmethod", "Class method"},
-                {"classproperty", "Class properyty"},
-                {"classfield", "Class field"},
-                {"classevent", "Class event"},
-                {"classconstructor", "Class constructor"},
-                {"enum", "Enumeration"},
-                {"delegate", "Delegate"},
-                {"webservice", "Web Service"},
-                {"database", "Database"},
-                {"datacolumn", "Data columns"},
-                {"datafunction", "Data function"},
-                {"datastoredproc", "Data stored procedure"},
-                {"datatable", "Data table"},
-                {"dataview", "Data view"},
-                {"vstsworkitem", "VSTS work item"},
-                {"vstsworkitemquery", "VSTS work item query"}
-            };
+        {                       
+            Settings = new Dictionary<string, object>();
 
+            // Make sure this is last
+            ProjectSettings = new DocProjectSettings(this);
         }
 
-        public DocProject(string filename = null)
+        public DocProject(string filename = null) : this()
         {
             if (filename == null)
                 filename = "DocumentationProject.json";
@@ -594,7 +560,7 @@ namespace DocHound.Model
             string link = null;
 
             if (mode == HtmlRenderModes.None)
-                mode = ActiveRenderMode;
+                mode = ProjectSettings.ActiveRenderMode;
 
             // Plain HTML
             if (mode == HtmlRenderModes.Html )
@@ -712,10 +678,8 @@ namespace DocHound.Model
                 if (string.IsNullOrEmpty(filename))
                     filename = Filename;
 
-                if (!DocProjectManager.Current.SaveProject(this, filename))
-                {
-                    Dispatcher.CurrentDispatcher.Invoke(()=> SetError(DocProjectManager.Current.ErrorMessage));
-                }                
+                if (!DocProjectManager.Current.SaveProject(this, filename))                
+                    Dispatcher.CurrentDispatcher.Invoke(()=> SetError(DocProjectManager.Current.ErrorMessage));                                
             });
         }
 
@@ -807,7 +771,7 @@ namespace DocHound.Model
 
             var query= topics.Where(t => t.ParentId == topic.Id);
 
-            if (AutoSortTopics)
+            if (ProjectSettings.AutoSortTopics)
             {    query = query
                     .OrderByDescending(t => t.SortOrder)
                     .ThenBy(t => t.DisplayType)
@@ -850,7 +814,7 @@ namespace DocHound.Model
             var query = topics
                 .OrderByDescending(t => t.SortOrder);
 
-            if (AutoSortTopics)
+            if (ProjectSettings.AutoSortTopics)
                 query = query.ThenBy(t => t.DisplayType).ThenBy(t => t.Title);
 
             var topicList = query.ToList();
@@ -951,6 +915,42 @@ namespace DocHound.Model
         #endregion
 
 
+        #region Settings Handling
+       
+        public string GetSetting(string key, string defaultValue = null)
+        {
+            if (Settings.TryGetValue(key, out object result))
+                return result as string;
+
+            return defaultValue;
+        }
+        public bool GetSetting(string key, bool defaultValue)
+        {
+            if (Settings.TryGetValue(key, out object result))
+                return (bool) result;
+
+            return defaultValue;
+        }
+        
+        
+        public T GetSetting<T>(string key, object defaultValue = null)
+        {
+            if (Settings.TryGetValue(key, out object result))
+                return (T)result;
+
+            if (defaultValue == null)
+                return default(T);
+
+            return (T)defaultValue;
+        }
+
+        public void SetSetting(string key, object value)
+        {
+            Settings[key] = value;
+        }
+
+        #endregion
+
 
 
         #region Error Handling
@@ -988,17 +988,17 @@ namespace DocHound.Model
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
+        
 
-        [NotifyPropertyChangedInvocator]
+       [NotifyPropertyChangedInvocator]
         public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        #endregion
-
-
         
+        #endregion
     }
+
 
     public enum HtmlRenderModes
     {
@@ -1008,9 +1008,4 @@ namespace DocHound.Model
         None
     }
 
-    public class SiteMenuItem
-    {
-        public string Title { get; set; }
-        public string Link { get; set; }
-    }
 }
