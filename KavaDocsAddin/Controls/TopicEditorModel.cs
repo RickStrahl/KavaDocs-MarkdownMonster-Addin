@@ -98,7 +98,7 @@ namespace KavaDocsAddin.Controls
 
                 var list = new List<DisplayTypeItem>();
 
-                foreach (var type in Project.TopicTypes)
+                foreach (var type in Project.ProjectSettings.TopicTypes)
                 {
                     var item = new DisplayTypeItem()
                     {

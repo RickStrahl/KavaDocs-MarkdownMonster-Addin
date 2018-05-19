@@ -15,7 +15,7 @@
                        Padding="4"
         WindowStartupLocation="CenterOwner"                                   
         IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
-        Width="800" Height="6400" MinWidth="640" MinHeight="320">
+        Width="800" Height="630" MinWidth="640" MinHeight="320">
     <Grid>
         
         <Grid.ColumnDefinitions>

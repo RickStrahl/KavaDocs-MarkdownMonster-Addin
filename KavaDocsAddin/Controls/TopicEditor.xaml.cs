@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace KavaDocsAddin.Controls
     /// <summary>
     /// Interaction logic for TopicEditor.xaml
     /// </summary>
-    public partial class TopicEditor : UserControl
+    public partial class TopicEditor
     {
         private TopicEditorModel Model;
 
@@ -36,8 +37,12 @@ namespace KavaDocsAddin.Controls
 
             DataContext = Model;
 
-            Loaded += TopicEditor_Loaded;                        
+            Loaded += TopicEditor_Loaded;               
+
+
+            
         }
+
 
 
         private void TopicEditor_Loaded(object sender, RoutedEventArgs e)
@@ -71,5 +76,39 @@ namespace KavaDocsAddin.Controls
             }
         }
 
+        //private void TopicEditor_LostFocus(object sender, RoutedEventArgs e)
+        //{
+        //    SaveProjectFileForTopic(Model.Topic,Model.Project);
+        //    Model.AppModel.Window.ShowStatus("Topic saved.",2000);
+        //    e.Handled = true;
+        //}
+
+
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            var pos = Mouse.GetPosition(this);
+            if (pos.X > 5)
+                return;
+        
+            if (SaveProjectFileForTopic(Model.Topic, Model.Project))
+                Model.AppModel.Window.ShowStatus("Topic saved.", 2000);
+
+            e.Handled = true;
+        }
+
+        public bool SaveProjectFileForTopic(DocTopic topic, DocProject project = null)
+        {
+            if (topic == null)
+                return false;
+
+            if (!topic.TopicState.IsDirty)
+                return false;
+
+            if (project == null)
+                project = kavaUi.AddinModel.ActiveProject;
+
+            project.SaveProjectAsync();
+            return true;            
+        }
     }
 }

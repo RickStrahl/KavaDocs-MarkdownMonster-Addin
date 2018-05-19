@@ -100,8 +100,6 @@ namespace DocHound.Windows.Dialogs
             }
         }
 
-        private bool _isHeaderTopic;
-
         public List<DisplayTypeItem> TopicTypesList
         {
             get
@@ -111,7 +109,7 @@ namespace DocHound.Windows.Dialogs
 
                 var list = new List<DisplayTypeItem>();
 
-                foreach (var type in AppModel.ActiveProject.TopicTypes)
+                foreach (var type in AppModel.ActiveProject.ProjectSettings.TopicTypes)
                 {
                     var item = new DisplayTypeItem()
                     {

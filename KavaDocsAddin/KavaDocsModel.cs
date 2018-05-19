@@ -243,13 +243,13 @@ namespace KavaDocsAddin
                 if (ActiveTopic == null)
                     return;
 
-                topic.Project.ActiveRenderMode = HtmlRenderModes.Preview;
+                topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Preview;
                 topic.TopicState.IsPreview = usePragmaLines;
 
                 string renderedHtml = topic.RenderTopicToFile(addPragmaLines: usePragmaLines);
 
                 topic.TopicState.IsPreview = false;
-                topic.Project.ActiveRenderMode = HtmlRenderModes.Html;
+                topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Html;
 
                 if (renderedHtml == null)
                 {

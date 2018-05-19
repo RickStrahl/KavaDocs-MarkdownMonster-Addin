@@ -167,7 +167,7 @@ namespace KavaDocsAddin.Controls
             return true;
         }
 
-        public bool SaveProjectFileForTopic(DocTopic topic, DocProject project = null)
+        public bool SaveProjectFileForTopic(DocTopic topic, DocProject project = null, bool async = false)
         {
             if (topic == null)
                 return false;
@@ -178,11 +178,19 @@ namespace KavaDocsAddin.Controls
             if (project == null)
                 project = kavaUi.AddinModel.ActiveProject;
 
+
+            if (async)
+            {
+                project.SaveProjectAsync();
+                topic.TopicState.IsDirty = false;
+                return true;
+            }
+
             bool result =  project.SaveProject();
             if (result)
                 topic.TopicState.IsDirty = false;
 
-            return result;
+            return result;        
         }
 
 
@@ -205,15 +213,23 @@ namespace KavaDocsAddin.Controls
                 if (!File.Exists(file))
                     File.WriteAllText(file, "");
 
-                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file);
+                tab = Model.KavaDocsModel.Window.OpenTab(file);
                 var editor = tab.Tag as MarkdownDocumentEditor;
                 if (editor != null)
-                    editor.Identifier = "KavaDocsDocument";
+                {
+                    editor.Identifier = null; //"KavaDocsDocument";
+                    editor.SetReadOnly(false);
+                }
             }
 
             return tab;
         }
 
+
+        /// <summary>
+        /// Opens read
+        /// </summary>
+        /// <returns></returns>
         public TabItem OpenTopicInEditor()
         {
             DocTopic topic = TreeTopicBrowser.SelectedItem as DocTopic;
@@ -233,24 +249,43 @@ namespace KavaDocsAddin.Controls
             }
             else
             {
-                try
+                // Is the tab already open?
+                tab = Model.KavaDocsModel.Window.GetTabFromFilename(file);
+                if (tab != null)
                 {
-                    File.Copy(file, editorFile, true);
-                }
-                catch
-                {
-                    try
-                    {
-                        File.Copy(file, editorFile, true);
-                    }
-                    catch
-                    {
-                        return null;
-                    }
+                    Model.KavaDocsModel.Window.TabControl.SelectedItem = tab;
+                    return tab; // yup activate and done
                 }
 
                 // Will also open the tab if not open yet
-                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(editorFile, readOnly: true);
+                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, readOnly: true);
+                if (tab == null)
+                   return null;
+                
+                var editor = tab.Tag as MarkdownDocumentEditor;
+                if (editor == null)
+                    return null;
+                
+                // close existing 
+                List<TabItem> itemsToClose = new List<TabItem>();
+                foreach (var item in Model.KavaDocsModel.Window.TabControl.Items)
+                {
+                    var tabItem = item as TabItem;
+                    if (tabItem == null)
+                        continue;
+
+                    var ed = tabItem.Tag as MarkdownDocumentEditor;
+                    if (ed == null)
+                        continue;
+
+                    if (ed.IsReadOnly && ed.Identifier == "KavaDocsDocument" && tabItem != tab)
+                        itemsToClose.Add(tabItem);
+                }
+
+                foreach (var item in itemsToClose)
+                    Model.KavaDocsModel.Addin.CloseTab(item);
+
+                editor.Properties["KavaDocsTopic"] = topic;
             }
 
             if (tab != null)

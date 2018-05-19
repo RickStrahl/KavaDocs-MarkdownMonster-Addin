@@ -572,7 +572,7 @@ namespace DocHound.Model
 
             if (!string.IsNullOrEmpty(Link))
             {                
-                string file = Path.Combine(Project.ProjectDirectory, Link);
+                string file = FileUtils.NormalizePath(Path.Combine(Project.ProjectDirectory, Link));
                 if (File.Exists(file))
                     return file;
             }
@@ -727,7 +727,7 @@ namespace DocHound.Model
             if (string.IsNullOrEmpty(Title))
                 Title = GetTitleHeader(markdownText);
 
-            if (Project != null && Project.StoreYamlInTopics)
+            if (Project != null && Project.ProjectSettings.StoreYamlInTopics)
             {
                 string yaml = serializer.Serialize(this);
                 markdownText = $"---\n{yaml}---\n{markdownText}";
@@ -882,7 +882,7 @@ namespace DocHound.Model
                 link = Slug;
 
             if (mode == HtmlRenderModes.None)
-                mode = Project.ActiveRenderMode;
+                mode = Project.ProjectSettings.ActiveRenderMode;
 
             // Plain HTML
             if (mode == HtmlRenderModes.Html)

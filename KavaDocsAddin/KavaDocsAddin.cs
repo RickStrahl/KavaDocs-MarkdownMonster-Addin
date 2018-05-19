@@ -236,13 +236,15 @@ namespace KavaDocsAddin
                 if (file == null)
                     return;
 
-                var editorFileName = AddinModel.ActiveTopic.GetKavaDocsEditorFilePath();
-                CloseTab(editorFileName);
-
-                var tab = Model.Window.RefreshTabFromFile(file); // refresh or open                
+                var tab = Model.Window.OpenTab(file); // refresh or open                
                 var editor = tab.Tag as MarkdownDocumentEditor;
-                if (editor != null)                
-                    TopicsTree.SetEditorWithTopic(editor, AddinModel.ActiveTopic);                    
+                if (editor != null)
+                {
+                    editor.SetReadOnly(false);
+                    editor.Identifier = null;
+                    TopicsTree.SetEditorWithTopic(editor, AddinModel.ActiveTopic);
+                }          
+                    
                 
             }
         }
@@ -272,13 +274,20 @@ namespace KavaDocsAddin
             if (topic == null)
                 return renderedHtml;
 
-            topic.Project.ActiveRenderMode = HtmlRenderModes.Preview;
+            topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Preview;
             topic.TopicState.IsPreview = true;
 
-            renderedHtml = topic.RenderTopicToFile(addPragmaLines: true);
+            if (topic.IsLink)
+            {
+                renderedHtml = topic.Body;
+                if (string.IsNullOrEmpty(topic.Body) && topic.Link.StartsWith("http"))
+                    renderedHtml = topic.Link;            
+            }
+            else
+                renderedHtml = topic.RenderTopicToFile(addPragmaLines: true);
 
             topic.TopicState.IsPreview = false;
-            topic.Project.ActiveRenderMode = HtmlRenderModes.Html;
+            topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Html;
 
             return base.OnModifyPreviewHtml(renderedHtml, markdownHtml);
         }

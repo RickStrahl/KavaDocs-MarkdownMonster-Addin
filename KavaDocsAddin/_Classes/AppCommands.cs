@@ -21,7 +21,6 @@ namespace KavaDocsAddin
         {
             Model = model;
             CreateCommands();
-
         }
 
         
@@ -269,7 +268,7 @@ namespace KavaDocsAddin
                 if (topic == null)
                     return;
 
-                Model.Window.OpenTab(topic.GetTopicFileName());
+                Model.Window.OpenTab(topic.GetTopicFileName(),readOnly: false);
             }, (p, c) => true);
         }
 

@@ -6,9 +6,7 @@
              xmlns:local="clr-namespace:KavaDocsAddin.Controls"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
-             xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
-             xmlns:System="clr-namespace:System;assembly=mscorlib"
-             xmlns:model="clr-namespace:DocHound.Model;assembly=DocHound"
+             xmlns:model="clr-namespace:DocHound.Model;assembly=DocHound"                          
              mc:Ignorable="d" 
              FontSize="14"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -16,7 +14,7 @@
         <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding KavaDocsModel.Commands.SaveProjectCommand}" />
     </UserControl.InputBindings>
 
-    <Grid Name="MainGrid">
+    <Grid Name="MainGrid" >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -45,9 +43,6 @@
                             Name="ButtonSaveTopic" BorderThickness="0"  FontSize="12"
                             ToolTip="Save Topic" BorderBrush="Transparent"
                             Command="{Binding KavaDocsModel.Commands.SaveProjectCommand}" />
-
-
-
 
                 <Button  Grid.Column="3"
                          fa:Awesome.Content="ChevronCircleRight" Background="Transparent" 
@@ -156,7 +151,7 @@
 
             <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
                 <Label>Sort order:</Label>
-                <TextBox Width="30" Text="{Binding KavaDocsModel.ActiveTopic.SortOrder}"></TextBox>
+                <TextBox Width="52" Padding="5 0 5 0" Text="{Binding KavaDocsModel.ActiveTopic.SortOrder}"></TextBox>
             </StackPanel>
 
             <!--<Label  Margin="0,6,0,0">Body:</Label>

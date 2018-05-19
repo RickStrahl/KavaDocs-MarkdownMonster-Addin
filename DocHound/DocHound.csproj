@@ -78,6 +78,7 @@
     <Compile Include="MarkdownParser\MarkdownParserMarkDig.cs" />
     <Compile Include="Model\DocProject.cs" />
     <Compile Include="Model\DocProjectCreator.cs" />
+    <Compile Include="Model\DocProjectSettings.cs" />
     <Compile Include="Model\DocTopic.cs" />
     <Compile Include="Utilities\KavaUtils.cs" />
     <Compile Include="Model\TopicState.cs" />
