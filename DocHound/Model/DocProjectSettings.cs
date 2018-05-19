@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DocHound.Model
 {
@@ -25,7 +26,7 @@ namespace DocHound.Model
                 {"interface", "Interface"},
                 {"namespace", "Namespace"},
                 {"classmethod", "Class method"},
-                {"classproperty", "Class properyty"},
+                {"classproperty", "Class property"},
                 {"classfield", "Class field"},
                 {"classevent", "Class event"},
                 {"classconstructor", "Class constructor"},
@@ -40,7 +41,7 @@ namespace DocHound.Model
                 {"dataview", "Data view"},
                 {"vstsworkitem", "VSTS work item"},
                 {"vstsworkitemquery", "VSTS work item query"}
-            };         
+            };
         }
 
         /// <summary>
@@ -53,11 +54,15 @@ namespace DocHound.Model
 
         /// <summary>
         /// Configured Topic Types that can be used with this project
-        /// </summary>
+        /// </summary>        
         public Dictionary<string, string> TopicTypes
         {
-            get => _project.GetSetting<Dictionary<string, string>>(nameof(TopicTypes));
-            set => _project.SetSetting("TopicTypes", value);
+            get
+            {
+                JObject objDict = _project.GetSetting<JObject>("topicTypes");
+                return objDict?.ToObject<Dictionary<string, string>>();
+            }
+            set => _project.SetSetting("topicTypes", value);
         }
 
         public bool AutoSortTopics
@@ -74,6 +79,5 @@ namespace DocHound.Model
             get => _project.GetSetting<bool>(nameof(StoreYamlInTopics));
             set => _project.SetSetting(nameof(StoreYamlInTopics), value);
         }
-
     }
 }

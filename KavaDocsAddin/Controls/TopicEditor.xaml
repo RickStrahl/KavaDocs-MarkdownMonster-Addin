@@ -151,7 +151,7 @@
 
             <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
                 <Label>Sort order:</Label>
-                <TextBox Width="52" Padding="5 0 5 0" Text="{Binding KavaDocsModel.ActiveTopic.SortOrder}"></TextBox>
+                <TextBox Name="TextSortOrder" Width="52" Padding="5 0 5 0" Text="{Binding KavaDocsModel.ActiveTopic.SortOrder}"></TextBox>
             </StackPanel>
 
             <!--<Label  Margin="0,6,0,0">Body:</Label>

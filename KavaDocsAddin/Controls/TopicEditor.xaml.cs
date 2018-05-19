@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using DocHound.Model;
 using MarkdownMonster;
+using MarkdownMonster.Windows;
 
 namespace KavaDocsAddin.Controls
 {
@@ -86,12 +87,13 @@ namespace KavaDocsAddin.Controls
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
+            WindowUtilities.FixFocus(Model.AppModel.Window, TextSortOrder);
             var pos = Mouse.GetPosition(this);
             if (pos.X > 5)
                 return;
         
             if (SaveProjectFileForTopic(Model.Topic, Model.Project))
-                Model.AppModel.Window.ShowStatus("Topic saved.", 2000);
+                Model.AppModel.Window.ShowStatus("Topic saved.", 3000);
 
             e.Handled = true;
         }

@@ -633,74 +633,6 @@ namespace DocHound.Model
 
 
         /// <summary>
-        /// Updates the provided topic with the Yaml that is embedded
-        /// in the markdown. Also updates the _body field with just the
-        /// raw markdown text stripping off the yaml.
-        /// </summary>
-        /// <param name="markdown">markdown that may or may not contain yaml</param>
-        /// <param name="topic"></param>
-        /// <returns></returns>
-        public bool UpdateTopicFromYaml(string markdown, DocTopic topic = null)
-        {
-            if (topic == null)
-                topic = this;
-
-            string extractedYaml = GetYaml(markdown);
-
-            if (!string.IsNullOrEmpty(extractedYaml))
-            {
-                var yaml = StringUtils.ExtractString(extractedYaml, "---", "\n---", returnDelimiters: false).Trim();
-                var sr = new StringReader(yaml);
-                var deserializer = new DeserializerBuilder()
-                    .IgnoreUnmatchedProperties()
-                    .WithNamingConvention(new CamelCaseNamingConvention())
-                    .Build();
-
-                try
-                {
-                    // TODO: Better parsing of YAML data
-                    var yamlObject = deserializer.Deserialize<DocTopic>(sr);
-
-                    if (string.IsNullOrEmpty(Id))
-                        Id = yamlObject.Id;
-
-                    if (!string.IsNullOrEmpty(yamlObject.Title))
-                        Title = yamlObject.Title;
-
-                    if (!string.IsNullOrEmpty(yamlObject.DisplayType))
-                        DisplayType = yamlObject.DisplayType;
-                    if (!string.IsNullOrEmpty(yamlObject.Slug))
-                        Slug = yamlObject.Slug;
-                    if (!string.IsNullOrEmpty(yamlObject.Link))
-                        Link = yamlObject.Link;
-                    if (!string.IsNullOrEmpty(yamlObject.Keywords))
-                        Keywords = yamlObject.Keywords;
-                    if (!string.IsNullOrEmpty(yamlObject.SeeAlso))
-                        SeeAlso = yamlObject.SeeAlso;
-                    if (yamlObject.SortOrder > 0 || SortOrder == 0)
-                        SortOrder = yamlObject.SortOrder;
-
-                    if (Properties.Count < 1 || yamlObject.Properties.Count > 0)
-                        Properties = yamlObject.Properties;
-
-                    ClassInfo = yamlObject.ClassInfo;
-                }
-                catch
-                {
-                    return false;
-                }
-
-                _body = _body.Replace(extractedYaml, "");
-
-                if (string.IsNullOrEmpty(Title))
-                    Title = GetTitleHeader(_body);                
-            }
-
-            return true;
-        }
-
-
-        /// <summary>
         /// Saves body field content to a Markdown file with the slug as a name
         /// </summary>
         /// <param name="markdownText"></param>
@@ -767,6 +699,99 @@ namespace DocHound.Model
                 return false;
 
             Debug.WriteLine($"Save TopicFile done: {this} {file}");
+            return true;
+        }
+
+
+        /// <summary>
+        /// Deletes the underlying topic markdown file if any.
+        /// </summary>
+        /// <param name="file">Optional filename</param>
+        /// <returns></returns>
+        public bool DeleteTopicFile(string file = null)
+        {
+             if (file == null)
+                file = GetExternalFilename();
+
+            try
+            {
+                File.Delete(file);
+            }
+            catch(Exception ex)
+            {
+                string msg = $"Couldn't delete topic detail: {ex.Message}";
+                SetError(msg);
+                mmApp.Log($"KavaDocs: {msg}");
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Updates the provided topic with the Yaml that is embedded
+        /// in the markdown. Also updates the _body field with just the
+        /// raw markdown text stripping off the yaml.
+        /// </summary>
+        /// <param name="markdown">markdown that may or may not contain yaml</param>
+        /// <param name="topic"></param>
+        /// <returns></returns>
+        public bool UpdateTopicFromYaml(string markdown, DocTopic topic = null)
+        {
+            if (topic == null)
+                topic = this;
+
+            string extractedYaml = GetYaml(markdown);
+
+            if (!string.IsNullOrEmpty(extractedYaml))
+            {
+                var yaml = StringUtils.ExtractString(extractedYaml, "---", "\n---", returnDelimiters: false).Trim();
+                var sr = new StringReader(yaml);
+                var deserializer = new DeserializerBuilder()
+                    .IgnoreUnmatchedProperties()
+                    .WithNamingConvention(new CamelCaseNamingConvention())
+                    .Build();
+
+                try
+                {
+                    // TODO: Better parsing of YAML data
+                    var yamlObject = deserializer.Deserialize<DocTopic>(sr);
+
+                    if (string.IsNullOrEmpty(Id))
+                        Id = yamlObject.Id;
+
+                    if (!string.IsNullOrEmpty(yamlObject.Title))
+                        Title = yamlObject.Title;
+
+                    if (!string.IsNullOrEmpty(yamlObject.DisplayType))
+                        DisplayType = yamlObject.DisplayType;
+                    if (!string.IsNullOrEmpty(yamlObject.Slug))
+                        Slug = yamlObject.Slug;
+                    if (!string.IsNullOrEmpty(yamlObject.Link))
+                        Link = yamlObject.Link;
+                    if (!string.IsNullOrEmpty(yamlObject.Keywords))
+                        Keywords = yamlObject.Keywords;
+                    if (!string.IsNullOrEmpty(yamlObject.SeeAlso))
+                        SeeAlso = yamlObject.SeeAlso;
+                    if (yamlObject.SortOrder > 0 || SortOrder == 0)
+                        SortOrder = yamlObject.SortOrder;
+
+                    if (Properties.Count < 1 || yamlObject.Properties.Count > 0)
+                        Properties = yamlObject.Properties;
+
+                    ClassInfo = yamlObject.ClassInfo;
+                }
+                catch
+                {
+                    return false;
+                }
+
+                _body = _body.Replace(extractedYaml, "");
+
+                if (string.IsNullOrEmpty(Title))
+                    Title = GetTitleHeader(_body);                
+            }
+
             return true;
         }
 
@@ -987,7 +1012,7 @@ namespace DocHound.Model
         
         #endregion
 
-        
+
     }
 
     public class ClassInfo

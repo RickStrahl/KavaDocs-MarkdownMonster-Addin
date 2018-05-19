@@ -76,6 +76,10 @@ namespace DocHound.Model
         }    
         private string _baseUrl = "http://markdownmonster.west-wind.com/docs/";
 
+
+        /// <summary>
+        /// File name of the project.
+        /// </summary>
         [JsonIgnore]
         public string Filename
         {
@@ -183,7 +187,8 @@ namespace DocHound.Model
 
 
         /// <summary>
-        /// KavaDocs Project Settings
+        /// KavaDocs Project Settings - these are projected to
+        /// settings from the Settings dictionary.
         /// </summary>
         [JsonIgnore]
         public DocProjectSettings ProjectSettings { get; set; }
@@ -318,6 +323,8 @@ namespace DocHound.Model
         {
             if (topic == null)
                 return;
+
+            topic.DeleteTopicFile();
 
             if (topic.Parent?.Topics != null)
                 topic.Parent.Topics.Remove(topic);

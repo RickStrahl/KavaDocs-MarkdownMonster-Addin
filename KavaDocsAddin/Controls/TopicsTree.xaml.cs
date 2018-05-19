@@ -136,13 +136,13 @@ namespace KavaDocsAddin.Controls
 
             kavaUi.AddinModel.LastTopic = kavaUi.AddinModel.ActiveTopic;
 
+
             bool result = SaveProjectFileForTopic(kavaUi.AddinModel.LastTopic);
-            if (!result)
-                return false;
-
             
+            if (result)
+                kavaUi.AddinModel.Window.ShowStatus("Topic saved.",3000);
+                
             kavaUi.AddinModel.ActiveTopic = topic;
-
             
             // TODO: Move to function
             if (kavaUi.AddinModel.RecentTopics.Contains(topic))
@@ -173,7 +173,7 @@ namespace KavaDocsAddin.Controls
                 return false;
 
             if (!topic.TopicState.IsDirty)
-                return true;
+                return false;
 
             if (project == null)
                 project = kavaUi.AddinModel.ActiveProject;
