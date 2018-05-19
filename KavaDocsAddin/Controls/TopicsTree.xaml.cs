@@ -92,8 +92,7 @@ namespace KavaDocsAddin.Controls
             if (!HandleSelection())
                 return;
 
-            var topic = TreeTopicBrowser.SelectedItem as DocTopic;
-            if (topic != null)
+            if (TreeTopicBrowser.SelectedItem is DocTopic)
             {
                 TreeViewItem tvi = e.OriginalSource as TreeViewItem;
                 tvi?.BringIntoView();
@@ -102,26 +101,8 @@ namespace KavaDocsAddin.Controls
 
         private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            OpenTopicInMMEditor();
-
-            //TreeTopicBrowser_Selected(sender, e);
-            //var topic = TreeTopicBrowser.SelectedItem as DocTopic;
-            //if (topic != null)
-            //{
-            //    var file = topic.GetTopicFileName();
-            //    if (!File.Exists(file))
-            //        File.WriteAllText(file,"");
-
-            //    var tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file);
-            //    var editor = tab.Tag as MarkdownDocumentEditor;
-            //    if (editor != null)
-            //        editor.Identifier = "KavaDocsDocument";
-            //}            
+            OpenTopicInMMEditor();                    
         }
-
-
-       
-
 
         public bool HandleSelection(DocTopic topic = null)
         {
@@ -167,6 +148,15 @@ namespace KavaDocsAddin.Controls
             return true;
         }
 
+
+        /// <summary>
+        /// Saves a topic in the tree and then saves the project to
+        /// disk.
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <param name="project"></param>
+        /// <param name="async"></param>
+        /// <returns>false if data wasn't written (could be because there's nothing that's changed)</returns>
         public bool SaveProjectFileForTopic(DocTopic topic, DocProject project = null, bool async = false)
         {
             if (topic == null)
@@ -234,27 +224,17 @@ namespace KavaDocsAddin.Controls
 
             var window = Model.KavaDocsModel.Window;
             var file = topic.GetTopicFileName();
-            //var editorFile = topic.GetKavaDocsEditorFilePath();
-
+            
             // is tab open already as a file? If so use that
             var tab = window.GetTabFromFilename(file);
             if (tab != null)
-            {
-                // Is the tab already open?
-                window.TabControl.SelectedItem = tab;
-                ((MarkdownDocumentEditor)tab.Tag).Identifier = null;
-            }
+                window.TabControl.SelectedItem = tab;   // already open
             else
             {
-                
                 // Will also open the tab if not open yet
-                tab = Model.KavaDocsModel.Window.OpenTab(file);
-                
-                //tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, readOnly: true);
-                if (tab == null)
-                   return null;
-                
-                var editor = tab.Tag as MarkdownDocumentEditor;
+                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, noFocus: true);
+
+                var editor = tab?.Tag as MarkdownDocumentEditor;
                 if (editor == null)
                     return null;
                 
@@ -274,15 +254,14 @@ namespace KavaDocsAddin.Controls
                     {                      
                         if( ed.Properties.TryGetValue("KavaDocsUnEdited", out object IsUnEdited) && (bool) IsUnEdited)
                             itemsToClose.Add(tabItem);
-                    }
-                        
+                    }                  
                 }
 
                 foreach (var item in itemsToClose)
                     Model.KavaDocsModel.Addin.CloseTab(item);
 
                 editor.Properties["KavaDocsTopic"] = topic;
-                editor.Properties["KavaDocsUnEdited"] = true;
+                editor.Properties["KavaDocsUnEdited"] = true;                
             }
 
             if (tab != null)
