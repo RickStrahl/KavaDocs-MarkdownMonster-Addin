@@ -33,15 +33,9 @@ namespace KavaDocsAddin.Controls
         public TopicEditor()
         {            
             InitializeComponent();
-
             Model = new TopicEditorModel();
-
             DataContext = Model;
-
             Loaded += TopicEditor_Loaded;               
-
-
-            
         }
 
 
@@ -60,31 +54,6 @@ namespace KavaDocsAddin.Controls
         #endregion
 
         
-        private void AddinModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(KavaDocsModel.ActiveTopic))
-            {                                                                         
-                //BodyEditor.Identifier = "KavaDocsDocument";
-                //var topicId = Model.AppModel.ActiveTopic?.Id;
-                //if (topicId != null)
-                //    BodyEditor.Properties["TopicId"] = topicId;
-                //else
-                //{
-                //    topicId = Model.AppModel.ActiveTopic?.Slug;
-                //    BodyEditor.Properties["TopicSlug"] = topicId;
-                //}
-                //BodyEditor.SetMarkdown();                
-            }
-        }
-
-        //private void TopicEditor_LostFocus(object sender, RoutedEventArgs e)
-        //{
-        //    SaveProjectFileForTopic(Model.Topic,Model.Project);
-        //    Model.AppModel.Window.ShowStatus("Topic saved.",2000);
-        //    e.Handled = true;
-        //}
-
-
         protected override void OnMouseLeave(MouseEventArgs e)
         {
             WindowUtilities.FixFocus(Model.AppModel.Window, TextSortOrder);

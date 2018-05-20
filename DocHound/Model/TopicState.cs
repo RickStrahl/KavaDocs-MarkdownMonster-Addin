@@ -80,9 +80,9 @@ namespace DocHound.Model
         {
             get
             {
-                string outfolder = Topic.Project.OutputDirectory;
+                string outfolder = Topic.Project.ProjectDirectory;
 
-                if (string.IsNullOrEmpty(Topic.Project.OutputDirectory))
+                if (string.IsNullOrEmpty(outfolder))
                     return null;
 
                 var type = Topic.DisplayType;
@@ -94,7 +94,7 @@ namespace DocHound.Model
                         type = "topic";
                 }
                 
-                return Path.Combine(Topic.Project.OutputDirectory, "icons", type.ToLower() + ".png");
+                return Path.Combine(outfolder, "kavadocs", "icons", type.ToLower() + ".png");
             }
         }
 
@@ -102,9 +102,9 @@ namespace DocHound.Model
         {
             get
             {
-                string outfolder = Topic.Project.OutputDirectory;
+                string outfolder = Topic.Project.ProjectDirectory;
 
-                if (string.IsNullOrEmpty(Topic.Project.OutputDirectory))
+                if (string.IsNullOrEmpty(outfolder))
                     return null;
 
                 var type = Topic.DisplayType;
@@ -116,9 +116,9 @@ namespace DocHound.Model
                         type = "topic";
                 }
                 if( type == "header" || type== "index")
-                    return Path.Combine(Topic.Project.OutputDirectory, "icons", type.ToLower() + "_open.png");
+                    return Path.Combine(outfolder, "kavadocs", "icons", type.ToLower() + "_open.png");
 
-                return Path.Combine(Topic.Project.OutputDirectory, "icons", type.ToLower() + ".png");
+                return Path.Combine(outfolder, "kavadocs", "icons", type.ToLower() + ".png");
             }
         }
 

@@ -682,6 +682,10 @@ namespace DocHound.Model
                     {
                         try
                         {
+                            var path = Path.GetDirectoryName(file);
+                            if (!Directory.Exists(path))
+                                Directory.CreateDirectory(path);
+
                             File.WriteAllText(file, markdownText, Encoding.UTF8);
                             break;
                         }
@@ -697,8 +701,7 @@ namespace DocHound.Model
             }
             else
                 return false;
-
-            Debug.WriteLine($"Save TopicFile done: {this} {file}");
+            
             return true;
         }
 

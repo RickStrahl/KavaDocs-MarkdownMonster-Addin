@@ -48,6 +48,13 @@
                         <TextBlock Margin="10,0,0,0" FontSize="14">Update Project Template</TextBlock>
                     </StackPanel>
                 </Button>
+                <Button Name="ButtonOpenProjectFile" Margin="0,20" Height="40" FontSize="15" Width="30"
+                        HorizontalAlignment="Left"   IsDefault="True" Click="Button_OpenProjectFile"  >
+                    <StackPanel Orientation="Horizontal">
+                        <fa:FontAwesome  Icon="FolderOpen"  FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" Foreground="#FF0E7E28" FontSize="20" />
+                    </StackPanel>
+                </Button>
+
             </StackPanel>
         </StackPanel>
     </Grid>

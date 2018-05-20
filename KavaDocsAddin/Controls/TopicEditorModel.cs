@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -40,28 +41,7 @@ namespace KavaDocsAddin.Controls
             get { return KavaDocsModel.ActiveTopic; }
         }
 
-        
-
-        public string TopicType
-        {
-            get
-            {                
-                return Topic?.Type.ToString();               
-            }
-            set
-            {
-                if (value == _topicType) return;
-                _topicType = value;
-                OnPropertyChanged();
-
-                if (Topic == null)
-                    return;
-                
-                Topic.Type = value;
-            }
-        }
-        private string _topicType;
-
+     
         public DocProject Project
         {
             get { return KavaDocsModel.ActiveProject; }
@@ -80,7 +60,7 @@ namespace KavaDocsAddin.Controls
             if (e.PropertyName == "ActiveTopic")
             {
                 OnPropertyChanged(nameof(Topic));
-                OnPropertyChanged(nameof(DisplayTypesList));
+                //OnPropertyChanged(nameof(DisplayTypesList));
             }
             if (e.PropertyName == "ActiveProject")
             {
@@ -89,6 +69,7 @@ namespace KavaDocsAddin.Controls
             }
         }
 
+        
         public List<DisplayTypeItem> DisplayTypesList
         {
             get
@@ -124,6 +105,7 @@ namespace KavaDocsAddin.Controls
         #endregion
     }
 
+    [DebuggerDisplay("{DisplayType}")]
     public class DisplayTypeItem
     {
         public string DisplayType { get; set; }
@@ -135,7 +117,7 @@ namespace KavaDocsAddin.Controls
                 if (DisplayType == null || kavaUi.AddinModel.ActiveProject == null)
                     return null;
 
-                return Path.Combine(kavaUi.AddinModel.ActiveProject.ProjectDirectory, "wwwroot", "icons", DisplayType + ".png");
+                return Path.Combine(kavaUi.AddinModel.ActiveProject.ProjectDirectory, "kavadocs", "icons", DisplayType + ".png");
             }
         }
 

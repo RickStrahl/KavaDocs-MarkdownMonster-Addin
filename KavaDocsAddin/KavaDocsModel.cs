@@ -171,6 +171,17 @@ namespace KavaDocsAddin
             ActiveTopic = ActiveProject.LoadTopic(topicId);
         }
 
+        /// <summary>
+        /// Loads or reloads a project by filename
+        /// </summary>
+        /// <param name="activeProjectFilename"></param>
+        public void LoadProject(string activeProjectFilename)
+        {
+            var proj = DocProject.LoadProject(activeProjectFilename);
+            TopicsTree.LoadProject(proj);
+            ActiveProject = proj;
+        }
+
         #endregion
 
         #region Project Operations
@@ -294,16 +305,5 @@ namespace KavaDocsAddin
         }
 
         #endregion
-
-        /// <summary>
-        /// Loads or reloads a project by filename
-        /// </summary>
-        /// <param name="activeProjectFilename"></param>
-        public void LoadProject(string activeProjectFilename)
-        {
-            var proj = DocProject.LoadProject(activeProjectFilename);
-            TopicsTree.LoadProject(proj);
-            ActiveProject = proj;
-        }
     }
 }

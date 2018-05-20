@@ -299,11 +299,25 @@ namespace DocHound.Windows.Dialogs
             }
             else
             {
+                string baseRoute = "";
+                var baseTopic = AppModel.ActiveTopic;
+
+                if (RadioButtonCurrent.IsChecked.Value)                
+                    baseRoute = baseTopic.Parent?.Slug;
+                if (RadioButtonBelow.IsChecked.Value)
+                    baseRoute = baseTopic.Slug;
+
+                if (!string.IsNullOrEmpty(baseRoute))
+                    baseRoute += "/";
+
                 Topic.Slug = Topic.CreateSlug();
                 if (IsHeaderTopic)
                     Topic.Link = Topic.Slug + "/" + Topic.Slug + ".md";
                 else
                     Topic.Link = Topic.Slug + ".md";
+
+                Topic.Link = baseRoute + Topic.Link;
+                Topic.Slug = baseRoute + Topic.Slug;
             }
 
         }

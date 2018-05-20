@@ -158,16 +158,6 @@ namespace DocHound.Model
             if (!CopyProjectAssets(project))
                 return null;
 
-            //string folder = ProjectFolder;
-            //if (!Directory.Exists(folder))
-            //    Directory.CreateDirectory(folder);
-
-            //string wwwFolder = Path.Combine(folder, "wwwroot");
-            //if (!Directory.Exists(wwwFolder))
-            //    Directory.CreateDirectory(wwwFolder);
-            
-            //KavaUtils.CopyDirectory(Path.Combine(InstallFolder,"ProjectTemplates"), wwwFolder);
-            
            
             string body = @"## Welcome to your new Documentation Project
 
@@ -196,14 +186,13 @@ Time to get going!
 
         public bool CopyProjectAssets(DocProject project)
         {
-
             try
             {
                 string folder = project.ProjectDirectory;
                 if (!Directory.Exists(folder))
                     Directory.CreateDirectory(folder);
 
-                string wwwFolder = Path.Combine(folder, "wwwroot");
+                string wwwFolder = Path.Combine(folder, "kavadocs");
                 if (!Directory.Exists(wwwFolder))
                     Directory.CreateDirectory(wwwFolder);
 

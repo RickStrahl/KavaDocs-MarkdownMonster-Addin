@@ -63,14 +63,6 @@
                                  controls:TextBoxHelper.Watermark="Topic Title"  />
 
             <Grid  Margin="0,10,0,0" HorizontalAlignment="Stretch">
-                <!--<Grid.Resources>
-                    <ObjectDataProvider x:Key="BodyTypes"  MethodName="GetValues"
-                                                    ObjectType="{x:Type System:Enum}">
-                        <ObjectDataProvider.MethodParameters>
-                            <x:Type TypeName="model:TopicBodyFormats"/>
-                        </ObjectDataProvider.MethodParameters>
-                    </ObjectDataProvider>
-                </Grid.Resources>-->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition  />
                     <ColumnDefinition  />
@@ -83,13 +75,14 @@
                 </ComboBox>
 
                 <ComboBox Name="ComboTopicType" 
-                                  Grid.Column="1"                                  
-                                  ItemsSource="{Binding DisplayTypesList}"
-                                  IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False"
-                                  TextSearch.TextPath="DisplayType"
-                                  SelectedValuePath="DisplayType"  
-                                  SelectedValue="{Binding KavaDocsModel.ActiveTopic.DisplayType}"
-                                  ToolTip="Display format that determines the icon and optional template to use for output rendering.">
+                          Grid.Column="1"                                  
+                          ItemsSource="{Binding DisplayTypesList}"                                  
+                          SelectedValuePath="DisplayType"
+                          SelectedValue="{Binding KavaDocsModel.ActiveTopic.DisplayType}"
+                          ToolTip="Display format that determines the icon and optional template to use for output rendering."
+                          IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False"
+                          TextSearch.TextPath="DisplayType"
+                    >
                     <ComboBox.ItemTemplate>
                         <ItemContainerTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -99,8 +92,6 @@
                         </ItemContainerTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-
-              
             </Grid>
 
             <Label Margin="0,6,0,0">Slug:</Label>

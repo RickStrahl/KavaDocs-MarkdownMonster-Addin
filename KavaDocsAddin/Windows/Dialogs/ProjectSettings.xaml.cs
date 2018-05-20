@@ -95,5 +95,10 @@ namespace DocHound.Windows.Dialogs
                 AppModel.Window.ShowStatus("Templates have been updated.", 6000);
             }
         }
+
+        private void Button_OpenProjectFile(object sender, RoutedEventArgs e)
+        {
+            AppModel.Window.OpenTab(Project.Filename,syntax: "json");
+        }
     }
 }
