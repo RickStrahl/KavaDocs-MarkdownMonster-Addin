@@ -122,6 +122,7 @@ namespace DocHound.Model
             set
             {
                 if (value == _slug) return;
+                TopicState.OldSlug = _slug;
                 _slug = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(RenderTopicFilename));
@@ -140,8 +141,10 @@ namespace DocHound.Model
             set
             {
                 if (value == _Link) return;
+                TopicState.OldLink = _Link;
                 _Link = value;
                 OnPropertyChanged(nameof(Link));
+                
             }
         }
         private string _Link;
@@ -171,7 +174,7 @@ namespace DocHound.Model
             get
             {
                 var type = _displayType?.ToLower();
-                if (string.IsNullOrEmpty(type))
+                if (type==null)
                 {
                     if (Topics != null && Topics.Count > 0)
                         type = "header";
@@ -186,7 +189,7 @@ namespace DocHound.Model
                 if (value == _displayType) return;
 
                 // don't empty null types
-                if (string.IsNullOrEmpty(value))
+                if (value == null)
                 {
                     if (Topics != null && Topics.Count > 0)
                         value= "header";
@@ -225,7 +228,6 @@ namespace DocHound.Model
                 OnPropertyChanged();
             }
         }
-
         private string _body;
 
         public string Type { get; set; } = TopicBodyFormats.Markdown;
@@ -325,8 +327,6 @@ namespace DocHound.Model
             }
         }
         private bool _isExpanded;
-
-        
 
 
         [YamlIgnore]
@@ -884,6 +884,38 @@ namespace DocHound.Model
             return file;
         }
 
+        /// <summary>
+        /// Determines whether a display is a header topic
+        /// </summary>
+        /// <param name="displayType"></param>
+        /// <returns></returns>
+        public bool IsHeaderTopic(string displayType = null)
+        {
+            if (string.IsNullOrEmpty(displayType))
+                displayType = DisplayType;
+
+            if (displayType == "header" ||
+                displayType == "index" ||
+                displayType == "database" ||
+                displayType == "webservice" ||
+                displayType == "dataview" ||
+                displayType == "datatable" ||
+                displayType == "enum" ||
+                displayType == "delegate")
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Allows setting the body of the topic without forcing a file write
+        /// operation in the setter. Useful for initialization.
+        /// </summary>
+        /// <param name="bodyText"></param>
+        public void SetBodyWithoutSavingTopicFile(string bodyText)
+        {
+            _body = bodyText;
+        }
         #endregion
 
 
@@ -1014,8 +1046,6 @@ namespace DocHound.Model
         }
         
         #endregion
-
-
     }
 
     public class ClassInfo

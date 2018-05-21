@@ -538,6 +538,13 @@ public void SelectTopic(DocTopic topic)
 
                     dragResult.SourceTopic.Parent = dragResult.TargetTopic;
                     dragResult.SourceTopic.ParentId = dragResult.TargetTopic.Id;
+
+                    var so = targetTopics.Count * 10;
+                    foreach (var topic in targetTopics)
+                    {
+                        so -= 10;
+                        topic.SortOrder = so;
+                    }
                 }
                 else if (dragResult.DropLocation == DropLocations.Before)
                 {
@@ -555,6 +562,13 @@ public void SelectTopic(DocTopic topic)
                     
                     dragResult.SourceTopic.Parent = dragResult.TargetTopic.Parent;
                     dragResult.SourceTopic.ParentId = dragResult.TargetTopic.ParentId;
+
+                    var so = targetParentTopics.Count * 10;
+                    foreach (var topic in targetParentTopics)
+                    {
+                        so -= 10;
+                        topic.SortOrder = so;
+                    }
                 }
                 else if (dragResult.DropLocation == DropLocations.After)
                 {
@@ -569,11 +583,18 @@ public void SelectTopic(DocTopic topic)
                     
                     idx++;
                     targetParentTopics.Insert(idx, dragResult.SourceTopic);
+                    
 
                     dragResult.SourceTopic.Parent = dragResult.TargetTopic.Parent;
                     dragResult.SourceTopic.ParentId = dragResult.TargetTopic.ParentId;
+
+                    var so = targetParentTopics.Count * 10;
+                    foreach (var topic in targetParentTopics)
+                    {
+                        so -= 10;
+                        topic.SortOrder = so;
+                    }
                 }
-    
 
                 Model.KavaDocsModel.ActiveProject.SaveProject();
             }, (p, c) => true);

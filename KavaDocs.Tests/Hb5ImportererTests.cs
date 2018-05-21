@@ -16,7 +16,7 @@ namespace Westwind.HtmlHelpBuilder.Tests
     [TestFixture]
     public class Hbp5ImporterTests
     {
-        
+        private string KavaDocsAddinPath = Environment.ExpandEnvironmentVariables("%appdata%\\Markdown Monster\\Addins\\kavadocs");
 
         [Test]
         public void ImportWconnectHb5()
@@ -30,7 +30,8 @@ namespace Westwind.HtmlHelpBuilder.Tests
                 catch { }
 
             var importer = new HelpBuilder5JsonImporter();
-            Assert.True(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\webconnection\wconnect_help.json", outputFolder));
+            Assert.True(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\webconnection\wconnect_help.json",
+                outputFolder, KavaDocsAddinPath)); 
         }
 
         [Test]
@@ -45,7 +46,8 @@ namespace Westwind.HtmlHelpBuilder.Tests
                 catch { }
             
             var importer = new HelpBuilder5JsonImporter();
-            Assert.True(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\west wind websurge\west wind websurge.json", outputFolder));
+            Assert.True(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\west wind websurge\west wind websurge.json",
+                outputFolder, KavaDocsAddinPath));
         }
 
         [Test]

@@ -117,7 +117,7 @@ namespace KavaDocsAddin
                 Model.ActiveProject?.SaveProject();
 
                 Model.Window.ShowStatus("Project saved.", KavaApp.Configuration.StatusMessageTimeout);
-            }, (p, c) => true);
+            });
         }
 
         public CommandBase NewProjectCommand { get; set; }
@@ -128,7 +128,7 @@ namespace KavaDocsAddin
             {                                
                 var dialog = new NewProjectDialog(Model.Window);
                 dialog.ShowDialog();                
-            }, (p, c) => true);
+            });
         }
 
 
@@ -146,7 +146,7 @@ namespace KavaDocsAddin
 
                 Model.Window.ShowStatus("Project " + projectName + " has been closed.",
                     KavaApp.Configuration.StatusMessageTimeout);
-            }, (p, c) => true);
+            });
         }
 
         #endregion
@@ -161,7 +161,7 @@ namespace KavaDocsAddin
             {
                 string action = parameter as string;
                 Model.ActiveMarkdownEditor?.ProcessEditorUpdateCommand(action);
-            }, (p, c) => true);
+            });
         }
         #endregion
 
@@ -173,7 +173,7 @@ namespace KavaDocsAddin
             SettingsCommand = new CommandBase((parameter, command) =>
             {
                 ShellUtils.GoUrl(Path.Combine(mmApp.Configuration.CommonFolder, "KavaDocsAddin.json"));
-            }, (p, c) => true);
+            });
         }
 
 
@@ -184,7 +184,7 @@ namespace KavaDocsAddin
             ProjectSettingsCommand = new CommandBase((parameter, command) =>
                 {
                     Model.Window.OpenTab(Model.ActiveProject.Filename,rebindTabHeaders:true);
-                }, (p, c) => true);
+                });
         }
 
         #endregion
@@ -202,7 +202,7 @@ namespace KavaDocsAddin
             {
                 var newTopic = new NewTopicDialog(Model.Window);
                 newTopic.ShowDialog();
-            }, (p, c) => true);
+            });
         }
 
 
@@ -254,7 +254,7 @@ namespace KavaDocsAddin
 
 
                              
-            }, (p, c) => true);
+            });
         }
 
 
@@ -269,7 +269,7 @@ namespace KavaDocsAddin
                     return;
 
                 Model.Window.OpenTab(topic.GetTopicFileName(),readOnly: false);
-            }, (p, c) => true);
+            });
         }
 
 
@@ -281,7 +281,7 @@ namespace KavaDocsAddin
             RefreshTreeCommand = new CommandBase((parameter, command) =>
                 {
                     Model.TopicsTree.LoadProject(Model.ActiveProject);
-                }, (p, c) => true);
+                });
         }
 
 
@@ -298,7 +298,7 @@ namespace KavaDocsAddin
                     return;
 
                 Model.OpenProject(recent.ProjectFile);
-            }, (p, c) => true);
+            });
         }
 
 
@@ -314,7 +314,7 @@ namespace KavaDocsAddin
             CloseRightSidebarCommand= new CommandBase((parameter, command) =>
             {
                 Model.Window.ShowRightSidebar(true);
-            }, (p, c) => true);
+            });
         }
 
 
@@ -329,17 +329,11 @@ namespace KavaDocsAddin
                 Model.PreviewTopic(false);
                 
                 
-            }, (p, c) => true);
+            });
         }
-
-
-
-
         #endregion
 
         #region Editing
-
-
         public CommandBase LinkTopicDialogCommand { get; set; }
 
         void Command_LinkTopicDialog()
@@ -380,7 +374,7 @@ namespace KavaDocsAddin
 
                     mmApp.Model.ActiveEditor.SetSelectionAndFocus(md);
                 }
-            }, (p, c) => true);
+            });
         }
 
         #endregion

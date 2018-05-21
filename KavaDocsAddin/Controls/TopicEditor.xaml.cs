@@ -55,12 +55,13 @@ namespace KavaDocsAddin.Controls
 
         
         protected override void OnMouseLeave(MouseEventArgs e)
-        {
-            WindowUtilities.FixFocus(Model.AppModel.Window, TextSortOrder);
+        {            
             var pos = Mouse.GetPosition(this);
             if (pos.X > 5)
                 return;
-        
+
+            WindowUtilities.FixFocus(Model.AppModel.Window, TextSortOrder);
+
             if (SaveProjectFileForTopic(Model.Topic, Model.Project))
                 Model.AppModel.Window.ShowStatus("Topic saved.", 3000);
 
@@ -74,6 +75,12 @@ namespace KavaDocsAddin.Controls
 
             if (!topic.TopicState.IsDirty)
                 return false;
+
+            if (!string.IsNullOrEmpty(topic.TopicState.OldLink) && topic.TopicState.OldLink != topic.Link)
+            {
+                MessageBox.Show($"Link has changed from {topic.TopicState.OldLink} to {topic.Link}");
+            }
+
 
             if (project == null)
                 project = kavaUi.AddinModel.ActiveProject;

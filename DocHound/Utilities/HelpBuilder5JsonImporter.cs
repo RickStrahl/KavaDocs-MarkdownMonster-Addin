@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using DocHound.Model;
+using MarkdownMonster;
 using Westwind.Utilities;
 
 namespace DocHound.Utilities
@@ -10,17 +11,29 @@ namespace DocHound.Utilities
     public class HelpBuilder5JsonImporter
     {
 
-        public bool ImportHbp(string inputFile,string outputFolder = null)
+        public bool ImportHbp(string inputFile,string outputFolder = null, string kavaDocsAddinFolder = null)
         {
+            if (kavaDocsAddinFolder == null)
+                kavaDocsAddinFolder =
+                    Environment.ExpandEnvironmentVariables("%appdata%\\Markdown Monster\\Addins\\KavaDocs");
+
             if (outputFolder == null)
                 outputFolder = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(inputFile));
 
             if (!Directory.Exists(outputFolder))            
                 Directory.CreateDirectory(outputFolder);
 
-            if (!Directory.Exists(Path.Combine(outputFolder, "wwwroot")))
-                Directory.CreateDirectory(Path.Combine(outputFolder, "wwwroot"));
+            if (!Directory.Exists(Path.Combine(outputFolder, "images")))
+                Directory.CreateDirectory(Path.Combine(outputFolder, "images"));
 
+            if (!string.IsNullOrEmpty(kavaDocsAddinFolder))
+                FileUtils.CopyDirectory(Path.Combine(kavaDocsAddinFolder, "ProjectTemplates", "kavadocs"),
+                    Path.Combine(outputFolder, "kavadocs"));
+            else
+            {
+                if (!Directory.Exists(Path.Combine(outputFolder, "kavadocs")))
+                    Directory.CreateDirectory(Path.Combine(outputFolder, "kavadocs"));                
+            }
 
             var oldTopics =
                 JsonSerializationUtils.DeserializeFromFile(inputFile, typeof(List<HbpTopic>)) as List<HbpTopic>;
@@ -30,6 +43,9 @@ namespace DocHound.Utilities
             project.Topics = newTopics;
             foreach (var oldTopic in oldTopics)
             {
+                if (oldTopic.pk == "CONFIG")
+                    continue;
+
                 var newTopic = new DocTopic(project)
                 {
                     Id = oldTopic.pk,
@@ -68,17 +84,16 @@ namespace DocHound.Utilities
 
                 int format = oldTopic.viewmode;
                 newTopic.Type = format == 2 ? TopicBodyFormats.Markdown : TopicBodyFormats.HelpBuilder;
-                newTopic.Body = oldTopic.body;
+                newTopic.SetBodyWithoutSavingTopicFile(oldTopic.body);
 
                 // Properties have to be parsed out
                 // BodyFormats
                 project.Topics.Add(newTopic);
             }
 
-
             if (!Directory.Exists(outputFolder))
                 Directory.CreateDirectory(outputFolder);
-
+            
             // Copy images
             string sourceFolder = Path.GetDirectoryName(inputFile);
 

@@ -75,6 +75,17 @@ namespace DocHound.Model
 
         public bool IsPreview { get; set; }
 
+        /// <summary>
+        /// If Slug is changed the old value is stored here
+        /// </summary>
+        public string OldSlug { get; set; }
+
+        /// <summary>
+        /// If Link is changed the old value is stored here
+        /// so we can detect a change
+        /// </summary>
+        public string OldLink { get; set; }
+
 
         public string ImageFilename
         {

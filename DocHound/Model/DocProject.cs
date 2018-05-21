@@ -18,8 +18,6 @@ using Westwind.Utilities;
 
 namespace DocHound.Model
 {
-
-
     /// <summary>
     /// A Kava Docs Project File that contains
     /// the project header and a hierarchical 
@@ -41,10 +39,11 @@ namespace DocHound.Model
                 OnPropertyChanged();
             }
         }
+
         private string _title;
 
 
-        
+
         /// <summary>
         /// An optional owner/company name that owns this project
         /// </summary>
@@ -58,6 +57,7 @@ namespace DocHound.Model
                 OnPropertyChanged();
             }
         }
+
         private string _owner;
 
 
@@ -73,7 +73,8 @@ namespace DocHound.Model
                 _baseUrl = value;
                 OnPropertyChanged();
             }
-        }    
+        }
+
         private string _baseUrl = "http://markdownmonster.west-wind.com/docs/";
 
 
@@ -93,6 +94,7 @@ namespace DocHound.Model
                 OnPropertyChanged(nameof(OutputDirectory));
             }
         }
+
         private string _filename;
 
 
@@ -101,7 +103,8 @@ namespace DocHound.Model
         /// The base folder where the project is located.
         /// Used as the base folder to find related Markdown content files
         /// </summary>
-        public string ProjectDirectory {
+        public string ProjectDirectory
+        {
             get
             {
                 if (!string.IsNullOrEmpty(Filename))
@@ -140,6 +143,7 @@ namespace DocHound.Model
                 OnPropertyChanged();
             }
         }
+
         private string _version;
 
 
@@ -157,13 +161,13 @@ namespace DocHound.Model
                 OnPropertyChanged();
             }
         }
+
         private string _language = "en-US";
 
-        
+
         #region Related Entities
 
-        [JsonIgnore]
-        public DocTopic Topic { get; set; }
+        [JsonIgnore] public DocTopic Topic { get; set; }
 
         /// <summary>
         /// Topic list
@@ -178,6 +182,7 @@ namespace DocHound.Model
                 OnPropertyChanged();
             }
         }
+
         private ObservableCollection<DocTopic> _topics = new ObservableCollection<DocTopic>();
 
         /// <summary>
@@ -196,9 +201,9 @@ namespace DocHound.Model
         /// <summary>
         /// KavaDocs online processing settings
         /// </summary>
-        public Dictionary<string,object> Settings { get; set; }
+        public Dictionary<string, object> Settings { get; set; }
 
-    
+
 
         #endregion
 
@@ -218,22 +223,24 @@ namespace DocHound.Model
                     _templateRender = new RazorTemplates();
                     _templateRender.StartRazorHost(ProjectDirectory);
                 }
+
                 return _templateRender;
             }
             set
             {
-                if (value == null)                
-                    _templateRender?.StopRazorHost();               
+                if (value == null)
+                    _templateRender?.StopRazorHost();
                 _templateRender = value;
             }
         }
+
         private RazorTemplates _templateRender;
 
         //public DocProjectConfiguration Configuration { get; set; }
 
 
         public DocProject()
-        {                       
+        {
             Settings = new Dictionary<string, object>();
 
             // Make sure this is last
@@ -244,7 +251,7 @@ namespace DocHound.Model
         {
             if (filename == null)
                 filename = "DocumentationProject.json";
-            Filename = filename;            
+            Filename = filename;
         }
 
         #region Topic Loading
@@ -256,7 +263,7 @@ namespace DocHound.Model
         /// <returns></returns>
         public DocTopic LoadTopic(string topicId)
         {
-            Topic = Topics.FirstOrDefault(t => t.Id == topicId);            
+            Topic = Topics.FirstOrDefault(t => t.Id == topicId);
             return AfterTopicLoaded(Topic);
         }
 
@@ -268,7 +275,7 @@ namespace DocHound.Model
         /// <returns></returns>
         public DocTopic LoadByTitle(string title)
         {
-            Topic = Topics.FirstOrDefault(t => !string.IsNullOrEmpty(t.Title) && t.Title.ToLower() == title.ToLower());            
+            Topic = Topics.FirstOrDefault(t => !string.IsNullOrEmpty(t.Title) && t.Title.ToLower() == title.ToLower());
             return AfterTopicLoaded(Topic);
         }
 
@@ -283,7 +290,7 @@ namespace DocHound.Model
             if (slug.StartsWith("_"))
                 slug = slug.Substring(1);
 
-            Topic = Topics.FirstOrDefault(t => t.Slug.ToLower() == slug.ToLower());            
+            Topic = Topics.FirstOrDefault(t => t.Slug.ToLower() == slug.ToLower());
             return AfterTopicLoaded(Topic);
         }
 
@@ -311,9 +318,11 @@ namespace DocHound.Model
 
             return topic;
         }
+
         #endregion
 
         #region Topic Crud
+
         /// <summary>
         /// Removes an item from collection
         /// </summary>
@@ -330,8 +339,8 @@ namespace DocHound.Model
                 topic.Parent.Topics.Remove(topic);
             else
                 Topics.Remove(topic);
-            
-            topic = null;            
+
+            topic = null;
         }
 
         /// <summary>
@@ -345,7 +354,7 @@ namespace DocHound.Model
         }
 
 
-      
+
 
         /// <summary>
         /// Saves a topic safely into the topic list.
@@ -363,8 +372,8 @@ namespace DocHound.Model
             if (topic == null)
                 return false;
 
-            var loadTopic = FindTopicInTree(topic,Topics);
-            
+            var loadTopic = FindTopicInTree(topic, Topics);
+
             if (string.IsNullOrEmpty(topic.Title))
             {
                 var lines = StringUtils.GetLines(topic.Body);
@@ -375,16 +384,17 @@ namespace DocHound.Model
 
             if (loadTopic == null)
             {
-                using(var updateLock = new TopicFileUpdateLock())
+                using (var updateLock = new TopicFileUpdateLock())
                 {
                     if (topic.Parent != null)
                         topic.Parent.Topics.Add(topic);
                     else
                         Topics.Add(topic);
 
-                    return topic.SaveTopicFile();                    
+                    return topic.SaveTopicFile();
                 }
             }
+
             if (loadTopic.Id == topic.Id)
             {
                 var topics = loadTopic.Parent?.Topics;
@@ -401,8 +411,10 @@ namespace DocHound.Model
                         {
                             topics.RemoveAt(i);
                         }
+
                         continue;
                     }
+
                     if (topics[i].Id == topic.Id)
                     {
                         using (var updateLock = new TopicFileUpdateLock())
@@ -435,12 +447,13 @@ namespace DocHound.Model
                 if (!string.IsNullOrEmpty(strippedSlugId) && strippedSlugId.StartsWith("_"))
                     strippedSlugId = id.Substring(1);
 
-                topic = Topics                    
+                topic = Topics
                     .FirstOrDefault(t => t.Id == id ||
                                          t.Slug == id ||
                                          t.Slug == strippedSlugId);
                 return topic;
             }
+
             if (id.StartsWith("msdn:"))
             {
                 // for now just return as is
@@ -452,7 +465,7 @@ namespace DocHound.Model
             }
 
             // Must be topic title
-            topic = Topics                
+            topic = Topics
                 .FirstOrDefault(t => t.Title != null && t.Title.ToLower() == id.ToLower() ||
                                      t.Slug != null && t.Slug.ToLower() == id.ToLower());
 
@@ -469,17 +482,30 @@ namespace DocHound.Model
         {
             var fileTopic = new DocTopic();
             fileTopic.Project = this;
+            fileTopic.DisplayType = string.Empty;
+            fileTopic.Type = null;
             fileTopic.LoadTopicFile(doc.Filename); // make sure we have latest
 
 
             if (!string.IsNullOrEmpty(fileTopic.Title))
                 topic.Title = fileTopic.Title;
-            topic.DisplayType = fileTopic.DisplayType;
+            
             if (!string.IsNullOrEmpty(fileTopic.Slug))
                 topic.Slug = fileTopic.Slug;
 
             if (!string.IsNullOrEmpty(fileTopic.Link))
                 topic.Link = fileTopic.Link;
+
+            // TODO: Figure out how we can detect whether this has changed or is the default
+            //       Problem is that DisplayType gets set to a default if n
+            if (!string.IsNullOrEmpty(fileTopic.DisplayType))
+                topic.DisplayType = fileTopic.DisplayType;
+
+
+            if (!string.IsNullOrEmpty(fileTopic.Type))
+                topic.Type = fileTopic.Type;
+
+
 
             if (!noBody)
                 topic.Body = fileTopic.Body;
@@ -497,7 +523,7 @@ namespace DocHound.Model
         {
             if (topics == null || topics.Count < 1)
                 return;
-            
+
             foreach (var topic in topics)
             {
                 if (string.IsNullOrEmpty(searchPhrase))
@@ -524,6 +550,7 @@ namespace DocHound.Model
                     FilterTopicsInTree(topic.Topics, searchPhrase, false);
             }
         }
+
         #endregion
 
 
@@ -531,12 +558,12 @@ namespace DocHound.Model
 
         public void GenerateHtmlOutput()
         {
-            
+
         }
 
         public void GenerateTableOfContents()
         {
-            
+
         }
 
         #endregion
@@ -552,12 +579,12 @@ namespace DocHound.Model
         /// <param name="attributes"></param>
         /// <param name="mode"></param>
         /// <returns></returns>
-        public string GetTopicLink(string displayText, 
+        public string GetTopicLink(string displayText,
             string id,
-            string anchor = null, 
-            string attributes = null,             
+            string anchor = null,
+            string attributes = null,
             HtmlRenderModes mode = HtmlRenderModes.None)
-        {            
+        {
             string topicFile = GetTopicFilename(id);
             if (string.IsNullOrEmpty(topicFile))
                 return null;
@@ -570,7 +597,7 @@ namespace DocHound.Model
                 mode = ProjectSettings.ActiveRenderMode;
 
             // Plain HTML
-            if (mode == HtmlRenderModes.Html )
+            if (mode == HtmlRenderModes.Html)
                 link = $"<a href='{StringUtils.UrlEncode(topicFile)}' {anchorString} {attributes}>{linkText}</a>";
             // Preview Mode
             else if (mode == HtmlRenderModes.Preview)
@@ -590,7 +617,7 @@ namespace DocHound.Model
         {
             if (string.IsNullOrEmpty(id))
                 return null;
-            
+
             string topicId = null;
             if (id.StartsWith("_"))
             {
@@ -650,7 +677,7 @@ namespace DocHound.Model
             {
                 topic.Project = project;
             }
-            
+
             return project;
         }
 
@@ -668,7 +695,7 @@ namespace DocHound.Model
         {
             if (string.IsNullOrEmpty(filename))
                 filename = Filename;
-            
+
             if (!DocProjectManager.Current.SaveProject(this, filename))
             {
                 SetError(DocProjectManager.Current.ErrorMessage);
@@ -685,8 +712,8 @@ namespace DocHound.Model
                 if (string.IsNullOrEmpty(filename))
                     filename = Filename;
 
-                if (!DocProjectManager.Current.SaveProject(this, filename))                
-                    Dispatcher.CurrentDispatcher.Invoke(()=> SetError(DocProjectManager.Current.ErrorMessage));                                
+                if (!DocProjectManager.Current.SaveProject(this, filename))
+                    Dispatcher.CurrentDispatcher.Invoke(() => SetError(DocProjectManager.Current.ErrorMessage));
             });
         }
 
@@ -715,9 +742,9 @@ namespace DocHound.Model
         /// </summary>
         /// <returns></returns>
         public List<DocTopic> GetTopics()
-        {            
+        {
             return Topics
-                .OrderBy(t=> t.ParentId)
+                .OrderBy(t => t.ParentId)
                 .ThenByDescending(t => t.SortOrder)
                 .ThenBy(t => t.DisplayType)
                 .ThenBy(t => t.Title)
@@ -726,7 +753,7 @@ namespace DocHound.Model
 
 
 
-         /// <summary>
+        /// <summary>
         /// Converts a flat topic list as a tree of nested topics
         /// </summary>
         /// <remarks>
@@ -743,7 +770,7 @@ namespace DocHound.Model
 
             // need to copy so we can clear the root collection
             var allTopics = new ObservableCollection<DocTopic>(topics);
-            
+
             var topicsList = topics.Where(t => string.IsNullOrEmpty(t.ParentId))
                 .OrderByDescending(t => t.SortOrder)
                 .ThenByDescending(t => t.DisplayType)
@@ -753,14 +780,21 @@ namespace DocHound.Model
             topics.Clear();
             foreach (var top in topicsList)
             {
+                if (top.DisplayType == "config")
+                    continue;
+
                 GetChildTopicsForTopicFromFlatList(allTopics, top);
-                
+
                 top.ParentId = null;
                 top.Parent = null;
                 top.Project = this;
-                topics.Add(top);                
+
+
+                topics.Add(top);
+
+                top.SaveTopicFile();
             }
-                        
+
         }
 
 
@@ -776,29 +810,45 @@ namespace DocHound.Model
             if (topics == null)
                 topics = new ObservableCollection<DocTopic>();
 
-            var query= topics.Where(t => t.ParentId == topic.Id);
+            var query = topics.Where(t => t.ParentId == topic.Id);
 
             if (ProjectSettings.AutoSortTopics)
-            {    query = query
+            {
+                query = query
                     .OrderByDescending(t => t.SortOrder)
                     .ThenBy(t => t.DisplayType)
                     .ThenBy(t => t.Title);
             }
 
-            var children = query.ToList();            
+            var children = query.ToList();
 
             if (topic.Topics != null)
                 topic.Topics.Clear();
             else
                 topic.Topics = new ObservableCollection<DocTopic>();
-                    
+
             foreach (var childTopic in children)
-            {                
+            {
                 childTopic.Parent = topic;
                 childTopic.ParentId = topic.Id;
                 childTopic.Project = this;
+
+                string slug = childTopic.CreateSlug();
+                string baseSlug = topic.Slug;
+                if (!string.IsNullOrEmpty(baseSlug))
+                    baseSlug += "/";
+
+                childTopic.Slug = baseSlug + slug;
+
+                if (childTopic.IsHeaderTopic())
+                    childTopic.Link = baseSlug + slug + "/" + slug + ".md";
+                else
+                    childTopic.Link = baseSlug + slug + ".md";
+
                 topic.Topics.Add(childTopic);
-            }            
+
+                childTopic.SaveTopicFile();
+            }
         }
 
         #endregion
@@ -825,15 +875,15 @@ namespace DocHound.Model
                 query = query.ThenBy(t => t.DisplayType).ThenBy(t => t.Title);
 
             var topicList = query.ToList();
-                                                   
+
 
             topics.Clear();
             foreach (var top in topicList)
             {
                 GetChildTopicsForTopic(top);
                 top.Project = this;
-                topics.Add(top);                
-            }                       
+                topics.Add(top);
+            }
         }
 
 
@@ -865,7 +915,7 @@ namespace DocHound.Model
                 childTopic.ParentId = topic.Id;
                 childTopic.Project = this;
             }
-            
+
         }
 
         /// <summary>
@@ -874,13 +924,13 @@ namespace DocHound.Model
         /// <param name="topic"></param>
         /// <param name="rootTopics"></param>
         /// <returns></returns>
-        public DocTopic FindTopicInTree( DocTopic topic, ObservableCollection<DocTopic> rootTopics = null)
+        public DocTopic FindTopicInTree(DocTopic topic, ObservableCollection<DocTopic> rootTopics = null)
         {
             if (rootTopics == null)
                 rootTopics = Topics;
-            
+
             if (rootTopics == null)
-                    return null;
+                return null;
 
             foreach (var top in rootTopics)
             {
@@ -897,17 +947,17 @@ namespace DocHound.Model
 
         public void WriteTopicTree(ObservableCollection<DocTopic> topics, int level, StringBuilder sb)
         {
-                if (topics == null || topics.Count < 1)
-                    return;
+            if (topics == null || topics.Count < 1)
+                return;
 
-                sb.AppendLine("    " + level);
-                foreach (var topic in topics)
-                {
-                    sb.AppendLine(new string(' ', level * 2) +
-                                      $"{topic.Title} - {topic.Id} {topic.ParentId} {topic.Project != null}");
+            sb.AppendLine("    " + level);
+            foreach (var topic in topics)
+            {
+                sb.AppendLine(new string(' ', level * 2) +
+                              $"{topic.Title} - {topic.Id} {topic.ParentId} {topic.Project != null}");
 
-                    WriteTopicTree(topic.Topics, level + 1,sb);
-                }            
+                WriteTopicTree(topic.Topics, level + 1, sb);
+            }
         }
 
         public DocTopic FindTopicInFlatTree(DocTopic topic, ObservableCollection<DocTopic> rootTopics = null)
@@ -923,7 +973,7 @@ namespace DocHound.Model
 
 
         #region Settings Handling
-       
+
         public string GetSetting(string key, string defaultValue = null)
         {
             if (Settings.TryGetValue(key, out object result))
@@ -931,6 +981,7 @@ namespace DocHound.Model
 
             return defaultValue;
         }
+
         public bool GetSetting(string key, bool defaultValue)
         {
             if (Settings.TryGetValue(key, out object result))
@@ -938,17 +989,17 @@ namespace DocHound.Model
 
             return defaultValue;
         }
-        
-        
+
+
         public T GetSetting<T>(string key, object defaultValue = null)
         {
             if (Settings.TryGetValue(key, out object result))
-                return (T)result;
+                return (T) result;
 
             if (defaultValue == null)
                 return default(T);
 
-            return (T)defaultValue;
+            return (T) defaultValue;
         }
 
         public void SetSetting(string key, object value)
@@ -961,8 +1012,8 @@ namespace DocHound.Model
 
 
         #region Error Handling
-        [JsonIgnore]
-        public string ErrorMessage { get; set; }
+
+        [JsonIgnore] public string ErrorMessage { get; set; }
 
         protected void SetError()
         {
@@ -976,6 +1027,7 @@ namespace DocHound.Model
                 ErrorMessage = string.Empty;
                 return;
             }
+
             ErrorMessage += message;
         }
 
@@ -990,19 +1042,20 @@ namespace DocHound.Model
 
             ErrorMessage = e.Message;
         }
+
         #endregion
 
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
-        
 
-       [NotifyPropertyChangedInvocator]
+
+        [NotifyPropertyChangedInvocator]
         public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        
+
         #endregion
     }
 
@@ -1010,7 +1063,7 @@ namespace DocHound.Model
     public enum HtmlRenderModes
     {
         Html,
-        Preview, 
+        Preview,
         Print,
         None
     }

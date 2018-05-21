@@ -292,6 +292,11 @@ namespace DocHound.Windows.Dialogs
 
         private void TextTopicTitle_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            UpdateSlugAndLink();
+        }
+
+        private void UpdateSlugAndLink()
+        {
             if (string.IsNullOrEmpty(Topic.Title))
             {
                 Topic.Slug = null;
@@ -302,7 +307,7 @@ namespace DocHound.Windows.Dialogs
                 string baseRoute = "";
                 var baseTopic = AppModel.ActiveTopic;
 
-                if (RadioButtonCurrent.IsChecked.Value)                
+                if (RadioButtonCurrent.IsChecked.Value)
                     baseRoute = baseTopic.Parent?.Slug;
                 if (RadioButtonBelow.IsChecked.Value)
                     baseRoute = baseTopic.Slug;
@@ -311,15 +316,14 @@ namespace DocHound.Windows.Dialogs
                     baseRoute += "/";
 
                 Topic.Slug = Topic.CreateSlug();
-                if (IsHeaderTopic)
-                    Topic.Link = Topic.Slug + "/" + Topic.Slug + ".md";
-                else
+                //if (IsHeaderTopic)
+                //    Topic.Link = Topic.Slug + "/" + Topic.Slug + ".md";
+                //else
                     Topic.Link = Topic.Slug + ".md";
 
                 Topic.Link = baseRoute + Topic.Link;
                 Topic.Slug = baseRoute + Topic.Slug;
             }
-
         }
     }
 }
