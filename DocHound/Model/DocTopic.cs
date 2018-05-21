@@ -558,21 +558,64 @@ namespace DocHound.Model
 
 
         /// <summary>
+        /// Creates or updates a slug based on the current topic
+        /// and parent topic. The slug and link are project
+        /// relative.
+        /// </summary>
+        /// <param name="topic"></param>
+        public void CreateRelativeSlugAndLink(DocTopic topic = null)
+        {
+            if (topic == null)
+                topic = this;
+
+            var slug = CreateSlug(topic.Title);
+            string baseSlug = topic.Parent?.Slug;
+            if (!string.IsNullOrEmpty(baseSlug))
+                baseSlug += "/";
+
+            topic.Slug = baseSlug + slug;
+
+            // update file links
+            if (topic.Link == null ||
+                !(topic.Link.StartsWith("http://") || topic.Link.StartsWith("https://") ||
+                topic.Link.StartsWith("vsts:") || topic.Link.StartsWith("git:")) )
+                topic.Link = topic.Slug + ".md";            
+        }
+
+        
+
+        /// <summary>
+        /// Updates
+        /// </summary>
+        /// <param name="oldTopic"></param>
+        /// <param name="newTopic"></param>
+        public void UpdateRelativeSlugAndLink(DocTopic oldTopic, DocTopic newTopic = null)
+        {
+            // TODO: Create Update Relative Link that tries to fixes up any links in other topics
+
+            // this creates new links appropriate for a new location
+            CreateRelativeSlugAndLink(newTopic);
+        }
+
+        /// <summary>
         /// Returns a fully qualified path for the saved Topic Filename on disk
         /// which is the Slug.md or Slug.html
         /// </summary>
         /// <returns>Filename or null if topic file doesn't exist or topic filename is a URL or other format</returns>
-        public string GetTopicFileName()
+        public string GetTopicFileName(string link = null)       
         {
-            if (Link != null && ( Link.StartsWith("http://") || Link.StartsWith("https://")))
+            if (string.IsNullOrEmpty(link))
+                link = Link;
+
+            if (link != null && ( link.StartsWith("http://") || link.StartsWith("https://")))
                 return null;
 
             if (string.IsNullOrEmpty(Project?.ProjectDirectory))
                 return null;
 
-            if (!string.IsNullOrEmpty(Link))
+            if (!string.IsNullOrEmpty(link))
             {                
-                string file = FileUtils.NormalizePath(Path.Combine(Project.ProjectDirectory, Link));
+                string file = FileUtils.NormalizePath(Path.Combine(Project.ProjectDirectory, link));
                 if (File.Exists(file))
                     return file;
             }
@@ -1046,6 +1089,7 @@ namespace DocHound.Model
         }
         
         #endregion
+
     }
 
     public class ClassInfo

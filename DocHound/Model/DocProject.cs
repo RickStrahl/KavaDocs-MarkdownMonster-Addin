@@ -308,7 +308,10 @@ namespace DocHound.Model
             }
 
             topic.Project = this;
+
             topic.TopicState.IsDirty = false;
+            topic.TopicState.OldLink = null;
+            topic.TopicState.OldSlug = null;
 
             if (!topic.LoadTopicFile()) // load disk content
             {
@@ -391,7 +394,15 @@ namespace DocHound.Model
                     else
                         Topics.Add(topic);
 
-                    return topic.SaveTopicFile();
+
+                    if (topic.SaveTopicFile())
+                    {
+                        topic.TopicState.IsDirty = false;
+                        topic.TopicState.OldLink = null;
+                        topic.TopicState.OldSlug = null;
+                        return true;
+                    }
+                    return false;
                 }
             }
 
@@ -420,7 +431,14 @@ namespace DocHound.Model
                         using (var updateLock = new TopicFileUpdateLock())
                         {
                             topics[i] = topic;
-                            return topic.SaveTopicFile();
+                            if (topic.SaveTopicFile())
+                            {
+                                topic.TopicState.IsDirty = false;
+                                topic.TopicState.OldLink = null;
+                                topic.TopicState.OldSlug = null;
+                                return true;
+                            }
+                            return false;
                         }
                     }
                 }

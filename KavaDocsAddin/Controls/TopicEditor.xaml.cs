@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -78,7 +79,19 @@ namespace KavaDocsAddin.Controls
 
             if (!string.IsNullOrEmpty(topic.TopicState.OldLink) && topic.TopicState.OldLink != topic.Link)
             {
-                MessageBox.Show($"Link has changed from {topic.TopicState.OldLink} to {topic.Link}");
+                if (MessageBox.Show(
+                        $@"Link has changed from {topic.TopicState.OldLink} to {
+                                topic.Link
+                            }.\r\n\rnDo you want to fix up the link and file?",
+                        "Topic Link Changed",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    var oldFile = topic.GetTopicFileName(topic.TopicState.OldLink);
+                    topic.SaveTopicFile(); // save new file
+                    File.Delete(oldFile);  
+                }
+
             }
 
 

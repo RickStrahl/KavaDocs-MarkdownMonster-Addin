@@ -139,14 +139,11 @@ namespace DocHound.Model
                 return null;                
             }
 
-            string filename = Filename;
+            string filename = "_toc.json";
             if (string.IsNullOrEmpty(filename))
-                filename = Path.Combine(ProjectFolder, "_toc.kavadocs");
+                filename = Path.Combine(ProjectFolder, "_toc.json");
             else
-            {
-                Path.ChangeExtension(filename, "kavadocs");
                 filename = Path.Combine(ProjectFolder, filename);
-            }
 
             var project = new DocProject()
             {

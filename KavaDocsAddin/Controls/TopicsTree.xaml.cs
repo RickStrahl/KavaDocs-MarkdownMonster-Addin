@@ -204,8 +204,12 @@ namespace KavaDocsAddin.Controls
                     File.WriteAllText(file, "");
 
                 tab = Model.KavaDocsModel.Window.OpenTab(file);
-                if (tab.Tag is MarkdownDocumentEditor editor)                
-                    editor.Properties["KavaDocsUnEdited"] = false;                
+
+                if (tab.Tag is MarkdownDocumentEditor editor)
+                {
+                    editor.Properties[EditorPropertyNames.KavaDocsTopic] = topic;
+                    editor.Properties[EditorPropertyNames.KavaDocsUnedited] = false;
+                }
             }
 
             return tab;
@@ -237,6 +241,7 @@ namespace KavaDocsAddin.Controls
                 var editor = tab?.Tag as MarkdownDocumentEditor;
                 if (editor == null)
                     return null;
+
                 
                 // close existing 
                 List<TabItem> itemsToClose = new List<TabItem>();
@@ -260,8 +265,8 @@ namespace KavaDocsAddin.Controls
                 foreach (var item in itemsToClose)
                     Model.KavaDocsModel.Addin.CloseTab(item);
 
-                editor.Properties["KavaDocsTopic"] = topic;
-                editor.Properties["KavaDocsUnEdited"] = true;                
+                editor.Properties[EditorPropertyNames.KavaDocsTopic] = topic;
+                editor.Properties[EditorPropertyNames.KavaDocsUnedited] = true;                
             }
 
             if (tab != null)
@@ -545,6 +550,8 @@ public void SelectTopic(DocTopic topic)
                         so -= 10;
                         topic.SortOrder = so;
                     }
+
+                    UpdateMovedTopic(dragResult.SourceTopic);
                 }
                 else if (dragResult.DropLocation == DropLocations.Before)
                 {
@@ -569,6 +576,7 @@ public void SelectTopic(DocTopic topic)
                         so -= 10;
                         topic.SortOrder = so;
                     }
+                    UpdateMovedTopic(dragResult.SourceTopic);
                 }
                 else if (dragResult.DropLocation == DropLocations.After)
                 {
@@ -589,15 +597,44 @@ public void SelectTopic(DocTopic topic)
                     dragResult.SourceTopic.ParentId = dragResult.TargetTopic.ParentId;
 
                     var so = targetParentTopics.Count * 10;
-                    foreach (var topic in targetParentTopics)
+                    foreach (var docTopic in targetParentTopics)
                     {
                         so -= 10;
-                        topic.SortOrder = so;
-                    }
+                        docTopic.SortOrder = so;
+                    }                    
+                    UpdateMovedTopic(dragResult.SourceTopic);
                 }
 
                 Model.KavaDocsModel.ActiveProject.SaveProject();
             }, (p, c) => true);
+        }
+
+        void UpdateMovedTopic(DocTopic topic)
+        {
+            // TODO: Get latest changes from Editor
+            var editorTopic = Model.MarkdownMonsterModel.ActiveEditor?.Properties[EditorPropertyNames.KavaDocsTopic] as DocTopic;
+            if (editorTopic == topic)
+                topic.Body = Model.MarkdownMonsterModel.ActiveEditor.GetMarkdown();            
+            else
+            {
+                // TODO: Check if the topic is open in another tab
+                var tab = Model.MarkdownMonsterModel.Window.GetTabFromFilename(topic.GetTopicFileName());
+                if (tab != null)
+                {
+                    topic = (tab.Tag as MarkdownDocumentEditor)?.Properties[EditorPropertyNames.KavaDocsTopic] as DocTopic;
+                    if(topic != null)
+                        topic.Body = Model.MarkdownMonsterModel.ActiveEditor.GetMarkdown();                    
+                }
+                else
+                    topic.LoadTopicFile(); // get latest from disk
+            }
+
+            // delete the old file
+            topic.DeleteTopicFile();  // delete in old location
+
+            // create new link and slug
+            topic.CreateRelativeSlugAndLink();
+            topic.SaveTopicFile();  // write in new location
         }
 
         private void TreeViewItem_DragOver(object sender, DragEventArgs e)
@@ -676,6 +713,12 @@ public void SelectTopic(DocTopic topic)
         Before,
         After,
         None
+    }
+
+    internal static class EditorPropertyNames
+    {
+        public static string KavaDocsTopic = "KavaDocsTopic";
+        public static string KavaDocsUnedited = "KavaDocsUnEdited";
     }
 
 
