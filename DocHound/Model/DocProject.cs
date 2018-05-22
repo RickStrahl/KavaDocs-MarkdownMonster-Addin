@@ -569,6 +569,24 @@ namespace DocHound.Model
             }
         }
 
+
+        /// <summary>
+        /// This routine walks a topics tree and visits each topic and
+        /// allows you to inspect each topic.
+        /// </summary>
+        /// <param name="topics"></param>
+        /// <param name="onTopicHandler"></param>
+        public void WalkTopicsHierarchy(ObservableCollection<DocTopic> topics, Action<DocTopic,DocProject> onTopicHandler)
+        {
+            if (topics == null)
+                topics = Topics;
+
+            foreach (var topic in topics)
+            {
+                onTopicHandler?.Invoke(topic, this);
+                WalkTopicsHierarchy(topic.Topics, onTopicHandler);                    
+            }
+        }
         #endregion
 
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text;
 using DocHound.Configuration;
 using DocHound.Model;
 using MarkdownMonster;
@@ -103,10 +104,36 @@ namespace DocHound.Utilities
 
             KavaUtils.CopyDirectory(Path.Combine(sourceFolder, "Images"), Path.Combine(outputFolder, "images"));
 
-            project.GetTopicTreeFromFlatList(project.Topics);
 
             project.Title = Title;
             project.Owner = Owner;
+
+            project.GetTopicTreeFromFlatList(project.Topics);
+
+            // fix up image links relative to hierarchy
+            project.WalkTopicsHierarchy(project.Topics, (topic, proj) =>
+            {
+                string find = "](images/";
+
+                
+                if (!topic.Body.Contains(find) || topic.Parent == null)
+                    return;
+
+                int foldersDown = 0;
+                var parent = topic.Parent;
+                while (parent != null)
+                {
+                    foldersDown++;
+                    parent = parent.Parent;
+                }
+
+                if (foldersDown < 1)
+                    return;
+                
+                string replace = "](" + new StringBuilder().Insert(0, "../", foldersDown) + "images/";
+
+                topic.Body = topic.Body.Replace(find, replace);
+            });
 
             return project.SaveProject(Path.Combine(outputFolder, "_toc.json"));
         }

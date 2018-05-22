@@ -84,26 +84,6 @@ namespace KavaDocsAddin.Controls
 
         #region Selection Handling
 
-
-        private void TreeTopicBrowser_Selected(object sender, RoutedEventArgs e)
-        {
-            e.Handled = true; // don't bubble up through parents
-
-            if (!HandleSelection())
-                return;
-
-            if (TreeTopicBrowser.SelectedItem is DocTopic)
-            {
-                TreeViewItem tvi = e.OriginalSource as TreeViewItem;
-                tvi?.BringIntoView();
-            }
-        }
-
-        private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            OpenTopicInMMEditor();                    
-        }
-
         public bool HandleSelection(DocTopic topic = null)
         {
             bool selectTopic = false;
@@ -146,6 +126,25 @@ namespace KavaDocsAddin.Controls
             topic.TopicState.IsDirty = false;
 
             return true;
+        }
+
+        private void TreeTopicBrowser_Selected(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true; // don't bubble up through parents
+
+            if (!HandleSelection())
+                return;
+
+            if (TreeTopicBrowser.SelectedItem is DocTopic)
+            {
+                TreeViewItem tvi = e.OriginalSource as TreeViewItem;
+                tvi?.BringIntoView();
+            }
+        }
+
+        private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            OpenTopicInMMEditor();                    
         }
 
 
@@ -232,16 +231,32 @@ namespace KavaDocsAddin.Controls
             // is tab open already as a file? If so use that
             var tab = window.GetTabFromFilename(file);
             if (tab != null)
-                window.TabControl.SelectedItem = tab;   // already open
-            else
             {
-                // Will also open the tab if not open yet
-                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, noFocus: true);
-
                 var editor = tab?.Tag as MarkdownDocumentEditor;
                 if (editor == null)
                     return null;
 
+                editor.Properties[EditorPropertyNames.KavaDocsTopic] = topic;
+                editor.Properties[EditorPropertyNames.KavaDocsUnedited] = true;
+
+                window.TabControl.SelectedItem = tab;   // already open
+            }                
+            else
+            {
+                // Will also open the tab if not open yet
+                // EXPLICITLY NOT SELECTING THE TAB SO THAT IT'S NOT RENDERED YET
+                // Assign topic first then explicitly select
+                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, noFocus: true, noSelectTab: true);
+
+                var editor = tab?.Tag as MarkdownDocumentEditor;                               
+                if (editor == null)
+                    return null;
+
+                editor.Properties[EditorPropertyNames.KavaDocsTopic] = topic;
+                editor.Properties[EditorPropertyNames.KavaDocsUnedited] = true;
+
+                // select AFTER we set properties on the tab
+                window.TabControl.SelectedItem = tab;
                 
                 // close existing 
                 List<TabItem> itemsToClose = new List<TabItem>();
@@ -255,26 +270,23 @@ namespace KavaDocsAddin.Controls
                     if (ed == null)
                         continue;
 
-                    if (ed.Identifier == "KavaDocsDocument" && tabItem != tab)
+                    if (ed.Identifier == EditorPropertyNames.KavaDocsDocument && tabItem != tab)
                     {                      
-                        if( ed.Properties.TryGetValue("KavaDocsUnEdited", out object IsUnEdited) && (bool) IsUnEdited)
+                        if( ed.Properties.TryGetValue(EditorPropertyNames.KavaDocsUnedited, out object IsUnEdited) && (bool) IsUnEdited)
                             itemsToClose.Add(tabItem);
                     }                  
                 }
 
                 foreach (var item in itemsToClose)
-                    Model.KavaDocsModel.Addin.CloseTab(item);
-
-                editor.Properties[EditorPropertyNames.KavaDocsTopic] = topic;
-                editor.Properties[EditorPropertyNames.KavaDocsUnedited] = true;                
+                    Model.KavaDocsModel.Addin.CloseTab(item);             
             }
 
             if (tab != null)
             {
-                SetEditorWithTopic(tab.Tag as MarkdownDocumentEditor, kavaUi.AddinModel.ActiveTopic);
+                var editor = tab.Tag as MarkdownDocumentEditor;     
+                SetEditorWithTopic(editor, kavaUi.AddinModel.ActiveTopic);
 
-                // Explicitly read in the current text from an open tab and save to body
-                var editor = tab.Tag as MarkdownDocumentEditor;
+                // Explicitly read in the current text from an open tab and save to body                
                 var body = editor.GetMarkdown();
                 if (!string.IsNullOrEmpty(body))                
                     topic.Body = topic.StripYaml(body);
@@ -719,6 +731,7 @@ public void SelectTopic(DocTopic topic)
     {
         public static string KavaDocsTopic = "KavaDocsTopic";
         public static string KavaDocsUnedited = "KavaDocsUnEdited";
+        public static string KavaDocsDocument = "KavaDocsDocument";
     }
 
 

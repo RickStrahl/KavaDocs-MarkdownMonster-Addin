@@ -1,25 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using DocHound.Configuration;
 using DocHound.Model;
 using DocHound.Utilities;
 using KavaDocsAddin;
 using KavaDocsAddin.Core.Configuration;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
 using MarkdownMonster;
+using MarkdownMonster.Windows;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Westwind.Utilities;
 using KavaDocsModel = KavaDocsAddin.KavaDocsModel;
@@ -41,6 +29,8 @@ namespace DocHound.Windows.Dialogs
         public MainWindow Window { get; set; }
 
 
+        #region Loading/Unloading
+
         public NewProjectDialog(MainWindow window)
         {
             InitializeComponent();
@@ -49,6 +39,7 @@ namespace DocHound.Windows.Dialogs
             Owner = window;
             AppModel = kavaUi.AddinModel;
             Window = kavaUi.AddinModel.Window;
+            
 
             ProjectCreator = new DocProjectCreator()
             {
@@ -58,6 +49,14 @@ namespace DocHound.Windows.Dialogs
             DataContext = this;
 
             Loaded += NewProjectDialog_Loaded;
+            Closing += NewProjectDialog_Closing;
+         
+        }
+
+        private void NewProjectDialog_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (ProjectCreator != null && !string.IsNullOrEmpty(ProjectCreator.Owner))
+                AppModel.Configuration.LastProjectCompany = ProjectCreator.Owner;
         }
 
         private void NewProjectDialog_Loaded(object sender, RoutedEventArgs e)
@@ -65,8 +64,15 @@ namespace DocHound.Windows.Dialogs
             TextProjectTitle.Focus();
         }
 
+        #endregion
+
+        #region Main Operation Button Handlers
+
         public bool CreateProject(DocProjectCreator creator = null)
         {
+
+            WindowUtilities.FixFocus(this, ButtonGetDirectory);
+
             if (creator == null)
                 creator = ProjectCreator;
 
@@ -103,61 +109,15 @@ Kava Docs requires a new project folder. Please choose another folder for your n
             return false;
         }
 
-
         private void Button_CreateProjectClick(object sender, RoutedEventArgs e)
         {
+            
             if (CreateProject())
             {
                 Close();
                 if (!string.IsNullOrEmpty(ProjectCreator.Owner))
                     kavaUi.Configuration.LastProjectCompany = ProjectCreator.Owner;
             }
-        }
-
-        private void Button_CancelClick(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private void TextProjectTitle_OnKeyUp(object sender, KeyEventArgs e)
-        {
-
-            if (string.IsNullOrEmpty(ProjectCreator.Title))
-            {
-                ProjectCreator.Filename = null;
-                ProjectCreator.ProjectFolder = null;
-            }
-            else
-            {
-
-                ProjectCreator.Filename = FileUtils.CamelCaseSafeFilename(ProjectCreator.Title) + ".kavadocs";
-                ProjectCreator.ProjectFolder = System.IO.Path.Combine(KavaApp.Configuration.DocumentsFolder,
-                    FileUtils.SafeFilename(ProjectCreator.Title));
-            }
-        }
-
-        private void ButtonGetDirectory_Click(object sender, RoutedEventArgs e)
-        {
-            var dlg = new CommonOpenFileDialog();
-
-            dlg.Title = "Select folder to open in the Folder Browser";
-            dlg.IsFolderPicker = true;
-            if (!string.IsNullOrEmpty(kavaUi.Configuration.LastProjectFile))
-                dlg.InitialDirectory = System.IO.Path.GetDirectoryName(kavaUi.Configuration.LastProjectFile);
-            else
-                dlg.InitialDirectory = kavaUi.Configuration.DocumentsFolder;
-            dlg.RestoreDirectory = true;
-            dlg.ShowHiddenItems = true;
-            dlg.ShowPlacesList = true;
-            dlg.EnsurePathExists = false;
-
-            var result = dlg.ShowDialog();
-
-            if (result != CommonFileDialogResult.Ok)
-                return;
-
-            ProjectCreator.ProjectFolder = dlg.FileName;
-
         }
 
         private void Button_ImportFromHelpBuilder(object sender, RoutedEventArgs e)
@@ -245,5 +205,56 @@ Kava Docs requires a new project folder. Please choose another folder for your n
 
             kavaUi.AddinModel.OpenProject(System.IO.Path.Combine(ProjectCreator.ProjectFolder, "_toc.json"));
         }
+
+        private void Button_CancelClick(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        #endregion
+
+        #region Other Events
+
+        private void TextProjectTitle_OnKeyUp(object sender, KeyEventArgs e)
+        {
+
+            if (string.IsNullOrEmpty(ProjectCreator.Title))
+            {
+                ProjectCreator.Filename = null;
+                ProjectCreator.ProjectFolder = null;
+            }
+            else
+            {
+
+                ProjectCreator.Filename = FileUtils.CamelCaseSafeFilename(ProjectCreator.Title) + ".kavadocs";
+                ProjectCreator.ProjectFolder = System.IO.Path.Combine(KavaApp.Configuration.DocumentsFolder,
+                    FileUtils.SafeFilename(ProjectCreator.Title));
+            }
+        }
+
+        private void ButtonGetDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new CommonOpenFileDialog();
+
+            dlg.Title = "Select folder to open in the Folder Browser";
+            dlg.IsFolderPicker = true;
+            if (!string.IsNullOrEmpty(kavaUi.Configuration.LastProjectFile))
+                dlg.InitialDirectory = System.IO.Path.GetDirectoryName(kavaUi.Configuration.LastProjectFile);
+            else
+                dlg.InitialDirectory = kavaUi.Configuration.DocumentsFolder;
+            dlg.RestoreDirectory = true;
+            dlg.ShowHiddenItems = true;
+            dlg.ShowPlacesList = true;
+            dlg.EnsurePathExists = false;
+
+            var result = dlg.ShowDialog();
+
+            if (result != CommonFileDialogResult.Ok)
+                return;
+
+            ProjectCreator.ProjectFolder = dlg.FileName;
+
+        }
+        #endregion
     }
 }

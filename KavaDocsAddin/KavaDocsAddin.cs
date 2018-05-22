@@ -205,13 +205,23 @@ namespace KavaDocsAddin
                 AddinModel.ActiveProject.SaveProject();
             }
             // Any previously activated document file
-            else if (editor.Properties.TryGetValue("KavaDocsTopic", out object objTopic))
+            else if (editor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object objTopic))
             {
                 AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, objTopic as DocTopic);
                 AddinModel.ActiveProject.SaveProject();
             }
         }
 
+        DocTopic GetTopicFromEditor()
+        {
+            if (Model.ActiveEditor == null)
+                return null;
+
+            if (!Model.ActiveEditor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object objTopic))
+                return null;
+
+            return objTopic as DocTopic;
+        }
 
         public override void OnDocumentActivated(MarkdownDocument doc)
         {
@@ -219,7 +229,7 @@ namespace KavaDocsAddin
             if (AddinModel == null || Model?.ActiveEditor == null)
                 return;
             
-            if (!Model.ActiveEditor.Properties.TryGetValue("KavaDocsTopic", out object objTopic))                                                    
+            if (!Model.ActiveEditor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object objTopic))                                                    
                  return;            
 
             var topic = objTopic as DocTopic;
@@ -235,14 +245,6 @@ namespace KavaDocsAddin
             Model.ActiveEditor.Properties["KavaDocsUnEdited"] = false;
         }
 
-
-        //public override void OnNotifyAddin(string command, object parameter)
-        //{
-        //    if (command == "ReadOnlyEditorDoubleClick")
-        //    {
-        //        Tree.OpenTopicInMMEditor(AddinModel.ActiveTopic);
-        //    }
-        //}
 
 
         public override void OnExecuteConfiguration(object sender)
@@ -261,14 +263,17 @@ namespace KavaDocsAddin
 
         public override string OnModifyPreviewHtml(string renderedHtml, string markdownHtml)
         {
+            
+            if (mmApp.Model.ActiveEditor == null ||
+                !mmApp.Model.ActiveEditor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object objTopic))
+                return renderedHtml;
 
-            if (!markdownHtml.Contains("kavaDocs: true"))
+            var topic = objTopic as DocTopic;
+
+            if (topic == null || topic != AddinModel.ActiveTopic) 
                 return renderedHtml;
             
-            var topic = AddinModel.ActiveTopic;
-            if (topic == null)
-                return renderedHtml;
-
+  
             topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Preview;
             topic.TopicState.IsPreview = true;
 
@@ -287,7 +292,7 @@ namespace KavaDocsAddin
             return base.OnModifyPreviewHtml(renderedHtml, markdownHtml);
         }
 
-        
+        // Completely take over preview rendering
 
         //// IMPORTANT: for browser COM CSE errors which can happen with script errors
         //[HandleProcessCorruptedStateExceptions]
