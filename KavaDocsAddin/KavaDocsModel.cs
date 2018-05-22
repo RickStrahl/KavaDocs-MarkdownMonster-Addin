@@ -202,7 +202,7 @@ namespace KavaDocsAddin
                     Filename = System.IO.Path.GetFileName(projectFile),
                     ProjectFolder = System.IO.Path.GetDirectoryName(projectFile),
                     Title = "New Project",
-                    Company = "West Wind Technologies"
+                    Owner = "West Wind Technologies"
                 });
             }
             else

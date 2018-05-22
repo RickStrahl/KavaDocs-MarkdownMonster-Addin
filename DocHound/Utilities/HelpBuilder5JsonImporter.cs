@@ -12,6 +12,10 @@ namespace DocHound.Utilities
     public class HelpBuilder5JsonImporter
     {
 
+        public string Owner { get; set; }
+
+        public string Title { get; set; }
+
         public bool ImportHbp(string inputFile,string outputFolder = null, string kavaDocsAddinFolder = null)
         {
             if (kavaDocsAddinFolder == null)
@@ -100,6 +104,9 @@ namespace DocHound.Utilities
             KavaUtils.CopyDirectory(Path.Combine(sourceFolder, "Images"), Path.Combine(outputFolder, "images"));
 
             project.GetTopicTreeFromFlatList(project.Topics);
+
+            project.Title = Title;
+            project.Owner = Owner;
 
             return project.SaveProject(Path.Combine(outputFolder, "_toc.json"));
         }

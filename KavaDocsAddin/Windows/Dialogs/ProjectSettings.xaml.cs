@@ -61,6 +61,9 @@ namespace DocHound.Windows.Dialogs
             Project = AppModel.ActiveProject;
 
             DataContext = this;
+            
+            // save before we enter
+            AppModel.ActiveProject.SaveProjectAsync();
         }
         
         #endregion
@@ -99,6 +102,19 @@ namespace DocHound.Windows.Dialogs
         private void Button_OpenProjectFile(object sender, RoutedEventArgs e)
         {
             AppModel.Window.OpenTab(Project.Filename,syntax: "json");
+        }
+
+        private void Button_SaveSettings(object sender, RoutedEventArgs e)
+        {
+            AppModel.ActiveProject.SaveProject();
+            Close();
+        }
+
+        private void Button_Cancel(object sender, RoutedEventArgs e)
+        {
+            // reload project
+           AppModel.ActiveProject =  DocProjectManager.Current.LoadProject(AppModel.ActiveProject.Filename);
+           Close();
         }
     }
 }

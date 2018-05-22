@@ -19,7 +19,7 @@ namespace DocumentationMonster.Core.Tests
             {
                 Title = "My New Project",
                 ProjectFolder = @"c:\temp\My New Project",
-                Company = "West Wind Technologies",
+                Owner = "West Wind Technologies",
                 Filename = "_toc.json",
                 InstallFolder = "C:\\projects2010\\DocumentationMonster\\DocumentationMonster\\bin\\Debug"
             };

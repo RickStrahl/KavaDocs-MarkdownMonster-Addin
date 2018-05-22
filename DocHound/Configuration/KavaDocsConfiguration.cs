@@ -64,6 +64,20 @@ namespace DocHound.Configuration
         /// </summary>
         public bool AutoOpen { get; set; }
 
+
+        public string LastProjectCompany
+        {
+            get { return _LastProjectCompany; }
+            set
+            {
+                if (value == _LastProjectCompany) return;
+                _LastProjectCompany = value;
+                OnPropertyChanged(nameof(LastProjectCompany));
+            }
+        }
+        private string _LastProjectCompany;
+
+
         /// <summary>
         /// Last location where an image was opened.
         /// </summary>
@@ -85,7 +99,6 @@ namespace DocHound.Configuration
             }
         }
         private ObservableCollection<RecentProjectItem> _RecentProjects;
-
 
         #endregion
 

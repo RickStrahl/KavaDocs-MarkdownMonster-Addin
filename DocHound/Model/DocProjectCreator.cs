@@ -64,18 +64,18 @@ namespace DocHound.Model
         private string _filename;
 
 
-        public string Company
+        public string Owner
         {
-            get { return _company; }
+            get { return _owner; }
             set
             {
-                if (value == _company) return;
-                _company = value;
+                if (value == _owner) return;
+                _owner = value;
                 OnPropertyChanged();
             }
         }
 
-        private string _company;
+        private string _owner;
 
         
         /// <summary>
@@ -149,7 +149,7 @@ namespace DocHound.Model
             {
                 Title = Title,
                 Filename = filename,
-                Owner = Company
+                Owner = Owner
             };
 
             if (!CopyProjectAssets(project))

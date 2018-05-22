@@ -32,7 +32,7 @@ namespace Westwind.HtmlHelpBuilder.Tests
 
             var projectCreator = new DocProjectCreator
             {
-                Company = "EPS Software",
+                Owner = "EPS Software",
                 Filename = "_toc.json",
                 ProjectFolder = outputFolder,                
                 Title = "Code Framework Documentation",

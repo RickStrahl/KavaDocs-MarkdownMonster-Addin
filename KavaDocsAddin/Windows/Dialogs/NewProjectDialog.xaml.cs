@@ -50,7 +50,11 @@ namespace DocHound.Windows.Dialogs
             AppModel = kavaUi.AddinModel;
             Window = kavaUi.AddinModel.Window;
 
-            ProjectCreator = new DocProjectCreator();
+            ProjectCreator = new DocProjectCreator()
+            {
+                Owner = kavaUi.Configuration.LastProjectCompany
+            };
+
             DataContext = this;
 
             Loaded += NewProjectDialog_Loaded;
@@ -103,7 +107,11 @@ Kava Docs requires a new project folder. Please choose another folder for your n
         private void Button_CreateProjectClick(object sender, RoutedEventArgs e)
         {
             if (CreateProject())
+            {
                 Close();
+                if (!string.IsNullOrEmpty(ProjectCreator.Owner))
+                    kavaUi.Configuration.LastProjectCompany = ProjectCreator.Owner;
+            }
         }
 
         private void Button_CancelClick(object sender, RoutedEventArgs e)
@@ -171,31 +179,36 @@ Kava Docs requires a new project folder. Please choose another folder for your n
 
             var inputJsonFile = openFileDialog.FileName;
 
-            var dlg = new CommonOpenFileDialog()
+            if (string.IsNullOrEmpty(ProjectCreator.ProjectFolder))
             {
-                Title = "Select folder for new KavaDocs Project",
-                IsFolderPicker = true,
-                RestoreDirectory = true,
-                ShowPlacesList = true,
-                Multiselect = false,
-                EnsureValidNames = false,
-                EnsureFileExists = false,
-                EnsurePathExists = false
-            };
+                var dlg = new CommonOpenFileDialog()
+                {
+                    Title = "Select folder for new KavaDocs Project",
+                    IsFolderPicker = true,
+                    RestoreDirectory = true,
+                    ShowPlacesList = true,
+                    Multiselect = false,
+                    EnsureValidNames = false,
+                    EnsureFileExists = false,
+                    EnsurePathExists = false
+                };
 
-            if (!string.IsNullOrEmpty(kavaUi.Configuration.LastProjectFile))
-                dlg.InitialDirectory = System.IO.Path.GetDirectoryName(kavaUi.Configuration.LastProjectFile);
-            else
-                dlg.InitialDirectory = kavaUi.Configuration.DocumentsFolder;
+                if (!string.IsNullOrEmpty(kavaUi.Configuration.LastProjectFile))
+                    dlg.InitialDirectory = System.IO.Path.GetDirectoryName(kavaUi.Configuration.LastProjectFile);
+                else
+                    dlg.InitialDirectory = kavaUi.Configuration.DocumentsFolder;
 
-            var res = dlg.ShowDialog();
+                var res = dlg.ShowDialog();
 
-            if (res != CommonFileDialogResult.Ok)
-                return;
+                if (res != CommonFileDialogResult.Ok)
+                    return;
 
-            var outputFolder = dlg.FileName;
+                ProjectCreator.ProjectFolder = dlg.FileName;
+            }
 
-            if (Directory.Exists(outputFolder) && Directory.GetFiles(outputFolder).Length > 0)
+            
+
+            if (Directory.Exists(ProjectCreator.ProjectFolder) && Directory.GetFiles(ProjectCreator.ProjectFolder).Length > 0)
             {
                 if (MessageBox.Show(
                         "The output folder exists already. The folder to create a new project has to be empty, so either delete the folder or pick a different one.\r\n\r\n" +
@@ -205,7 +218,7 @@ Kava Docs requires a new project folder. Please choose another folder for your n
 
                 try
                 {
-                    Directory.Delete(outputFolder, true);
+                    Directory.Delete(ProjectCreator.ProjectFolder, true);
                 }
                 catch (Exception ex)
                 {
@@ -214,8 +227,12 @@ Kava Docs requires a new project folder. Please choose another folder for your n
                 }
             }
 
-            var importer = new HelpBuilder5JsonImporter();
-            if (!importer.ImportHbp(inputJsonFile, outputFolder, KavaDocsConfiguration.Current.HomeFolder))
+            var importer = new HelpBuilder5JsonImporter
+            {
+                Title = ProjectCreator.Title,
+                Owner = ProjectCreator.Owner
+            };
+            if (!importer.ImportHbp(inputJsonFile, ProjectCreator.ProjectFolder, KavaDocsConfiguration.Current.HomeFolder))
             {
                 MessageBox.Show($"Couldn't create new project from import file.");
                 return;
@@ -223,7 +240,10 @@ Kava Docs requires a new project folder. Please choose another folder for your n
 
             Close();
 
-            kavaUi.AddinModel.OpenProject(System.IO.Path.Combine(outputFolder, "_toc.json"));
+            if(!string.IsNullOrEmpty(ProjectCreator.Owner))
+                kavaUi.Configuration.LastProjectCompany = ProjectCreator.Owner;
+
+            kavaUi.AddinModel.OpenProject(System.IO.Path.Combine(ProjectCreator.ProjectFolder, "_toc.json"));
         }
     }
 }

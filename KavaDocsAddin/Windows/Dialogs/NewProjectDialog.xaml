@@ -39,10 +39,8 @@
                             <TextBlock Margin="5,0,5,0">Cancel</TextBlock>
                         </StackPanel>
                     </Button>
-                </ToolBar>
-
-                <ToolBar>
-                    <Button Name="ButtonImportHelpBuilder" 
+              
+                    <Button Name="ButtonImportHelpBuilder" Margin="20,0,0,0"
                         HorizontalAlignment="Left"   IsDefault="True" Click="Button_ImportFromHelpBuilder">
                         <Button.ToolTip>
                             <TextBlock>
