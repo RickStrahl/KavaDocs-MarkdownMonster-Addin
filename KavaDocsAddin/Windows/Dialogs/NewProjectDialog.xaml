@@ -15,67 +15,97 @@
         Height="500" Width="800" >
     <Grid>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
 
-        <StackPanel Margin="25,25,40,0">
-            <Image Source="../../Assets/KavaDocs.png"                   
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ToolBarPanel>
+            <StackPanel Orientation="Horizontal" >
+                <ToolBar>
+                    <Button Name="ButtonOk" 
+                        HorizontalAlignment="Left"   IsDefault="True" Click="Button_CreateProjectClick"  >
+                        <StackPanel Orientation="Horizontal">
+                            <fa:FontAwesome  Icon="Gear"  FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" Foreground="#FF0E7E28" FontSize="20" />
+                            <TextBlock Margin="5,0,5,0" >Create Project</TextBlock>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Name="ButtonCancel" 
+                        HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" >
+                        <StackPanel Orientation="Horizontal">
+                            <fa:FontAwesome Icon="Remove" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" Foreground="DarkRed"  FontSize="20"/>
+                            <TextBlock Margin="5,0,5,0">Cancel</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </ToolBar>
+
+                <ToolBar>
+                    <Button Name="ButtonImportHelpBuilder" 
+                        HorizontalAlignment="Left"   IsDefault="True" Click="Button_ImportFromHelpBuilder">
+                        <Button.ToolTip>
+                            <TextBlock>
+                                Imports an exported JSON project file from HTML Help Builder.
+                                <LineBreak/>
+                                Requires that you export your HelpBUilder project to JSON, and then specify an output folder.
+                            </TextBlock>
+                        </Button.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <fa:FontAwesome  Icon="ArrowCircleOutlineLeft" Foreground="DarkGoldenrod"  FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="20" />
+                            <TextBlock Margin="5,0,5,0">Import from Help Builder</TextBlock>
+                        </StackPanel>
+                    </Button>
+
+                </ToolBar>
+            </StackPanel>
+        </ToolBarPanel>
+
+        <Grid Name="GridContent" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Margin="25,35,40,0">
+                <Image Source="../../Assets/KavaDocs.png"                   
                    Width="180" VerticalAlignment="Top" />
 
-            <Separator Margin="0,20,0,15" />
-            <TextBlock FontWeight="DemiBold" FontSize="20" >New Project</TextBlock>
-        </StackPanel>
+                <Separator Margin="0,20,0,15" />
+                <TextBlock FontWeight="DemiBold" FontSize="20" >New Project</TextBlock>
+            </StackPanel>
 
-        <StackPanel Margin="0,20,20,20" Grid.Column="1">
-            <TextBox Name="TextProjectTitle" Text="{Binding ProjectCreator.Title,UpdateSourceTrigger=PropertyChanged}"
+            <StackPanel Margin="0,30,20,20" Grid.Column="1">
+                <TextBox Name="TextProjectTitle" Text="{Binding ProjectCreator.Title,UpdateSourceTrigger=PropertyChanged}"
                      Style="{StaticResource HeaderTextBoxStyle}" controls:TextBoxHelper.Watermark="Project Title"
                      KeyUp="TextProjectTitle_OnKeyUp"></TextBox>
 
-            <Label Margin="0,15,0,0">Your Company</Label>
-            <TextBox Text="{Binding ProjectCreator.Company}"></TextBox>
+                <Label Margin="0,15,0,0">Your Company</Label>
+                <TextBox Text="{Binding ProjectCreator.Company}"></TextBox>
 
-            <TextBlock Margin="0,10,0,0" TextWrapping="Wrap">Please choose a Path and file name for your new project.
+                <TextBlock Margin="0,10,0,0" TextWrapping="Wrap">Please choose a Path and file name for your new project.
                 Projects are created as a directory structure on your hard drive and should be placed into
                 a new folder.
-            </TextBlock>
+                </TextBlock>
 
-            <Label Margin="0,10,0,0">Choose a Project Folder</Label>
-            <Grid >
+                <Label Margin="0,10,0,0">Choose a Project Folder</Label>
+                <Grid >
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="auto" />
-                </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" Text="{Binding ProjectCreator.ProjectFolder}"></TextBox>
-                <Button Grid.Column="1" Name="ButtonGetDirectory" 
+                    <TextBox Grid.Column="0" Text="{Binding ProjectCreator.ProjectFolder}"></TextBox>
+                    <Button Grid.Column="1" Name="ButtonGetDirectory" 
                         Margin="3,0,0,0" Width="33"
                         Click="ButtonGetDirectory_Click">...</Button>
-            </Grid>
+                </Grid>
 
-            <Label Margin="0,10,0,0">Project File Name</Label>
-            <TextBox Text="{Binding ProjectCreator.Filename}" Padding="3"></TextBox>
-
-
-            <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                <Button Name="ButtonOk" Margin="0,20" Height="40" FontSize="15" Width="175"
-                        HorizontalAlignment="Left"   IsDefault="True" Click="Button_CreateProjectClick"  >
-                    <StackPanel Orientation="Horizontal">
-                        <fa:FontAwesome  Icon="Upload"  FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" Foreground="#FF0E7E28" FontSize="20" />
-                        <TextBlock Margin="10,0,0,0" >Create Project</TextBlock>
-                    </StackPanel>
-                </Button>
-
-                <Button Name="ButtonCancel" Margin="10,20" Height="40" FontSize="15" Width="175" 
-                        HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" >
-                    <StackPanel Orientation="Horizontal">
-                        <fa:FontAwesome Icon="Remove" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" Foreground="DarkRed"  FontSize="20"/>
-                        <TextBlock Margin="10,0,0,0">Cancel</TextBlock>
-                    </StackPanel>
-                </Button>
+                <Label Margin="0,10,0,0">Project File Name</Label>
+                <TextBox Text="{Binding ProjectCreator.Filename}" Padding="3"></TextBox>
             </StackPanel>
-        </StackPanel>
+        </Grid>
     </Grid>
 </controls:MetroWindow>

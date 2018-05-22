@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using DocHound.Configuration;
 using DocHound.Model;
 using MarkdownMonster;
 using Westwind.Utilities;
@@ -14,8 +15,7 @@ namespace DocHound.Utilities
         public bool ImportHbp(string inputFile,string outputFolder = null, string kavaDocsAddinFolder = null)
         {
             if (kavaDocsAddinFolder == null)
-                kavaDocsAddinFolder =
-                    Environment.ExpandEnvironmentVariables("%appdata%\\Markdown Monster\\Addins\\KavaDocs");
+                kavaDocsAddinFolder = KavaDocsConfiguration.Current.HomeFolder;
 
             if (outputFolder == null)
                 outputFolder = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(inputFile));
@@ -27,7 +27,7 @@ namespace DocHound.Utilities
                 Directory.CreateDirectory(Path.Combine(outputFolder, "images"));
 
             if (!string.IsNullOrEmpty(kavaDocsAddinFolder))
-                FileUtils.CopyDirectory(Path.Combine(kavaDocsAddinFolder, "ProjectTemplates", "kavadocs"),
+                FileUtils.CopyDirectory(Path.Combine(kavaDocsAddinFolder, "ProjectTemplates"),
                     Path.Combine(outputFolder, "kavadocs"));
             else
             {
