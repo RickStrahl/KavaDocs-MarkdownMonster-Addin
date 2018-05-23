@@ -177,7 +177,13 @@ namespace KavaDocsAddin
             var editor = AddinModel.ActiveMarkdownEditor;
             var projectFilename = topic?.Project?.Filename;
             var lowerFilename = doc.Filename.ToLower();
-            
+
+
+            if (topic.Body == "NoContent")
+            {
+                topic.Body = null;
+            }
+
             // Save Project File
             if (projectFilename != null && lowerFilename == projectFilename.ToLower())
             {
@@ -261,6 +267,12 @@ namespace KavaDocsAddin
 
         #region Previewing
 
+        /// <summary>
+        /// OVerride the Preview rendering for Links and using Topic Rendering logic
+        /// </summary>
+        /// <param name="renderedHtml"></param>
+        /// <param name="markdownHtml"></param>
+        /// <returns></returns>
         public override string OnModifyPreviewHtml(string renderedHtml, string markdownHtml)
         {
             
@@ -280,16 +292,22 @@ namespace KavaDocsAddin
             if (topic.IsLink)
             {
                 renderedHtml = topic.Body;
+                if (renderedHtml == "NoContent")
+                    renderedHtml = null;
+
                 if (string.IsNullOrEmpty(topic.Body) && topic.Link.StartsWith("http"))
                     renderedHtml = topic.Link;            
             }
             else
-                renderedHtml = topic.RenderTopicToFile(addPragmaLines: true);
+            {
+                // Currently we're not rendering topics and just using MM to render topic content
+                //renderedHtml = topic.RenderTopicToFile(addPragmaLines: true);
+            }
 
             topic.TopicState.IsPreview = false;
             topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Html;
 
-            return base.OnModifyPreviewHtml(renderedHtml, markdownHtml);
+            return renderedHtml; //return base.OnModifyPreviewHtml(renderedHtml, markdownHtml);
         }
 
         // Completely take over preview rendering

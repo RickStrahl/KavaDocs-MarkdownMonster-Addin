@@ -602,12 +602,12 @@ namespace DocHound.Model
         /// which is the Slug.md or Slug.html
         /// </summary>
         /// <returns>Filename or null if topic file doesn't exist or topic filename is a URL or other format</returns>
-        public string GetTopicFileName(string link = null)       
+        public string GetTopicFileName(string link = null, bool force = false)       
         {
             if (string.IsNullOrEmpty(link))
                 link = Link;
 
-            if (link != null && ( link.StartsWith("http://") || link.StartsWith("https://")))
+            if (!force && link != null && ( link.StartsWith("http://") || link.StartsWith("https://")))
                 return null;
 
             if (string.IsNullOrEmpty(Project?.ProjectDirectory))

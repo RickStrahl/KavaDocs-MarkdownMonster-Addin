@@ -226,7 +226,7 @@ namespace KavaDocsAddin.Controls
                 return null;
 
             var window = Model.KavaDocsModel.Window;
-            var file = topic.GetTopicFileName();
+            var file = topic.GetTopicFileName(force: true);
             
             // is tab open already as a file? If so use that
             var tab = window.GetTabFromFilename(file);
@@ -236,8 +236,8 @@ namespace KavaDocsAddin.Controls
                 if (editor == null)
                     return null;
 
-                editor.Properties[EditorPropertyNames.KavaDocsTopic] = topic;
-                editor.Properties[EditorPropertyNames.KavaDocsUnedited] = true;
+                // make sure topic is attached
+                //SetEditorWithTopic(editor,topic,true);
 
                 window.TabControl.SelectedItem = tab;   // already open
             }                
@@ -252,8 +252,8 @@ namespace KavaDocsAddin.Controls
                 if (editor == null)
                     return null;
 
-                editor.Properties[EditorPropertyNames.KavaDocsTopic] = topic;
-                editor.Properties[EditorPropertyNames.KavaDocsUnedited] = true;
+                // make sure topic is associated with editor
+                SetEditorWithTopic(editor, topic, true);
 
                 // select AFTER we set properties on the tab
                 window.TabControl.SelectedItem = tab;
@@ -272,7 +272,7 @@ namespace KavaDocsAddin.Controls
 
                     if (ed.Identifier == EditorPropertyNames.KavaDocsDocument && tabItem != tab)
                     {                      
-                        if( ed.Properties.TryGetValue(EditorPropertyNames.KavaDocsUnedited, out object IsUnEdited) && (bool) IsUnEdited)
+                        if( !ed.IsDirty() && ed.Properties.TryGetValue(EditorPropertyNames.KavaDocsUnedited, out object IsUnEdited) && (bool) IsUnEdited)
                             itemsToClose.Add(tabItem);
                     }                  
                 }
@@ -319,22 +319,41 @@ namespace KavaDocsAddin.Controls
         /// </summary>
         /// <param name="editor"></param>
         /// <param name="topic"></param>
-        public static void SetEditorWithTopic(MarkdownDocumentEditor editor, DocTopic topic)
+        public static void SetEditorWithTopic(MarkdownDocumentEditor editor, DocTopic topic, bool isUnEdited = true)
         {
             if (editor == null)
                 return;
+
             if (topic == null)
             {
-                editor.Identifier = null;
-                editor.Properties.Remove("KavaDocsTopic");
+                editor.Identifier = null;                
+                editor.Properties.Remove(EditorPropertyNames.KavaDocsTopic);
+                editor.Properties.Remove(EditorPropertyNames.KavaDocsUnedited);
             }
             else
             {
                 editor.Identifier = "KavaDocsDocument";
-                editor.Properties["KavaDocsTopic"] = topic;
+                editor.Properties[EditorPropertyNames.KavaDocsTopic] = topic;
+                editor.Properties[EditorPropertyNames.KavaDocsUnedited] = isUnEdited;
             }
         }
 
+        public static DocTopic GetEditorTopic(MarkdownDocumentEditor editor)
+        {
+            if (!editor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object topic))
+                return null;
+
+            return topic as DocTopic;
+        }
+
+        public static DocTopic GetEditorTopic(TabItem tab)
+        {
+            var editor = tab.Tag as MarkdownDocumentEditor;
+            if (editor == null)
+                return null;
+
+            return GetEditorTopic(editor);
+        }
 
         private void TreeViewItem_KeyDown(object sender, KeyEventArgs e)
         {
