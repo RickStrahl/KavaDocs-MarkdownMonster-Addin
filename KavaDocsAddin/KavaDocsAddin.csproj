@@ -83,6 +83,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="Controls\TopicPicker.xaml.cs">
       <DependentUpon>TopicPicker.xaml</DependentUpon>
     </Compile>
@@ -386,6 +387,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Constants" />
     <None Include="ProjectTemplates\Themes\classconstructor.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -148,6 +148,14 @@ namespace KavaDocsAddin
                         Model.Window.Dispatcher.Delay(10, p => Tree.LoadProject(KavaDocsModel.ActiveProject));
                 }
                 IsAddinInitialized = true;
+
+                // Activate the Tab
+                Model.Window.ShowFolderBrowser();
+                Model.Window.SidebarContainer.SelectedItem = KavaDocsTopicTreeTab;
+
+                // If no project is open try to open one
+                if (KavaDocsModel.ActiveProject == null)
+                    KavaDocsModel.Commands.OpenProjectCommand.Execute(null);
             }
         }
 
@@ -165,6 +173,9 @@ namespace KavaDocsAddin
                 mmApp.Model.Window.MainMenu.Items.Remove(KavaDocsMenu.KavaDocsMenuItem);
                 mmApp.Model.Window.ShowRightSidebar(true);
                 mmApp.Model.Window.ShowFolderBrowser();
+
+                KavaDocsModel = null;                
+
                 IsAddinInitialized = false;
             }
         }
@@ -201,25 +212,16 @@ namespace KavaDocsAddin
             }
 
             InitializeKavaDocs();  // will check if already loaded
-
-            // Activate the Tab
-            Model.Window.ShowFolderBrowser();
-            Model.Window.SidebarContainer.SelectedItem = KavaDocsTopicTreeTab;
-
-            // If no project is open try to open one
-            if (KavaDocsModel.ActiveProject == null)
-                KavaDocsModel.Commands.OpenProjectCommand.Execute(null);
         }
 
 
         public override void OnAfterSaveDocument(MarkdownDocument doc)
         {
-            InitializeKavaDocs();  // will check if already loaded
-
             base.OnAfterSaveDocument(doc);
            
             if (doc == null)
                 return;
+
 
             if (doc.Filename.IndexOf("kavadocsaddin.json", StringComparison.InvariantCultureIgnoreCase) > -1)
             {                
@@ -227,10 +229,17 @@ namespace KavaDocsAddin
                 return;
             }
 
-            if (KavaDocsModel?.ActiveTopic == null)
+
+
+            if (KavaDocsModel?.ActiveTopic != null )
             {
-                OnTopicFilesSaved(KavaDocsModel.ActiveTopic,doc);
-                return;
+                var topic = Model.ActiveEditor.GetProperty<DocTopic>(Constants.EditorPropertyNames.KavaDocsTopic);
+                if (topic != null)
+                {
+                    InitializeKavaDocs(); // will check if already loaded
+                    OnTopicFilesSaved(topic, doc);
+                    return;
+                }                
             }
         }
 
@@ -280,7 +289,7 @@ namespace KavaDocsAddin
                 KavaDocsModel.ActiveProject.SaveProject();
             }
             // Any previously activated document file
-            else if (KavaDocsModel.ActiveMarkdownEditor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object objTopic))
+            else if (KavaDocsModel.ActiveMarkdownEditor.Properties.TryGetValue(Constants.EditorPropertyNames.KavaDocsTopic, out object objTopic))
             {
                 KavaDocsModel.ActiveProject.UpdateTopicFromMarkdown(doc, objTopic as DocTopic);
                 KavaDocsModel.ActiveProject.SaveProject();
@@ -292,7 +301,7 @@ namespace KavaDocsAddin
             if (Model.ActiveEditor == null)
                 return null;
 
-            if (!Model.ActiveEditor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object objTopic))
+            if (!Model.ActiveEditor.Properties.TryGetValue(Constants.EditorPropertyNames.KavaDocsTopic, out object objTopic))
                 return null;
 
             return objTopic as DocTopic;
@@ -304,7 +313,7 @@ namespace KavaDocsAddin
             if (KavaDocsModel == null || Model?.ActiveEditor == null)
                 return;
             
-            if (!Model.ActiveEditor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object objTopic))                                                    
+            if (!Model.ActiveEditor.Properties.TryGetValue(Constants.EditorPropertyNames.KavaDocsTopic, out object objTopic))                                                    
                  return;            
 
             var topic = objTopic as DocTopic;
@@ -317,7 +326,7 @@ namespace KavaDocsAddin
             if (KavaDocsModel == null || Model?.ActiveEditor == null || Model.ActiveEditor.Identifier != "KavaDocsDocument")
                 return;
 
-            Model.ActiveEditor.Properties[EditorPropertyNames.KavaDocsUnedited] = false;
+            Model.ActiveEditor.Properties[Constants.EditorPropertyNames.KavaDocsUnedited] = false;
         }
 
 
@@ -346,7 +355,7 @@ namespace KavaDocsAddin
         {
             
             if (mmApp.Model.ActiveEditor == null ||
-                !mmApp.Model.ActiveEditor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object objTopic))
+                !mmApp.Model.ActiveEditor.Properties.TryGetValue(Constants.EditorPropertyNames.KavaDocsTopic, out object objTopic))
                 return renderedHtml;
 
             var topic = objTopic as DocTopic;

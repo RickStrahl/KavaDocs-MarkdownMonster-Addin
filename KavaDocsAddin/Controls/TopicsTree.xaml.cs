@@ -206,8 +206,8 @@ namespace KavaDocsAddin.Controls
 
                 if (tab.Tag is MarkdownDocumentEditor editor)
                 {
-                    editor.Properties[EditorPropertyNames.KavaDocsTopic] = topic;
-                    editor.Properties[EditorPropertyNames.KavaDocsUnedited] = false;
+                    editor.Properties[Constants.EditorPropertyNames.KavaDocsTopic] = topic;
+                    editor.Properties[Constants.EditorPropertyNames.KavaDocsUnedited] = false;
                 }
             }
 
@@ -270,9 +270,9 @@ namespace KavaDocsAddin.Controls
                     if (ed == null)
                         continue;
 
-                    if (ed.Identifier == EditorPropertyNames.KavaDocsDocument && tabItem != tab)
+                    if (ed.Identifier == Constants.EditorPropertyNames.KavaDocsDocument && tabItem != tab)
                     {                      
-                        if( !ed.IsDirty() && ed.Properties.TryGetValue(EditorPropertyNames.KavaDocsUnedited, out object IsUnEdited) && (bool) IsUnEdited)
+                        if( !ed.IsDirty() && ed.Properties.TryGetValue(Constants.EditorPropertyNames.KavaDocsUnedited, out object IsUnEdited) && (bool) IsUnEdited)
                             itemsToClose.Add(tabItem);
                     }                  
                 }
@@ -327,20 +327,20 @@ namespace KavaDocsAddin.Controls
             if (topic == null)
             {
                 editor.Identifier = null;                
-                editor.Properties.Remove(EditorPropertyNames.KavaDocsTopic);
-                editor.Properties.Remove(EditorPropertyNames.KavaDocsUnedited);
+                editor.Properties.Remove(Constants.EditorPropertyNames.KavaDocsTopic);
+                editor.Properties.Remove(Constants.EditorPropertyNames.KavaDocsUnedited);
             }
             else
             {
                 editor.Identifier = "KavaDocsDocument";
-                editor.Properties[EditorPropertyNames.KavaDocsTopic] = topic;
-                editor.Properties[EditorPropertyNames.KavaDocsUnedited] = isUnEdited;
+                editor.Properties[Constants.EditorPropertyNames.KavaDocsTopic] = topic;
+                editor.Properties[Constants.EditorPropertyNames.KavaDocsUnedited] = isUnEdited;
             }
         }
 
         public static DocTopic GetEditorTopic(MarkdownDocumentEditor editor)
         {
-            if (!editor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object topic))
+            if (!editor.Properties.TryGetValue(Constants.EditorPropertyNames.KavaDocsTopic, out object topic))
                 return null;
 
             return topic as DocTopic;
@@ -643,7 +643,7 @@ public void SelectTopic(DocTopic topic)
         void UpdateMovedTopic(DocTopic topic)
         {
             // TODO: Get latest changes from Editor
-            var editorTopic = Model.MarkdownMonsterModel.ActiveEditor?.Properties[EditorPropertyNames.KavaDocsTopic] as DocTopic;
+            var editorTopic = Model.MarkdownMonsterModel.ActiveEditor?.Properties[Constants.EditorPropertyNames.KavaDocsTopic] as DocTopic;
             if (editorTopic == topic)
                 topic.Body = Model.MarkdownMonsterModel.ActiveEditor.GetMarkdown();            
             else
@@ -652,7 +652,7 @@ public void SelectTopic(DocTopic topic)
                 var tab = Model.MarkdownMonsterModel.Window.GetTabFromFilename(topic.GetTopicFileName());
                 if (tab != null)
                 {
-                    topic = (tab.Tag as MarkdownDocumentEditor)?.Properties[EditorPropertyNames.KavaDocsTopic] as DocTopic;
+                    topic = (tab.Tag as MarkdownDocumentEditor)?.Properties[Constants.EditorPropertyNames.KavaDocsTopic] as DocTopic;
                     if(topic != null)
                         topic.Body = Model.MarkdownMonsterModel.ActiveEditor.GetMarkdown();                    
                 }
@@ -744,13 +744,6 @@ public void SelectTopic(DocTopic topic)
         Before,
         After,
         None
-    }
-
-    internal static class EditorPropertyNames
-    {
-        public static string KavaDocsTopic = "KavaDocsTopic";
-        public static string KavaDocsUnedited = "KavaDocsUnEdited";
-        public static string KavaDocsDocument = "KavaDocsDocument";
     }
 
 
