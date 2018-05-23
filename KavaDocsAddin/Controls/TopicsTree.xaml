@@ -33,7 +33,7 @@
             <MenuItem Header="_Close Project" Command="{Binding KavaDocsModel.Commands.CloseProjectCommand}" />
             <MenuItem Header="_Save Project" Command="{Binding KavaDocsModel.Commands.SaveProjectCommand}"  InputGestureText="alt-k-s" />
             <Separator />
-            <MenuItem Name="MenuLinkTopic" Header="Link to another Topic" 
+            <MenuItem Name="MenuLinkTopic" Header="_Link to another Topic" 
                       Command="{Binding KavaDocsModel.Commands.LinkTopicDialogCommand}" />
             <Separator/>
             <MenuItem Header="Settings">

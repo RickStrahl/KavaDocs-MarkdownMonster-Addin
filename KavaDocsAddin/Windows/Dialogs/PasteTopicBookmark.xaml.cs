@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using DocHound.Model;
 using MahApps.Metro.Controls;
+using MarkdownMonster;
 
 namespace KavaDocsAddin.Windows.Dialogs
 {
@@ -32,11 +33,24 @@ namespace KavaDocsAddin.Windows.Dialogs
             InitializeComponent();
 
             TopicPicker.TopicSelected += (selectedTopic) => { LinkSelected(); };
+
+            TopicPicker.TextSearchText.Focus();
+
+            TopicPicker.TreeTopicBrowser.SelectedItemChanged += TreeTopicBrowser_SelectedItemChanged;
         }
 
+        private void TreeTopicBrowser_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            SelectedTopic = TopicPicker.SelectedTopic;
+            if (SelectedTopic == null)
+                return;
 
+            var doc = new MarkdownDocument();
+            doc.Load(SelectedTopic.GetTopicFileName());
+            doc.RenderHtmlToFile();
 
-
+            PreviewBrowser.Navigate(doc.HtmlRenderFilename);
+        }
 
         private void Button_EmbedLink(object sender, RoutedEventArgs e)
         {

@@ -19,32 +19,49 @@ namespace KavaDocsAddin
 {
     public class KavaDocsAddin : MarkdownMonster.AddIns.MarkdownMonsterAddin
     {
-
+        /// <summary>
+        /// KavaDocs global configuration settings
+        /// </summary>
         public KavaDocsConfiguration Configuration { get; set; }
 
-        private KavaDocsModel _addinModel;
+        /// <summary>
+        /// The KavaDocs Addin model
+        /// </summary>
+        public KavaDocsModel KavaDocsModel { get; set; }
 
-        public KavaDocsModel AddinModel
-        {
-            get
-            {
-                return _addinModel;
-            }
-            set
-            {
-                _addinModel = value;
-            }
-        }
 
-        public TabItem KavaDocsTab { get; set; }
+        private bool IsAddinInitialized = false;
 
+
+        #region Control References
+
+        /// <summary>
+        /// The KavaDocs main menu that is hooked to MM
+        /// </summary>
         public KavaDocsMenuHandler KavaDocsMenu { get; set; }
 
-        public bool HasUiLoaded = false;
+        /// <summary>
+        /// Reference to the KavaDocs Topic Editor Tab
+        /// </summary>
+        public TabItem KavaDocsTopicEditorTab { get; private set; }
 
-        public TabItem KavaDocsTopicTab { get; private set; }
+        /// <summary>
+        /// Reference to the Topic Editor Control
+        /// </summary>
         public TopicEditor TopicEditor { get; private set; }
+
+
+        /// <summary>
+        /// Reference to the tab that contains the Topic Tree
+        /// </summary>
+        public TabItem KavaDocsTopicTreeTab { get; set; }
+
+        /// <summary>
+        /// Reference to the the Topic Tree Control
+        /// </summary>
         public TopicsTree Tree { get; set; }
+        #endregion
+
 
         #region Initialization
         public override void OnApplicationStart()
@@ -90,26 +107,31 @@ namespace KavaDocsAddin
         }      
 
 
+        /// <summary>
+        /// Attach the addin to Markdown Monster
+        /// </summary>
         public void InitializeKavaDocs()
         {
-            if (!HasUiLoaded)
+            if (!IsAddinInitialized)
             {
                 kavaUi.Addin = this;
-                AddinModel = kavaUi.AddinModel;
-                AddinModel.Addin = this;
+
+                KavaDocsModel = kavaUi.AddinModel;
+                KavaDocsModel.Addin = this;
                 Configuration = kavaUi.Configuration;
+                KavaDocsModel.Configuration = Configuration;
 
 
+                // Set up the KavaDocs Topic Tree in the Left Sidebar
                 var tabItem = new TabItem() {Name = "KavaDocsTree", Header = " Kava Docs "};
-                KavaDocsTab = tabItem;
-
+                KavaDocsTopicTreeTab = tabItem;
                 Tree = new TopicsTree();
                 tabItem.Content = Tree;
                 Model.Window.AddLeftSidebarPanelTabItem(tabItem);
 
-
+                // Kava Docs Topic Editor Tab
                 tabItem = new TabItem() { Name = "KavaDocsTopic", Header = " Topic " };
-                KavaDocsTopicTab = tabItem;
+                KavaDocsTopicEditorTab = tabItem;
 
                 TopicEditor = new TopicEditor();
                 tabItem.Content = TopicEditor;
@@ -121,21 +143,39 @@ namespace KavaDocsAddin
 
                 if (Configuration.OpenLastProject)
                 {
-                    AddinModel.ActiveProject = DocProjectManager.Current.LoadProject(Configuration.LastProjectFile);
-                    if (AddinModel.ActiveProject != null)
-                        Model.Window.Dispatcher.Delay(10, p => Tree.LoadProject(AddinModel.ActiveProject));
+                    KavaDocsModel.ActiveProject = DocProjectManager.Current.LoadProject(Configuration.LastProjectFile);
+                    if (KavaDocsModel.ActiveProject != null)
+                        Model.Window.Dispatcher.Delay(10, p => Tree.LoadProject(KavaDocsModel.ActiveProject));
                 }
-                HasUiLoaded = true;
+                IsAddinInitialized = true;
+            }
+        }
+
+
+        /// <summary>
+        /// Remove the Addin from Markdown Monster
+        /// </summary>
+        public void UninitializeKavaDocs()
+        {
+            if (IsAddinInitialized)
+            {
+                // Set up the KavaDocs Topic Tree in the Left Sidebar
+                mmApp.Model.Window.SidebarContainer.Items.Remove(KavaDocsTopicTreeTab);
+                mmApp.Model.Window.RightSidebarContainer.Items.Remove(KavaDocsTopicEditorTab);
+                mmApp.Model.Window.MainMenu.Items.Remove(KavaDocsMenu.KavaDocsMenuItem);
+                mmApp.Model.Window.ShowRightSidebar(true);
+                mmApp.Model.Window.ShowFolderBrowser();
+                IsAddinInitialized = false;
             }
         }
 
 
         public override void OnApplicationShutdown()
         {
-            if (AddinModel != null)
+            if (KavaDocsModel != null)
             {
-                AddinModel.ActiveProject?.CloseProject();
-                AddinModel.Configuration.Write();
+                KavaDocsModel.ActiveProject?.CloseProject();
+                KavaDocsModel.Configuration.Write();
             }
 
             base.OnApplicationShutdown();                   
@@ -154,67 +194,96 @@ namespace KavaDocsAddin
 
         public override void OnExecute(object sender)
         {
+            if (IsAddinInitialized)
+            {
+                UninitializeKavaDocs();
+                return;
+            }
+
             InitializeKavaDocs();  // will check if already loaded
 
             // Activate the Tab
             Model.Window.ShowFolderBrowser();
-            Model.Window.SidebarContainer.SelectedItem = KavaDocsTab;
+            Model.Window.SidebarContainer.SelectedItem = KavaDocsTopicTreeTab;
 
             // If no project is open try to open one
-            if (AddinModel.ActiveProject == null)
-                AddinModel.Commands.OpenProjectCommand.Execute(null);
+            if (KavaDocsModel.ActiveProject == null)
+                KavaDocsModel.Commands.OpenProjectCommand.Execute(null);
         }
 
 
         public override void OnAfterSaveDocument(MarkdownDocument doc)
         {
-            base.OnAfterSaveDocument(doc);
+            InitializeKavaDocs();  // will check if already loaded
 
-            if (doc == null || AddinModel?.ActiveTopic == null)
+            base.OnAfterSaveDocument(doc);
+           
+            if (doc == null)
                 return;
 
-            var topic = AddinModel.ActiveTopic;           
-            var editor = AddinModel.ActiveMarkdownEditor;
+            if (doc.Filename.IndexOf("kavadocsaddin.json", StringComparison.InvariantCultureIgnoreCase) > -1)
+            {                
+                KavaDocsModel.Configuration.Read(); // reload settings from saved
+                return;
+            }
+
+            if (KavaDocsModel?.ActiveTopic == null)
+            {
+                OnTopicFilesSaved(KavaDocsModel.ActiveTopic,doc);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Called after a topic file (the MD file linked to a topic)
+        /// has been saved on disk. This allows updating of topic
+        /// info from the saved content.
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <param name="doc"></param>
+        public void OnTopicFilesSaved(DocTopic topic, MarkdownDocument doc)
+        {
+            if (topic == null)
+                return;
+
             var projectFilename = topic?.Project?.Filename;
-            var lowerFilename = doc.Filename.ToLower();
+            var filename = doc.Filename.ToLower();
 
 
             if (topic.Body == "NoContent")
-            {
                 topic.Body = null;
-            }
 
             // Save Project File
-            if (projectFilename != null && lowerFilename == projectFilename.ToLower())
+            if (projectFilename != null && filename.Equals(projectFilename,StringComparison.InvariantCultureIgnoreCase))
             {
                 // reload the project
-                AddinModel.LoadProject(AddinModel.ActiveProject.Filename);
+                KavaDocsModel.LoadProject(KavaDocsModel.ActiveProject.Filename);
                 return;
             }
 
             // Check for explicit KavaDocs Documents
-            if (topic == null || string.IsNullOrEmpty(doc.CurrentText))
+            if (string.IsNullOrEmpty(doc.CurrentText))
                 return;
 
             // Save the underlying topic file
-            if (lowerFilename == topic.GetTopicFileName().ToLower())
+            if (filename.Equals(topic.GetTopicFileName(), StringComparison.InvariantCultureIgnoreCase))
             {
-                AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, topic);
-                AddinModel.ActiveProject.SaveProject();
+                KavaDocsModel.ActiveProject.UpdateTopicFromMarkdown(doc, topic);
+                KavaDocsModel.ActiveProject.SaveProject();
             }
             // READ-ONLY this shouldn't really happen any more
             // Saving the KavaDocs.md file - assume we're on the active topic 
-            else if (lowerFilename == topic.GetKavaDocsEditorFilePath().ToLower())
+            else if (filename.Equals(topic.GetKavaDocsEditorFilePath(),StringComparison.InvariantCultureIgnoreCase))
             {
                 topic.Body = doc.CurrentText;
-                AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, topic);
-                AddinModel.ActiveProject.SaveProject();
+                KavaDocsModel.ActiveProject.UpdateTopicFromMarkdown(doc, topic);
+                KavaDocsModel.ActiveProject.SaveProject();
             }
             // Any previously activated document file
-            else if (editor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object objTopic))
+            else if (KavaDocsModel.ActiveMarkdownEditor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object objTopic))
             {
-                AddinModel.ActiveProject.UpdateTopicFromMarkdown(doc, objTopic as DocTopic);
-                AddinModel.ActiveProject.SaveProject();
+                KavaDocsModel.ActiveProject.UpdateTopicFromMarkdown(doc, objTopic as DocTopic);
+                KavaDocsModel.ActiveProject.SaveProject();
             }
         }
 
@@ -232,23 +301,23 @@ namespace KavaDocsAddin
         public override void OnDocumentActivated(MarkdownDocument doc)
         {
             base.OnDocumentActivated(doc);
-            if (AddinModel == null || Model?.ActiveEditor == null)
+            if (KavaDocsModel == null || Model?.ActiveEditor == null)
                 return;
             
             if (!Model.ActiveEditor.Properties.TryGetValue(EditorPropertyNames.KavaDocsTopic, out object objTopic))                                                    
                  return;            
 
             var topic = objTopic as DocTopic;
-            AddinModel.ActiveTopic = topic;
+            KavaDocsModel.ActiveTopic = topic;
             topic.TopicState.IsSelected = true;
         }
 
         public override void OnDocumentUpdated()
         {
-            if (AddinModel == null || Model?.ActiveEditor == null || Model.ActiveEditor.Identifier != "KavaDocsDocument")
+            if (KavaDocsModel == null || Model?.ActiveEditor == null || Model.ActiveEditor.Identifier != "KavaDocsDocument")
                 return;
 
-            Model.ActiveEditor.Properties["KavaDocsUnEdited"] = false;
+            Model.ActiveEditor.Properties[EditorPropertyNames.KavaDocsUnedited] = false;
         }
 
 
@@ -282,7 +351,7 @@ namespace KavaDocsAddin
 
             var topic = objTopic as DocTopic;
 
-            if (topic == null || topic != AddinModel.ActiveTopic) 
+            if (topic == null || topic != KavaDocsModel.ActiveTopic) 
                 return renderedHtml;
             
   

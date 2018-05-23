@@ -6,6 +6,7 @@
             xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"                        
             xmlns:kavaDocsAddinControls="clr-namespace:KavaDocsAddinControls"
             xmlns:fa="http://schemas.fontawesome.io/icons/"
+            xmlns:previewBrowser="clr-namespace:MarkdownMonster.Windows.PreviewBrowser;assembly=MarkdownMonster"
             mc:Ignorable="d"   Icon="../../icon.png"                    
             Title="Insert Topic Link"
             TitleCharacterCasing="Normal"                      
@@ -16,54 +17,64 @@
             IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
             Width="800" Height="640" MinWidth="640" MinHeight="320">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
-            <ColumnDefinition Width="14" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
 
-        <kavaDocsAddinControls:TopicPicker x:Name="TopicPicker" Grid.Column="0"  />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <GridSplitter Grid.Column="1"                               
+        <ToolBarPanel>
+            <StackPanel Orientation="Horizontal">
+                <ToolBar FontWeight="Normal" Padding="0,2,0,2" >
+                    <Button Name="ButtonEmbedImage" IsDefault="True"
+                            Click="Button_EmbedLink" >
+                        <StackPanel Orientation="Horizontal">
+                            <fa:FontAwesome Margin="5,4,5,0" Icon="ExternalLink" 
+                                            FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
+                                            Foreground="#1F9B3C"   />
+                            <TextBlock>Select Link Topic</TextBlock>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Name="ButtonCancel" IsCancel="True">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:FontAwesome Margin="5,4,5,0" Icon="Remove" 
+                                            FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
+                                            Foreground="Firebrick"   />
+                            <TextBlock>Cancel</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </ToolBar>
+            </StackPanel>
+        </ToolBarPanel>
+
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="14" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <kavaDocsAddinControls:TopicPicker x:Name="TopicPicker" Grid.Column="0"  />
+
+            <GridSplitter Grid.Column="1"                               
                       HorizontalAlignment="Center"                          
                       BorderThickness="0" IsTabStop="False"                          
                       VerticalAlignment="Stretch" >
-            <GridSplitter.Template>
-                <ControlTemplate TargetType="{x:Type GridSplitter}">
-                    <Grid Background="Transparent">
-                        <Image Source="pack://application:,,,/MarkdownMonster;component/Assets/vsizegrip.png"
+                <GridSplitter.Template>
+                    <ControlTemplate TargetType="{x:Type GridSplitter}">
+                        <Grid Background="Transparent">
+                            <Image Source="pack://application:,,,/MarkdownMonster;component/Assets/vsizegrip.png"
                        Height="30" Margin="1,0,1,0" VerticalAlignment="Center"/>
-                    </Grid>
-                </ControlTemplate>
-            </GridSplitter.Template>
-        </GridSplitter>
+                        </Grid>
+                    </ControlTemplate>
+                </GridSplitter.Template>
+            </GridSplitter>
 
-        <Grid Grid.Column="2">
-            <ToolBarPanel>
-                <StackPanel Orientation="Horizontal">
-                    <ToolBar FontWeight="Normal" Padding="0,2,0,2" >
-                        <Button Name="ButtonEmbedImage" IsDefault="True"
-                                Click="Button_EmbedLink" >
-                            <StackPanel Orientation="Horizontal">
-                                <fa:FontAwesome Margin="5,4,5,0" Icon="ExternalLink" 
-                                                FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
-                                                Foreground="#1F9B3C"   />
-                                <TextBlock>Select Link Topic</TextBlock>
-                            </StackPanel>
-                        </Button>
-
-                        <Button Name="ButtonCancel" IsCancel="True">
-                            <StackPanel Orientation="Horizontal">
-                                <fa:FontAwesome Margin="5,4,5,0" Icon="Remove" 
-                                                FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
-                                                Foreground="Firebrick"   />
-                                <TextBlock>Cancel</TextBlock>
-                            </StackPanel>
-                        </Button>
-                    </ToolBar>
-                </StackPanel>
-            </ToolBarPanel>
+            <Grid Grid.Column="2">
+                <previewBrowser:IEWebBrowserControl Name="PreviewBrowser" />
+            </Grid>
         </Grid>
-
     </Grid>
 </mahapps:MetroWindow>
