@@ -336,6 +336,15 @@ namespace DocHound.Model
             if (topic == null)
                 return;
 
+            if (topic.Topics.Count > 0)
+            {
+                var childTopics = topic.Topics.ToList();
+                foreach (var childTopic in childTopics)
+                {
+                    DeleteTopic(childTopic);
+                }
+            }
+            
             topic.DeleteTopicFile();
 
             if (topic.Parent?.Topics != null)

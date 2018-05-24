@@ -199,6 +199,9 @@ namespace KavaDocsAddin.Controls
             if (topic != null)
             {
                 var file = topic.GetTopicFileName();
+                if (file == null)
+                    return null;
+                
                 if (!File.Exists(file))
                     File.WriteAllText(file, "");
 
@@ -226,10 +229,23 @@ namespace KavaDocsAddin.Controls
                 return null;
 
             var window = Model.KavaDocsModel.Window;
+
+            TabItem tab;
+            if (topic != null && topic.Body != null && ( topic.IsLink || topic.Body.StartsWith("http")) )
+            {
+                tab = Model.MarkdownMonsterModel.Window.OpenBrowserTab(topic.Link ?? topic.Body);
+                return tab;               
+            }
+
             var file = topic.GetTopicFileName(force: true);
+
+            
+
+
+
             
             // is tab open already as a file? If so use that
-            var tab = window.GetTabFromFilename(file);
+            tab = window.GetTabFromFilename(file);
             if (tab != null)
             {
                 var editor = tab?.Tag as MarkdownDocumentEditor;

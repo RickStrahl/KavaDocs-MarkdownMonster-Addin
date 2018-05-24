@@ -762,6 +762,10 @@ namespace DocHound.Model
             try
             {
                 File.Delete(file);
+
+                var folder = Path.GetDirectoryName(file);
+                if (!Directory.GetFiles(folder).Any())
+                    Directory.Delete(folder);
             }
             catch(Exception ex)
             {
