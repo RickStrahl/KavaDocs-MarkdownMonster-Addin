@@ -10,7 +10,7 @@ trim_trailing_whitespace = false
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
 insert_final_newline = true
-charset = utf-8-bom
+charset = utf-8
 trim_trailing_whitespace = true
 
 [*.less]

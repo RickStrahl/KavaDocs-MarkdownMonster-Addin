@@ -68,6 +68,7 @@
     <Compile Include="TypeParser.cs" />
     <Compile Include="TypeParserLegacy.cs" />
     <Compile Include="TypeParserFactory.cs" />
+    <Compile Include="XmlDocumentationParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

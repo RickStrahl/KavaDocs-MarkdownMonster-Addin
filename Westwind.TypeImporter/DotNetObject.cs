@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 using Mono.Cecil;
 using Westwind.Utilities;
 
@@ -9,55 +10,60 @@ namespace Westwind.TypeImporter
 
     public class DotnetObject : IComparable
     {
-        public string Name;
-        public string RawTypeName;
-        public string FormattedName;
+        public string Name { get; set; }
+        public string RawTypeName { get; set; }
+        public string FormattedName { get; set; }
 
-        public string Scope;
-        public bool Internal = false;
-
+        public string Scope { get; set; }
+        public bool Internal { get; set; }
         public TypeDefinition TypeDefinition;
 
-        public string Syntax;
+        public string Syntax { get; set; }
+        public List<ObjectMethod> AllMethods { get; set; } = new List<ObjectMethod>();
+        public List<ObjectMethod> Constructors {
+            get=>  AllMethods.Where(mth => mth.IsConstructor).ToList();
+        }
+        public List<ObjectMethod> Methods {
+            get=>  AllMethods.Where(mth => !mth.IsConstructor)
+                        .OrderBy(mth=> mth.Name.ToLowerInvariant())
+                        .ToList();
+        }
 
+        public List<ObjectProperty> Properties { get; set; } = new List<ObjectProperty>();
+        public List<ObjectProperty> Fields { get; set; } = new List<ObjectProperty>();
+        public List<ObjectEvent> Events { get; set; } = new List<ObjectEvent>();
 
-        public List<ObjectMethod> Methods = new List<ObjectMethod>();
-        public List<ObjectProperty> Properties = new List<ObjectProperty>();
-        public List<ObjectEvent> Events = new List<ObjectEvent>();
+        public string HelpText { get; set; }
+        public string Remarks { get; set; }
+        public string Example { get; set; }
+        public string SeeAlso { get; set; }
 
-        
-
-        public string HelpText = "";
-        public string Remarks = "";
-        public string Example = "";
-        public string SeeAlso = "";
-
-        public string Assembly = "";
-        public string Namespace = "";
-        public string InheritsFrom = "";
-        public string InheritanceTree = "";
-        public string Implements = "";
-        public string Contract = "";        
+        public string Assembly { get; set; }
+        public string Namespace { get; set; }
+        public string InheritsFrom { get; set; }
+        public string InheritanceTree { get; set; }
+        public string Implements { get; set; }
+        public string Contract { get; set; }
 
         /// <summary>
         /// class, interface, enum, delegate
         /// </summary>
-        public string Type = "";
+        public string Type { get; set; }
 
         /// <summary>
         /// Full signature of the class - namespace + classname
         /// </summary>
-        public string Signature = "";
+        public string Signature { get; set; }
 
         /// <summary>
         /// The raw signature returned from Type member
         /// </summary>
-        public string RawSignature = "";
+        //public string RawSignature { get; set; }
 
         /// <summary>
         /// All class level identifiers except visibility. ie: static override virtual etc.
         /// </summary>
-        public string Other = "";
+        public string Other { get; set; }
 
         /// <summary>
         /// Determines whether inherited members are retrieved
@@ -75,7 +81,7 @@ namespace Westwind.TypeImporter
                 _RetrieveDeclaredMembersOnly = value;
             }
         }
-        bool _RetrieveDeclaredMembersOnly = false;
+        bool _RetrieveDeclaredMembersOnly { get; set; }
 
         /// <summary>
         /// Reflection retrieval flags.
@@ -128,10 +134,10 @@ namespace Westwind.TypeImporter
         //                isObsolete = true;
         //                break;
         //            }
-        //        }                
+        //        }
         //        if (isObsolete)
         //            continue;
-                
+
 
         //        ObjectMethod loM = Methods[x];
         //        loM.Name = method.Name;
@@ -216,7 +222,7 @@ namespace Westwind.TypeImporter
         //        string rawParameters = "";
 
         //        for (int y = 0; y < parameterInfos.Length; y++)
-        //        {                            
+        //        {
         //            var parameterInfo = parameterInfos[y];
         //            string ParmType = parameterInfo.ParameterType.Name;
         //            bool IsByRef = false;
@@ -320,7 +326,7 @@ namespace Westwind.TypeImporter
         //        if (IsVb)
         //            loM.Name = "New";
         //        else
-        //            loM.Name = "Constructor"; //" Constructor"; "_" + loMethod.Name.Substring(1);  
+        //            loM.Name = "Constructor"; //" Constructor"; "_" + loMethod.Name.Substring(1);
 
         //        MethodCount++;
 
@@ -397,7 +403,7 @@ namespace Westwind.TypeImporter
         //            if (ParameterType.IsGenericType)
         //                ParmType = GetGenericTypeName(ParameterType, GenericTypeNameFormats.TypeName);
 
-        //            string ParmTypeName = GetSignatureParameterType(ParameterType);                    
+        //            string ParmTypeName = GetSignatureParameterType(ParameterType);
         //            //if (ParameterType.IsGenericType)
         //            //    ParmTypeName = GetGenericTypeName(ParameterType,GenericTypeNameFormats.TypeName);
         //            //else if (ParameterType.IsGenericParameter)
@@ -410,7 +416,7 @@ namespace Westwind.TypeImporter
         //                lcParameters = lcParameters + loParameters[y].Name + " as " + TypeNameForLanguage(loParameters[y].ParameterType.Name);
         //            else
         //                lcParameters = lcParameters + TypeNameForLanguage(ParmType) + " " + loParameters[y].Name;
-                    
+
 
         //            if (y < loParameters.Length - 1)
         //                lcParameters = lcParameters + ", ";
@@ -437,7 +443,7 @@ namespace Westwind.TypeImporter
         //}
 
 
-       
+
 
         ///// <summary>
         ///// Load Events from an object into aEvents property
@@ -469,7 +475,7 @@ namespace Westwind.TypeImporter
         //            loE.Type = TypeNameForLanguage(foxEvent.EventHandlerType.Name);
         //        else
         //            loE.Type = GetGenericTypeName(foxEvent.EventHandlerType, GenericTypeNameFormats.TypeName);
-                
+
 
         //        loE.Scope = "public";
         //        if (IsVb)
@@ -484,51 +490,6 @@ namespace Westwind.TypeImporter
         //}
 
 
-        /// <summary>
-        /// Converts a CLR typename to VB or C# type name. Type must passed in as plain name
-        /// not in full system format.
-        /// </summary>
-        /// <param name="typeName"></param>
-        /// <param name="Language"></param>
-        /// <returns></returns>
-        public static string TypeNameForLanguage(string typeName)
-        {
-            switch (typeName)
-            {
-                case "String":
-                    return "string";
-                case "Boolean":
-                    return "bool";
-                case "Int32":
-                    return "int";
-                case "Int64":
-                    return "long";
-                case "Int16":
-                    return "byte";
-                case "Decimal":
-                    return "decimal";
-                case "Object":
-                    return "object";
-                case "Double":
-                    return "double";
-                case "Single":
-                    return "float";
-                case "Char":
-                    return "char";
-                case "Void":
-                    return "void";
-            }
-
-            // *** Nullable types converted to int? or DateTime?
-            if (typeName.StartsWith("Nullable"))
-            {
-                string ValueType = StringUtils.ExtractString(typeName, "<", ">");
-                if (!string.IsNullOrEmpty(ValueType))
-                    return TypeNameForLanguage(ValueType) + "?";
-            }
-
-            return typeName;
-        }
 
 
         /// <summary>
@@ -563,11 +524,11 @@ namespace Westwind.TypeImporter
             string FormattedName = typeName;
 
             // *** Parse the generic type arguments
-                        
+
             string genericOutput = "<";
             bool start = true;
 
-            
+
             var genericParameters = genericType.GenericParameters;
             if (genericParameters.Count < 1)
                 genericParameters = genericType.GetElementType().GenericParameters;
@@ -576,7 +537,7 @@ namespace Westwind.TypeImporter
             {
                 var name = genericArg.Name;
                 if (name.StartsWith("!"))
-                    name = name.Replace("!", "T");
+                    name = name.Replace("!0","T").Replace("!", "T");
 
                 if (start)
                 {
@@ -586,8 +547,11 @@ namespace Westwind.TypeImporter
                 else
                     genericOutput += "," + name;
             }
-        
-            genericOutput += ">";
+
+            genericOutput = genericOutput +  ">";
+
+            if (genericOutput == "<>")
+                genericOutput = string.Empty;
 
 
             if (typeNameFormat == GenericTypeNameFormats.GenericListOnly)
@@ -595,7 +559,7 @@ namespace Westwind.TypeImporter
 
             FormattedName += genericOutput;
 
-            // *** return the type name plus the generic list 
+            // *** return the type name plus the generic list
             if (typeNameFormat == GenericTypeNameFormats.TypeName)
                 return FormattedName;
 
@@ -607,7 +571,7 @@ namespace Westwind.TypeImporter
 
 
         /// <summary>
-        /// Retrieves the type of a parameter and parses out info for 
+        /// Retrieves the type of a parameter and parses out info for
         /// generic parameter (`0,`1 for generic types).
         /// </summary>
         /// <param name="parameterType"></param>
@@ -725,7 +689,7 @@ namespace Westwind.TypeImporter
             if (!string.IsNullOrEmpty(Name))
                 return Name;
 
-            return base.ToString(); 
+            return base.ToString();
         }
     }
 

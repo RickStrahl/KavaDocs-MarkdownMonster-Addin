@@ -1,143 +1,143 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Westwind.TypeImporter
 {
-	public class ObjectMethod 
-	{
-		public string Name = "";
-		public string Parameters = "";
-		public string ReturnType = "";
-        public string ReturnDescription = "";
-		public string Scope = "";
-        
-		public bool Static = false; 
-		public bool Literal = false;
-		public bool Internal = false;
-        public bool Constructor = false;
-		public string Other = "";
+    public class ObjectMethod
+    {
+        public string Name { get; set; }
+        public string Parameters { get; set; }
+        public string ReturnType { get; set; }
+        public string ReturnDescription { get; set; }
+        public string Scope { get; set; }
 
-		public string[] ParameterList = null;
-        public MethodParameter[] ParametersList2 = null;
-		public int ParameterCount = 0;
+        public bool Static { get; set; }
+        public bool Literal { get; set; }
+        public bool Internal { get; set; }
+        public bool IsConstructor { get; set; }
+        public string Other { get; set; }
 
-		// *** Parsed from XMLDocs
-		public string HelpText = string.Empty;
-		public string Remarks = string.Empty;
-		public string Example = string.Empty;
-        public string Exceptions = string.Empty;
-        public string Contract = string.Empty;
-		public string SeeAlso = string.Empty;
+        //public string[] ParameterList = null;
+        public List<MethodParameter> ParameterList { get; set; } = new List<MethodParameter>();
 
-		public string Signature = string.Empty;
-        public string RawSignature = string.Empty;
+        // *** Parsed from XMLDocs
+        public string HelpText { get; set; }
+        public string Remarks { get; set; }
 
-        /// <summary>
-        /// Determines the parent type
-        /// - bad naming in hind sight. This maps to ReflectedType.
-        /// </summary>
-		public string DeclaringType = string.Empty;
-        
-        /// <summary>
-        /// Determines the actual type that implements this member
-        /// - bad naming in hind sight. This maps to DeclaringType.
-        /// </summary>
-        public string ImplementedType = string.Empty;
-        public string GenericParameters = string.Empty;
-	    public string RawParameters;
-	    public string DescriptiveParameters;
+        public string Example { get; set; }
+        public string Exceptions { get; set; }
+        public string Contract { get; set; }
+        public string SeeAlso { get; set; }
 
-	    public override string ToString()
-        {
-            if (string.IsNullOrEmpty(Name))
-                return base.ToString();
+        public string Syntax;
+        public string Signature { get; set; }
 
-            return Name;
-        }
-	}
+        public string DeclaringType { get; set; }
 
-	public class ObjectProperty
-	{
-		public string Name = string.Empty;
-		public string Type = string.Empty;
-        		
-		public string Scope = string.Empty;
-		public string AccessType = string.Empty;
-		public string DefaultValue = string.Empty;
-
-		public bool Static = false;
-		public bool ReadOnly = false;
-		public bool Internal = false;
-		public bool Literal = false;
-
-		public string Other = string.Empty;
-		
-		/// Field or Property
-		public string FieldOrProperty = string.Empty;
-
-		// *** Parsed from XML docs
-		public string HelpText = string.Empty;
-		public string Remarks = string.Empty;
-		public string Example = string.Empty;
-        public string Contract = "";
-		public string SeeAlso = string.Empty;
-
-		public string Signature = string.Empty;
-		public string DeclaringType = string.Empty;
-
-
-        /// <summary>
-        /// Determines the actual type that implements this member
-        /// - bad naming in hind sight. This maps to DeclaringType.
-        /// </summary>
-        public string ImplementedType = string.Empty;
+        public string GenericParameters { get; set; }
+        public string RawParameters { get; set; }
+        public string DescriptiveParameters { get; set; }
 
         public override string ToString()
         {
-            if (string.IsNullOrEmpty(Name))
+            if (string.IsNullOrEmpty(Syntax))
                 return base.ToString();
 
-            return Name;
+            return Syntax ?? Name;
         }
-	}
+    }
 
-	
-	public class ObjectEvent 
-	{
-		public string Name = string.Empty;
-		public string Type = string.Empty;
-        		
-		public string Scope = string.Empty;
-		public bool Static = false;        
-		public bool ReadOnly = false;
+    public class ObjectProperty
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
 
-		public string Other = string.Empty;
-		
-		public string HelpText = string.Empty;
-		public string Remarks = string.Empty;
-		public string Example = "";
-		public string SeeAlso = "";
+        public string Scope { get; set; }
+        public string AccessType { get; set; }
+        public string DefaultValue { get; set; }
 
-		public string Signature = "";
-		public string DeclaringType = "";
-        /// <summary>
-        /// Determines the actual type that implements this member
-        /// - bad naming in hind sight. This maps to DeclaringType.
-        /// </summary>
-        public string ImplementedType = "";
-        
+        public bool Static { get; set; }
+        public bool ReadOnly { get; set; }
+        public bool Internal { get; set; }
+        public bool Literal { get; set; }
+
+        public string Other { get; set; }
+
+        public string Syntax { get; set; }
+
+        /// Field or Property
+        public PropertyModes PropertyMode;
+
+        // *** Parsed from XML docs
+        public string HelpText
+        {
+            get => _helpText;
+            set => _helpText = value;
+        }
+        private string _helpText;
+
+        public string Remarks { get; set; }
+        public string Example { get; set; }
+        public string Contract { get; set; }
+        public string SeeAlso { get; set; }
+
+        public string Signature { get; set; }
+        public string DeclaringType { get; set; }
+
+
         public override string ToString()
         {
-            if (string.IsNullOrEmpty(Name))
-                return base.ToString();
+            if (!string.IsNullOrEmpty(Syntax))
+                return Syntax;
 
             return Name;
         }
     }
 
+
+    public class ObjectEvent
+    {
+        public string Name;
+        public string Type { get; set; }
+
+        public string Scope { get; set; }
+        public bool Static { get; set; }
+        public bool ReadOnly { get; set; }
+
+        public string Other { get; set; }
+
+        public string HelpText { get; set; }
+        public string Remarks { get; set; }
+        public string Example { get; set; }
+        public string SeeAlso { get; set; }
+
+        public string Signature { get; set; }
+        public string RawSignature { get; set; }
+
+        public string DeclaringType { get; set; }
+
+        public string Syntax { get; set; }
+
+        public override string ToString()
+        {
+            if (string.IsNullOrEmpty(Name))
+                return base.ToString();
+
+            return Syntax ?? Name;
+        }
+    }
+
     public class MethodParameter
     {
-        public string Name = "";
-        public string TypeName = "";
-        public string ShortTypeName = "";
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public string ShortTypeName { get; set; }
+        public string Other { get; set; }
+    }
+
+    public enum PropertyModes
+    {
+        Property,
+        Field
     }
 }
