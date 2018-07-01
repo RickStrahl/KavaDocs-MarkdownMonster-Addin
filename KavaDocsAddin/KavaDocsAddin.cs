@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
@@ -10,8 +10,10 @@ using DocHound.Configuration;
 using DocHound.Model;
 using FontAwesome.WPF;
 using KavaDocsAddin.Controls;
+using MahApps.Metro.Controls;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
+using MarkdownMonster.Utilities;
 using MarkdownMonster.Windows;
 using Westwind.Utilities;
 
@@ -123,14 +125,25 @@ namespace KavaDocsAddin
 
 
                 // Set up the KavaDocs Topic Tree in the Left Sidebar
-                var tabItem = new TabItem() {Name = "KavaDocsTree", Header = " Kava Docs "};
+                var tabItem = new MetroTabItem() {Name = "KavaDocsTree"};
+
+                var panel = new StackPanel { Orientation = Orientation.Horizontal };
+                var icons = new AssociatedIcons();
+                var imgSource = icons.GetIconFromFile("t.kavadocs");
+                panel.Children.Add(new Image { Source = imgSource, Height=16, Margin =  new Thickness(4,0,4,0) });
+                panel.Children.Add(new TextBlock { Text = "Kava Docs"});
+                tabItem.Header = panel;
+
                 KavaDocsTopicTreeTab = tabItem;
                 Tree = new TopicsTree();
                 tabItem.Content = Tree;
                 Model.Window.AddLeftSidebarPanelTabItem(tabItem);
 
                 // Kava Docs Topic Editor Tab
-                tabItem = new TabItem() { Name = "KavaDocsTopic", Header = " Topic " };
+                tabItem = new MetroTabItem() { Name = "KavaDocsTopic" };
+
+               
+
                 KavaDocsTopicEditorTab = tabItem;
 
                 TopicEditor = new TopicEditor();
