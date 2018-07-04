@@ -127,28 +127,24 @@ namespace KavaDocsAddin
                 // Set up the KavaDocs Topic Tree in the Left Sidebar
                 var tabItem = new MetroTabItem() {Name = "KavaDocsTree"};
 
-                var panel = new StackPanel { Orientation = Orientation.Horizontal };
-                var icons = new AssociatedIcons();
-                var imgSource = icons.GetIconFromFile("t.kavadocs");
-                panel.Children.Add(new Image { Source = imgSource, Height=16, Margin =  new Thickness(4,0,4,0) });
-                panel.Children.Add(new TextBlock { Text = "Kava Docs"});
-                tabItem.Header = panel;
-
+                // Create the tab content user control
                 KavaDocsTopicTreeTab = tabItem;
                 Tree = new TopicsTree();
                 tabItem.Content = Tree;
-                Model.Window.AddLeftSidebarPanelTabItem(tabItem);
+
+                var icons = new AssociatedIcons();
+                var imgSource = icons.GetIconFromFile("t.kavadocs");  // image source
+
+                Model.Window.AddLeftSidebarPanelTabItem(tabItem,"Topics",imgSource);
 
                 // Kava Docs Topic Editor Tab
                 tabItem = new MetroTabItem() { Name = "KavaDocsTopic" };
-
-               
-
                 KavaDocsTopicEditorTab = tabItem;
 
                 TopicEditor = new TopicEditor();
                 tabItem.Content = TopicEditor;
-                Model.Window.AddRightSidebarPanelTabItem(tabItem);
+                
+                Model.Window.AddRightSidebarPanelTabItem(tabItem, "Topic",imgSource);
 
 
                 KavaDocsMenu = new KavaDocsMenuHandler();
