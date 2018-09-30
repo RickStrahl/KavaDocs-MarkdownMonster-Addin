@@ -12,7 +12,7 @@ based on dark.css by Vladimir Epifanov
   background: #252525;
   color: #E2E2E2;
   font-weight: normal;  
-  font-size: 1em !important;  
+  font-size: 1.15em !important;  
 }
 
 .hljs-keyword,
@@ -48,7 +48,11 @@ based on dark.css by Vladimir Epifanov
   color: #8f8f8f;
 }
 
-.hljs-title,
+.hljs-title {  
+  color: #C78C3B;
+}
+
+
 .hljs-name,
 .hljs-selector-id,
 .hljs-selector-class,
