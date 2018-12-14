@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel;
+using DocHound.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -67,8 +68,8 @@ namespace DocHound.Model
 
         public bool AutoSortTopics
         {
-            get => _project.GetSetting<bool>(nameof(AutoSortTopics));
-            set => _project.SetSetting(nameof(AutoSortTopics), value);
+            get => _project.GetSetting<bool>(SettingsEnum.AutoSortTopics);
+            set => _project.SetSetting(SettingsEnum.AutoSortTopics, value);
         }
 
         /// <summary>
@@ -76,8 +77,8 @@ namespace DocHound.Model
         /// </summary>
         public bool StoreYamlInTopics
         {
-            get => _project.GetSetting<bool>(nameof(StoreYamlInTopics));
-            set => _project.SetSetting(nameof(StoreYamlInTopics), value);
+            get => _project.GetSetting<bool>(SettingsEnum.StoreYamlInTopics);
+            set => _project.SetSetting(SettingsEnum.StoreYamlInTopics, value);
         }
     }
 }

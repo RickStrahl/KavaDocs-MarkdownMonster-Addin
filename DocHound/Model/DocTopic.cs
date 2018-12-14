@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -346,23 +346,35 @@ namespace DocHound.Model
         }
         private string _HelpId;
 
-        
+
+        /// <summary>
+        /// Optional class information for this topic
+        /// Anything related to code based topics
+        /// </summary>
         public ClassInfo ClassInfo { get; set; }
 
+        /// <summary>
+        /// Contains various state settings for this topic
+        /// when it's rendered in the UI. Internally used
+        /// and not persisted.
+        /// </summary>
         [YamlIgnore]
         [JsonIgnore]
         public TopicState TopicState
         {
             get { return _topicState; }
             set
-            {
+            {                
                 if (Equals(value, _topicState)) return;
                 _topicState = value;
                // OnPropertyChanged();
             }
         }
         private TopicState _topicState;
-        
+
+        /// <summary>
+        /// Child Topics collection for this topic
+        /// </summary>
         [YamlIgnore]
         public ObservableCollection<DocTopic> Topics
         {
@@ -375,10 +387,34 @@ namespace DocHound.Model
             }
         }
         private ObservableCollection<DocTopic> _topics;
+        
 
-               
-        public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
 
+        /// <summary>
+        /// Hierarchical configuration settings that can be set on
+        /// the topic level and are overridden by:
+        ///
+        /// topic -> parent topic(s) -> root -> project
+        /// </summary>
+        public Dictionary<string, object> Settings { get; set; } = new Dictionary<string, object>();
+
+        /// <summary>
+        /// Additional User defined properties that a user can add to a topic
+        /// that are persisted and can be rendered
+        /// </summary>
+        public Dictionary<string, string> Properties
+        {
+            get
+            {
+                if (_properties == null)
+                    _properties = new Dictionary<string, string>();
+                
+                return _properties;
+            }
+            set => _properties = value;
+        }
+
+        private Dictionary<string, string> _properties;
 
         #region Statics
 

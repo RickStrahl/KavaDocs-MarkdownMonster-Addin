@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DocHound.Model;
 using DocHound.Properties;
+using DocHound.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -38,9 +39,9 @@ namespace DocHound
 						Formatting = Formatting.Indented,
 						MissingMemberHandling = MissingMemberHandling.Ignore,
 						NullValueHandling = NullValueHandling.Ignore,
-                        DefaultValueHandling = DefaultValueHandling.Include,
+                        DefaultValueHandling = DefaultValueHandling.Ignore,
 						ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-						ContractResolver = new CamelCasePropertyNamesContractResolver(),
+						ContractResolver = new CamelCaseAndIgnoreEmptyEnumerablesResolver()                        
 					};
 					settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
 

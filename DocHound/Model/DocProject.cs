@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using DocHound.Annotations;
 using DocHound.Configuration;
+using DocHound.Interfaces;
 using DocHound.Razor;
 using MarkdownMonster;
 using Newtonsoft.Json;
@@ -79,6 +80,89 @@ namespace DocHound.Model
 
 
         /// <summary>
+        /// Kava Docs Version used to create this file
+        /// </summary>
+        public string Version
+        {
+            get { return _version; }
+            set
+            {
+                if (value == _version) return;
+                _version = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _version;
+
+
+
+        /// <summary>
+        /// Language of the help file
+        /// </summary>
+        public string Language
+        {
+            get { return _language; }
+            set
+            {
+                if (value == _language) return;
+                _language = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _language = "en-US";
+
+        /// <summary>
+        /// Online project's menu options
+        /// </summary>
+        public List<MenuLink> Menu { get; set; } = new List<MenuLink>();
+
+
+        #region Related Entities
+
+        [JsonIgnore] public DocTopic Topic { get; set; }
+
+        /// <summary>
+        /// Topic list
+        /// </summary>
+        public ObservableCollection<DocTopic> Topics
+        {
+            get { return _topics; }
+            set
+            {
+                if (Equals(value, _topics)) return;
+                _topics = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ObservableCollection<DocTopic> _topics = new ObservableCollection<DocTopic>();
+
+        /// <summary>
+        /// A list of custom topics that are available in this help file
+        /// </summary>
+        public Dictionary<string, string> CustomFields { get; set; }
+
+
+        /// <summary>
+        /// KavaDocs Project Settings - these are projected to
+        /// settings from the Settings dictionary.
+        /// </summary>
+        [JsonIgnore]
+        public DocProjectSettings ProjectSettings { get; set; }
+
+        /// <summary>
+        /// KavaDocs online processing settings
+        /// </summary>
+        public Dictionary<string, object> Settings { get; set; }
+
+        #endregion
+
+        #region Internal State
+
+
+        /// <summary>
         /// File name of the project.
         /// </summary>
         [JsonIgnore]
@@ -128,86 +212,7 @@ namespace DocHound.Model
                 return Path.Combine(ProjectDirectory, "wwwroot");
             }
         }
-
-
-        /// <summary>
-        /// Kava Docs Version used to create this file
-        /// </summary>
-        public string Version
-        {
-            get { return _version; }
-            set
-            {
-                if (value == _version) return;
-                _version = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _version;
-
-
-
-        /// <summary>
-        /// Language of the help file
-        /// </summary>
-        public string Language
-        {
-            get { return _language; }
-            set
-            {
-                if (value == _language) return;
-                _language = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _language = "en-US";
-
-
-        #region Related Entities
-
-        [JsonIgnore] public DocTopic Topic { get; set; }
-
-        /// <summary>
-        /// Topic list
-        /// </summary>
-        public ObservableCollection<DocTopic> Topics
-        {
-            get { return _topics; }
-            set
-            {
-                if (Equals(value, _topics)) return;
-                _topics = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private ObservableCollection<DocTopic> _topics = new ObservableCollection<DocTopic>();
-
-        /// <summary>
-        /// A list of custom topics that are available in this help file
-        /// </summary>
-        public Dictionary<string, string> CustomFields { get; set; }
-
-
-        /// <summary>
-        /// KavaDocs Project Settings - these are projected to
-        /// settings from the Settings dictionary.
-        /// </summary>
-        [JsonIgnore]
-        public DocProjectSettings ProjectSettings { get; set; }
-
-        /// <summary>
-        /// KavaDocs online processing settings
-        /// </summary>
-        public Dictionary<string, object> Settings { get; set; }
-
-
-
-        #endregion
-
-
+        
 
 
         [JsonIgnore]
@@ -238,6 +243,10 @@ namespace DocHound.Model
 
         //public DocProjectConfiguration Configuration { get; set; }
 
+        #endregion
+
+
+        #region Topic Loading
 
         public DocProject()
         {
@@ -254,7 +263,6 @@ namespace DocHound.Model
             Filename = filename;
         }
 
-        #region Topic Loading
 
         /// <summary>
         /// Loads a topic by id
@@ -1019,18 +1027,21 @@ namespace DocHound.Model
 
         #region Settings Handling
 
+        public string GetSetting(SettingsEnum settingsKey, string defaultValue = null)
+        {
+            return GetSetting(settingsKey.ToString(), defaultValue);
+        }
+
+        public T GetSetting<T>(SettingsEnum settingsKey, object defaultValue = null)
+        {
+            return GetSetting<T>(settingsKey.ToString(), defaultValue);
+        }
+
+
         public string GetSetting(string key, string defaultValue = null)
         {
             if (Settings.TryGetValue(key, out object result))
                 return result as string;
-
-            return defaultValue;
-        }
-
-        public bool GetSetting(string key, bool defaultValue)
-        {
-            if (Settings.TryGetValue(key, out object result))
-                return (bool) result;
 
             return defaultValue;
         }
@@ -1047,11 +1058,15 @@ namespace DocHound.Model
             return (T) defaultValue;
         }
 
+        public void SetSetting(SettingsEnum settingsKey, object value)
+        {
+            Settings[settingsKey.ToString()] = value;
+        }
+        
         public void SetSetting(string key, object value)
         {
             Settings[key] = value;
         }
-
         #endregion
 
 
@@ -1111,6 +1126,12 @@ namespace DocHound.Model
         Preview,
         Print,
         None
+    }
+
+    public class MenuLink
+    {
+        public string Title { get; set; }
+        public string Link { get; set; }
     }
 
 }
