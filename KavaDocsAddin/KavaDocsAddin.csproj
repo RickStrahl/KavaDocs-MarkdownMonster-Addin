@@ -330,12 +330,6 @@
     <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\rainbow.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\school-book.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\school-book.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\solarized-dark.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
