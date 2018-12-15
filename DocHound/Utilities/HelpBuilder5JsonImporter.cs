@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using DocHound.Configuration;
+using DocHound.Interfaces;
 using DocHound.Model;
 using MarkdownMonster;
 using Westwind.Utilities;

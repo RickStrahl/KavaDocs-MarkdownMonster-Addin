@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -62,7 +62,7 @@ namespace Westwind.HtmlHelpBuilder.Tests
                 catch { }
 
             var importer = new HelpBuilder5JsonImporter();
-            Assert.True(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\markdownmonster\markdownmonster-12-28-17.json", outputFolder));
+            Assert.True(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\markdownmonster\markdownmonster-10-01-18.json", outputFolder));
         }
 
         [Test]
