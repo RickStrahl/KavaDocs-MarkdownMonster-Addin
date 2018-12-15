@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:fa="http://schemas.fontawesome.io/icons/"
-        xmlns:model="clr-namespace:DocHound.Model;assembly=DocHound"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"        
+        xmlns:interfaces="clr-namespace:DocHound.Interfaces;assembly=DocHound"
         mc:Ignorable="d"
         Icon="../../icon.png"                    
         Title="New Topic"
@@ -59,7 +59,7 @@
                               
                               SelectedValue="{Binding Topic.Type}"                                 
                           Grid.Column="0" ToolTip="Topic source type that input format"
-                          ItemsSource="{Binding Source={x:Static model:TopicBodyFormats.TopicBodyFormatsList}}"
+                          ItemsSource="{Binding Source={x:Static interfaces:TopicBodyFormats.TopicBodyFormatsList}}"
                           Margin="0,0,10,0">
                     </ComboBox>
                 </StackPanel>

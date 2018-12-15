@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace DocHound.Interfaces
 {
@@ -31,6 +33,7 @@ namespace DocHound.Interfaces
         [DefaultValue(true)] AllowSyntaxHighlightingThemeSwitching,
         [DefaultValue("")] AllowableSyntaxHighlightingThemes,
         [DefaultValue(true)] RequireHttps,
+        [DefaultValue(TrueFalseAuto.Auto)] RenderTitleInTopic,
 
         // Content and theme settings
         [DefaultValue("~/Images/SiteIcon.png")] SiteIcon,
@@ -67,20 +70,20 @@ namespace DocHound.Interfaces
         [DefaultValue(true)] UseYamlFrontMatter,
         [DefaultValue(true)] UseFontAwesomeInMarkdown,
 
-
         // KavaDocs Client
         [DefaultValue(true), Description("Determines whether topics are sorted in the tree")]
         AutoSortTopics,
 
-        [DefaultValue(true), Description("Determines whether topics are sorted in the tree")]
+        [DefaultValue(true), Description("Determines whether all related meta data is stored as YAML in the Markdown file in addition to the JSON properties.")]
         StoreYamlInTopics,
-        
-        [DefaultValue(null)]
+
+
+        [DefaultValue(null),Description("Allowable Topic types dictionary for topics.")]
         TopicTypes
 
     }
 
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     sealed class DocumentScopeAttribute : Attribute
     {
         public DocumentScopes Scope { get; set; }
@@ -93,10 +96,52 @@ namespace DocHound.Interfaces
         }
     }
 
+
+
     public enum DocumentScopes
     {
         Unknown,
         Markdown,
         Text
     }
+
+    public enum TrueFalseAuto
+    {
+        Auto,
+        True,
+        False
+    }
+
+
+
+    public class TopicBodyFormats
+    {
+        public static List<string> TopicBodyFormatsList { get; } = new List<string>();
+
+        static TopicBodyFormats()
+        {
+            var pi = typeof(TopicBodyFormats).GetProperties(System.Reflection.BindingFlags.Static |
+                                                            System.Reflection.BindingFlags.Public |
+                                                            System.Reflection.BindingFlags.GetProperty).Where(p =>
+                p.Name != nameof(TopicBodyFormatsList))
+                .OrderBy(p => p.Name)
+                .ToList();
+
+            foreach (var p in pi)
+            {
+                TopicBodyFormatsList.Add(p.GetValue(null).ToString());
+            }
+        }
+
+        public static string Markdown => "markdown";
+        public static string Html => "html";
+        public static string ImageUrl => "imageurl";
+        public static string HelpBuilder => "helpbuilder";
+        public static string VstsWorkItemQueries => "vsts-workitem-queries";
+        public static string VstsWorkItem => "vsts-workitem";
+        public static string VstsWorkItemQuery => "vsts-workitem-query";
+        public static string VstsWorkItemQueryToc => "vsts-workitem-query:toc";
+        public static string VstsWorkItemQueriesToc => "vsts-workitem-queries:toc";
+    }
+
 }

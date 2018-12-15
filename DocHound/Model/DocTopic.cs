@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DocHound.Annotations;
+using DocHound.Interfaces;
 using DocHound.Utilities;
 using MarkdownMonster;
 using Newtonsoft.Json;
@@ -1168,31 +1169,6 @@ namespace DocHound.Model
 
 
 
-    public class TopicBodyFormats
-    {
-        public static List<string> TopicBodyFormatsList => new List<string>()
-            {
-                Markdown,
-                Html,
-                HelpBuilder,
-                ImageUrl,                
-                VstsWorkItem,
-                VstsWorkItemQuery,
-                VstsWorkItemQueries,
-                VstsWorkItemQueryToc,
-                VstsWorkItemQueriesToc,
-            };
-
-        public static string Markdown => "markdown";
-        public static string Html => "html";
-        public static string ImageUrl => "imageurl";
-        public static string HelpBuilder => "helpbuilder";
-        public static string VstsWorkItemQueries => "vsts-workitem-queries";
-        public static string VstsWorkItem => "vsts-workitem";
-        public static string VstsWorkItemQuery => "vsts-workitem-query";
-        public static string VstsWorkItemQueryToc => "vsts-workitem-query:toc";
-        public static string VstsWorkItemQueriesToc => "vsts-workitem-queries:toc";
-    }
 
     
     
