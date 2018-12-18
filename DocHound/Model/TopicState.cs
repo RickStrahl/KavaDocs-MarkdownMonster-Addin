@@ -105,7 +105,7 @@ namespace DocHound.Model
                         type = "topic";
                 }
                 
-                return Path.Combine(outfolder, "kavadocs", "icons", type.ToLower() + ".png");
+                return Path.Combine(outfolder, "_kavadocs", "icons", type.ToLower() + ".png");
             }
         }
 
@@ -127,9 +127,9 @@ namespace DocHound.Model
                         type = "topic";
                 }
                 if( type == "header" || type== "index")
-                    return Path.Combine(outfolder, "kavadocs", "icons", type.ToLower() + "_open.png");
+                    return Path.Combine(outfolder, "_kavadocs", "icons", type.ToLower() + "_open.png");
 
-                return Path.Combine(outfolder, "kavadocs", "icons", type.ToLower() + ".png");
+                return Path.Combine(outfolder, "_kavadocs", "icons", type.ToLower() + ".png");
             }
         }
 

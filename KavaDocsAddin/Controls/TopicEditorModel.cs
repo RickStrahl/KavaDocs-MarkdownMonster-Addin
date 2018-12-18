@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -117,7 +117,7 @@ namespace KavaDocsAddin.Controls
                 if (DisplayType == null || kavaUi.AddinModel.ActiveProject == null)
                     return null;
 
-                return Path.Combine(kavaUi.AddinModel.ActiveProject.ProjectDirectory, "kavadocs", "icons", DisplayType + ".png");
+                return Path.Combine(kavaUi.AddinModel.ActiveProject.ProjectDirectory, "_kavadocs", "icons", DisplayType + ".png");
             }
         }
 

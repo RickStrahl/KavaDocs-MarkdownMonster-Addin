@@ -650,15 +650,18 @@ namespace DocHound.Model
             if (string.IsNullOrEmpty(Project?.ProjectDirectory))
                 return null;
 
+            string file;
             if (!string.IsNullOrEmpty(link))
-            {                
-                string file = FileUtils.NormalizePath(Path.Combine(Project.ProjectDirectory, link));
+            {
+                file = FileUtils.NormalizePath(Path.Combine(Project.ProjectDirectory, link));
                 if (File.Exists(file))
                     return file;
             }
 
-            return Path.Combine(Project.ProjectDirectory,
+            file = Path.Combine(Project.ProjectDirectory,
                 Slug + (Type == TopicBodyFormats.Html ? ".html" : ".md"));
+
+            return FileUtils.NormalizePath(file);
         }
 
         /// <summary>

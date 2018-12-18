@@ -1,12 +1,14 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Threading;
 using DocHound.Configuration;
 using DocHound.Windows.Dialogs;
 using KavaDocsAddin.Controls;
 using KavaDocsAddin.Core.Configuration;
 using KavaDocsAddin.Windows.Dialogs;
 using MarkdownMonster;
+using MarkdownMonster.Windows;
 using Microsoft.Win32;
 using Westwind.Utilities;
 
@@ -214,7 +216,7 @@ namespace KavaDocsAddin
 
         public void Command_DeleteTopic()
         {
-            DeleteTopicCommand = new CommandBase((parameter, command) =>
+            DeleteTopicCommand = new CommandBase( (parameter, command) =>
             {
                 if (!mmApp.Model.IsEditorActive)
                     return;
@@ -224,7 +226,7 @@ namespace KavaDocsAddin
                     return;
                 if (MessageBox.Show($"You are about to delete topic\r\n\r\n{topic.Title}\r\n\r\nAre you sure?",
                         "Delete Topic",
-                        MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.No)
+                        MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.Yes) == MessageBoxResult.No)
                     return;
 
 
@@ -232,28 +234,28 @@ namespace KavaDocsAddin
                 if (parentTopics == null)
                     parentTopics = Model.ActiveProject.Topics;
                 int topicIndex = -1;
-                if(parentTopics != null)
+                if (parentTopics != null)
                     topicIndex = parentTopics.IndexOf(topic);
 
                 Model.ActiveProject.DeleteTopic(topic);
+                Model.ActiveProject.SaveProjectAsync();
 
-                var parent = topic.Parent;                    
+                var parent = topic.Parent;
                 if (parent != null)
                 {
-                        if (topicIndex < 1)
-                            parent.TopicState.IsSelected = true;
-                        else
-                            parent.Topics[topicIndex - 1].TopicState.IsSelected = true;                
+                    if (topicIndex < 1)
+                        parent.TopicState.IsSelected = true;
+                    else
+                        parent.Topics[topicIndex - 1].TopicState.IsSelected = true;
                 }
                 // root topic / project
                 else
                 {
-                    if (topicIndex > -0)                                            
+                    if (topicIndex > -0)
                         parentTopics[topicIndex - 1].TopicState.IsSelected = true;
                 }
 
-
-                             
+                Model.TopicsTree.Dispatcher.Delay(300,(p) => Model.TopicsTree.TreeTopicBrowser.Focus(), DispatcherPriority.ApplicationIdle);
             });
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
@@ -189,7 +189,7 @@ Time to get going!
                 if (!Directory.Exists(folder))
                     Directory.CreateDirectory(folder);
 
-                string wwwFolder = Path.Combine(folder, "kavadocs");
+                string wwwFolder = Path.Combine(folder, "_kavadocs");
                 if (!Directory.Exists(wwwFolder))
                     Directory.CreateDirectory(wwwFolder);
 

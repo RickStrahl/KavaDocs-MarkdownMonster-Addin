@@ -34,11 +34,11 @@ namespace DocHound.Utilities
 
             if (!string.IsNullOrEmpty(kavaDocsAddinFolder))
                 FileUtils.CopyDirectory(Path.Combine(kavaDocsAddinFolder, "ProjectTemplates"),
-                    Path.Combine(outputFolder, "kavadocs"));
+                    Path.Combine(outputFolder, "_kavadocs"));
             else
             {
-                if (!Directory.Exists(Path.Combine(outputFolder, "kavadocs")))
-                    Directory.CreateDirectory(Path.Combine(outputFolder, "kavadocs"));                
+                if (!Directory.Exists(Path.Combine(outputFolder, "_kavadocs")))
+                    Directory.CreateDirectory(Path.Combine(outputFolder, "_kavadocs"));                
             }
 
             var oldTopics =

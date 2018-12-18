@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -84,7 +84,7 @@ namespace KavaDocsAddin.Controls
 
         #region Selection Handling
 
-        public bool HandleSelection(DocTopic topic = null)
+        public bool HandleSelection(DocTopic topic = null, bool forceFocus = false)
         {
             bool selectTopic = false;
             if (topic == null)
@@ -95,9 +95,12 @@ namespace KavaDocsAddin.Controls
             if (topic == null)
                 return false;
 
-            kavaUi.AddinModel.LastTopic = kavaUi.AddinModel.ActiveTopic;
+            var lastTopic = kavaUi.AddinModel.ActiveTopic;
+            if (lastTopic != null)
+                lastTopic.TopicState.IsSelected = false;
 
-
+            kavaUi.AddinModel.LastTopic = lastTopic;
+            
             bool result = SaveProjectFileForTopic(kavaUi.AddinModel.LastTopic);
             
             if (result)
@@ -205,7 +208,8 @@ namespace KavaDocsAddin.Controls
                 if (!File.Exists(file))
                     File.WriteAllText(file, "");
 
-                tab = Model.KavaDocsModel.Window.OpenTab(file);
+                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, isPreview: false, noFocus: false);
+                Model.KavaDocsModel.Window.BindTabHeaders();
 
                 if (tab.Tag is MarkdownDocumentEditor editor)
                 {
@@ -222,7 +226,7 @@ namespace KavaDocsAddin.Controls
         /// Opens read
         /// </summary>
         /// <returns></returns>
-        public TabItem OpenTopicInEditor()
+        public TabItem OpenTopicInEditor(bool setFocus = false)
         {
             DocTopic topic = TreeTopicBrowser.SelectedItem as DocTopic;
             if (topic == null)
@@ -251,11 +255,11 @@ namespace KavaDocsAddin.Controls
                 window.TabControl.SelectedItem = tab;   // already open
             }                
             else
-            {
+            {   
                 // Will also open the tab if not open yet
                 // EXPLICITLY NOT SELECTING THE TAB SO THAT IT'S NOT RENDERED YET
                 // Assign topic first then explicitly select
-                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, noFocus: true, noSelectTab: true, isPreview: true);
+                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, noFocus: !setFocus, isPreview: true, noSelectTab:true);
 
                 var editor = tab?.Tag as MarkdownDocumentEditor;                               
                 if (editor == null)
@@ -345,12 +349,18 @@ namespace KavaDocsAddin.Controls
         private void TreeViewItem_KeyDown(object sender, KeyEventArgs e)
         {
             // Tabbing out of treeview sets focus to editor
-            if (e.Key == Key.Tab)
+            if (e.Key == Key.Tab || e.Key == Key.Enter)
             {
                 var tvi = e.OriginalSource as TreeViewItem;
                 if (tvi == null)
-                    return;                
+                    return;
+
+                var topic = tvi.Tag as DocTopic;
+                OpenTopicInMMEditor();
+
+
             }
+
 
             // this works without a selection
             if (e.Key == Key.N && Keyboard.IsKeyDown(Key.LeftCtrl))

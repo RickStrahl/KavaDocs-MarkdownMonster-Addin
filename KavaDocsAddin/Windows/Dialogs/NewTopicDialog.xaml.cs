@@ -209,21 +209,32 @@ namespace DocHound.Windows.Dialogs
                   
             }
 
-            // HACK: Filtered Collection won't update on its
-            AppModel.TopicsTree.Model.OnPropertyChanged(nameof(TopicsTreeModel.FilteredTopicTree));
-            //CollectionViewSource.GetDefaultView(Window.TopicsTree.Model.FilteredTopicTree).Refresh();
-
-            Topic.TopicState.IsSelected = true;
             Topic.Body = "# " + Topic.Title;
             Topic.SaveTopicFile();
+
+            AppModel.ActiveTopic = Topic;
+
 
             // make sure it gets written to disk
             //AppModel.ActiveProject.SaveTopic(Topic);
             AppModel.ActiveProject.SaveProject();
 
-            AppModel.ActiveTopic = Topic;
-            //AppModel.Window.PreviewMarkdownAsync();
-            AppModel.TopicsTree.OpenTopicInMMEditor(Topic);
+
+            Dispatcher.Invoke(() =>
+            {
+                // HACK: Filtered Collection won't update on its own
+                AppModel.TopicsTree.Model.OnPropertyChanged(nameof(TopicsTreeModel.FilteredTopicTree));
+                //CollectionViewSource.GetDefaultView(Window.TopicsTree.Model.FilteredTopicTree).Refresh();
+
+                Topic.TopicState.IsSelected = true;
+            
+                //AppModel.Window.PreviewMarkdownAsync();
+                //Dispatcher.InvokeAsync(() =>
+                //        AppModel.TopicsTree.OpenTopicInMMEditor(Topic),
+                //        System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+
+                AppModel.TopicsTree.OpenTopicInMMEditor(Topic);
+            },System.Windows.Threading.DispatcherPriority.ApplicationIdle);
 
             return Topic;
         }
