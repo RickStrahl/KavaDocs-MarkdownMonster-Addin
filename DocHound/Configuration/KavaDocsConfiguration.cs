@@ -1,4 +1,4 @@
-﻿
+
 
 using System;
 using System.Collections.Generic;
@@ -24,6 +24,12 @@ namespace DocHound.Configuration
             DocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Kava Docs");         
             RecentProjects = new ObservableCollection<RecentProjectItem>();
             HomeFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        }
+
+        protected override void OnInitialize(IConfigurationProvider provider, string sectionName, object configData)
+        {
+            base.OnInitialize(provider, sectionName, configData);
+            CleanupRecentProjects();
         }
 
         #region Static Configuration Options
@@ -131,6 +137,8 @@ namespace DocHound.Configuration
 
         #endregion
 
+        #region Recent Projects List
+
         public void AddRecentProjectItem(string filename, string topicId = null, string projectTitle = null)
         {
             var recent = RecentProjects.FirstOrDefault(rec => rec.ProjectFile == filename);
@@ -149,6 +157,21 @@ namespace DocHound.Configuration
             RecentProjects.Insert(0, recent);
             Write();
         }
+
+        public void CleanupRecentProjects()
+        {
+            // Remove missing projects
+            var missing = new List<RecentProjectItem>();
+            foreach (var recentProject in RecentProjects)
+            {
+                if (!File.Exists(recentProject.ProjectFile))
+                    missing.Add(recentProject);
+            }
+            foreach (var recent in missing)
+                RecentProjects.Remove(recent);
+        }
+
+        #endregion
 
     }
 

@@ -695,6 +695,9 @@ public void SelectTopic(DocTopic topic)
                 return;
 
             menu.Items.Clear();
+
+            Model.KavaDocsModel.Configuration.CleanupRecentProjects();
+
             foreach (var recent in Model.KavaDocsModel.Configuration.RecentProjects)
             {
                 var header = recent.ProjectTitle;

@@ -30,6 +30,7 @@ namespace KavaDocsAddin
         private void CreateCommands()
         {
             Command_OpenProject();
+            Command_OpenFolder();
             Command_SaveProject();
             Command_NewProject();
             Command_CloseProject();
@@ -62,8 +63,7 @@ namespace KavaDocsAddin
         #region File Commands
 
         public CommandBase OpenProjectCommand { get; set; }
-
-
+        
         private void Command_OpenProject()
         {
             OpenProjectCommand = new CommandBase((parameter, command) =>
@@ -108,6 +108,21 @@ namespace KavaDocsAddin
                 return true;
             });
         }
+
+
+        public CommandBase OpenFolderCommand { get; set; }
+
+        void Command_OpenFolder()
+        {
+            OpenFolderCommand = new CommandBase((parameter, command) =>
+            {
+                if (Model.ActiveProject?.Filename == null)
+                    return;
+
+                Model.Window.ShowFolderBrowser(folder: Model.ActiveProject.ProjectDirectory );
+            }, (p, c) => Model.ActiveProject != null);
+        }
+
 
         public CommandBase SaveProjectCommand { get; set; }
 

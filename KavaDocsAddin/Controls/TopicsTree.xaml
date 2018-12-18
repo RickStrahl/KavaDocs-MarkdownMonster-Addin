@@ -108,7 +108,7 @@
 					   FontWeight="Medium" FontSize="11"  Padding="4,5,2,5" />
             </StackPanel>
 
-            <Button Content="…" Grid.Column="1" Background="Transparent" 
+            <Button Content="…" Grid.Column="0" Background="Transparent" 
                     Foreground="{DynamicResource BlueItem}" Padding="5,0,5,0"
                     Name="ButtonSelecttFolder" BorderThickness="0"  FontSize="12"
                     ToolTip="Open Project" BorderBrush="Transparent"
@@ -122,6 +122,14 @@
                     Name="ButtonNewProject" BorderThickness="0"  FontSize="12"
                     ToolTip="New Project" BorderBrush="Transparent"
                     Command="{Binding KavaDocsModel.Commands.NewProjectCommand}" />-->
+
+            <Button  Grid.Column="1"
+                     fa:Awesome.Content="FolderOpen" Background="Transparent" 
+                     Foreground="{DynamicResource BlueItem}" Padding="6,0,6,0"   
+                     Name="ButtonOpenFolder" BorderThickness="0"  FontSize="12"
+                     ToolTip="Refresh Project Tree" BorderBrush="Transparent"
+                     Command="{Binding KavaDocsModel.Commands.OpenFolderCommand}"
+            />
 
             <Button  Grid.Column="2"
                      fa:Awesome.Content="Refresh" Background="Transparent" 
