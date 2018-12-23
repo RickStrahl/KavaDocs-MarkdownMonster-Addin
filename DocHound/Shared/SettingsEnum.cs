@@ -37,14 +37,14 @@ namespace DocHound.Interfaces
 
         // Content and theme settings
         [DefaultValue("~/Images/SiteIcon.png")] SiteIcon,
-        [DefaultValue("_meta/_logo.png")] LogoPath,
-        [DefaultValue("<p>Documentation engine provided by <a href=\"https://kavadocs.com\">Kava Docs</a>.<br /><i class=\"fa fa-heart\"></i> Made with Aloha in Maui, Hawaii.</p>")]
-        FooterHtml,
+        [DefaultValue("_kavadocs/_logo.png")] LogoPath,
+        [DefaultValue("<p>Documentation engine provided by <a href=\"https://kavadocs.com\">Kava Docs</a>.<br /><i class=\"fa fa-heart\"></i> Made with Aloha in Maui, Hawaii.</p>")] FooterHtml,
         [DefaultValue("Default")] Theme,
         [DefaultValue("Default")] ThemeColors,
         [DefaultValue("")] CustomCssPath,
         [DefaultValue("KavaDocs")] SyntaxTheme,
         [DefaultValue(true)] ShowEstimatedReadingTime,
+        [DefaultValue(false)] RenderProjectTitle,
 
         // Markdown related settings
         [DefaultValue(true)] UseAbbreviations,
@@ -64,7 +64,7 @@ namespace DocHound.Interfaces
         [DefaultValue(false)] UseMathematics,
         [DefaultValue(true)] UseMediaLinks,
         [DefaultValue(true)] UsePipeTables,
-        [DefaultValue(true)] UsePragmaLines,
+        [DefaultValue(false)] UsePragmaLines,
         [DefaultValue(true)] UseSmartyPants,
         [DefaultValue(true)] UseTaskLists,
         [DefaultValue(true)] UseYamlFrontMatter,
@@ -78,7 +78,7 @@ namespace DocHound.Interfaces
         StoreYamlInTopics,
 
 
-        [DefaultValue(null),Description("Allowable Topic types dictionary for topics.")]
+        [DefaultValue(null), Description("Allowable Topic types dictionary for topics.")]
         TopicTypes
 
     }

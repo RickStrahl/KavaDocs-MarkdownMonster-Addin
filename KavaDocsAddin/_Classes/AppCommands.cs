@@ -124,6 +124,20 @@ namespace KavaDocsAddin
         }
 
 
+
+
+        public CommandBase OpenProjectSettingsCommand { get; set; }
+
+        void Command_OpenProjectSettings()
+        {
+            OpenProjectSettingsCommand = new CommandBase((parameter, command) =>
+                {
+                    var form = new ProjectSettingsDialog(Model.Model.Window);
+                    form.Show();
+                },
+                (p, c) => Model.ActiveProject != null);
+        }
+
         public CommandBase SaveProjectCommand { get; set; }
 
         public void Command_SaveProject()

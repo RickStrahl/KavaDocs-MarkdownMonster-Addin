@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,14 +14,20 @@ namespace DocHound.Razor
         public RazorFolderHostContainer<KavaDocsTemplate> RazorHost { get; set; }
 
         public string RenderTemplate(string template, object model, out string error)
-        {            
-            error = null;
+        {                        
+            if (RazorHost == null)
+                throw new InvalidOperationException(
+                    "Can't render template - RazorHost not loaded. Please make sure to call RazorTemplates.StartRazorHost() before calling this method.");
 
+            error = null;
             string result = RazorHost.RenderTemplate(template, model);
             if (result == null)
+            {
                 result =
-                    "<h3>Template Rendering Error</h3>\r\n<hr/>\r\n"  + 
+                    "<h3>Template Rendering Error</h3>\r\n<hr/>\r\n" +
                     "<pre>" + HtmlUtils.HtmlEncode(RazorHost.ErrorMessage) + "</pre>";
+                error = RazorHost.ErrorMessage;
+            }
 
             return result;
         }
@@ -33,14 +39,17 @@ namespace DocHound.Razor
             var host = new RazorFolderHostContainer<KavaDocsTemplate>()
             {
                 // *** Set your Folder Path here - physical or relative ***
-                TemplatePath = Path.GetFullPath(Path.Combine(projectFolder,"wwwroot","themes")),
+                TemplatePath = Path.GetFullPath(Path.Combine(projectFolder,"_kavadocs","themes")),
                 // *** Path to the Assembly path of your application
                 BaseBinaryFolder = Environment.CurrentDirectory
             };
 
             // Add any assemblies that are referenced in your templates
-            host.AddAssemblyFromType(typeof(RazorTemplates));
-            host.AddAssemblyFromType(typeof(StringUtils));
+            host.AddAssemblyFromType(typeof(RazorTemplates)); // Dochound
+            host.AddAssemblyFromType(typeof(StringUtils));  // Westwind.Utilities
+            host.AddAssemblyFromType(typeof(Markdig.Markdown));
+            host.AddAssemblyFromType(typeof(Newtonsoft.Json.JsonConvert));
+            host.AddAssemblyFromType(typeof(MarkdownMonster.App));
 
             host.ReferencedNamespaces.Add("DocHound");            
             host.ReferencedNamespaces.Add("DocHound.Model");

@@ -127,7 +127,8 @@
                      fa:Awesome.Content="FolderOpen" Background="Transparent" 
                      Foreground="{DynamicResource BlueItem}" Padding="6,0,6,0"   
                      Name="ButtonOpenFolder" BorderThickness="0"  FontSize="12"
-                     ToolTip="Refresh Project Tree" BorderBrush="Transparent"
+                     ToolTip="Open Project Folder in Folder Browser" 
+                     BorderBrush="Transparent"
                      Command="{Binding KavaDocsModel.Commands.OpenFolderCommand}"
             />
 

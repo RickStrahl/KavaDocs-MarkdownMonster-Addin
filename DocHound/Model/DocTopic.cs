@@ -25,6 +25,11 @@ namespace DocHound.Model
 {
     public class DocTopic : INotifyPropertyChanged
     {
+
+        private void Test()
+        {
+           
+        }
         
         /// <summary>
         /// References the the containing project that this 
@@ -161,7 +166,7 @@ namespace DocHound.Model
                 if (Project == null || string.IsNullOrEmpty(Project.OutputDirectory))
                     return null;
 
-                return Path.Combine(Project.OutputDirectory, "_" + Slug + ".html");
+                return FileUtils.NormalizePath(Path.Combine(Project.OutputDirectory, "_" + Slug + ".html"));
             }
         }
 
@@ -453,7 +458,7 @@ namespace DocHound.Model
         {
             string error;
             string html = Project.TemplateRenderer.RenderTemplate(DisplayType + ".cshtml", this, out error);
-            
+
             if (string.IsNullOrEmpty(html))
             {
                 SetError(error);
@@ -462,6 +467,9 @@ namespace DocHound.Model
 
             return html;
         }
+
+
+
 
         /// <summary>
         /// Renders a topic to a specified file. If no filename
@@ -477,7 +485,7 @@ namespace DocHound.Model
             if (html==null)
                 return null;
 
-            int written = 0;
+            int written = 0; // try to write 4 times
             while (written < 4)
             {
                 if (filename == null)
@@ -486,10 +494,27 @@ namespace DocHound.Model
                 try
                 {                    
                     File.WriteAllText(filename, html, Encoding.UTF8);
-                    written = 10;
+                    written = 10;  // done
                 }
-                catch(Exception ex)
-                {                    
+                catch(DirectoryNotFoundException)
+                {
+                    try
+                    {
+                        // Create the path and try again
+                        var path = Path.GetDirectoryName(filename);
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+
+                        // and just retry
+                    }
+                    catch(Exception ex)
+                    {
+                        mmApp.Log("Warning: Unable to create output folder for topic file: " + filename + "\r\n" + ex.Message);
+                        return null;
+                    }                                      
+                }
+                catch (Exception ex)
+                {
                     Thread.Sleep(50);
                     written++;
                     if (written == 4)

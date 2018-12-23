@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,7 +45,7 @@ namespace DocHound.Razor
             host.AddAssemblyFromType(typeof(RazorTemplates));
             host.AddAssemblyFromType(typeof(StringUtils));
 
-            host.ReferencedNamespaces.Add("DocumentationMonster");            
+            host.ReferencedNamespaces.Add("Doc");            
             host.ReferencedNamespaces.Add("DocumentationMonster.Core.Model");
             host.ReferencedNamespaces.Add("DocumentationMonster.Core.Utilities");
             host.ReferencedNamespaces.Add("DocumentationMonster.Core.Configuration");

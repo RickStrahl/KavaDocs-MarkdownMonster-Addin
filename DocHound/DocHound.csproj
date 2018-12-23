@@ -31,23 +31,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Markdig, Version=0.14.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Markdig.0.14.9\lib\net40\Markdig.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Markdig, Version=0.15.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Markdig.0.15.5\lib\net40\Markdig.dll</HintPath>
     </Reference>
     <Reference Include="MarkdownMonster">
       <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\MarkdownMonster.exe</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -57,13 +56,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Westwind.RazorHosting, Version=3.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Westwind.RazorHosting.3.2.0.0\lib\net40\Westwind.RazorHosting.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Westwind.Utilities, Version=3.0.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Westwind.Utilities.3.0.10\lib\net45\Westwind.Utilities.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Westwind.Utilities, Version=3.0.21.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Westwind.Utilities.3.0.21\lib\net45\Westwind.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="YamlDotNet, Version=4.2.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -82,8 +76,8 @@
     <Compile Include="Model\DocProjectCreator.cs" />
     <Compile Include="Model\DocProjectSettings.cs" />
     <Compile Include="Model\DocTopic.cs" />
-    <Compile Include="Model\SettingsEnum.cs" />
-    <Compile Include="Utilities\IgnoreEmptyEnumerablesContractSerializer.cs" />
+    <Compile Include="Shared\SettingsEnum.cs" />
+    <Compile Include="Utilities\CamelCaseAndIgnoreEmptyEnumerablesResolver.cs" />
     <Compile Include="Utilities\KavaUtils.cs" />
     <Compile Include="Model\TopicState.cs" />
     <Compile Include="Properties\Annotations.cs" />
@@ -112,6 +106,12 @@
       <LastGenOutput>DocumentationMonsterResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Westwind.RazorHosting\Westwind.RazorHosting\Westwind.RazorHosting.csproj">
+      <Project>{abf048cf-ead5-40b7-aed2-b367e8579590}</Project>
+      <Name>Westwind.RazorHosting</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

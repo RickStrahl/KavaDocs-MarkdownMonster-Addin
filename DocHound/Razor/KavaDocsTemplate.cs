@@ -28,7 +28,7 @@ namespace DocHound.Razor
 
      }
 
-    public class DocumentMonsterStringTemplate : RazorTemplateBase<DocTopic>
+    public class KavaDocsStringTemplate : RazorTemplateBase<DocTopic>
     {
         public DocTopic Topic { get; set; }
         public DocProject Project { get; set; }

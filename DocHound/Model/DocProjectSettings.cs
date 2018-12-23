@@ -16,33 +16,36 @@ namespace DocHound.Model
         public DocProjectSettings(DocProject project)
         {
             _project = project;
-            TopicTypes = new Dictionary<string, string>
+            if (TopicTypes == null)
             {
-                {"index", "Top level topic for the documentation."},
-                {"header", "Header topic for sub-topics"},
-                {"topic", "Generic topic"},
-                {"whatsnew", "What's new"},
-                {"weblink", "External link"},
-                {"classheader", "Class Header"},
-                {"interface", "Interface"},
-                {"namespace", "Namespace"},
-                {"classmethod", "Class method"},
-                {"classproperty", "Class property"},
-                {"classfield", "Class field"},
-                {"classevent", "Class event"},
-                {"classconstructor", "Class constructor"},
-                {"enum", "Enumeration"},
-                {"delegate", "Delegate"},
-                {"webservice", "Web Service"},
-                {"database", "Database"},
-                {"datacolumn", "Data columns"},
-                {"datafunction", "Data function"},
-                {"datastoredproc", "Data stored procedure"},
-                {"datatable", "Data table"},
-                {"dataview", "Data view"},
-                {"vstsworkitem", "VSTS work item"},
-                {"vstsworkitemquery", "VSTS work item query"}
-            };
+                TopicTypes = new Dictionary<string, string>
+                {
+                    {"index", "Top level topic for the documentation."},
+                    {"header", "Header topic for sub-topics"},
+                    {"topic", "Generic topic"},
+                    {"whatsnew", "What's new"},
+                    {"weblink", "External link"},
+                    {"classheader", "Class Header"},
+                    {"interface", "Interface"},
+                    {"namespace", "Namespace"},
+                    {"classmethod", "Class method"},
+                    {"classproperty", "Class property"},
+                    {"classfield", "Class field"},
+                    {"classevent", "Class event"},
+                    {"classconstructor", "Class constructor"},
+                    {"enum", "Enumeration"},
+                    {"delegate", "Delegate"},
+                    {"webservice", "Web Service"},
+                    {"database", "Database"},
+                    {"datacolumn", "Data columns"},
+                    {"datafunction", "Data function"},
+                    {"datastoredproc", "Data stored procedure"},
+                    {"datatable", "Data table"},
+                    {"dataview", "Data view"},
+                    {"vstsworkitem", "VSTS work item"},
+                    {"vstsworkitemquery", "VSTS work item query"}
+                };
+            }
         }
 
         /// <summary>
@@ -60,15 +63,21 @@ namespace DocHound.Model
         {
             get
             {
-                JObject objDict = _project.GetSetting<JObject>("topicTypes");
-                return objDict?.ToObject<Dictionary<string, string>>();
+                if (_topicTypes == null)
+                {
+                    JObject objDict = _project.GetSetting<JObject>("topicTypes");
+                    _topicTypes = objDict?.ToObject<Dictionary<string, string>>();
+                }
+
+                return _topicTypes;
             }
             set => _project.SetSetting("topicTypes", value);
         }
+        public Dictionary<string, string> _topicTypes;
 
         public bool AutoSortTopics
         {
-            get => _project.GetSetting<bool>(SettingsEnum.AutoSortTopics);
+            get => _project.GetSetting<bool>(SettingsEnum.AutoSortTopics, false);
             set => _project.SetSetting(SettingsEnum.AutoSortTopics, value);
         }
 
@@ -77,8 +86,33 @@ namespace DocHound.Model
         /// </summary>
         public bool StoreYamlInTopics
         {
-            get => _project.GetSetting<bool>(SettingsEnum.StoreYamlInTopics);
+            get => _project.GetSetting<bool>(SettingsEnum.StoreYamlInTopics, false);
             set => _project.SetSetting(SettingsEnum.StoreYamlInTopics, value);
         }
+
+        public bool RenderProjectTitle
+        {
+            get => _project.GetSetting<bool>(SettingsEnum.RenderProjectTitle, true);
+            set => _project.SetSetting(SettingsEnum.RenderProjectTitle, value);
+        }
+
+        /// <summary>
+        /// Determines whether the topic should render a title in the topic. Depends on
+        /// doc type - existing documents likely have headers but KavaDocs documents have an
+        /// external document title and want to have the title embedded.
+        /// </summary>
+        public TrueFalseAuto RenderTitleInTopic
+        {
+            get => _project.GetSetting<TrueFalseAuto>(SettingsEnum.RenderTitleInTopic,TrueFalseAuto.False);
+            set => _project.SetSetting(SettingsEnum.RenderTitleInTopic, value);
+        }
+
+
+        public bool ShowEstimatedReadingTime
+        {
+            get => _project.GetSetting<bool>(SettingsEnum.ShowEstimatedReadingTime, false);
+            set => _project.SetSetting(SettingsEnum.ShowEstimatedReadingTime,value);
+        }
+
     }
 }

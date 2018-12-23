@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.TypeImporter", "We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.TypeParser.Tests", "Westwind.TypeParser.Tests\Westwind.TypeParser.Tests.csproj", "{F6302E31-64F8-4D17-AE8E-8D1657FDD4D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.RazorHosting", "..\..\Libraries\Westwind.RazorHosting\Westwind.RazorHosting\Westwind.RazorHosting.csproj", "{ABF048CF-EAD5-40B7-AED2-B367E8579590}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{F6302E31-64F8-4D17-AE8E-8D1657FDD4D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6302E31-64F8-4D17-AE8E-8D1657FDD4D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6302E31-64F8-4D17-AE8E-8D1657FDD4D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABF048CF-EAD5-40B7-AED2-B367E8579590}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABF048CF-EAD5-40B7-AED2-B367E8579590}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABF048CF-EAD5-40B7-AED2-B367E8579590}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABF048CF-EAD5-40B7-AED2-B367E8579590}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

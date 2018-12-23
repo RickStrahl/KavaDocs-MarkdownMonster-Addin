@@ -232,14 +232,22 @@ namespace KavaDocsAddin
                 return;
 
 
+            // Reload settings after saving them in the editor
             if (doc.Filename.IndexOf("kavadocsaddin.json", StringComparison.InvariantCultureIgnoreCase) > -1)
             {                
-                KavaDocsModel.Configuration.Read(); // reload settings from saved
+                KavaDocsModel.Configuration.Read(); 
                 return;
             }
 
 
-
+            // Reload Project file if editing project file
+            if (KavaDocsModel.ActiveProject != null &&
+                KavaDocsModel.ActiveProject.Filename.Equals(doc.Filename,StringComparison.InvariantCultureIgnoreCase))
+            {
+                KavaDocsModel.LoadProject(KavaDocsModel.ActiveProject.Filename);
+                return;
+            }
+            
             if (KavaDocsModel?.ActiveTopic != null )
             {
                 var topic = Model.ActiveEditor.GetProperty<DocTopic>(Constants.EditorPropertyNames.KavaDocsTopic);
@@ -388,7 +396,7 @@ namespace KavaDocsAddin
             else
             {
                 // Currently we're not rendering topics and just using MM to render topic content
-                //renderedHtml = topic.RenderTopicToFile(addPragmaLines: true);
+                renderedHtml = topic.RenderTopicToFile(addPragmaLines: true);
             }
 
             topic.TopicState.IsPreview = false;
