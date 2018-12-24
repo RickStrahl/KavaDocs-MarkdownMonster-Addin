@@ -23,9 +23,7 @@ namespace DocHound.Razor
             string result = RazorHost.RenderTemplate(template, model);
             if (result == null)
             {
-                result =
-                    "<h3>Template Rendering Error</h3>\r\n<hr/>\r\n" +
-                    "<pre>" + HtmlUtils.HtmlEncode(RazorHost.ErrorMessage) + "</pre>";
+                result = RazorHost.RenderHtmlErrorPage();                                        
                 error = RazorHost.ErrorMessage;
             }
 
