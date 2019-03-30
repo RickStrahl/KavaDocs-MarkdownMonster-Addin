@@ -454,10 +454,10 @@ namespace DocHound.Model
         /// <param name="addPragmaLines"></param>
         /// <param name="renderExternalLinks"></param>
         /// <returns></returns>
-        public string RenderTopic(bool addPragmaLines = false, bool renderExternalLinks = false)
+        public string RenderTopic(bool addPragmaLines = false)
         {
             string error;
-            string html = Project.TemplateRenderer.RenderTemplate(DisplayType + ".cshtml", this, out error);
+            string html = Project.TemplateRenderer.RenderTemplate(DisplayType + ".cshtml", this, out error);            
 
             if (string.IsNullOrEmpty(html))
             {
@@ -468,6 +468,7 @@ namespace DocHound.Model
             return html;
         }
 
+        
 
 
 
@@ -498,12 +499,11 @@ namespace DocHound.Model
                     int length = relRootPath.Split('\\').Length;
                     relRootPath = StringUtils.Replicate("../", length);
                 }
-                if (!string.IsNullOrEmpty(relRootPath))                
-                    html = html.Replace("\"~/","\"" + relRootPath);
+                else
+                    relRootPath = string.Empty;
+
+                html = html.Replace("\"~/","\"" + relRootPath);
                 
-
-                Console.WriteLine(relRootPath);
-
                 try
                 {                    
                     File.WriteAllText(filename, html, Encoding.UTF8);
@@ -1208,10 +1208,10 @@ namespace DocHound.Model
         }
     }
 
-
-
-
-    
-    
+    public enum TopicRenderModes
+    {
+        Html,
+        Preview
+    }       
 }
 
