@@ -34,7 +34,7 @@ namespace DocHound.Utilities
 
             CopyFoldersAndStaticFiles();
             GenerateHtml();
-
+            GenerateTableOfContents();
         }
 
         public void CopyFoldersAndStaticFiles()
@@ -97,6 +97,15 @@ namespace DocHound.Utilities
         public void GenerateTableOfContents()
         {
 
+            if (string.IsNullOrEmpty(OutputPath))
+                OutputPath = Project.OutputDirectory;
+
+            var rootTopic = Project.Topics[0];
+            rootTopic.Project = Project;
+            
+            string error;
+            string html = Project.TemplateRenderer.RenderTemplate("TableOfContents.cshtml", rootTopic, out error);            
+            File.WriteAllText(Path.Combine(OutputPath, "TableOfContents.html"),html); 
         }
 
         public void WriteStatus()
@@ -109,7 +118,37 @@ namespace DocHound.Utilities
 
         }
 
-        
+        #region Error
 
+        public string ErrorMessage { get; set; }
+
+        protected void SetError()
+        {
+            this.SetError("CLEAR");
+        }
+
+        protected void SetError(string message)
+        {
+            if (message == null || message == "CLEAR")
+            {
+                this.ErrorMessage = string.Empty;
+                return;
+            }
+            this.ErrorMessage += message;
+        }
+
+        protected void SetError(Exception ex, bool checkInner = false)
+        {
+            if (ex == null)
+                this.ErrorMessage = string.Empty;
+
+            Exception e = ex;
+            if (checkInner)
+                e = e.GetBaseException();
+
+            ErrorMessage = e.Message;
+        }
+
+        #endregion
     }
 }

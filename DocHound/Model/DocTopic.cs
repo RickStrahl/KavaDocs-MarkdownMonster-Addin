@@ -458,14 +458,14 @@ namespace DocHound.Model
         public string RenderTopic(bool addPragmaLines = false, TopicRenderModes renderMode = TopicRenderModes.Html)
         {
             string error;
-            string html = Project.TemplateRenderer.RenderTemplate(DisplayType + ".cshtml", this, out error);            
+            string html = Project.TemplateRenderer.RenderTemplate(DisplayType + ".cshtml", this, out error);
+           
 
             if (string.IsNullOrEmpty(html))
             {
                 SetError(error);
                 return null;
             }
-
 
             // Fix up any locally linked .md extensions to .html
             if (renderMode == TopicRenderModes.Html)                

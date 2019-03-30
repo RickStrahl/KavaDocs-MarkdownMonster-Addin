@@ -37,6 +37,11 @@ namespace DocHound.Razor
         public TemplateHelpers Helpers { get; set; }
 
 
+        public void InitializeTemplate(DocTopic model, object configurationData)
+        {
+            InitializeTemplate((object) model, configurationData);
+        }
+
         public override void InitializeTemplate(object model, object configurationData)
         {
             Topic = model as DocTopic;

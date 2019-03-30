@@ -22,5 +22,15 @@ namespace DocumentationMonster.Core.Tests
             output.Generate();
 
         }
+
+        [Test]
+        public void GenerateTableOfContentsTest()
+        {
+
+            var project = DocProjectManager.Current.LoadProject(TestConfiguration.Current.Paths.projectFile);
+            var output = new HtmlOutputGenerator(project);
+            output.GenerateTableOfContents();
+
+        }
     }
 }
