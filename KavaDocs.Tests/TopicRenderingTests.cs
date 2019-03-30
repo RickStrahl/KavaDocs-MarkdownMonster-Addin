@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,7 +45,7 @@ namespace DocumentationMonster.Core.Tests
         [Test]
         public void WconnectRenderToFileTest()
         {
-            var project = DocProjectManager.Current.LoadProject("C:\\Temp\\wconnect_help\\wconnect_help.json");
+            var project = DocProjectManager.Current.LoadProject("C:\\Temp\\wconnect_help\\_kavadocs-project.json");
 
             Assert.NotNull(project);
 
@@ -65,7 +65,7 @@ namespace DocumentationMonster.Core.Tests
         [Test]
         public void WconnectRenderAllTopicsFileTest()
         {
-            var project = DocProjectManager.Current.LoadProject("C:\\Temp\\wconnect_help\\wconnect_help.json");
+            var project = DocProjectManager.Current.LoadProject("C:\\Temp\\wconnect_help\\_kavadocs-project.json");
             
             Assert.NotNull(project);
             Assert.True(project.Topics.Count > 0);

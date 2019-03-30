@@ -601,7 +601,8 @@ namespace DocHound.Model
             foreach (var topic in topics)
             {
                 onTopicHandler?.Invoke(topic, this);
-                WalkTopicsHierarchy(topic.Topics, onTopicHandler);                    
+                if(topic.Topics != null && topic.Topics.Count > 0)
+                    WalkTopicsHierarchy(topic.Topics, onTopicHandler);                    
             }
         }
         #endregion

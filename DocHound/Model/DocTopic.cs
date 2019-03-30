@@ -166,7 +166,7 @@ namespace DocHound.Model
                 if (Project == null || string.IsNullOrEmpty(Project.OutputDirectory))
                     return null;
 
-                return FileUtils.NormalizePath(Path.Combine(Project.OutputDirectory, "_" + Slug + ".html"));
+                return FileUtils.NormalizePath(Path.Combine(Project.OutputDirectory, Slug + ".html"));
             }
         }
 
@@ -490,6 +490,19 @@ namespace DocHound.Model
             {
                 if (filename == null)
                     filename = RenderTopicFilename;
+
+                string relRootPath = FileUtils.GetRelativePath(filename, Project.OutputDirectory);
+                relRootPath = Path.GetDirectoryName(relRootPath);
+                if (!string.IsNullOrEmpty(relRootPath))
+                {
+                    int length = relRootPath.Split('\\').Length;
+                    relRootPath = StringUtils.Replicate("../", length);
+                }
+                if (!string.IsNullOrEmpty(relRootPath))                
+                    html = html.Replace("\"~/","\"" + relRootPath);
+                
+
+                Console.WriteLine(relRootPath);
 
                 try
                 {                    

@@ -19,7 +19,6 @@ namespace KavaDocsAddin
         }
         public MenuItem CreateKavaDocsMainMenu()
         {
-
             var mi = Model.TopicsTree.Resources["MainMenuKavaDocsMenu"] as MenuItem;
             mi.DataContext = Model.TopicsTree.Model;
 

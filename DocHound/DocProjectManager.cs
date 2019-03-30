@@ -31,7 +31,7 @@ namespace DocHound
 		public static JsonSerializer Serializer
 		{
 			get
-			{
+			{                
 				if (_serializer == null)
 				{
 					var settings = new JsonSerializerSettings
@@ -62,8 +62,8 @@ namespace DocHound
         /// <param name="filename"></param>
         /// <returns></returns>
         public DocProject LoadProject(string filename)
-		{
-			try
+        {
+            try
 			{
 				using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
 				{
