@@ -148,8 +148,10 @@
 			         Command="{Binding MarkdownMonsterModel.ShowFolderBrowserCommand}" />
         </Grid>
 
-        <TextBox Grid.Row="2" Name="TextSearchText" Text="{Binding TopicsFilter,UpdateSourceTrigger=PropertyChanged,Delay=500}"
-                 Opacity="0.60" controls:TextBoxHelper.Watermark="Search" controls:TextBoxHelper.ClearTextButton="True"
+        <TextBox Grid.Row="1" Name="TextSearchText" 
+                 Text="{Binding TopicsFilter,UpdateSourceTrigger=PropertyChanged,Delay=500}"
+                 FontSize="13"
+                 Opacity="0.60" controls:TextBoxHelper.Watermark="Search Topic Titles" controls:TextBoxHelper.ClearTextButton="True"
                  ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"                 
                  BorderThickness="0"  />
 
