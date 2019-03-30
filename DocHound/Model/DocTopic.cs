@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using DocHound.Annotations;
 using DocHound.Interfaces;
 using DocHound.Utilities;
+using HtmlAgilityPack;
 using MarkdownMonster;
 using Newtonsoft.Json;
 using Westwind.Utilities;
@@ -454,7 +455,7 @@ namespace DocHound.Model
         /// <param name="addPragmaLines"></param>
         /// <param name="renderExternalLinks"></param>
         /// <returns></returns>
-        public string RenderTopic(bool addPragmaLines = false)
+        public string RenderTopic(bool addPragmaLines = false, TopicRenderModes renderMode = TopicRenderModes.Html)
         {
             string error;
             string html = Project.TemplateRenderer.RenderTemplate(DisplayType + ".cshtml", this, out error);            
@@ -465,10 +466,47 @@ namespace DocHound.Model
                 return null;
             }
 
+
+            // Fix up any locally linked .md extensions to .html
+            if (renderMode == TopicRenderModes.Html)                
+                FixupHtmlLinks(ref html);
+            
             return html;
         }
 
-        
+        /// <summary>
+        /// Fixes up any non-Web .md file links to point to an .html
+        /// file instead
+        /// </summary>
+        /// <param name="html"></param>
+        private void FixupHtmlLinks(ref string html)
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+
+            var links = doc.DocumentNode.SelectNodes("//a");
+            if (links.Count > 0)
+            {
+                bool updated = false;
+                foreach (var link in links)
+                {
+                    var href = link.Attributes["href"]?.Value;
+                    if (href == null)
+                        continue;
+                    
+                    if (string.IsNullOrEmpty(href) || href.StartsWith("http://") || href.StartsWith("https://"))
+                        continue;
+
+                    if (href.EndsWith(".md", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        link.Attributes["href"].Value = href.Replace(".md", ".html");
+                        updated = true;
+                    }
+                }
+                if (updated)
+                    html = doc.DocumentNode.OuterHtml;
+            }
+        }
 
 
 
