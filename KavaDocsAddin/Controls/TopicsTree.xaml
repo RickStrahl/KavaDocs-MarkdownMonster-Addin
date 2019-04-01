@@ -24,29 +24,9 @@
             <MenuItem Name="MenuRefresh" Header="Reload Tree" Command="{Binding KavaDocsModel.Commands.ReloadTreeCommand}" />
         </ContextMenu>
 
-        <MenuItem x:Key="MainMenuKavaDocsMenu" Header="_Kava Docs">
-            <MenuItem Header="_New Project" Command="{Binding KavaDocsModel.Commands.NewProjectCommand}"  InputGestureText="alt-k-n" />
-            <MenuItem Header="_Open Project" Command="{Binding KavaDocsModel.Commands.OpenProjectCommand}" InputGestureText="alt-k-o" />
-            <MenuItem Header="Recent Projects" Name="MenuRecentItems" SubmenuOpened="MenuRecentItems_SubmenuOpened"  >
-                <MenuItem />
-            </MenuItem>
-            <MenuItem Header="_Close Project" Command="{Binding KavaDocsModel.Commands.CloseProjectCommand}" />
-            <MenuItem Header="_Save Project" Command="{Binding KavaDocsModel.Commands.SaveProjectCommand}"  InputGestureText="alt-k-s" />
-            <Separator />
-            <MenuItem Name="MenuLinkTopic" Header="_Link to another Topic" 
-                      Command="{Binding KavaDocsModel.Commands.LinkTopicDialogCommand}" />
-            <Separator/>
-            <MenuItem Header="Settings">
-                <MenuItem Header="Project Settings"  Click="MenuProjectSettings_Click" IsEnabled="{Binding }"/>
-                <MenuItem Header="Kava Docs Settings"  Click="MenuKavaDocsSettings_Click" />
-            </MenuItem>
-            
-        </MenuItem>
-
-
         <HierarchicalDataTemplate x:Key="TopicsTemplate" ItemsSource="{Binding Topics}"  >
             <StackPanel >
-                <StackPanel Orientation="Horizontal" KeyUp="TreeViewItem_KeyDown" >
+                <StackPanel Orientation="Horizontal" KeyUp="TreeViewItem_KeyDown"   >
                     <Image Height="16" Width="Auto" Margin="4,0,4,0" SnapsToDevicePixels="True">
                         <Image.Style>
                             <Style TargetType="Image">
@@ -96,19 +76,19 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <!--<ColumnDefinition Width="Auto" />-->
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" >
                 <Image Source="../Assets/icon_16.png" Width="16" Height="16" Margin="4,0,0,0"/>
                 <TextBlock Height="Auto" 
 					   Text="Kava Docs"  
 					   FontWeight="Medium" FontSize="11"  Padding="4,5,2,5" />
             </StackPanel>
 
-            <Button Content="…" Grid.Column="0" Background="Transparent" 
+            <Button Content="…" Grid.Column="1" Background="Transparent" 
                     Foreground="{DynamicResource BlueItem}" Padding="5,0,5,0"
                     Name="ButtonSelecttFolder" BorderThickness="0"  FontSize="12"
                     ToolTip="Open Project" BorderBrush="Transparent"
@@ -123,7 +103,7 @@
                     ToolTip="New Project" BorderBrush="Transparent"
                     Command="{Binding KavaDocsModel.Commands.NewProjectCommand}" />-->
 
-            <Button  Grid.Column="1"
+            <Button  Grid.Column="2"
                      fa:Awesome.Content="FolderOpen" Background="Transparent" 
                      Foreground="{DynamicResource BlueItem}" Padding="6,0,6,0"   
                      Name="ButtonOpenFolder" BorderThickness="0"  FontSize="12"
@@ -132,7 +112,7 @@
                      Command="{Binding KavaDocsModel.Commands.OpenFolderCommand}"
             />
 
-            <Button  Grid.Column="2"
+            <Button  Grid.Column="3"
                      fa:Awesome.Content="Refresh" Background="Transparent" 
 			         Foreground="{DynamicResource BlueItem}" Padding="6,0,6,0"   
 			         Name="ButtonRefreshFolder" BorderThickness="0"  FontSize="12"
@@ -140,12 +120,13 @@
                      Command="{Binding KavaDocsModel.Commands.ReloadTreeCommand}"
 			         />
 
-            <Button  Grid.Column="3"
+            <Button  Grid.Column="4"
                      fa:Awesome.Content="ChevronCircleLeft" Background="Transparent" 
 			         Foreground="{DynamicResource BlueItem}" Padding="7,0,7,0"  
 			         Name="ButtonClosePanel" BorderThickness="0" FontSize="12"
 			         ToolTip="Close Kava Docs Panel" BorderBrush="Transparent"
 			         Command="{Binding MarkdownMonsterModel.ShowFolderBrowserCommand}" />
+            
         </Grid>
 
         <TextBox Grid.Row="1" Name="TextSearchText" 
@@ -155,15 +136,15 @@
                  ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"                 
                  BorderThickness="0"  />
 
+        <!--TreeViewItem.Selected="TreeTopicBrowser_Selected"-->
         <TreeView Grid.Row="2" Name="TreeTopicBrowser" 
                   ItemTemplate="{StaticResource TopicsTemplate}" 
                   ItemsSource="{Binding FilteredTopicTree}"    BorderThickness="0"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"                  
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"      
+                  GotFocus="TreeTopicBrowser_GotFocus"
                   VirtualizingPanel.IsVirtualizing="True"
-                  ContextMenu="{StaticResource TopicContextMenu}" 
-                  TreeViewItem.Selected="TreeTopicBrowser_Selected"  
-                                    
-                  KeyDown="TreeViewItem_KeyDown">
+                  ContextMenu="{StaticResource TopicContextMenu}"                                                 
+                  KeyDown="TreeViewItem_KeyDown" KeyUp="TreeViewItem_KeyUp">
             <TreeView.InputBindings>
                 <KeyBinding Key="Delete" Command="{Binding Commands.DeleteTopicCommand }"  />
             </TreeView.InputBindings>
