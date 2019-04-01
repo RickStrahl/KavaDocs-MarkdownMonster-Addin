@@ -198,7 +198,9 @@ namespace KavaDocsAddin
                 KavaDocsModel.Configuration.Write();
             }
 
-            base.OnApplicationShutdown();                   
+            base.OnApplicationShutdown();
+
+            
         }
 
         #endregion
@@ -394,13 +396,16 @@ namespace KavaDocsAddin
                     renderedHtml = topic.Link;            
             }
             else
-            {
+            {            
                 // Currently we're not rendering topics and just using MM to render topic content
                 renderedHtml = topic.RenderTopicToFile(addPragmaLines: true);
             }
 
             topic.TopicState.IsPreview = false;
             topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Html;
+
+            // render and preview in wwwroot
+            mmApp.Model.ActiveDocument.SetHtmlRenderFilename(topic.RenderTopicFilename);
 
             return renderedHtml; //return base.OnModifyPreviewHtml(renderedHtml, markdownHtml);
         }
