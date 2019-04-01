@@ -3,8 +3,8 @@
   "name": "Kava Docs (Alpha)",
   "summary": "Create Kava Docs Documentation content more easily with this addin that manages your content tree and supports many custom imports.",
   "description": "Kava Docs lets you build documentation the easy way using the tools you already use today and let Kava Docs sniff out your content for you. Using simple Markdown or HTML text and an online store like GitHub, VSTS or a Web site is all you need to create great looking, highly functional documentation.\r\n\r\nThis addin provides an easy way to edit the table of contents, import and embed custom content types like class or service imports, VSTS workitems and much more.",
-  "version": "0.1.25.2",
-  "minVersion": "1.14.3",
-  "author": "© Rick Strahl, West Wind Technologies 2018",
-  "updated": "2018-12-18T12:00:00Z"
+  "version": "0.1.26",
+  "minVersion": "1.16.4.7",
+  "author": "© Rick Strahl, West Wind Technologies 2018-2019",
+  "updated": "2019-04-01T12:00:00Z"
 }
