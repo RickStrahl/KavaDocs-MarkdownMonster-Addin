@@ -358,7 +358,7 @@ namespace KavaDocsAddin.Controls
         // This is too slow so require SPACE to refresh on key navigation
         private void TreeViewItem_KeyUp(object sender, KeyEventArgs e)
         {
-            keyUpDispatcher.Debounce(350, (p) =>
+            keyUpDispatcher.Debounce(500, (p) =>
             {
                 var ev = p as KeyEventArgs;
 
@@ -385,16 +385,6 @@ namespace KavaDocsAddin.Controls
                 var topic = tvi.Tag as DocTopic;
                 OpenTopicInMMEditor();
             }
-
-            if (e.Key == Key.Space)
-            {
-                var tvi = e.OriginalSource as TreeViewItem;
-                if (tvi == null)
-                    return;
-
-                HandleSelection();
-            }
-
 
             // this works without a selection
             if (e.Key == Key.N && Keyboard.IsKeyDown(Key.LeftCtrl))
@@ -439,10 +429,13 @@ namespace KavaDocsAddin.Controls
 
         private void TreeViewItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
+
+            var topic = (e.OriginalSource as FrameworkElement)?.DataContext as DocTopic;
+            if (topic == null || (sender as TreeViewItem)?.DataContext != topic)
+                return;
+
             if (e.ChangedButton == MouseButton.Left)
-            {
                 _lastMouseDownPoint = e.GetPosition(TreeTopicBrowser);
-            }
 
             if (!HandleSelection())
                 return;
@@ -456,30 +449,16 @@ namespace KavaDocsAddin.Controls
 
         private void TreeViewItem_MouseMove(object sender, MouseEventArgs e)
         {
-            var time = DateTime.UtcNow;
-            
-            if (e.LeftButton == MouseButtonState.Pressed)
+      if (e.LeftButton == MouseButtonState.Pressed)
             {               
                 var topic = TreeTopicBrowser.SelectedItem as DocTopic;
                 if (topic == null)
                     return;
-                
-                
-                //// At least 400 ms before dragging and less than 1.5secs to start dragging
-                //if (time < _lastMouseDown.AddMilliseconds(200) || time > _lastMouseDown.AddMilliseconds(1500))
-                //{
-                //    Debug.WriteLine($"Not dragging: {time:HH:mm:ss:ms} {_lastMouseDown:HH:mm:ss:ms}");
-                //    _isDragging = false;
-                //    _lastMouseDown = DateTime.MinValue;                    
-                //    return;
-                    
-                //}
-
-
+      
                 Point currentPosition = e.GetPosition(TreeTopicBrowser);
 
-                if ((Math.Abs(currentPosition.X - _lastMouseDownPoint.X) > 25) ||
-                    (Math.Abs(currentPosition.Y - _lastMouseDownPoint.Y) > 20))
+                if ((Math.Abs(currentPosition.X - _lastMouseDownPoint.X) > 50) ||
+                    (Math.Abs(currentPosition.Y - _lastMouseDownPoint.Y) > 25))
                 {
                     DragDrop.DoDragDrop(TreeTopicBrowser, TreeTopicBrowser.SelectedItem, DragDropEffects.Move | DragDropEffects.None);
                 }
