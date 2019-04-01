@@ -1,15 +1,24 @@
-﻿<!DOCTYPE html>
+﻿@inherits DocHound.Razor.KavaDocsTemplate
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" /> 
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />        
-    <title><%= pcProjectName %></title>
+    <title>@Project.Title</title>
     <meta http-equiv="cache-control" CONTENT="public">
     <meta http-equiv="cache-control" CONTENT="private">
 
-    <link rel="stylesheet" type="text/css" href="templates/scripts/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="templates/scripts/fontawesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" href="templates/wwhelp.css" />
+    <link rel="stylesheet" type="text/css" href="_kavadocs/themes/scripts/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="_kavadocs/themes/scripts/fontawesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="_kavadocs/themes/wwhelp.css" />
+
+    <script src="_kavadocs/themes/scripts/jquery/jquery.min.js"></script>
+    <script src="_kavadocs/themes/scripts/ww.jquery.min.js"></script>
+    <script src="_kavadocs/themes/scripts/wwhelp.js"></script>
 </head>
 <body style="overflow: auto;">
     <div class="toc-content">
@@ -28,7 +37,17 @@
 
         <nav>
             <ul class="toc">
-                <%= pcToc %>
+                @foreach(var topic in Project.Topics) {
+                    var link = topic.Link;                    
+                    if (link != null) {
+                        link = link.Replace(".md",".html");
+                    }
+
+                    <li>
+                        <img src="_kavadocs/icons/@(topic.DisplayType.ToLower()).png" />
+                        <a href="@link">@topic.Title</a>
+                    </li>
+                }
             </ul>
         </nav>
         <br class="clearfix" />

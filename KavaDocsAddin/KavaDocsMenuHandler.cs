@@ -78,7 +78,6 @@ namespace KavaDocsAddin
                 Header = "Topic Operations",
             };
             topMi.Items.Add(mi);
-            
 
             var mic = new MenuItem()
             {
@@ -95,6 +94,30 @@ namespace KavaDocsAddin
             mi.Items.Add(mic);
 
             topMi.Items.Add(new Separator());
+
+            // Build SubMenu
+            mi = new MenuItem()
+            {
+                Header = "Build and Publish",
+            };
+            topMi.Items.Add(mi);
+
+            mic = new MenuItem()
+            {
+                Header = "_Build Project Html Output",
+                Command = Model.Commands.BuildHtmlCommand
+            };
+            mi.Items.Add(mic);
+
+            mic = new MenuItem()
+            {
+                Header = "_Publish Project",
+                IsEnabled = false
+                //Command = Model.Commands.BuildHtmlCommand
+            };
+            mi.Items.Add(mic);
+
+
 
             // Settings Submenu
             mi = new MenuItem()

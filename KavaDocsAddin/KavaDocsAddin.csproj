@@ -84,6 +84,7 @@
       <DependentUpon>TopicPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="KavaDocsAddin.cs" />
+    <Compile Include="TreeviewContextMenuHandler.cs" />
     <Compile Include="Windows\Dialogs\ImportDotnetLibraryDialog.xaml.cs">
       <DependentUpon>ImportDotnetLibraryDialog.xaml</DependentUpon>
     </Compile>

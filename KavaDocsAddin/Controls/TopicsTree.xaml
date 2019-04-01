@@ -12,7 +12,7 @@
     <UserControl.Resources>
         <windows:UriToCachedImageConverter x:Key="UriToCachedImageConverter"/>
 
-        <ContextMenu x:Key="TopicContextMenu" Name="TopicContextMenu">
+        <!--<ContextMenu x:Key="TopicContextMenu" Name="TopicContextMenu">
             <MenuItem Name="MenuNewTopic" Header="_New Topic" InputGestureText="ctrl-n" 
                       Command="{Binding KavaDocsModel.Commands.NewTopicCommand}" />
             <MenuItem Name="MenuDeleteTopic" Header="Delete Topic" InputGestureText="del" 
@@ -22,7 +22,7 @@
                       Command="{Binding KavaDocsModel.Commands.OpenTopicFileExplicitlyCommand}"/>
             <Separator/>
             <MenuItem Name="MenuRefresh" Header="Reload Tree" Command="{Binding KavaDocsModel.Commands.ReloadTreeCommand}" />
-        </ContextMenu>
+        </ContextMenu>-->
 
         <HierarchicalDataTemplate x:Key="TopicsTemplate" ItemsSource="{Binding Topics}"  >
             <StackPanel >
@@ -142,12 +142,17 @@
                   ItemsSource="{Binding FilteredTopicTree}"    BorderThickness="0"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"      
                   GotFocus="TreeTopicBrowser_GotFocus"
-                  VirtualizingPanel.IsVirtualizing="True"
-                  ContextMenu="{StaticResource TopicContextMenu}"                                                 
+                  VirtualizingPanel.IsVirtualizing="True"        
+                  ContextMenuOpening="TreeTopicBrowser_ContextMenuOpening"
                   KeyDown="TreeViewItem_KeyDown" KeyUp="TreeViewItem_KeyUp">
             <TreeView.InputBindings>
                 <KeyBinding Key="Delete" Command="{Binding Commands.DeleteTopicCommand }"  />
             </TreeView.InputBindings>
+            <TreeView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem />
+                </ContextMenu>
+            </TreeView.ContextMenu>
             <!-- <TreeView.Resources>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="IsSelected" Value="{Binding Path=TopicState.IsSelected, Mode=TwoWay}" />

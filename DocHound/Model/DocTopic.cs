@@ -485,52 +485,72 @@ namespace DocHound.Model
         }
 
         /// <summary>
-        /// Handler that allows you manipulate the topic before rendering.
+        /// Renders a topic to a specified file. If no filename
+        /// is specified the default location is used in the 
+        /// wwwroot folder with '_slug.htm' as the filename
         /// </summary>
-        public Action<DocTopic, TopicRenderModes> PreRenderAction;
-
-
-        /// <summary>
-        /// Action that can be fired after a topic has rendered to HTML.
-        /// Method gets passed the HTML string as input.
-        /// </summary>
-        public Action<string, TopicRenderModes> AfterRenderAction;
- 
-        /// <summary>
-        /// Fired before rendering.
-        ///
-        /// You are allowed to make changes to the Object that is rendered
-        /// </summary>
-        /// <param name="renderMode"></param>
-        private void OnPreRender(DocTopic topic, TopicRenderModes renderMode)
+        /// <param name="filename"></param>
+        /// <param name="addPragmaLines"></param>
+        /// <returns></returns>
+        public string RenderTopicToFile(string filename = null, bool addPragmaLines = false)
         {
-            PreRenderAction?.Invoke(topic, renderMode);
+            var html = RenderTopic(addPragmaLines);
+            if (html==null)
+                return null;
 
-            if (string.IsNullOrEmpty(topic.Body))
+            int written = 0; // try to write 4 times
+            while (written < 4)
             {
-                if (topic.Topics != null && topic.Topics.Count > 0)
-                {
-                    var sb = new StringBuilder();
-                    sb.AppendLine();
-                    foreach (var subTopic in topic.Topics)
-                    {
-                        sb.AppendLine($"* [{subTopic.Title}]({subTopic.Link})");
-                    }
+                if (filename == null)
+                    filename = RenderTopicFilename;
 
-                    topic.Body = sb.ToString();
+                string relRootPath = FileUtils.GetRelativePath(filename, Project.OutputDirectory);
+                relRootPath = Path.GetDirectoryName(relRootPath);
+                if (!string.IsNullOrEmpty(relRootPath))
+                {
+                    int length = relRootPath.Split('\\').Length;
+                    relRootPath = StringUtils.Replicate("../", length);
+                }
+                else
+                    relRootPath = string.Empty;
+
+                html = html.Replace("\"~/","\"" + relRootPath);
+                
+                try
+                {                                        
+                    File.WriteAllText(filename, html, Encoding.UTF8);
+                    written = 10;  // done
+                }
+                catch(DirectoryNotFoundException)
+                {
+                    try
+                    {
+                        // Create the path and try again
+                        var path = Path.GetDirectoryName(filename);
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+
+                        // and just retry
+                    }
+                    catch(Exception ex)
+                    {
+                        mmApp.Log("Warning: Unable to create output folder for topic file: " + filename + "\r\n" + ex.Message);
+                        return null;
+                    }                                      
+                }
+                catch (Exception ex)
+                {
+                    Thread.Sleep(50);
+                    written++;
+                    if (written == 4)
+                    {
+                        mmApp.Log("Warning: Unable to write output file: " + filename + "\r\n" + ex.Message);
+                        return null;
+                    }
                 }
             }
-        }
 
-        /// <summary>
-        /// Fired after the Topic rendering has created HTML for post processing
-        /// operations on the HTML output
-        /// </summary>
-        /// <param name="html"></param>
-        /// <param name="mode"></param>
-        private void OnAfterRender(string html, TopicRenderModes mode)
-        {
-            AfterRenderAction?.Invoke(html, mode);
+            return html;
         }
 
         /// <summary>
@@ -567,78 +587,159 @@ namespace DocHound.Model
             }
         }
 
+        /// <summary>
+        /// Handler that allows you manipulate the topic before rendering.
+        /// </summary>
+        public Action<DocTopic, TopicRenderModes> PreRenderAction;
 
 
         /// <summary>
-        /// Renders a topic to a specified file. If no filename
-        /// is specified the default location is used in the 
-        /// wwwroot folder with '_slug.htm' as the filename
+        /// Action that can be fired after a topic has rendered to HTML.
+        /// Method gets passed the HTML string as input.
         /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="addPragmaLines"></param>
-        /// <returns></returns>
-        public string RenderTopicToFile(string filename = null, bool addPragmaLines = false)
-        {
-            var html = RenderTopic(addPragmaLines);
-            if (html==null)
-                return null;
+        public Action<string, TopicRenderModes> AfterRenderAction;
+ 
+        /// <summary>
+        /// Fired before rendering.
+        ///
+        /// You are allowed to make changes to the Object that is rendered
+        /// </summary>
+        /// <param name="renderMode"></param>
+        private void OnPreRender(DocTopic topic, TopicRenderModes renderMode)
+        {           
+            PreRenderAction?.Invoke(topic, renderMode);
 
-            int written = 0; // try to write 4 times
-            while (written < 4)
+            if (string.IsNullOrEmpty(topic.Body))
             {
-                if (filename == null)
-                    filename = RenderTopicFilename;
-
-                string relRootPath = FileUtils.GetRelativePath(filename, Project.OutputDirectory);
-                relRootPath = Path.GetDirectoryName(relRootPath);
-                if (!string.IsNullOrEmpty(relRootPath))
+                if (topic.Topics != null && topic.Topics.Count > 0)
                 {
-                    int length = relRootPath.Split('\\').Length;
-                    relRootPath = StringUtils.Replicate("../", length);
-                }
-                else
-                    relRootPath = string.Empty;
+                    var sb = new StringBuilder();
+                    sb.AppendLine("\n<div class='child-topics-list'>\n\n");
 
-                html = html.Replace("\"~/","\"" + relRootPath);
-                
-                try
-                {                    
-                    File.WriteAllText(filename, html, Encoding.UTF8);
-                    written = 10;  // done
-                }
-                catch(DirectoryNotFoundException)
-                {
-                    try
+                    foreach (var subTopic in topic.Topics)
                     {
-                        // Create the path and try again
-                        var path = Path.GetDirectoryName(filename);
-                        if (!Directory.Exists(path))
-                            Directory.CreateDirectory(path);
-
-                        // and just retry
+                        sb.AppendLine(
+                            $"* <img src='~/_kavadocs/icons/{subTopic.DisplayType}.png' /> [{subTopic.Title}]({subTopic.Link})");
                     }
-                    catch(Exception ex)
-                    {
-                        mmApp.Log("Warning: Unable to create output folder for topic file: " + filename + "\r\n" + ex.Message);
-                        return null;
-                    }                                      
-                }
-                catch (Exception ex)
-                {
-                    Thread.Sleep(50);
-                    written++;
-                    if (written == 4)
-                    {
-                        mmApp.Log("Warning: Unable to write output file: " + filename + "\r\n" + ex.Message);
-                        return null;
-                    }
+
+                    sb.AppendLine("\n</div>\n\n");
+                    topic.Body = sb.ToString();
                 }
             }
 
-            return html;
+            ProcessRenderDirectives(topic, renderMode);
         }
 
-        
+        private static Regex DirectiveRegex = new Regex(@"<kavadocs:.*?\s/>", RegexOptions.Multiline);
+
+
+        /// <summary>
+        /// Parses `<kavadocs:directive />` commands.
+        /// Examples:
+        /// `<kavadocs:child-topics-list />`
+        /// `<kavadocs:msdn-class-link &quoteSystem.Environment&quote />`
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <param name="renderMode"></param>
+        /// <returns></returns>
+        private List<ProcessDirective> ParseRenderDirectives(DocTopic topic, TopicRenderModes renderMode)
+        {            
+            var list = new List<ProcessDirective>();
+
+            if (string.IsNullOrEmpty(topic.Body))
+                return list;
+
+            var matches = DirectiveRegex.Matches(topic.Body);
+            foreach (Match match in matches)
+            {
+                var text = match.Value;
+
+                var dir = new ProcessDirective
+                {
+                    DirectiveText = text,
+                    Directive = StringUtils.ExtractString(text, "<kavadocs:", " ")
+                };
+                
+                if (string.IsNullOrEmpty(dir.Directive))
+                    continue;
+
+                text = StringUtils.ExtractString(text, " ", " />");
+                if (!string.IsNullOrEmpty(text))
+                {
+
+                    dir.Arguments = text.Split(new[] {"\",", "\" />"}, StringSplitOptions.None);
+                    for (int i = 0; i < dir.Arguments.Length; i++)
+                    {
+                        dir.Arguments[i] = dir.Arguments[i].Trim(' ', '"');
+                    }
+                }
+
+                list.Add(dir);
+            }
+
+            return list;
+        }
+
+        private void ProcessRenderDirectives(DocTopic topic, TopicRenderModes renderMode)
+        {
+            var directives = ParseRenderDirectives(topic,renderMode);
+
+            foreach(var dir in directives)
+            {
+                // <kavadocs:child-topics-list "no-icons" />
+                if (dir.Directive == "child-topics-list" || dir.Directive == "ChildTopicsList")
+                {                    
+                    if (topic.Topics != null)
+                    {
+                        var sb = new StringBuilder();
+
+                        foreach (var top in topic.Topics)
+                        {
+                            if( dir.Arguments.Any(s=> s == "no-icons"))
+                                sb.AppendLine($"* [{top.Title}]({top.Link})");
+                            else
+                                sb.AppendLine($"* <img style='' src=\"~/_kavadocs/icons/{top.DisplayType}.png\" /> [{top.Title}]({top.Link})");
+                        }
+
+                        if (sb.Length > 0)
+                        {
+
+                            sb.Insert(0, "\n<div class='child-topics-list'>\n\n");
+                            sb.AppendLine("n\n</div>\n");
+                        }
+
+                        topic.Body = topic.Body.Replace(dir.DirectiveText, sb.ToString());
+                    }
+                }
+
+
+            }
+
+
+        }
+
+        public class ProcessDirective
+        {
+            public string Directive { get; set; }
+            public string[] Arguments { get; set; } = { };
+
+            public string DirectiveText { get; set; }
+        }
+
+
+        /// <summary>
+        /// Fired after the Topic rendering has created HTML for post processing
+        /// operations on the HTML output
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="mode"></param>
+        private void OnAfterRender(string html, TopicRenderModes mode)
+        {
+            AfterRenderAction?.Invoke(html, mode);
+        }
+
+
+
 
         /// <summary>
         /// Returns a Markdown String

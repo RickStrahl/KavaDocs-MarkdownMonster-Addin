@@ -288,6 +288,13 @@ td, th  {
 #parameters {
     margin-bottom: 10px;
 }
+ul>li>img { 
+    width: 21px;
+    margin-right: 8px; 
+    margin-top: -2px;
+}
+
+
 /* IE 9/8 limited support */
 .old-ie .sidebar-left {
     float: left;

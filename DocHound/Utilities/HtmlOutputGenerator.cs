@@ -64,8 +64,7 @@ namespace DocHound.Utilities
 
                 string target = FileUtils.GetRelativePath(folder.FullName, SourcePath);
                 target = Path.Combine(OutputPath, target);
-                Directory.CreateDirectory(target);
-                
+                Directory.CreateDirectory(target);                
             }
 
             var files = di.GetFiles("*.*", SearchOption.AllDirectories);
@@ -74,7 +73,7 @@ namespace DocHound.Utilities
                 var ext = Path.GetExtension(file.Name);
                 if (string.IsNullOrEmpty(ext))
                     ext = ext.ToLower();
-                if (ext == ".md" || ext == ".json" || ext == ".cshtml")
+                if (ext == ".md" || ext == ".cshtml" || ext == ".bak" || ext == ".tmp")
                     continue;
 
                 string target = FileUtils.GetRelativePath(file.FullName, SourcePath);

@@ -372,17 +372,19 @@ namespace KavaDocsAddin
         /// <returns></returns>
         public override string OnModifyPreviewHtml(string renderedHtml, string markdownHtml)
         {
-            
+
             if (mmApp.Model.ActiveEditor == null ||
-                !mmApp.Model.ActiveEditor.Properties.TryGetValue(Constants.EditorPropertyNames.KavaDocsTopic, out object objTopic))
+                !mmApp.Model.ActiveEditor.Properties.TryGetValue(Constants.EditorPropertyNames.KavaDocsTopic,
+                    out object objTopic))
                 return renderedHtml;
 
             var topic = objTopic as DocTopic;
 
-            if (topic == null || topic != KavaDocsModel.ActiveTopic) 
+            if (topic == null || topic != KavaDocsModel.ActiveTopic)
                 return renderedHtml;
-            
-  
+
+            topic.Body = mmApp.Model.ActiveEditor.GetMarkdown();
+
             topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Preview;
             topic.TopicState.IsPreview = true;
 
@@ -393,10 +395,10 @@ namespace KavaDocsAddin
                     renderedHtml = null;
 
                 if (string.IsNullOrEmpty(topic.Body) && topic.Link.StartsWith("http"))
-                    renderedHtml = topic.Link;            
+                    renderedHtml = topic.Link;
             }
             else
-            {            
+            {
                 // Currently we're not rendering topics and just using MM to render topic content
                 renderedHtml = topic.RenderTopicToFile(addPragmaLines: true);
             }

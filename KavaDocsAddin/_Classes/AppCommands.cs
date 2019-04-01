@@ -1,8 +1,11 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using DocHound;
 using DocHound.Configuration;
+using DocHound.Utilities;
 using DocHound.Windows.Dialogs;
 using KavaDocsAddin.Controls;
 using KavaDocsAddin.Core.Configuration;
@@ -52,12 +55,18 @@ namespace KavaDocsAddin
             Command_Settings();
             Command_ProjectSettings();
 
+            // Shell
+            Command_ShowFileInExplorer();
+
             // Views
             Command_PreviewBrowser();
             Command_CloseRightSidebarCommand();
 
             // Editing
             Command_LinkTopicDialog();
+
+            // Build
+            Command_BuildHtml();
         }
 
         #region File Commands
@@ -221,6 +230,29 @@ namespace KavaDocsAddin
         #endregion
 
 
+        #region ShellCommands
+
+        public CommandBase ShowFileInExplorerCommand { get; set; }
+
+        void Command_ShowFileInExplorer()
+        {
+            ShowFileInExplorerCommand = new CommandBase((parameter, command) =>
+            {
+                var file = parameter as string;
+
+                if (string.IsNullOrEmpty(file))
+                    return;
+
+                if (File.Exists(file))
+                    ShellUtils.OpenFileInExplorer(file);
+
+                var path = Path.GetDirectoryName(file);
+                ShellUtils.OpenFileInExplorer(path);
+
+            }, (p, c) => true);
+        }
+
+        #endregion
 
 
         #region Topic Commands
@@ -423,6 +455,33 @@ namespace KavaDocsAddin
 
         #endregion
 
+        #region Build Operations
+
+        public CommandBase BuildHtmlCommand { get; set; }
+
+        void Command_BuildHtml()
+        {
+            BuildHtmlCommand = new CommandBase((parameter, command) =>
+            {
+                mmApp.Model.Window.ShowStatusProgress("Generating project to Html output...");
+
+                Task.Run(() =>
+                {
+                    var project = kavaUi.AddinModel.ActiveProject;
+                    var output = new HtmlOutputGenerator(project);
+                    output.Generate();
+
+                    mmApp.Model.Window.Dispatcher.Invoke(
+                        () =>
+                        {
+                            ShellUtils.OpenFileInExplorer(project.OutputDirectory);
+                            mmApp.Model.Window.ShowStatusSuccess("Project output has been generated...");
+                        });
+                });                            
+            }, (p, c) => true);
+        }
+
+        #endregion
 
     }
 }

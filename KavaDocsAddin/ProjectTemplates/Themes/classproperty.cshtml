@@ -17,10 +17,15 @@
 	@Topic.MarkdownRaw(Topic.ClassInfo.Parameters)
 }
 
-@if(string.IsNullOrEmpty(Topic.ClassInfo.Syntax)) {
+@if(string.IsNullOrEmpty(Topic.ClassInfo.Exceptions)) {
 <pre class="syntaxbox" id="syntax">
-	@Topic.ClassInfo.Syntax
+	@Topic.MarkdownRaw(Topic.ClassInfo.Exceptions)
 </pre>
+}
+
+@if (!string.IsNullOrEmpty(Topic.Remarks)) {
+    <h3 class="outdent" id="remarks">Remarks</h3>
+    @Topic.MarkdownRaw(Topic.Remarks)
 }
 
 @if(!string.IsNullOrEmpty(Topic.Example))  {

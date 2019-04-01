@@ -711,6 +711,13 @@ namespace KavaDocsAddin.Controls
         {
 
         }
+
+        private void TreeTopicBrowser_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            var ctxHandler = new TreeviewContextMenuHandler();
+            TreeTopicBrowser.ContextMenu = ctxHandler.CreateTreeviewContextMenu();
+            TreeTopicBrowser.ContextMenu.IsOpen = true;
+        }
     }
 
 
