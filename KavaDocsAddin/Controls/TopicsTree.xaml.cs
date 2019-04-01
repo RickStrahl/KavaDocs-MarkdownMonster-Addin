@@ -40,7 +40,7 @@ namespace KavaDocsAddin.Controls
             Loaded += TopicsTree_Loaded;
 
             Model = new TopicsTreeModel(null);
-            DataContext = Model;
+            DataContext = Model;            
         }
 
         private void TopicsTree_Loaded(object sender, RoutedEventArgs e)
@@ -117,7 +117,8 @@ namespace KavaDocsAddin.Controls
                 kavaUi.AddinModel.RecentTopics =
                     new ObservableCollection<DocTopic>(kavaUi.AddinModel.RecentTopics.Take(14));
 
-            OpenTopicInEditor();
+            //OpenTopicInEditor();
+            Dispatcher.InvokeAsync(() => OpenTopicInEditor(),DispatcherPriority.ApplicationIdle);
             
             var file = topic.GetTopicFileName();
             var doc = new MarkdownDocument();
@@ -131,19 +132,20 @@ namespace KavaDocsAddin.Controls
             return true;
         }
 
-        private void TreeTopicBrowser_Selected(object sender, RoutedEventArgs e)
-        {
-            e.Handled = true; // don't bubble up through parents
 
-            if (!HandleSelection())
-                return;
+        //private void TreeTopicBrowser_Selected(object sender, RoutedEventArgs e)
+        //{
+        //    e.Handled = true; // don't bubble up through parents
 
-            if (TreeTopicBrowser.SelectedItem is DocTopic)
-            {
-                TreeViewItem tvi = e.OriginalSource as TreeViewItem;
-                tvi?.BringIntoView();
-            }
-        }
+        //    if (!HandleSelection())
+        //        return;
+
+        //    if (TreeTopicBrowser.SelectedItem is DocTopic)
+        //    {
+        //        TreeViewItem tvi = e.OriginalSource as TreeViewItem;
+        //        tvi?.BringIntoView();
+        //    }
+        //}
 
         private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -228,6 +230,8 @@ namespace KavaDocsAddin.Controls
         /// <returns></returns>
         public TabItem OpenTopicInEditor(bool setFocus = false)
         {
+            Debug.WriteLine("OpenTopicInEditor");
+
             DocTopic topic = TreeTopicBrowser.SelectedItem as DocTopic;
             if (topic == null)
                 return null;
@@ -235,67 +239,70 @@ namespace KavaDocsAddin.Controls
             var window = Model.KavaDocsModel.Window;
 
             TabItem tab;
-            if (topic != null && topic.Body != null && ( topic.IsLink || topic.Body.StartsWith("http")) )
+            if (topic != null && topic.Body != null && (topic.IsLink || topic.Body.StartsWith("http")))
             {
                 tab = Model.MarkdownMonsterModel.Window.OpenBrowserTab(topic.Link ?? topic.Body);
-                return tab;               
+                return tab;
             }
 
             var file = topic.GetTopicFileName(force: true);
 
-            
+            MarkdownDocumentEditor editor = null;
+
             // is tab open already as a file? If so use that
             tab = window.GetTabFromFilename(file);
             if (tab != null)
             {
-                var editor = tab?.Tag as MarkdownDocumentEditor;
+                editor = tab?.Tag as MarkdownDocumentEditor;
                 if (editor == null)
                     return null;
-                
-                window.TabControl.SelectedItem = tab;   // already open
-            }                
+            }
             else
-            {   
+            {
                 // Will also open the tab if not open yet
                 // EXPLICITLY NOT SELECTING THE TAB SO THAT IT'S NOT RENDERED YET
                 // Assign topic first then explicitly select
-                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, noFocus: !setFocus, isPreview: true, noSelectTab:true);
+                //tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, noFocus: !setFocus, isPreview: true, noSelectTab:true);
 
-                var editor = tab?.Tag as MarkdownDocumentEditor;                               
+                tab = Model.KavaDocsModel.Window.ActivateTab(file,
+                    noFocus: !setFocus,
+                    isPreview: true,
+                    noSelectTab: true);
+
+                //RefreshTabFromFile(file, noFocus: !setFocus, isPreview: true, noSelectTab: true);
+
+                editor = tab?.Tag as MarkdownDocumentEditor;
                 if (editor == null)
                     return null;
-
-                // make sure topic is associated with editor
-                SetEditorWithTopic(editor, topic, true);
-
-                // select AFTER we set properties on the tab
-                window.TabControl.SelectedItem = tab;                       
             }
 
-            if (tab != null)
+            if (tab == null)
+                return null;
+
+            // make sure topic is associated with editor
+            SetEditorWithTopic(editor, topic, isUnEdited: true); // kavaUi.AddinModel.ActiveTopic);
+           
+            // Explicitly read in the current text from an open tab and save to body                
+            var body = editor.GetMarkdown();
+            if (!string.IsNullOrEmpty(body))
+                topic.Body = topic.StripYaml(body);
+
+            if (string.IsNullOrEmpty(topic.Link))
             {
-                var editor = tab.Tag as MarkdownDocumentEditor;     
-                SetEditorWithTopic(editor, kavaUi.AddinModel.ActiveTopic);
-
-                // Explicitly read in the current text from an open tab and save to body                
-                var body = editor.GetMarkdown();
-                if (!string.IsNullOrEmpty(body))                
-                    topic.Body = topic.StripYaml(body);
-
-                if (string.IsNullOrEmpty(topic.Link))
+                var relative = FileUtils.GetRelativePath(topic.GetTopicFileName(), topic.Project.ProjectDirectory);
+                if (!string.IsNullOrEmpty(relative))
                 {
-                    var relative = FileUtils.GetRelativePath(topic.GetTopicFileName(), topic.Project.ProjectDirectory);
-                    if (!string.IsNullOrEmpty(relative))
-                    {
-                        topic.Link = FileUtils.NormalizePath(relative);
-                        if (string.IsNullOrEmpty(topic.Link))
-                            topic.Link = topic.Link.Replace("\\", "/");
-                    }
+                    topic.Link = FileUtils.NormalizePath(relative);
+                    if (string.IsNullOrEmpty(topic.Link))
+                        topic.Link = topic.Link.Replace("\\", "/");
                 }
-
-                if (body != topic.Body)
-                    editor.SetMarkdown(topic.Body);
             }
+
+            if (body != topic.Body)
+                editor.SetMarkdown(topic.Body);
+
+            window.TabControl.SelectedItem = tab;
+
 
             return tab;
         }
@@ -346,6 +353,26 @@ namespace KavaDocsAddin.Controls
             return GetEditorTopic(editor);
         }
 
+        private DebounceDispatcher keyUpDispatcher = new DebounceDispatcher();
+
+        // This is too slow so require SPACE to refresh on key navigation
+        private void TreeViewItem_KeyUp(object sender, KeyEventArgs e)
+        {
+            keyUpDispatcher.Debounce(350, (p) =>
+            {
+                var ev = p as KeyEventArgs;
+
+                if (ev.Key == Key.Up || ev.Key == Key.Down)
+                {
+                    var tvi = e.OriginalSource as TreeViewItem;
+                    if (tvi == null)
+                        return;
+
+                    HandleSelection();
+                }
+            }, e, DispatcherPriority.ApplicationIdle, Dispatcher);
+        }
+
         private void TreeViewItem_KeyDown(object sender, KeyEventArgs e)
         {
             // Tabbing out of treeview sets focus to editor
@@ -357,8 +384,15 @@ namespace KavaDocsAddin.Controls
 
                 var topic = tvi.Tag as DocTopic;
                 OpenTopicInMMEditor();
+            }
 
+            if (e.Key == Key.Space)
+            {
+                var tvi = e.OriginalSource as TreeViewItem;
+                if (tvi == null)
+                    return;
 
+                HandleSelection();
             }
 
 
@@ -373,14 +407,12 @@ namespace KavaDocsAddin.Controls
             }
         }
 
-     
+        #endregion
 
-#endregion
-
-#region SearchKey
+        #region SearchKey
 
 
-public void SelectTopic(DocTopic topic)
+        public void SelectTopic(DocTopic topic)
         {
             topic.TopicState.IsSelected = true;
         }
@@ -402,8 +434,6 @@ public void SelectTopic(DocTopic topic)
         internal DragMoveResult DragMoveResult = null;
         ContextMenu _dragContextMenu;
         private Point _lastMouseDownPoint;
-        //private DateTime _lastMouseDown;
-        //bool _isDragging = false;
 
         public CommandBase MoveTopicCommand { get; set; }
 
@@ -412,8 +442,15 @@ public void SelectTopic(DocTopic topic)
             if (e.ChangedButton == MouseButton.Left)
             {
                 _lastMouseDownPoint = e.GetPosition(TreeTopicBrowser);
-                //_lastMouseDown = DateTime.UtcNow;
-                //_isDragging = false;                
+            }
+
+            if (!HandleSelection())
+                return;
+
+            if (TreeTopicBrowser.SelectedItem is DocTopic)
+            {
+                TreeViewItem tvi = e.OriginalSource as TreeViewItem;
+                tvi?.BringIntoView();
             }
         }
 
@@ -686,47 +723,14 @@ public void SelectTopic(DocTopic topic)
         }
 
 
+
+
+
         #endregion
 
-        private void MenuRecentItems_SubmenuOpened(object sender, RoutedEventArgs e)
+        private void TreeTopicBrowser_GotFocus(object sender, RoutedEventArgs e)
         {
-            var menu = sender as MenuItem;
-            if (menu == null)
-                return;
 
-            menu.Items.Clear();
-
-            Model.KavaDocsModel.Configuration.CleanupRecentProjects();
-
-            foreach (var recent in Model.KavaDocsModel.Configuration.RecentProjects)
-            {
-                var header = recent.ProjectTitle;
-                if (!String.IsNullOrEmpty(header))
-                    header += $" ({FileUtils.GetCompactPath(recent.ProjectFile)})";
-                else
-                {
-                    header = $"{System.IO.Path.GetFileNameWithoutExtension(recent.ProjectFile)} ({FileUtils.GetCompactPath(recent.ProjectFile)})";
-                }
-
-                var mi = new MenuItem()
-                {
-                    Header =  header,
-                    Command = Model.KavaDocsModel.Commands.OpenRecentProjectCommand,
-                    CommandParameter = recent
-                };
-                menu.Items.Add(mi);
-            }
-        }
-
-        private void MenuProjectSettings_Click(object sender, RoutedEventArgs e)
-        {
-            var form = new ProjectSettingsDialog(Model.MarkdownMonsterModel.Window);
-            form.Show();
-        }
-
-        private void MenuKavaDocsSettings_Click(object sender, RoutedEventArgs e)
-        {
-            Model.MarkdownMonsterModel.Window.OpenTab(System.IO.Path.Combine(Model.MarkdownMonsterModel.Configuration.CommonFolder,"KavaDocsAddin.json"));
         }
     }
 
