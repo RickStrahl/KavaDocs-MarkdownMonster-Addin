@@ -21,7 +21,9 @@ namespace DocHound.Utilities
         public HtmlOutputGenerator(DocProject project)
         {
             Project = project;
-            
+
+            OutputPath = Project.OutputDirectory;
+            SourcePath = Project.ProjectDirectory;
         }
 
         public void Generate()
@@ -81,6 +83,43 @@ namespace DocHound.Utilities
                 File.Copy(file.FullName, target, true);
             }
         }
+
+        public void CopyScriptsAndTemplates()
+        {
+            var outputPath = Path.Combine(OutputPath, "_kavadocs");
+            var sourcePath = Path.Combine(SourcePath, "_kavadocs");
+
+            if (string.IsNullOrEmpty(outputPath))
+                outputPath = Path.Combine(Project.OutputDirectory, "_kavadocs");
+
+            if (!Directory.Exists(outputPath))
+                Directory.CreateDirectory(outputPath);
+
+            var di = new DirectoryInfo(sourcePath);
+            var folders = di.GetDirectories("*.*", SearchOption.AllDirectories);
+            foreach (var folder in folders)
+            {
+                string target = FileUtils.GetRelativePath(folder.FullName, sourcePath);
+                target = Path.Combine(outputPath, target);
+                if (!Directory.Exists(target))
+                    Directory.CreateDirectory(target);
+            }
+
+            var files = di.GetFiles("*.*", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                var ext = Path.GetExtension(file.Name);
+                if (string.IsNullOrEmpty(ext))
+                    ext = ext.ToLower();
+                if (ext == ".md" || ext == ".cshtml" || ext == ".bak" || ext == ".tmp")
+                    continue;
+
+                string target = FileUtils.GetRelativePath(file.FullName, sourcePath);
+                target = Path.Combine(outputPath, target);
+                File.Copy(file.FullName, target, true);
+            }
+        }
+
 
         public void GenerateHtml()
         {

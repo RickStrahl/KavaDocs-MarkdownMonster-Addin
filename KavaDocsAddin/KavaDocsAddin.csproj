@@ -224,6 +224,9 @@
     <Content Include="ProjectTemplates\images\vsizegrip.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="ProjectTemplates\Themes\kavadocs.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ProjectTemplates\Themes\scripts\bootstrap\dist\css\bootstrap-theme.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -297,6 +300,9 @@
     <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\ir-black.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\kavadocs.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\kimbie.dark.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -345,6 +351,9 @@
     <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\vs.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\vs2015.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ProjectTemplates\Themes\scripts\highlightjs\styles\xcode.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -357,16 +366,13 @@
     <Content Include="ProjectTemplates\Themes\scripts\jquery\jquery.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="ProjectTemplates\Themes\scripts\kavadocs.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ProjectTemplates\Themes\scripts\ww.jquery.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ProjectTemplates\Themes\scripts\ww.jquery.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectTemplates\Themes\scripts\wwhelp.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectTemplates\Themes\wwhelp.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="version.json">
@@ -463,7 +469,6 @@
     <None Include="ProjectTemplates\Themes\scripts\fontawesome\fonts\FontAwesome.otf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ProjectTemplates\Themes\scripts\highlightjs\LICENSE" />
     <None Include="ProjectTemplates\Themes\scripts\jquery\jquery.min.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

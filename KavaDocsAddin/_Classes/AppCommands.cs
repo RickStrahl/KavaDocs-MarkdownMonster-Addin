@@ -57,6 +57,7 @@ namespace KavaDocsAddin
 
             // Shell
             Command_ShowFileInExplorer();
+            Command_UpdateScriptsAndTemplates();
 
             // Views
             Command_PreviewBrowser();
@@ -475,11 +476,29 @@ namespace KavaDocsAddin
                         () =>
                         {
                             ShellUtils.OpenFileInExplorer(project.OutputDirectory);
-                            mmApp.Model.Window.ShowStatusSuccess("Project output has been generated...");
+                            mmApp.Model.Window.ShowStatusSuccess("Project output has been generated.");
                         });
                 });                            
             }, (p, c) => true);
         }
+
+
+        public CommandBase UpdateScriptsAndTemplatesCommand { get; set; }
+
+        void Command_UpdateScriptsAndTemplates()
+        {
+            UpdateScriptsAndTemplatesCommand = new CommandBase((parameter, command) =>
+            {
+                mmApp.Model.Window.ShowStatusProgress("Copying scripts and templates...");
+
+                var generator = new HtmlOutputGenerator(kavaUi.AddinModel.ActiveProject);
+                generator.CopyScriptsAndTemplates();
+
+
+                mmApp.Model.Window.ShowStatusSuccess("Scripts and Templates copied.");
+            }, (p, c) => true);
+        }
+
 
         #endregion
 

@@ -121,6 +121,14 @@ namespace KavaDocsAddin
             };            
             mi.Items.Add(sub);
 
+            sub = new MenuItem
+            {
+                Header = "Update Scripts and Templates",
+                Command = Model.Commands.UpdateScriptsAndTemplatesCommand,
+                ToolTip = "Updates scripts, css, templates, template images, icons from the template into the output folder."
+            };
+            mi.Items.Add(sub);
+
             ctxMenu.Items.Add(new Separator());
 
             mi = new MenuItem
