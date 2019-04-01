@@ -59,6 +59,11 @@ namespace DocHound.Model
         }
         private bool _isEditing;
 
+
+        public bool NoAutoSave
+        {
+            get;set;
+        }
         
         public bool IsDirty
         {

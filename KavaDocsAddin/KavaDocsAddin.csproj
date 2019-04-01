@@ -84,6 +84,9 @@
       <DependentUpon>TopicPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="KavaDocsAddin.cs" />
+    <Compile Include="Windows\Dialogs\ImportDotnetLibraryDialog.xaml.cs">
+      <DependentUpon>ImportDotnetLibraryDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="_Classes\AppCommands.cs" />
     <Compile Include="Controls\TopicEditor.xaml.cs">
       <DependentUpon>TopicEditor.xaml</DependentUpon>
@@ -498,6 +501,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Windows\Dialogs\ImportDotnetLibraryDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\Dialogs\NewProjectDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -519,6 +526,10 @@
     <ProjectReference Include="..\DocHound\DocHound.csproj">
       <Project>{f7cf7101-6c60-4f3a-8036-ca77351aa2a2}</Project>
       <Name>DocHound</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Westwind.TypeImporter\Westwind.TypeImporter.csproj">
+      <Project>{fced37a2-d418-4e9c-846a-abb52ea93954}</Project>
+      <Name>Westwind.TypeImporter</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

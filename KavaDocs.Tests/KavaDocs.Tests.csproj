@@ -78,6 +78,7 @@
     <Compile Include="TestConfigurationSettings.cs" />
     <Compile Include="TopicHelpers.cs" />
     <Compile Include="TopicLoadingAndSavingTests.cs" />
+    <Compile Include="TopicParserTests.cs" />
     <Compile Include="TopicRenderingTests.cs" />
   </ItemGroup>
   <ItemGroup>

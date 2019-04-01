@@ -10,10 +10,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Westwind.TypeParser.Tests</RootNamespace>
     <AssemblyName>Westwind.TypeParser.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,6 +54,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DocHound\DocHound.csproj">
+      <Project>{f7cf7101-6c60-4f3a-8036-ca77351aa2a2}</Project>
+      <Name>DocHound</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Westwind.TypeImporter\Westwind.TypeImporter.csproj">
       <Project>{fced37a2-d418-4e9c-846a-abb52ea93954}</Project>
       <Name>Westwind.TypeImporter</Name>

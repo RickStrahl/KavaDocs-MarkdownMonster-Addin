@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web.Configuration;
 using Mono.Cecil;
 using Westwind.Utilities;
 
@@ -48,6 +47,7 @@ namespace Westwind.TypeImporter
 
             return typeList;
         }
+
 
         public DotnetObject ParseObject(TypeDefinition type, bool dontParseMembers = false )
         {

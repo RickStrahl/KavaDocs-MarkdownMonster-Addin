@@ -44,6 +44,20 @@ namespace DocHound.Model
         private string _title;
 
 
+        public string Byline
+        {
+            get { return _Byline; }
+            set
+            {
+                if (value == _Byline) return;
+                _Byline = value;
+                OnPropertyChanged(nameof(Byline));
+            }
+        }
+        private string _Byline;
+
+
+
 
         /// <summary>
         /// An optional owner/company name that owns this project

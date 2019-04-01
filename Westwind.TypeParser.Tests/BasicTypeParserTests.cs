@@ -1,8 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using Westwind.TypeImporter;
 
@@ -45,7 +42,7 @@ namespace Westwind.TypeParser.Tests
         public void GetTypesNetCoreTest()
         {
             var parser = new TypeImporter.TypeParser() { ParseXmlDocumentation = true};
-            var types = parser.GetAllTypes(assemblyPath: @"C:\projects2010\Westwind.AspNetCore\Westwind.AspNetCore\bin\Release\netstandard2.0\Westwind.AspNetCore.dll");
+            var types = parser.GetAllTypes(assemblyPath: @"C:\projects2010\Westwind.Utilities\Westwind.Utilities\bin\Release\netStandard2.0\Westwind.Utilities.dll");
 
             Assert.IsNotNull(types);
             Assert.IsTrue(types.Count > 0, "Count shouldn't be 0");
@@ -56,6 +53,8 @@ namespace Westwind.TypeParser.Tests
             }
         }
 
+
+        
 
         void RenderTypes(List<DotnetObject> types)
         {

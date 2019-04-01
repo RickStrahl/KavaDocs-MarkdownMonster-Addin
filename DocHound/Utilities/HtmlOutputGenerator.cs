@@ -124,23 +124,23 @@ namespace DocHound.Utilities
 
         protected void SetError()
         {
-            this.SetError("CLEAR");
+            SetError("CLEAR");
         }
 
         protected void SetError(string message)
         {
             if (message == null || message == "CLEAR")
             {
-                this.ErrorMessage = string.Empty;
+                ErrorMessage = string.Empty;
                 return;
             }
-            this.ErrorMessage += message;
+            ErrorMessage += message;
         }
 
         protected void SetError(Exception ex, bool checkInner = false)
         {
             if (ex == null)
-                this.ErrorMessage = string.Empty;
+                ErrorMessage = string.Empty;
 
             Exception e = ex;
             if (checkInner)

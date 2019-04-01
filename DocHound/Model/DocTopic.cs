@@ -229,9 +229,12 @@ namespace DocHound.Model
             }
             set
             {
-                if (value.Equals(_body)) return;
+                if (value == _body) return;
                 _body = value;
-                SaveTopicFile();
+
+                if (!TopicState.NoAutoSave)
+                    SaveTopicFile();
+
                 OnPropertyChanged();
             }
         }
@@ -457,9 +460,14 @@ namespace DocHound.Model
         /// <returns></returns>
         public string RenderTopic(bool addPragmaLines = false, TopicRenderModes renderMode = TopicRenderModes.Html)
         {
+            // save body in case something modifies it
+            var topic = Copy();
+            topic.TopicState = new TopicState(topic) {NoAutoSave = true};
+
+            OnPreRender(topic, renderMode);
+
             string error;
-            string html = Project.TemplateRenderer.RenderTemplate(DisplayType + ".cshtml", this, out error);
-           
+            string html = Project.TemplateRenderer.RenderTemplate(DisplayType + ".cshtml", topic, out error);
 
             if (string.IsNullOrEmpty(html))
             {
@@ -468,10 +476,61 @@ namespace DocHound.Model
             }
 
             // Fix up any locally linked .md extensions to .html
-            if (renderMode == TopicRenderModes.Html)                
+            if (renderMode == TopicRenderModes.Html)
                 FixupHtmlLinks(ref html);
-            
+
+            OnAfterRender(html, renderMode);
+
             return html;
+        }
+
+        /// <summary>
+        /// Handler that allows you manipulate the topic before rendering.
+        /// </summary>
+        public Action<DocTopic, TopicRenderModes> PreRenderAction;
+
+
+        /// <summary>
+        /// Action that can be fired after a topic has rendered to HTML.
+        /// Method gets passed the HTML string as input.
+        /// </summary>
+        public Action<string, TopicRenderModes> AfterRenderAction;
+ 
+        /// <summary>
+        /// Fired before rendering.
+        ///
+        /// You are allowed to make changes to the Object that is rendered
+        /// </summary>
+        /// <param name="renderMode"></param>
+        private void OnPreRender(DocTopic topic, TopicRenderModes renderMode)
+        {
+            PreRenderAction?.Invoke(topic, renderMode);
+
+            if (string.IsNullOrEmpty(topic.Body))
+            {
+                if (topic.Topics != null && topic.Topics.Count > 0)
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine();
+                    foreach (var subTopic in topic.Topics)
+                    {
+                        sb.AppendLine($"* [{subTopic.Title}]({subTopic.Link})");
+                    }
+
+                    topic.Body = sb.ToString();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Fired after the Topic rendering has created HTML for post processing
+        /// operations on the HTML output
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="mode"></param>
+        private void OnAfterRender(string html, TopicRenderModes mode)
+        {
+            AfterRenderAction?.Invoke(html, mode);
         }
 
         /// <summary>
@@ -961,6 +1020,18 @@ namespace DocHound.Model
             return true;
         }
 
+        /// <summary>
+        /// Makes a separate copy of a topic
+        /// that can be changed
+        /// </summary>
+        /// <returns></returns>
+        public DocTopic Copy()
+        {
+            var topic= new DocTopic();
+            DataUtils.CopyObjectData(this, topic);
+            return topic;
+        }
+
         #endregion
 
         #region Topic Body Helpers
@@ -1214,7 +1285,6 @@ namespace DocHound.Model
 
     public class ClassInfo
     {
-        public string Signature { get; set; }
 
         public string Classname { get; set; }
 
@@ -1228,6 +1298,11 @@ namespace DocHound.Model
 
         public string Syntax { get; set; }
 
+        public string Signature { get; set; }
+
+        public string RawSignature { get; set; }
+
+
         public string Inherits { get; set; }
         public string Implements { get; set; }
 
@@ -1238,7 +1313,7 @@ namespace DocHound.Model
         public string Namespace { get; set; }
         public bool Static { get; set; }
 	    public string Exceptions { get; set; }
-
+        
 
         public override string ToString()
         {

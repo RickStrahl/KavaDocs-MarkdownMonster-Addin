@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28721.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KavaDocsAddin", "KavaDocsAddin\KavaDocsAddin.csproj", "{50BEB3B4-4211-465D-BEC6-3FCDC1050DD4}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.TypeImporter", "Westwind.TypeImporter\Westwind.TypeImporter.csproj", "{FCED37A2-D418-4E9C-846A-ABB52EA93954}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.TypeParser.Tests", "Westwind.TypeParser.Tests\Westwind.TypeParser.Tests.csproj", "{F6302E31-64F8-4D17-AE8E-8D1657FDD4D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6A881589-1FFF-49FF-8C15-D18522B7FDB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +44,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{14E6ECBA-EAFC-4233-8E92-8DE15900608D} = {6A881589-1FFF-49FF-8C15-D18522B7FDB4}
+		{F6302E31-64F8-4D17-AE8E-8D1657FDD4D9} = {6A881589-1FFF-49FF-8C15-D18522B7FDB4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7048FA7C-E2F7-4263-A120-5B2967938962}

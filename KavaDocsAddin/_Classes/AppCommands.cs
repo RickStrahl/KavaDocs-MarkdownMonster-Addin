@@ -333,6 +333,19 @@ namespace KavaDocsAddin
         }
 
 
+        public CommandBase ImportDotnetLibraryCommand { get; set; }
+
+        void Command_ImportDotnetLibrary()
+        {
+            ImportDotnetLibraryCommand = new CommandBase((parameter, command) =>
+            {
+                var dlg = new ImportDotnetLibraryDialog();
+                dlg.ShowDialog();
+
+            }, (p, c) => true);
+        }
+
+
         #endregion
 
         #region View Commands

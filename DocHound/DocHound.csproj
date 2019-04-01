@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="Configuration\KavaDocsConfiguration.cs" />
     <Compile Include="DocProjectManager.cs" />
+    <Compile Include="Importer\TopicParser.cs" />
     <Compile Include="MarkdownParser\IMarkdownParser.cs" />
     <Compile Include="MarkdownParser\MarkdownParserBase.cs" />
     <Compile Include="MarkdownParser\MarkdownParserFactory.cs" />
@@ -114,6 +115,12 @@
       <LastGenOutput>DocumentationMonsterResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Westwind.TypeImporter\Westwind.TypeImporter.csproj">
+      <Project>{fced37a2-d418-4e9c-846a-abb52ea93954}</Project>
+      <Name>Westwind.TypeImporter</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
