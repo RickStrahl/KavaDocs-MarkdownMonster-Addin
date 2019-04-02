@@ -18,6 +18,10 @@ namespace Westwind.TypeImporter
         public string AssemblyFilename { get; set; }
         public bool ParseXmlDocumentation { get; set; } = true;
 
+        public string ClassesToImport { get; set; }
+        public bool NoInheritedMembers { get; set; } = true;
+
+
         public List<DotnetObject> GetAllTypes(string assemblyPath = null, bool dontParseMethods=false)
         {
             if (assemblyPath == null)
@@ -35,9 +39,13 @@ namespace Westwind.TypeImporter
             }
 
             var types = assembly.Types;
-
+            string classList = string.IsNullOrEmpty(ClassesToImport) ? null : "," + ClassesToImport + ",";
+            
+            
             foreach (var type in types)
             {
+                if (!string.IsNullOrEmpty(classList) && !classList.Contains("," + type.Name + ","))
+                    continue;
 
                 var dotnetObject = ParseObject(type, dontParseMethods);
                 if(dotnetObject != null)
@@ -94,6 +102,10 @@ namespace Westwind.TypeImporter
                 if (type.IsAbstract && !type.IsInterface)
                     dotnetObject.Other += "abstract";
             }
+
+            
+            dotnetObject.IsInterface = type.IsInterface;
+            dotnetObject.IsAbstract = type.IsAbstract;
 
             dotnetObject.Namespace = type.Namespace;
             dotnetObject.Signature = type.FullName;
@@ -218,7 +230,9 @@ namespace Westwind.TypeImporter
                 var meth = new ObjectMethod();
                 var miRef = mi.GetElementMethod();
 
-
+                if (NoInheritedMembers && miRef.DeclaringType != dotnetType)
+                    continue;
+                   
                 meth.Name = mi.Name;
                 if (meth.Name.StartsWith("<") || mi.IsGetter || mi.IsSetter || mi.IsAddOn || mi.IsRemoveOn)
                     continue;
@@ -374,6 +388,9 @@ namespace Westwind.TypeImporter
             {
                 var piRef = pi.PropertyType;
 
+                if (NoInheritedMembers && piRef.DeclaringType != dotnetType)
+                    continue;
+
                 var prop = new ObjectProperty();
                 prop.Name = prop.Name =FixupStringTypeName(pi.PropertyType.Name);
 
@@ -458,6 +475,9 @@ namespace Westwind.TypeImporter
 
                 var piRef = pi.FieldType;
 
+                if (NoInheritedMembers && piRef.DeclaringType != dotnetType)
+                    continue;
+
                 var prop = new ObjectProperty();
                 prop.Name = FixupStringTypeName(pi.FieldType.Name);
                 prop.PropertyMode = PropertyModes.Field;
@@ -516,6 +536,9 @@ namespace Westwind.TypeImporter
                     continue;
 
                 var eiRef = ei.EventType;
+
+                if (NoInheritedMembers && eiRef.DeclaringType != dotnetType)
+                    continue;
 
                 var eventObject = new ObjectEvent();
                 eventObject.Name = ei.Name;
@@ -658,6 +681,7 @@ namespace Westwind.TypeImporter
         }
 
         public string ErrorMessage { get; set; }
+ 
 
         protected void SetError()
         {

@@ -57,7 +57,8 @@ namespace KavaDocsAddin
 
             ctxMenu.Items.Add(new Separator());
 
-            // Template Submenu
+            // *** Template Submenu
+
             mi = new MenuItem
             {
                 Name = "MenuTemplates",
@@ -130,6 +131,22 @@ namespace KavaDocsAddin
             mi.Items.Add(sub);
 
             ctxMenu.Items.Add(new Separator());
+
+            // *** Import
+            mi = new MenuItem
+            {               
+                Header = "Import",
+            };
+            ctxMenu.Items.Add(mi);
+
+            sub = new MenuItem()
+            {
+                Header = "Import .NET Library",
+                Command = Model.Commands.ImportDotnetLibraryCommand
+            };
+            mi.Items.Add(sub);
+
+            // *** Misc
 
             mi = new MenuItem
             {

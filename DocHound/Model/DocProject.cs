@@ -1013,6 +1013,36 @@ namespace DocHound.Model
             return null;
         }
 
+        /// <summary>
+        /// Finds a topic in the tree by comparing the link
+        /// rather than an object reference. This allows finding
+        /// topics that were not in the original project references        
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <param name="rootTopics"></param>
+        /// <returns></returns>
+        public DocTopic FindTopicInTreeByValue(DocTopic topic, ObservableCollection<DocTopic> rootTopics = null)
+        {
+            if (rootTopics == null)
+                rootTopics = Topics;
+
+            if (rootTopics == null)
+                return null;
+
+            foreach (var top in rootTopics)
+            {
+                if (top.Link == topic.Link)
+                    return top;
+
+                var foundTopic = FindTopicInTree(top, top.Topics);
+                if (foundTopic != null)
+                    return foundTopic;
+            }
+
+            return null;
+        }
+
+
         public void WriteTopicTree(ObservableCollection<DocTopic> topics, int level, StringBuilder sb)
         {
             if (topics == null || topics.Count < 1)

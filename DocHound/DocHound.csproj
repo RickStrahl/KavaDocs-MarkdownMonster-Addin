@@ -75,7 +75,7 @@
   <ItemGroup>
     <Compile Include="Configuration\KavaDocsConfiguration.cs" />
     <Compile Include="DocProjectManager.cs" />
-    <Compile Include="Importer\TopicParser.cs" />
+    <Compile Include="Importer\ClassTopicParser.cs" />
     <Compile Include="MarkdownParser\IMarkdownParser.cs" />
     <Compile Include="MarkdownParser\MarkdownParserBase.cs" />
     <Compile Include="MarkdownParser\MarkdownParserFactory.cs" />

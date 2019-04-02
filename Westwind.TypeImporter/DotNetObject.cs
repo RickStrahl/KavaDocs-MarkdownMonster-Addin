@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,6 +65,10 @@ namespace Westwind.TypeImporter
         /// </summary>
         public string Other { get; set; }
 
+        public bool IsAbstract { get; set; }
+
+        public bool IsInterface { get; set; }
+
         /// <summary>
         /// Determines whether inherited members are retrieved
         /// </summary>
@@ -82,6 +86,7 @@ namespace Westwind.TypeImporter
             }
         }
         bool _RetrieveDeclaredMembersOnly { get; set; }
+        
 
         /// <summary>
         /// Reflection retrieval flags.

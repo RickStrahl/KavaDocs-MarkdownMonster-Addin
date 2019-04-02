@@ -53,15 +53,22 @@ namespace Westwind.TypeImporter
                     Match = oDom.SelectSingleNode("/doc/members/member[@name='" +
                         "T:" + dotnetObject.Signature +  "']");
 
-                    dotnetObject.HelpText = GetNodeValue(Match, "summary");
+                    dotnetObject.HelpText = GetNodeValue(Match, "summary") ?? string.Empty;
 
                     dotnetObject.Remarks = GetNodeValue(Match, "remarks");
                     dotnetObject.Example = GetExampleCode(Match);
 
-
-                    var dotnetObjectHelpText = dotnetObject.HelpText;
                     var dotnetObjectRemarks = dotnetObject.Remarks;
-                    dotnetObject.SeeAlso = FixupSeeAlsoLinks(ref dotnetObjectHelpText) +
+                    var dotnetObjectHelpText = dotnetObject.HelpText;
+
+
+                dotnetObjectHelpText = dotnetObjectHelpText.Replace("\r", "");
+                dotnetObjectHelpText = dotnetObjectHelpText.Replace("\n\n", "#$#$#$");                
+                dotnetObjectHelpText = dotnetObjectHelpText.Replace("\n", " ");
+                dotnetObjectHelpText = dotnetObjectHelpText.Replace("#$#$#$","\r\n\r\n");
+
+
+                dotnetObject.SeeAlso = FixupSeeAlsoLinks(ref dotnetObjectHelpText) +
                                            FixupSeeAlsoLinks(ref dotnetObjectRemarks);
                     dotnetObject.HelpText = dotnetObjectHelpText;
                     dotnetObject.Remarks = dotnetObjectRemarks;

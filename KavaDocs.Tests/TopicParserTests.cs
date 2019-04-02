@@ -36,11 +36,12 @@ namespace DocumentationMonster.Core.Tests
 
 
 
-            var parser = new DocHound.Importer.TopicParser(proj, topic);
-
-         
+            var parser = new DocHound.Importer.TypeTopicParser(proj, topic)
+            {
+                 NoInheritedMembers = true,
+                 ClassesToImport = null
+            };
             parser.ParseAssembly(assemblyFile, topic, true);
-
             proj.SaveProject();
 
 

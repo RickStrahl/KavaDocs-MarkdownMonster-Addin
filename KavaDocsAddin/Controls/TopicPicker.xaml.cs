@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -67,6 +67,12 @@ namespace KavaDocsAddinControls
 
             Model.KavaDocsModel.Configuration.AddRecentProjectItem(project.Filename, projectTitle: project.Title);
         }
+
+        public void SelectTopic(DocTopic topic)
+        {
+            Model.SelectTopic(topic);
+        }
+
 
         #endregion
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -14,6 +15,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DocHound.Model;
+using KavaDocsAddin.Controls;
 using MahApps.Metro.Controls;
 using MarkdownMonster;
 using MarkdownMonster.Annotations;
@@ -40,25 +43,60 @@ namespace KavaDocsAddin.Windows.Dialogs
                 AddinModel = kavaUi.AddinModel
             };
 
+            Model.AssemblyPath =
+                @"C:\projects2010\Westwind.Utilities\Westwind.Utilities\bin\Release\net46\Westwind.Utilities.dll";
+
             DataContext = Model;
+
+            TopicPicker.SelectTopic(Model.AddinModel.ActiveTopic);
+
+            TopicPicker.TopicSelected = TopicSelected;
+            
+        }
+
+        void TopicSelected(DocTopic topic)
+        {
+            Model.ParentTopic = topic;
         }
 
         private void Button_CancelClick(object sender, RoutedEventArgs e)
         {
             Close();
         }
-
+    
         private void Button_ImportClick(object sender, RoutedEventArgs e)
         {
-            var parser = new TypeParser() { ParseXmlDocumentation = true };
+            // make sure we have the same reference
+            var parentTopic = Model.AddinModel.ActiveProject.FindTopicInTreeByValue(Model.ParentTopic, Model.AddinModel.ActiveProject.Topics);
+
+            
+            var parser = new DocHound.Importer.TypeTopicParser(Model.AddinModel.ActiveProject, parentTopic)
+            {
+                NoInheritedMembers = Model.NoInheritedMembers,
+                ClassesToImport = Model.ClassList
+            };
+            parser.ParseAssembly(Model.AssemblyPath,parentTopic);
+
+            Model.AddinModel.ActiveProject.SaveProject();
+
+            // Force the 
+            Model.AddinModel.TopicsTree.Model.OnPropertyChanged(nameof(TopicsTreeModel.TopicTree));
+
+
+            //var parser = new TypeParser() { ParseXmlDocumentation = true,
+            //    NoInheritedMembers = Model.NoInheritedMembers,
+            //    ClassesToImport = Model.ClassList
+
+            //};
+
+
+            //var types = parser.GetAllTypes(Model.AssemblyPath);
 
 
 
-            var types = parser.GetAllTypes(assemblyPath: @"C:\projects2010\Westwind.Utilities\Westwind.Utilities\bin\Release\net45\Westwind.Utilities.dll");
 
-          
 
-            RenderTypes(types);
+            //RenderTypes(types);
         }
 
 
@@ -150,6 +188,15 @@ namespace KavaDocsAddin.Windows.Dialogs
 
         public AppModel AppModel { get; set; }
 
+        /// <summary>
+        /// Topic under which the class or Namespaces are imported
+        /// </summary>
+        public DocTopic ParentTopic { get; set; }
+
+        /// <summary>
+        /// The path to the assembly on disk. Automatically picks up the
+        /// XML documentation if it exists in the same location.
+        /// </summary>
         public string AssemblyPath
         {
             get { return _AssemblyPath; }
@@ -163,6 +210,23 @@ namespace KavaDocsAddin.Windows.Dialogs
         private string _AssemblyPath;
 
 
+        /// <summary>
+        /// Comma delimited list of classes that are to be imported from
+        /// the .NET Assembly
+        /// </summary>
+        public string ClassList
+        {
+            get { return _classList; }
+            set
+            {
+                if (value == _classList) return;
+                _classList = value;
+                OnPropertyChanged(nameof(ClassList));
+            }
+        }
+        private string _classList;
+
+
         public bool Overwrite
         {
             get { return _Overwrite; }
@@ -174,6 +238,23 @@ namespace KavaDocsAddin.Windows.Dialogs
             }
         }
         private bool _Overwrite;
+
+
+        /// <summary>
+        /// If true doesn't import any inherited members
+        /// in the class structure
+        /// </summary>
+        public bool NoInheritedMembers
+        {
+            get { return _noInheritedMembers; }
+            set
+            {
+                if (value == _noInheritedMembers) return;
+                _noInheritedMembers = value;
+                OnPropertyChanged(nameof(NoInheritedMembers));
+            }
+        }
+        private bool _noInheritedMembers;
 
 
         public ImportModes ImportMode

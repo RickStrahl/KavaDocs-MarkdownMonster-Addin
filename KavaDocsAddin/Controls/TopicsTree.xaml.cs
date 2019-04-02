@@ -80,6 +80,18 @@ namespace KavaDocsAddin.Controls
             Model.KavaDocsModel.Configuration.AddRecentProjectItem(project.Filename,projectTitle: project.Title);
         }
 
+        public void SelectTopic(DocTopic topic)
+        {
+            var foundTopic = Model.FindTopic(null,topic);
+            if (foundTopic != null)
+                foundTopic.TopicState.IsSelected = true;
+        }
+
+        public void RefreshTree()
+        {
+            Model.RefreshTree();
+        }
+
         #endregion
 
         #region Selection Handling
@@ -397,22 +409,16 @@ namespace KavaDocsAddin.Controls
             }
         }
 
-        #endregion
-
-        #region SearchKey
-
-
-        public void SelectTopic(DocTopic topic)
-        {
-            topic.TopicState.IsSelected = true;
-        }
-
         public TreeViewItem GetTreeviewItem(DocTopic item)
         {
             return (TreeViewItem) TreeTopicBrowser
                 .ItemContainerGenerator
                 .ContainerFromItem(item);
         }
+
+        #endregion
+
+        #region SearchKey
 
         #endregion
 

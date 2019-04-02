@@ -72,7 +72,7 @@ namespace KavaDocsAddin
 
             topMi.Items.Add(new Separator());
 
-            // Topic Submenu
+            // *** Topic Submenu
             mi = new MenuItem()
             {
                 Header = "Topic Operations",
@@ -95,7 +95,9 @@ namespace KavaDocsAddin
 
             topMi.Items.Add(new Separator());
 
-            // Build SubMenu
+
+            // *** Build SubMenu
+
             mi = new MenuItem()
             {
                 Header = "Build and Publish",
@@ -106,6 +108,13 @@ namespace KavaDocsAddin
             {
                 Header = "_Build Project Html Output",
                 Command = Model.Commands.BuildHtmlCommand
+            };
+            mi.Items.Add(mic);
+            mic = new MenuItem()
+            {
+                Header = "Update Output Scripts and Templates",
+                Command = Model.Commands.UpdateScriptsAndTemplatesCommand,
+                ToolTip = "Copies the scripts and styles from the templates folder into the 'wwwroot' output folder of the project."
             };
             mi.Items.Add(mic);
 

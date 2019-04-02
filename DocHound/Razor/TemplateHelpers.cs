@@ -60,8 +60,12 @@ namespace DocHound.Razor
             )
         {
             var childTopics = Topic.Topics.Where(t => GenericUtils.Inlist(t.DisplayType, "classproperty", "classmethod",
-                "classevent", "classfield", "classconstructor"));
+                "classevent", "classfield", "classconstructor")).ToList();
 
+
+            if (childTopics.Count < 1)
+                return new RawString(string.Empty);
+            
 
             StringBuilder sb = new StringBuilder();
             sb.Append($@"

@@ -703,9 +703,8 @@ namespace DocHound.Model
 
                         if (sb.Length > 0)
                         {
-
                             sb.Insert(0, "\n<div class='child-topics-list'>\n\n");
-                            sb.AppendLine("n\n</div>\n");
+                            sb.AppendLine("\n\n</div>\n");
                         }
 
                         topic.Body = topic.Body.Replace(dir.DirectiveText, sb.ToString());

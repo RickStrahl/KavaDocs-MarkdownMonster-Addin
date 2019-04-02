@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Westwind.TypeImporter
@@ -37,6 +37,8 @@ namespace Westwind.TypeImporter
         public string GenericParameters { get; set; }
         public string RawParameters { get; set; }
         public string DescriptiveParameters { get; set; }
+
+        public bool IsInherited { get; set; }
 
         public override string ToString()
         {
@@ -84,6 +86,7 @@ namespace Westwind.TypeImporter
         public string Signature { get; set; }
         public string DeclaringType { get; set; }
 
+        public bool IsInherited { get; set; }
 
         public override string ToString()
         {
@@ -117,6 +120,8 @@ namespace Westwind.TypeImporter
         public string DeclaringType { get; set; }
 
         public string Syntax { get; set; }
+
+        public bool IsInherited { get; set; }
 
         public override string ToString()
         {

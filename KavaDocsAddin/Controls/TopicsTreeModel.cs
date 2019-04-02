@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -128,6 +128,55 @@ namespace KavaDocsAddin.Controls
             }
 
             return topicList;
+        }
+
+        public void SelectTopic(DocTopic topic)
+        {
+            var found = FindTopic(null, topic);
+            if (found != null)
+                found.TopicState.IsSelected = true;    
+        }
+
+        public void RefreshTree()
+        {
+            OnPropertyChanged(nameof(TopicTree));
+            OnPropertyChanged(nameof(FilteredTopicTree));
+        }
+
+
+        /// <summary>
+        /// Searches the tree for a specific item
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="fullName"></param>
+        /// <returns></returns>
+        public DocTopic FindTopic(DocTopic parent, DocTopic topic)
+        {
+            var topics = parent?.Topics;
+            if (topics == null)
+                topics = Project.Topics;
+
+            if (parent != null)
+            {
+                // check for root folder match
+                if (parent.Link == topic.Link)
+                    return parent;
+            }
+
+            foreach (var ttopic in topics)
+            {
+                if (ttopic.Link == topic.Link)
+                    return ttopic;
+
+                if (ttopic.Topics != null && ttopic.Topics.Count > 0)
+                {
+                    var ftopic = FindTopic(ttopic, topic);
+                    if (ftopic != null)
+                        return ftopic;
+                }
+            }
+
+            return null;            
         }
 
         public KavaDocsModel KavaDocsModel { get; }

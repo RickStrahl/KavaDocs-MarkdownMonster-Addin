@@ -38,10 +38,11 @@ namespace KavaDocsAddin
             Command_NewProject();
             Command_CloseProject();
 
+            // Topic
             Command_NewTopic();
             Command_DeleteTopic();
             Command_RefreshTree();
-            
+            Command_ImportDotnetLibrary();
 
             Command_OpenTopicFileExplicitly();
             Command_OpenRecentProject();
