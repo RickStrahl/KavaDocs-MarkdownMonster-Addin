@@ -93,7 +93,7 @@ namespace Westwind.TypeImporter
             if (type.IsSealed && type.IsAbstract)
             {
                 dotnetObject.Other = "static";
-            }
+            }            
             else
             {
                 if (type.IsSealed && !type.IsEnum)
@@ -164,18 +164,30 @@ namespace Westwind.TypeImporter
                 while (current != null)
                 {
                     if (current.IsGenericInstance)
-                        Tree.Add(FixupStringTypeName(DotnetObject.GetGenericTypeName(current, GenericTypeNameFormats.FullTypeName)));
+                        Tree.Insert(0,FixupStringTypeName(DotnetObject.GetGenericTypeName(current, GenericTypeNameFormats.FullTypeName)));
                     else
-                        Tree.Add(current.FullName);
+                        Tree.Insert(0,current.FullName);
 
-                    current = current.BaseType as TypeDefinition;
+                    var tref = current.BaseType as TypeReference;
+                    if (tref == null)
+                        break;
+
+                    var tdef = new TypeDefinition(tref.Namespace, tref.Name, Mono.Cecil.TypeAttributes.Class, tref);
+                    if (current.FullName == tdef.FullName)
+                        break;
+
+                    current = tdef;
                 }
+
+
+                StringBuilder sb = new StringBuilder();
 
                 // *** Walk our list backwards to build the string
-                for (int z = Tree.Count - 1; z >= 0; z--)
+                foreach (var ti in Tree)
                 {
-                    dotnetObject.InheritanceTree += Tree[z] + "\r\n";
+                    sb.AppendLine(ti);
                 }
+                dotnetObject.InheritanceTree = sb.ToString();
 
 
             }

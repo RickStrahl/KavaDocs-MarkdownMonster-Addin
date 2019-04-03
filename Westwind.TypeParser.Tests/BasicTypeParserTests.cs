@@ -11,16 +11,23 @@ namespace Westwind.TypeParser.Tests
         string outputFile = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "_TopicsFileText.json");
         string inputAssembly = @"C:\projects2010\MarkdownMonster\MarkdownMonster\bin\Release\MarkdownMonster.exe";
 
+        private string wwutilsAssembly =
+            @"C:\projects2010\Westwind.Utilities\Westwind.Utilities\bin\Release\net46\Westwind.Utilities.dll";
 
 
         [Test]
-        public void GetMMTypesTest()
+        public void BasicParsingTest()
         {
-            var parser = new TypeImporter.TypeParser() {ParseXmlDocumentation = true};
-            var types = parser.GetAllTypes(assemblyPath: inputAssembly);
+            var parser = new TypeImporter.TypeParser()
+            {
+                ParseXmlDocumentation = true,
+                NoInheritedMembers = true,
+                AssemblyFilename = wwutilsAssembly
+            };
+            var types = parser.GetAllTypes(assemblyPath: wwutilsAssembly);
 
-            Assert.IsNotNull(types);
-            Assert.IsTrue(types.Count > 0,"Count shouldn't be 0");
+            Assert.IsNotNull(types,parser.ErrorMessage);
+            Assert.Greater(types.Count,0,"Count shouldn't be 0");
 
             RenderTypes(types);
 
@@ -30,10 +37,10 @@ namespace Westwind.TypeParser.Tests
         public void GetTypesUtilitiesTest()
         {
             var parser = new TypeImporter.TypeParser() {ParseXmlDocumentation =  true};
-            var types = parser.GetAllTypes(assemblyPath: @"C:\projects2010\Westwind.Utilities\Westwind.Utilities\bin\Release\net45\Westwind.Utilities.dll");
+            var types = parser.GetAllTypes(assemblyPath:  wwutilsAssembly  );
 
-            Assert.IsNotNull(types);
-            Assert.IsTrue(types.Count > 0, "Count shouldn't be 0");
+            Assert.IsNotNull(types,parser.ErrorMessage);
+            Assert.Greater(types.Count,0, "Count shouldn't be 0");
 
             RenderTypes(types);
         }
@@ -42,7 +49,7 @@ namespace Westwind.TypeParser.Tests
         public void GetTypesNetCoreTest()
         {
             var parser = new TypeImporter.TypeParser() { ParseXmlDocumentation = true};
-            var types = parser.GetAllTypes(assemblyPath: @"C:\projects2010\Westwind.Utilities\Westwind.Utilities\bin\Release\netStandard2.0\Westwind.Utilities.dll");
+            var types = parser.GetAllTypes(assemblyPath: wwutilsAssembly);
 
             Assert.IsNotNull(types);
             Assert.IsTrue(types.Count > 0, "Count shouldn't be 0");
