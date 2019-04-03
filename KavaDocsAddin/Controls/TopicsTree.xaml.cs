@@ -437,13 +437,13 @@ namespace KavaDocsAddin.Controls
         {
 
             var topic = (e.OriginalSource as FrameworkElement)?.DataContext as DocTopic;
-            if (topic == null || (sender as TreeViewItem)?.DataContext != topic)
+            if (topic == null )
                 return;
 
             if (e.ChangedButton == MouseButton.Left)
                 _lastMouseDownPoint = e.GetPosition(TreeTopicBrowser);
 
-            if (!HandleSelection())
+            if (!HandleSelection(topic))
                 return;
 
             if (TreeTopicBrowser.SelectedItem is DocTopic)

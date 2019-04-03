@@ -5,14 +5,25 @@ using Westwind.TypeImporter;
 
 namespace DocHound.Importer
 {
-    public class TopicParser
+    /// <summary>
+    /// Class used to parse type information into topics by
+    /// creating a hierarchy of topics. 
+    /// </summary>
+    public class TypeTopicParser
     {
         private readonly DocProject _project;
         private readonly DocTopic _parentTopic;
 
         private TypeParser Parser = new TypeParser();
 
-        public TopicParser(DocProject project, DocTopic parentTopic)
+
+        public string ClassesToImport { get; set; }
+
+        public bool NoInheritedMembers { get; set; } = true;
+        
+
+
+        public TypeTopicParser(DocProject project, DocTopic parentTopic)
         {
             _project = project;
             _parentTopic = parentTopic;
@@ -46,7 +57,8 @@ namespace DocHound.Importer
                 Example = method.Example,
                 SeeAlso = method.SeeAlso,
 
-                Parent = parentClassTopic
+                Parent = parentClassTopic,
+                ParentId = parentClassTopic?.Id
             };
 
             parentClassTopic?.Topics.Add(topic);
@@ -79,9 +91,8 @@ namespace DocHound.Importer
                 Remarks = obj.Remarks,
                 Example = obj.Example,
                 SeeAlso = obj.SeeAlso,
-
-                Parent = parentTopic
-            };            
+            };
+            topic.Parent = parentTopic;
             topic.CreateRelativeSlugAndLink(topic);
             topic.Body = obj.HelpText;
 
@@ -104,7 +115,12 @@ namespace DocHound.Importer
         /// <returns></returns>
         public DocTopic ParseAssembly(string assemblyFile, DocTopic parentTopic, bool parseXmlDocs = true)
         {
-            var parser = new Westwind.TypeImporter.TypeParser() {ParseXmlDocumentation = parseXmlDocs};
+            var parser = new Westwind.TypeImporter.TypeParser()
+            {
+                ParseXmlDocumentation = parseXmlDocs,
+                NoInheritedMembers = NoInheritedMembers,
+                ClassesToImport = ClassesToImport
+            };
 
             var topics = new List<DocTopic>();
 
@@ -118,8 +134,8 @@ namespace DocHound.Importer
             foreach (var type in types)
             {
                 var topic = ParseClass(type, parentTopic);
+                topic.Parent = parentTopic;
                 topics.Add(topic);
-                Console.WriteLine($"{type} ");
             }
 
             if (parentTopic == null)

@@ -57,12 +57,12 @@ namespace KavaDocsAddin.Controls
 
         private void KavaDocsModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "ActiveTopic")
+            if (e.PropertyName == nameof(KavaDocsModel.ActiveTopic))
             {
-                OnPropertyChanged(nameof(Topic));
+                OnPropertyChanged(nameof(Topic));              
                 //OnPropertyChanged(nameof(DisplayTypesList));
-            }
-            if (e.PropertyName == "ActiveProject")
+            }                        
+            if (e.PropertyName == nameof(KavaDocsModel.ActiveProject))
             {
                 OnPropertyChanged(nameof(Project));
                 OnPropertyChanged(nameof(Topic));
@@ -83,7 +83,7 @@ namespace KavaDocsAddin.Controls
                 {
                     var item = new DisplayTypeItem()
                     {
-                        DisplayType = type.Key
+                        DisplayType = type.Key                        
                     };
                     list.Add(item);
                 }
@@ -91,6 +91,67 @@ namespace KavaDocsAddin.Controls
             }
         }
 
+        #region Display Behavior
+
+
+        public bool IsClassPanelVisible
+        {
+            get
+            {
+                if (KavaDocsModel.ActiveTopic == null)
+                    return false;
+                var type = KavaDocsModel.ActiveTopic.DisplayType;
+                if (type.StartsWith("class", StringComparison.InvariantCultureIgnoreCase))
+                    return true;
+
+                return false;
+            }
+        }
+
+        public bool IsClass
+        {
+            get
+            {
+                if (KavaDocsModel.ActiveTopic == null)
+                    return false;
+                var type = KavaDocsModel.ActiveTopic.DisplayType;
+                if (type ==  "classheader" || type == "database" || type== "webservice")
+                    return true;
+
+                return false;
+            }
+        }
+
+        public bool IsMethod
+        {
+            get
+            {
+                if (KavaDocsModel.ActiveTopic == null)
+                    return false;
+                var type = KavaDocsModel.ActiveTopic.DisplayType;
+                if (type == "classmethod" || type == "classevent")
+                    return true;
+
+                return false;
+            }
+        }
+
+        public bool IsProperty
+        {
+            get
+            {
+                if (KavaDocsModel.ActiveTopic == null)
+                    return false;
+                var type = KavaDocsModel.ActiveTopic.DisplayType;
+                if (type == "classproperty" || type == "classfield" || type == "databasefield")
+                    return true;
+
+                return false;
+            }
+        }
+
+
+        #endregion
 
         #region INotifyPropertyChanged
 
@@ -100,6 +161,14 @@ namespace KavaDocsAddin.Controls
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            
+            if (propertyName == nameof(Topic))
+            {
+                OnPropertyChanged(nameof(IsClassPanelVisible));
+                OnPropertyChanged(nameof(IsClass));
+                OnPropertyChanged(nameof(IsMethod));
+                OnPropertyChanged(nameof(IsProperty));
+            }
         }
 
         #endregion
