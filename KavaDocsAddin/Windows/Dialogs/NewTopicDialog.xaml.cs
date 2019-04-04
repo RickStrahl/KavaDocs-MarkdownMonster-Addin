@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using DocHound.Annotations;
 using DocHound.Model;
@@ -151,7 +152,7 @@ namespace DocHound.Windows.Dialogs
 
         #region Topic Manipulation
 
-        public DocTopic CreateTopic()
+        public async Task<DocTopic> CreateTopic()
         {
             ButtonCreateTopic.Focus();
             

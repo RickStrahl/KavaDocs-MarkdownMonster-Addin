@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using DocHound.Model;
 using Westwind.TypeImporter;
 
@@ -31,37 +33,72 @@ namespace DocHound.Importer
 
         public DocTopic ParseProperty(ObjectProperty property, DocTopic parentClassTopic)
         {
-            return null;
+            var topic = new DocTopic(_project)
+            {
+                Title = parentClassTopic.ClassInfo.Classname + "." + property.Name,                
+                //ListTitle = property.Name,                
+                DisplayType = "classproperty",
+
+                ClassInfo = new ClassInfo
+                {
+                    MemberName = property.Name,
+                    Signature = property.Signature,
+                    Scope = property.Scope,
+                    IsStatic = property.Static,
+                    Syntax = property.Syntax
+
+                },
+
+                Remarks = property.Remarks,
+                Example = property.Example,
+                SeeAlso = property.SeeAlso,
+
+                Parent = parentClassTopic,
+                ParentId = parentClassTopic?.Id
+            };
+
+            topic.Parent = parentClassTopic;
+            topic.CreateRelativeSlugAndLink(topic);
+            topic.Body = property.HelpText;
+
+            return topic;
         }
 
         public DocTopic ParseMethod(ObjectMethod method, DocTopic parentClassTopic)
         {
             var topic = new DocTopic(_project)
             {
-                Title = method.Name,
-                Body = method.HelpText,
-                DisplayType = "classmethod",
+                Title = parentClassTopic.ClassInfo.Classname + "." + method.Name,
+                //ListTitle = method.Name,                
+                DisplayType = method.IsConstructor ? "classconstructor" : "classmethod",
 
                 ClassInfo = new ClassInfo
                 {
                     MemberName = method.Name,
                     Signature = method.Signature,
-                    Exceptions = method.Exceptions,                    
+                    Exceptions = method.Exceptions,
                     Scope = method.Scope,
-                    Static = method.Static,
-                    Syntax = method.Syntax
-
+                    IsStatic = method.Static,
+                    Syntax = method.Syntax,                    
+                    Parameters = method.Parameters,
+                    IsConstructor = method.IsConstructor,
+                    IsInherited = method.IsInherited,
                 },
 
                 Remarks = method.Remarks,
                 Example = method.Example,
-                SeeAlso = method.SeeAlso,
+                SeeAlso = method.SeeAlso,                
 
-                Parent = parentClassTopic,
                 ParentId = parentClassTopic?.Id
             };
 
+            topic.Parent = parentClassTopic;
+            topic.CreateRelativeSlugAndLink(topic);
+            topic.Body = method.HelpText;
+
             parentClassTopic?.Topics.Add(topic);
+
+            
 
             return topic;
         }
@@ -70,7 +107,8 @@ namespace DocHound.Importer
         {
             var topic = new DocTopic(_project)
             {
-                Title = obj.FormattedName,
+                Title = $"{obj.FormattedName} Class",
+                //ListTitle = obj.FormattedName,
                 DisplayType = "classheader",
 
                 ClassInfo = new ClassInfo
@@ -96,9 +134,28 @@ namespace DocHound.Importer
             topic.CreateRelativeSlugAndLink(topic);
             topic.Body = obj.HelpText;
 
-
             parentTopic?.Topics.Add(topic);
 
+            foreach (var meth in obj.Methods.Where(m=> m.IsConstructor))
+            {
+                var childTopic = ParseMethod(meth,topic);
+                parentTopic.Topics.Add(childTopic);
+            }
+            foreach (var meth in obj.Methods.Where(m => !m.IsConstructor).OrderBy(m=> m.Name))
+            {
+                var childTopic = ParseMethod(meth, topic);
+                parentTopic.Topics.Add(childTopic);
+            }
+            foreach (var prop in obj.Properties.OrderBy(p=> p.Name))
+            {
+                var childTopic = ParseProperty(prop, topic);
+                parentTopic.Topics.Add(childTopic);
+            }
+            //foreach (var ev in obj.Events)
+            //{
+            //    var childTopic = ParseEvent(ev, parentTopic);
+            //    parentTopic.Topics.Add(childTopic);
+            //}
             return topic;
         }
 
@@ -131,11 +188,18 @@ namespace DocHound.Importer
                 return null;
             }
 
-            foreach (var type in types)
+            try
             {
-                var topic = ParseClass(type, parentTopic);
-                topic.Parent = parentTopic;
-                topics.Add(topic);
+                foreach (var type in types)
+                {
+                    var topic = ParseClass(type, parentTopic);
+                    topic.Parent = parentTopic;
+                    topics.Add(topic);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
 
             if (parentTopic == null)

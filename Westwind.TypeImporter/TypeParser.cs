@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Mono.Cecil;
+using Mono.Collections.Generic;
 using Westwind.Utilities;
 
 namespace Westwind.TypeImporter
@@ -185,7 +186,7 @@ namespace Westwind.TypeImporter
                 // *** Walk our list backwards to build the string
                 foreach (var ti in Tree)
                 {
-                    sb.AppendLine(ti);
+                    sb.AppendLine(ti + "  " );
                 }
                 dotnetObject.InheritanceTree = sb.ToString();
 
@@ -233,29 +234,55 @@ namespace Westwind.TypeImporter
         /// <param name="dotnetObject"></param>
         public void ParseMethods(DotnetObject dotnetObject)
         {
+            
             var dotnetType = dotnetObject.TypeDefinition;
+                        
+            var methods = dotnetType.Methods;
 
+            // loop through base classes
+            while (methods != null)
+            {
+                ParseMethodsOnType(dotnetObject, methods, dotnetType);
+                
+                if (NoInheritedMembers)
+                    break;
+
+                var tref = dotnetType.BaseType;
+                if (tref == null || tref.FullName == dotnetType.FullName)
+                    break;
+
+                dotnetType = tref.Resolve();
+                methods = dotnetType.Methods;
+            }
+        }
+
+        private void ParseMethodsOnType(DotnetObject dotnetObject, Collection<MethodDefinition> methods, TypeDefinition dotnetType)
+        {
             var methodList = new List<ObjectMethod>();
 
-            foreach (var mi in dotnetType.Methods)
+            foreach (var mi in methods)
             {
                 var meth = new ObjectMethod();
                 var miRef = mi.GetElementMethod();
 
-                if (NoInheritedMembers && miRef.DeclaringType != dotnetType)
+                if (NoInheritedMembers && miRef.DeclaringType != dotnetType )
                     continue;
-                   
+
                 meth.Name = mi.Name;
-                if (meth.Name.StartsWith("<") || mi.IsGetter || mi.IsSetter || mi.IsAddOn || mi.IsRemoveOn)
+                if (meth.Name.StartsWith("<") || mi.IsGetter || mi.IsSetter || mi.IsAddOn || mi.IsRemoveOn || mi.IsPrivate )
                     continue;
+
+
+                meth.Classname = mi.DeclaringType.Name;
 
                 if (mi.IsConstructor)
                 {
-                    if (mi.IsStatic)
+                    // no static or base class constructors
+                    if (mi.IsStatic || mi.DeclaringType.FullName != dotnetObject.TypeDefinition.FullName)
                         continue; // don't document static constructors
 
-                    meth.IsConstructor = mi.IsConstructor;
-                    meth.Name = dotnetObject.Name;
+                    meth.IsConstructor = true;
+                    meth.Name = dotnetObject.Name;                    
                 }
 
                 if (mi.IsPublic)
@@ -280,6 +307,7 @@ namespace Westwind.TypeImporter
                     meth.Static = mi.IsStatic;
                     meth.Other += "static ";
                 }
+
                 if (mi.IsFinal)
                     meth.Other += "sealed ";
 
@@ -291,6 +319,7 @@ namespace Westwind.TypeImporter
                     {
                         meth.GenericParameters += genericArg.Name + ",";
                     }
+
                     meth.GenericParameters = meth.GenericParameters.TrimEnd(',');
                     meth.GenericParameters += ">";
                     if (meth.GenericParameters == "<>")
@@ -306,9 +335,12 @@ namespace Westwind.TypeImporter
                         methodParm.Other = "ref ";
                         methodParm.Name = methodParm.Name.TrimEnd('&');
                     }
+
                     methodParm.ShortTypeName = FixupStringTypeName(parm.ParameterType.Name);
-                    if(parm.ParameterType.IsGenericInstance)
-                        methodParm.ShortTypeName = DotnetObject.GetGenericTypeName(parm.ParameterType.GetElementType(),GenericTypeNameFormats.TypeName);
+                    if (parm.ParameterType.IsGenericInstance)
+                        methodParm.ShortTypeName =
+                            DotnetObject.GetGenericTypeName(parm.ParameterType.GetElementType(),
+                                GenericTypeNameFormats.TypeName);
 
 
                     methodParm.Type = parm.ParameterType.FullName;
@@ -319,15 +351,24 @@ namespace Westwind.TypeImporter
 
                 meth.ReturnType = mi.ReturnType.FullName;
 
+                var simpleRetName = mi.ReturnType.Name;
+                if (!mi.ReturnType.IsGenericParameter)
+                    simpleRetName = FixupStringTypeName(simpleRetName);               
 
-                meth.Syntax = dotnetObject.Scope + " " + dotnetObject.Other  + " " + meth.Name +
-                              meth.GenericParameters + "(";
-                foreach (var parm in meth.ParameterList)
+                var sbSyntax = new StringBuilder();
+                sbSyntax.Append($"{dotnetObject.Scope} {dotnetObject.Other} {simpleRetName} {meth.Name}{meth.GenericParameters}(");
+
+                var parmCounter = 0;
+                 foreach (var parm in meth.ParameterList)
                 {
-                    meth.Syntax += $"{parm.ShortTypeName} {parm.Name}, ";
+                    sbSyntax.Append($"{parm.ShortTypeName} {parm.Name}, ");
+                    parmCounter++;
+                    if (parmCounter % 2 == 0)
+                        sbSyntax.Append("\r\n\t\t\t");
                 }
 
-                meth.Syntax = meth.Syntax.TrimEnd(' ',',') + ")";
+                meth.Syntax = sbSyntax.ToString();
+                meth.Syntax = meth.Syntax.TrimEnd(' ', ',','\r','\n', '\t') + ")";
                 meth.Syntax = meth.Syntax.Replace("   ", " ").Replace("  ", " ");
 
                 if (meth.IsConstructor)
@@ -335,7 +376,6 @@ namespace Westwind.TypeImporter
 
                 string parameters = "";
                 string rawParameters = "";
-
 
 
                 meth.Signature = mi.FullName;
@@ -350,9 +390,9 @@ namespace Westwind.TypeImporter
 
                 // fix up object member syntax and double conversions
                 meth.Signature = meth.Signature
-                     .Replace("::",".")
-                     .Replace("..",".")
-                     .Trim();
+                    .Replace("::", ".")
+                    .Replace("..", ".")
+                    .Trim();
 
                 // fix up parameters
                 if (meth.Signature.EndsWith("()"))
@@ -363,7 +403,7 @@ namespace Westwind.TypeImporter
                     // fix up parameters for generics
                     // from:  .method(System.Collections.Generic.IDictionary`2(System.String,System.Object),System.String)
                     // to:    .method(System.Collections.Generic.IDictionary{System.String,System.Object},System.String)
-                    var origParms = StringUtils.ExtractString(meth.Signature, "(", ")",returnDelimiters:true);
+                    var origParms = StringUtils.ExtractString(meth.Signature, "(", ")", returnDelimiters: true);
                     var newParms = origParms;
                     if (origParms.Contains("`"))
                     {
@@ -376,14 +416,17 @@ namespace Westwind.TypeImporter
                             newParms = newParms.Replace(orig, "{" + type + "}");
                         }
                     }
+
                     if (!newParms.Equals(origParms))
-                        meth.Signature =  meth.Signature.Replace(origParms, newParms);
+                        meth.Signature = meth.Signature.Replace(origParms, newParms);
                 }
 
                 methodList.Add(meth);
             }
 
-            dotnetObject.AllMethods.AddRange(methodList);
+            dotnetObject.AllMethods.AddRange(methodList
+                .OrderBy(ml=> !ml.IsConstructor)
+                .ThenBy(ml=> ml.Name.ToLowerInvariant()));            
         }
 
         /// <summary>
@@ -400,20 +443,27 @@ namespace Westwind.TypeImporter
             {
                 var piRef = pi.PropertyType;
 
-                if (NoInheritedMembers && piRef.DeclaringType != dotnetType)
-                    continue;
+                //if (NoInheritedMembers && piRef.DeclaringType != dotnetType)
+                //    continue;
 
                 var prop = new ObjectProperty();
-                prop.Name = prop.Name =FixupStringTypeName(pi.PropertyType.Name);
+                prop.Name = pi.Name;
+                if (prop.Name.StartsWith("<"))
+                    continue;
+
+                prop.Classname = pi.DeclaringType.Name;
 
                 prop.PropertyMode = PropertyModes.Property;
-
-
+                
                 MethodDefinition mi;
                 if (pi.GetMethod != null)
                     mi = pi.GetMethod;
                 else
                     mi = pi.SetMethod;
+
+                if (mi.IsPrivate)
+                    return;
+                
 
                 if (mi.IsAbstract)
                     prop.Other += "abstract ";
@@ -453,15 +503,16 @@ namespace Westwind.TypeImporter
                 }
                 else if (mi.IsPrivate)
                     prop.Scope = "private";
-
+                
                 if (!piRef.IsGenericInstance)
                     prop.Type = FixupStringTypeName( pi.PropertyType.Name);
                 else
                     prop.Type = DotnetObject.GetGenericTypeName(pi.PropertyType, GenericTypeNameFormats.TypeName);
 
-                prop.Syntax = $"{prop.Scope} {prop.Other} {prop.Type} {prop.Name}" + prop.Name;
+                
+                prop.Syntax = $"{prop.Scope} {prop.Other} {prop.Type} {prop.Name}";
                 prop.Syntax = prop.Syntax.Replace("  ", " ");
-                prop.Signature = FixupMemberNameForSignature(mi.FullName);
+                prop.Signature = FixupMemberNameForSignature(pi.FullName);
                 prop.DeclaringType = pi.DeclaringType.FullName;
 
                 propertyList.Add(prop);
@@ -636,6 +687,8 @@ namespace Westwind.TypeImporter
                     return FixupStringTypeName(ValueType) + "?";
             }
 
+
+            
             return typeName;
         }
 
@@ -651,46 +704,15 @@ namespace Westwind.TypeImporter
         /// <returns></returns>
         public static  string FixupTypename(TypeDefinition type)
         {
-            var typeName = type.Name;
-
-            switch (typeName)
-            {
-                case "String":
-                    return "string";
-                case "Boolean":
-                    return "bool";
-                case "Int32":
-                    return "int";
-                case "Int64":
-                    return "long";
-                case "Int16":
-                    return "byte";
-                case "Decimal":
-                    return "decimal";
-                case "Object":
-                    return "object";
-                case "Double":
-                    return "double";
-                case "Single":
-                    return "float";
-                case "Char":
-                    return "char";
-                case "Void":
-                    return "void";
-            }
-
-            // *** Nullable types converted to int? or DateTime?
-            if (typeName.StartsWith("Nullable"))
-            {
-                string ValueType = StringUtils.ExtractString(typeName, "<", ">");
-                return ValueType;
-            }
+            var typeName = FixupStringTypeName(type.Name);
 
             if (type.IsGenericInstance || type.IsGenericParameter)
                 return DotnetObject.GetGenericTypeName(type.GetElementType(), GenericTypeNameFormats.TypeName);
 
             return typeName;
         }
+
+
 
         public string ErrorMessage { get; set; }
  

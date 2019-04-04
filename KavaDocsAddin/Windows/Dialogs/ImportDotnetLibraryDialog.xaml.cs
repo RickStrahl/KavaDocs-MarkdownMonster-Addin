@@ -20,6 +20,7 @@ using KavaDocsAddin.Controls;
 using MahApps.Metro.Controls;
 using MarkdownMonster;
 using MarkdownMonster.Annotations;
+using MarkdownMonster.Windows;
 using Microsoft.Win32;
 using Westwind.TypeImporter;
 
@@ -32,15 +33,19 @@ namespace KavaDocsAddin.Windows.Dialogs
     {
         public ImportDotnetLibraryModel Model;
 
+        private StatusBarHelper StatusBar { get; set; }
+
         public ImportDotnetLibraryDialog()
         {
 
             InitializeComponent();
+            mmApp.SetThemeWindowOverride(this);
 
             Model = new ImportDotnetLibraryModel()
             {
                 AppModel = mmApp.Model,
-                AddinModel = kavaUi.AddinModel
+                AddinModel = kavaUi.AddinModel,
+                ParentTopic = kavaUi.AddinModel.ActiveTopic
             };
 
             Model.AssemblyPath =
@@ -51,8 +56,12 @@ namespace KavaDocsAddin.Windows.Dialogs
             TopicPicker.SelectTopic(Model.AddinModel.ActiveTopic);
 
             TopicPicker.TopicSelected = TopicSelected;
-            
+
+            StatusBar = new StatusBarHelper(StatusText, StatusIcon);
+
         }
+
+        
 
         void TopicSelected(DocTopic topic)
         {
@@ -63,25 +72,55 @@ namespace KavaDocsAddin.Windows.Dialogs
         {
             Close();
         }
-    
-        private void Button_ImportClick(object sender, RoutedEventArgs e)
+
+        public static object TopicsCollectionLock = new object();
+        private async void Button_ImportClick(object sender, RoutedEventArgs e)
         {
+            if (Model.ParentTopic == null)
+            {
+                StatusBar.ShowStatusError("Please select a Parent Topic first.");
+                return;
+            }
+
             // make sure we have the same reference
             var parentTopic = Model.AddinModel.ActiveProject.FindTopicInTreeByValue(Model.ParentTopic, Model.AddinModel.ActiveProject.Topics);
 
-            
-            var parser = new DocHound.Importer.TypeTopicParser(Model.AddinModel.ActiveProject, parentTopic)
-            {
-                NoInheritedMembers = Model.NoInheritedMembers,
-                ClassesToImport = Model.ClassList
-            };
-            parser.ParseAssembly(Model.AssemblyPath,parentTopic);
+            StatusBar.ShowStatusProgress("Generating class documentation...",200_000_000);
 
+
+            var importRootTopic = parentTopic.Copy();
+            importRootTopic.Topics = new System.Collections.ObjectModel.ObservableCollection<DocTopic>();
+            
+            //BindingOperations.EnableCollectionSynchronization(Model.ParentTopic.Topics, TopicsCollectionLock);
+
+            try
+            {
+                await Task.Run(() =>
+                {
+                    var parser = new DocHound.Importer.TypeTopicParser(Model.AddinModel.ActiveProject, importRootTopic)
+                    {
+                        NoInheritedMembers = Model.NoInheritedMembers,
+                        ClassesToImport = Model.ClassList
+                    };
+                    parser.ParseAssembly(Model.AssemblyPath, importRootTopic);
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+
+            foreach (var topic in importRootTopic.Topics)
+                parentTopic.Topics.Add(topic);
+
+            StatusBar.ShowStatusProgress("Saving project...");
             Model.AddinModel.ActiveProject.SaveProject();
 
             // Force the 
             Model.AddinModel.TopicsTree.Model.OnPropertyChanged(nameof(TopicsTreeModel.TopicTree));
 
+            StatusBar.ShowStatusSuccess("Class import completed.",5000);
 
             //var parser = new TypeParser() { ParseXmlDocumentation = true,
             //    NoInheritedMembers = Model.NoInheritedMembers,

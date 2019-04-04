@@ -100,7 +100,7 @@ namespace DocHound
 				            using (var jsonTextWriter = new JsonTextWriter(writer))
 				            {				               
 				                try
-				                {
+				                {                                    
 				                    Serializer.Serialize(jsonTextWriter, docProject);				                    
 				                    break;
 				                }

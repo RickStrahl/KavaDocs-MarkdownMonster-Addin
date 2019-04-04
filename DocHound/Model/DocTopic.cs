@@ -109,7 +109,8 @@ namespace DocHound.Model
             {
                 if (_title == value) return;
                 _title = value;
-                OnPropertyChanged();                
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ListTitle));
                 if (Slug == null)
                     Slug = CreateSlug(_title);
             }
@@ -117,7 +118,31 @@ namespace DocHound.Model
         private string _title;
 
 
-        
+
+        /// <summary>
+        /// The title displayed for this topic in the topic
+        /// list which may be truncated
+        /// </summary>
+        [JsonIgnore]
+        [YamlIgnore]
+        public string ListTitle
+        {
+            get
+            {
+                if (!DisplayType.StartsWith("class"))
+                    return Title;
+
+
+                if (DisplayType == "classheader")
+                    return ClassInfo.Classname;
+
+                if (DisplayType == "classproperty" || DisplayType == "classmethod" || DisplayType == "classevent")
+                    return ClassInfo.MemberName;
+                
+                return Title;
+            }
+        }
+
 
         /// <summary>
         /// The Title slug used for the filename. Filenames are rendered 
@@ -539,8 +564,7 @@ namespace DocHound.Model
                     }                                      
                 }
                 catch (Exception ex)
-                {
-                    Thread.Sleep(50);
+                {                    
                     written++;
                     if (written == 4)
                     {
@@ -592,13 +616,6 @@ namespace DocHound.Model
         /// </summary>
         public Action<DocTopic, TopicRenderModes> PreRenderAction;
 
-
-        /// <summary>
-        /// Action that can be fired after a topic has rendered to HTML.
-        /// Method gets passed the HTML string as input.
-        /// </summary>
-        public Action<string, TopicRenderModes> AfterRenderAction;
- 
         /// <summary>
         /// Fired before rendering.
         ///
@@ -619,7 +636,7 @@ namespace DocHound.Model
                     foreach (var subTopic in topic.Topics)
                     {
                         sb.AppendLine(
-                            $"* <img src='~/_kavadocs/icons/{subTopic.DisplayType}.png' /> [{subTopic.Title}]({subTopic.Link})");
+                            $"* <img src=\"~/_kavadocs/icons/{subTopic.DisplayType}.png\" /> [{subTopic.Title}]({subTopic.Link})");
                     }
 
                     sb.AppendLine("\n</div>\n\n");
@@ -628,6 +645,24 @@ namespace DocHound.Model
             }
 
             ProcessRenderDirectives(topic, renderMode);
+        }
+
+        /// <summary>
+        /// Action that can be fired after a topic has rendered to HTML.
+        /// Method gets passed the HTML string as input.
+        /// </summary>
+        public Action<string, TopicRenderModes> AfterRenderAction;
+
+
+        /// <summary>
+        /// Fired after the Topic rendering has created HTML for post processing
+        /// operations on the HTML output
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="mode"></param>
+        private void OnAfterRender(string html, TopicRenderModes mode)
+        {
+            AfterRenderAction?.Invoke(html, mode);
         }
 
         private static Regex DirectiveRegex = new Regex(@"<kavadocs:.*?\s/>", RegexOptions.Multiline);
@@ -724,20 +759,6 @@ namespace DocHound.Model
 
             public string DirectiveText { get; set; }
         }
-
-
-        /// <summary>
-        /// Fired after the Topic rendering has created HTML for post processing
-        /// operations on the HTML output
-        /// </summary>
-        /// <param name="html"></param>
-        /// <param name="mode"></param>
-        private void OnAfterRender(string html, TopicRenderModes mode)
-        {
-            AfterRenderAction?.Invoke(html, mode);
-        }
-
-
 
 
         /// <summary>
@@ -933,8 +954,7 @@ namespace DocHound.Model
                         break;
                     }
                     catch
-                    {
-                        Task.Delay(50);
+                    {                        
                         if (i > 2)
                             return false;
                     }
@@ -1009,8 +1029,7 @@ namespace DocHound.Model
                         }
                         catch
                         {
-                            _body = markdownText;
-                            Task.Delay(50);
+                            _body = markdownText;                            
                             if (i > 3)
                                 return false;
                         }
@@ -1330,7 +1349,9 @@ namespace DocHound.Model
 
         #region Error Handling
 
-        public string ErrorMessage { get; set; }        
+        public string ErrorMessage { get; set; }
+     
+
 
         protected void SetError()
         {
@@ -1408,12 +1429,16 @@ namespace DocHound.Model
 
         public string InheritanceTree { get; set; }
 
+        public bool IsInherited { get; set; }
+        public bool IsConstructor { get; set; }
+
         public string Assembly { get; set; }
         public string Contract { get; set; }
         public string Namespace { get; set; }
-        public bool Static { get; set; }
+        public bool IsStatic { get; set; }
 	    public string Exceptions { get; set; }
         
+
 
         public override string ToString()
         {

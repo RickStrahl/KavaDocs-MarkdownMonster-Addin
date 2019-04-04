@@ -20,12 +20,12 @@ namespace Westwind.TypeImporter
 
         public string Syntax { get; set; }
         public List<ObjectMethod> AllMethods { get; set; } = new List<ObjectMethod>();
+
         public List<ObjectMethod> Constructors {
             get=>  AllMethods.Where(mth => mth.IsConstructor).ToList();
         }
         public List<ObjectMethod> Methods {
-            get=>  AllMethods.Where(mth => !mth.IsConstructor)
-                        .OrderBy(mth=> mth.Name.ToLowerInvariant())
+            get=>  AllMethods.Where(mth => !mth.IsConstructor)                     
                         .ToList();
         }
 

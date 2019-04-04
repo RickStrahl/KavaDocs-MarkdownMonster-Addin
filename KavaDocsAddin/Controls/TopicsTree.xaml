@@ -42,7 +42,7 @@
                         </Image.Style>
                     </Image>
 
-                    <TextBlock Name="TextTopicTitle" Text="{Binding Title, Mode=OneWay}"
+                    <TextBlock Name="TextTopicTitle" Text="{Binding ListTitle, Mode=OneWay}"
                                        Padding="5,3,25,3"  controls:VisibilityHelper.IsCollapsed="{Binding TopicState.IsEditing}"/>
                     <TextBox Name="TextEditTopicTitle" 
                              Text="{Binding Title, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Padding="6,5,10,5"

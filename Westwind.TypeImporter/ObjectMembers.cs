@@ -6,6 +6,9 @@ namespace Westwind.TypeImporter
     public class ObjectMethod
     {
         public string Name { get; set; }
+
+        public string Classname { get; set; }
+
         public string Parameters { get; set; }
         public string ReturnType { get; set; }
         public string ReturnDescription { get; set; }
@@ -39,6 +42,7 @@ namespace Westwind.TypeImporter
         public string DescriptiveParameters { get; set; }
 
         public bool IsInherited { get; set; }
+        
 
         public override string ToString()
         {
@@ -52,6 +56,9 @@ namespace Westwind.TypeImporter
     public class ObjectProperty
     {
         public string Name { get; set; }
+
+        public string Classname { get; set; }
+
         public string Type { get; set; }
 
         public string Scope { get; set; }
@@ -101,6 +108,9 @@ namespace Westwind.TypeImporter
     public class ObjectEvent
     {
         public string Name;
+
+        public string Classname { get; set; }
+
         public string Type { get; set; }
 
         public string Scope { get; set; }

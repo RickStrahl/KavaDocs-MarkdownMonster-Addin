@@ -16,7 +16,7 @@ namespace Westwind.TypeParser.Tests
 
 
         [Test]
-        public void BasicParsingTest()
+        public void BasicParsingWithoutMembersTest()
         {
             var parser = new TypeImporter.TypeParser()
             {
@@ -34,9 +34,14 @@ namespace Westwind.TypeParser.Tests
         }
 
         [Test]
-        public void GetTypesUtilitiesTest()
+        public void GetTypesWithMembersTest()
         {
-            var parser = new TypeImporter.TypeParser() {ParseXmlDocumentation =  true};
+            var parser = new TypeImporter.TypeParser()
+            {
+                ParseXmlDocumentation = true,
+                NoInheritedMembers = false,
+                AssemblyFilename = wwutilsAssembly
+            };
             var types = parser.GetAllTypes(assemblyPath:  wwutilsAssembly  );
 
             Assert.IsNotNull(types,parser.ErrorMessage);

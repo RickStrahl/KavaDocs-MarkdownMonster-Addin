@@ -47,27 +47,6 @@ namespace KavaDocsAddin.Controls
             get { return KavaDocsModel.ActiveProject; }
         }
 
-        public TopicEditorModel()
-        {
-            KavaDocsModel = kavaUi.AddinModel;
-            AppModel = kavaUi.MarkdownMonsterModel;
-
-            KavaDocsModel.PropertyChanged += KavaDocsModel_PropertyChanged;
-        }
-
-        private void KavaDocsModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(KavaDocsModel.ActiveTopic))
-            {
-                OnPropertyChanged(nameof(Topic));              
-                //OnPropertyChanged(nameof(DisplayTypesList));
-            }                        
-            if (e.PropertyName == nameof(KavaDocsModel.ActiveProject))
-            {
-                OnPropertyChanged(nameof(Project));
-                OnPropertyChanged(nameof(Topic));
-            }
-        }
 
         
         public List<DisplayTypeItem> DisplayTypesList
@@ -91,7 +70,7 @@ namespace KavaDocsAddin.Controls
             }
         }
 
-        #region Display Behavior
+        #region Display Behavior Only Properties
 
 
         public bool IsClassPanelVisible
@@ -152,6 +131,29 @@ namespace KavaDocsAddin.Controls
 
 
         #endregion
+
+
+        public TopicEditorModel()
+        {
+            KavaDocsModel = kavaUi.AddinModel;
+            AppModel = kavaUi.MarkdownMonsterModel;
+
+            KavaDocsModel.PropertyChanged += KavaDocsModel_PropertyChanged;
+        }
+
+        private void KavaDocsModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(KavaDocsModel.ActiveTopic))
+            {
+                OnPropertyChanged(nameof(Topic));
+                //OnPropertyChanged(nameof(DisplayTypesList));
+            }
+            if (e.PropertyName == nameof(KavaDocsModel.ActiveProject))
+            {
+                OnPropertyChanged(nameof(Project));
+                OnPropertyChanged(nameof(Topic));
+            }
+        }
 
         #region INotifyPropertyChanged
 

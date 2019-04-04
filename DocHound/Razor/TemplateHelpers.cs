@@ -73,6 +73,7 @@ namespace DocHound.Razor
 <tr><th colspan='2'>{memberLabel}</th><th>{descriptionLabel}</th></tr>
             ");
 
+            
             bool alternate = false;
             foreach (var childTopic in childTopics)
             {
@@ -82,9 +83,9 @@ namespace DocHound.Razor
                 if (childTopic.ClassInfo.Scope == "protected")
                     icon += "protected";
 
-                sb.AppendLine($"\t<td class='col-icon'><img src='icons/{icon}.png' />");
-                if (childTopic.ClassInfo.Static)
-                    sb.Append("<img src='bmp/static.gif'/>");
+                sb.AppendLine($"\t<td class='col-icon'><img src='~/kavadocs/icons/{icon}.png' />");
+                if (childTopic.ClassInfo.IsStatic)
+                    sb.Append("<img src='~/_kavadocs/icons/static.gif'/>");
                 sb.AppendLine("\t</td>");
 
                 string link = childTopic.GetTopicLink(HtmlUtils.HtmlEncode(childTopic.Title));
