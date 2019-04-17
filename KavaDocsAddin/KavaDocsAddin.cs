@@ -230,7 +230,7 @@ namespace KavaDocsAddin
         {
             base.OnAfterSaveDocument(doc);
            
-            if (doc == null)
+            if (doc == null || KavaDocsModel == null)
                 return;
 
 
