@@ -31,49 +31,48 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ControlzEx">
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\ControlzEx.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Dragablz">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Dragablz.dll</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\Dragablz.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="FontAwesome.WPF">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\FontAwesome.WPF.dll</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\FontAwesome.WPF.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MahApps.Metro">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\MahApps.Metro.dll</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\MahApps.Metro.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MarkdownMonster">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\MarkdownMonster.exe</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\MarkdownMonster.exe</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Microsoft.WindowsAPICodePack.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\Microsoft.WindowsAPICodePack.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack.Shell">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\System.Windows.Interactivity.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationCore" />
     <Reference Include="Westwind.Utilities">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Debug\Westwind.Utilities.dll</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\Westwind.Utilities.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="WindowsBase" />

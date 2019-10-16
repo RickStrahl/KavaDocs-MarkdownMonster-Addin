@@ -58,8 +58,8 @@ namespace Westwind.TypeImporter
                     dotnetObject.Remarks = GetNodeValue(Match, "remarks");
                     dotnetObject.Example = GetExampleCode(Match);
 
-                    var dotnetObjectRemarks = dotnetObject.Remarks;
-                    var dotnetObjectHelpText = dotnetObject.HelpText;
+                    var dotnetObjectRemarks = dotnetObject.Remarks.Trim();
+                    var dotnetObjectHelpText = dotnetObject.HelpText.Trim();
 
 
                 dotnetObjectHelpText = dotnetObjectHelpText.Replace("\r", "");
@@ -182,7 +182,7 @@ namespace Westwind.TypeImporter
                 }  // for methods
 
                 // Combine properties and fields into a single list
-                List<ObjectProperty> propAndFieldList = new List<ObjectProperty>();
+                var propAndFieldList = new List<ObjectProperty>();
                 propAndFieldList.AddRange(dotnetObject.Properties);
                 propAndFieldList.AddRange(dotnetObject.Fields);
 
@@ -194,9 +194,14 @@ namespace Westwind.TypeImporter
                         fieldPrefix = "F:";
 
                     xPath = "/doc/members/member[@name='" + fieldPrefix +
-                        property.Signature + "']";
+                        property.Signature.Replace("()","") + "']";
 
                     Match = oDom.SelectSingleNode(xPath);
+
+                    if (property.Name == "TerminalCommand")
+                    {
+                        int x = 0;
+                    }
 
                     property.HelpText = GetNodeValue(Match, "summary");
                     property.Remarks = GetNodeValue(Match, "remarks");
@@ -281,9 +286,9 @@ namespace Westwind.TypeImporter
                 {
                     // *** Need to pull inner XML so we can get the sub XML strings ilke <seealso> etc.
                     if (keyword == "example")
-                        result = FixHelpString(subMatch.InnerXml.Replace("\r\n","\r"),false);
+                        result = FixHelpString(subMatch.InnerText.Replace("\r\n","\r"),false);
                     else
-                        result = FixHelpString(subMatch.InnerXml.Replace("\r\n","\r"),wordWrap);
+                        result = FixHelpString(subMatch.InnerText.Replace("\r\n","\r"),wordWrap);
 
                     result = FixupSeeLinks(result);
 

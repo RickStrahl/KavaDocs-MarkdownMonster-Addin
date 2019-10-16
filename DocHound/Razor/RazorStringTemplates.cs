@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Westwind.RazorHosting;
@@ -26,7 +27,7 @@ namespace DocHound.Razor
             if (result == null)
                 result =
                     "<h3>Template Rendering Error</h3>\r\n<hr/>\r\n"  + 
-                    "<pre>" + HtmlUtils.HtmlEncode(RazorHost.ErrorMessage) + "</pre>";
+                    "<pre>" + WebUtility.HtmlEncode(RazorHost.ErrorMessage) + "</pre>";
 
             return result;
         }

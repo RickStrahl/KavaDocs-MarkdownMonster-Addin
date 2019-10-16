@@ -13,7 +13,7 @@ namespace DocHound.Utilities
 {
     public class CamelCaseAndIgnoreEmptyEnumerablesResolver : CamelCasePropertyNamesContractResolver
     {
-        public new static readonly CamelCaseAndIgnoreEmptyEnumerablesResolver Instance =
+        public static readonly CamelCaseAndIgnoreEmptyEnumerablesResolver Instance =
             new CamelCaseAndIgnoreEmptyEnumerablesResolver();
 
         public CamelCaseAndIgnoreEmptyEnumerablesResolver()

@@ -13,6 +13,7 @@ using KavaDocsAddin.Controls;
 using MahApps.Metro.Controls;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
+using MarkdownMonster.RenderExtensions;
 using MarkdownMonster.Utilities;
 using MarkdownMonster.Windows;
 using Westwind.Utilities;
@@ -106,6 +107,8 @@ namespace KavaDocsAddin
             // Must add the menu to the collection to display menu and toolbar items            
             MenuItems.Add(menuItem);
 
+
+            
         }      
 
 
@@ -372,6 +375,9 @@ namespace KavaDocsAddin
         /// <returns></returns>
         public override string OnModifyPreviewHtml(string renderedHtml, string markdownHtml)
         {
+            // default rendering if specified
+            if (kavaUi.Configuration.TopicRenderMode == TopicRenderingModes.MarkdownDefault)
+                return renderedHtml;
 
             if (mmApp.Model.ActiveEditor == null ||
                 !mmApp.Model.ActiveEditor.Properties.TryGetValue(Constants.EditorPropertyNames.KavaDocsTopic,
@@ -538,4 +544,5 @@ namespace KavaDocsAddin
 
     }
 
+    
 }

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -658,7 +659,7 @@ namespace DocHound.Model
                 return null;
 
             string anchorString = (string.IsNullOrEmpty(anchor) ? "" : "#" + anchor);
-            string linkText = HtmlUtils.HtmlEncode(displayText);
+            string linkText = WebUtility.HtmlEncode(displayText);
             string link = null;
 
             if (mode == HtmlRenderModes.None)

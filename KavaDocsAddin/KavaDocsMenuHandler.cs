@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using DocHound.Configuration;
+using DocHound.Model;
 using DocHound.Windows.Dialogs;
 using Westwind.Utilities;
 
@@ -96,6 +98,18 @@ namespace KavaDocsAddin
             topMi.Items.Add(new Separator());
 
 
+            mi = new MenuItem()
+            {
+                Header = "Preview using Topic Template",
+                IsCheckable = true,
+                IsChecked = Model.Configuration.TopicRenderMode == DocHound.Configuration.TopicRenderingModes.TopicTemplate
+            };
+            mi.Unchecked += OnRenderModeToggled;
+            mi.Checked += OnRenderModeToggled;
+            topMi.Items.Add(mi);
+
+            topMi.Items.Add(new Separator());
+
             // *** Build SubMenu
 
             mi = new MenuItem()
@@ -177,6 +191,13 @@ namespace KavaDocsAddin
 
 
             return topMi;
+        }
+
+        private void OnRenderModeToggled(object s, RoutedEventArgs e)
+        {
+            Model.Configuration.TopicRenderMode = ((MenuItem) s).IsChecked
+                ? TopicRenderingModes.TopicTemplate
+                : TopicRenderingModes.MarkdownDefault;
         }
 
         public void RemoveMenu()

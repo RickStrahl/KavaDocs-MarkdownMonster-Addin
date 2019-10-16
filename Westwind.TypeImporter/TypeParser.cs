@@ -57,7 +57,65 @@ namespace Westwind.TypeImporter
             return typeList;
         }
 
+        public class MonoAssemblyResolver : IAssemblyResolver
+        {
+            public AssemblyDefinition AssemblyDefinition;
+            
+            public AssemblyDefinition Resolve(AssemblyNameReference name)
+            {
+                return AssemblyDefinition;
+            }
 
+            public AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
+            {
+
+                return AssemblyDefinition;
+            }
+
+            public void Dispose()
+            {
+                AssemblyDefinition = null;
+            }
+        }
+
+        /// <summary>
+        /// Parses an object based on a .NET type definition
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="dontParseMembers"></param>
+        /// <returns></returns>
+        public DotnetObject ParseObject(Type type, bool dontParseMembers = false)
+        {
+
+            var resolver = new MonoAssemblyResolver();
+
+            var a = AssemblyDefinition.ReadAssembly(type.Assembly.Location,
+                new ReaderParameters() { AssemblyResolver = resolver });
+
+            resolver.AssemblyDefinition = a;
+
+            var tr = a.MainModule.Import(type: type);
+            var td = tr.Resolve();
+
+
+            if (td == null)
+            {
+                SetError("Couldn't resolve .NET Type: " + type.FullName);
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(AssemblyFilename))
+                AssemblyFilename = type.Assembly.Location;
+
+            return ParseObject(td, dontParseMembers);
+        }
+
+        /// <summary>
+        /// Parses an object based on a  Mono.Cecil type definition
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="dontParseMembers"></param>
+        /// <returns></returns>
         public DotnetObject ParseObject(TypeDefinition type, bool dontParseMembers = false )
         {
 

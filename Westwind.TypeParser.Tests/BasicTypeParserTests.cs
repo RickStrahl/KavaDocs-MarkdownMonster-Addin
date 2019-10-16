@@ -66,6 +66,23 @@ namespace Westwind.TypeParser.Tests
         }
 
 
+        [Test]
+        public void GetConfigurationPropertiesTest()
+        {
+            var appConfigType = typeof(MarkdownMonster.ApplicationConfiguration);
+
+            var typeParser = new TypeImporter.TypeParser()
+            {
+                ParseXmlDocumentation = true,
+            };
+            var dotnetObject = typeParser.ParseObject(appConfigType);
+
+            var list = new List<DotnetObject>();
+            list.Add(dotnetObject);
+
+            RenderTypes(list);
+        }
+
         
 
         void RenderTypes(List<DotnetObject> types)
@@ -74,29 +91,6 @@ namespace Westwind.TypeParser.Tests
             {
                 Console.WriteLine($"{type} -  - {type.Signature}");
 
-                if (type.Constructors.Count > 0)
-                {
-                    Console.WriteLine("  *** Constructors:");
-                    foreach (var meth in type.Constructors)
-                    {
-                        Console.WriteLine($"\t{meth} - {meth.Signature}");
-
-                    }
-                }
-
-                if (type.Methods.Count > 0)
-                {
-                    Console.WriteLine("  *** Methods:");
-                    foreach (var meth in type.Methods)
-                    {
-                        Console.WriteLine($"\t{meth}  - {meth.Signature}");
-                        Console.WriteLine($"\t{meth.HelpText}");
-                        foreach (var parm in meth.ParameterList)
-                        {
-                            Console.WriteLine($"\t\t{parm.ShortTypeName} {parm.Name}");
-                        }
-                    }
-                }
 
                 if (type.Properties.Count > 0)
                 {
@@ -104,26 +98,11 @@ namespace Westwind.TypeParser.Tests
                     foreach (var prop in type.Properties )
                     {
                         Console.WriteLine($"\t{prop}  - {prop.Signature}");
+                        Console.WriteLine($"\t{prop.HelpText}");
+                        Console.WriteLine();
                     }
                 }
 
-                if (type.Fields.Count > 0)
-                {
-                    Console.WriteLine("  *** Fields:");
-                    foreach (var prop in type.Fields)
-                    {
-                        Console.WriteLine($"\t{prop}  - {prop.Signature}");
-                    }
-                }
-
-                if (type.Events.Count > 0)
-                {
-                    Console.WriteLine("  *** Events:");
-                    foreach (var ev in type.Events)
-                    {
-                        Console.WriteLine($"\t{ev}  - {ev.Signature}");
-                    }
-                }
 
             }
         }

@@ -152,7 +152,7 @@ namespace DocHound.Windows.Dialogs
 
         #region Topic Manipulation
 
-        public async Task<DocTopic> CreateTopic()
+        public DocTopic CreateTopic()
         {
             ButtonCreateTopic.Focus();
             

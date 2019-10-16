@@ -1,5 +1,3 @@
-
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -69,6 +67,12 @@ namespace DocHound.Configuration
         /// it loads only when you click on the addin icon.
         /// </summary>
         public bool AutoOpen { get; set; }
+
+        /// <summary>
+        /// Determines how topics are rendered either using the default Markdown Monster template
+        /// or the Topic Template
+        /// </summary>
+        public TopicRenderingModes TopicRenderMode { get; set; } = TopicRenderingModes.MarkdownDefault;
 
 
         public string LastProjectCompany
@@ -181,5 +185,11 @@ namespace DocHound.Configuration
 
         public string ProjectTitle { get; set; }
         public string LastTopicId { get; set; }
+    }
+
+    public enum TopicRenderingModes
+    {
+        TopicTemplate,
+        MarkdownDefault
     }
 }

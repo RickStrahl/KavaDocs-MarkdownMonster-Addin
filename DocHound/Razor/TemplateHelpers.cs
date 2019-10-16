@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using DocHound.Model;
+using MarkdownMonster;
+using MarkdownMonster.RenderExtensions;
 using Westwind.RazorHosting;
 using Westwind.Utilities;
 
@@ -88,7 +91,7 @@ namespace DocHound.Razor
                     sb.Append("<img src='~/_kavadocs/icons/static.gif'/>");
                 sb.AppendLine("\t</td>");
 
-                string link = childTopic.GetTopicLink(HtmlUtils.HtmlEncode(childTopic.Title));
+                string link = childTopic.GetTopicLink(WebUtility.HtmlEncode(childTopic.Title));
                 sb.AppendLine($"\t<td>{link}</td>");
                 sb.AppendLine($"\t<td class='col-detail'>{HtmlUtils.HtmlAbstract(childTopic.Body, 200)}");
 
@@ -139,7 +142,7 @@ namespace DocHound.Razor
 
             foreach (var childTopic in childTopics)
             {
-                sb.AppendLine($@"<li><img src='icons/{childTopic.DisplayType}.png' /> {HtmlUtils.HtmlEncode(childTopic.Title)}</li>");
+                sb.AppendLine($@"<li><img src='icons/{childTopic.DisplayType}.png' /> {WebUtility.HtmlEncode(childTopic.Title)}</li>");
             }
             sb.AppendLine("</ul>");
 
@@ -187,4 +190,6 @@ namespace DocHound.Razor
         }
         #endregion
     }
+
+
 }
