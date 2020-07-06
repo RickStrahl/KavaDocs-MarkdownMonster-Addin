@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KavaDocsAddin</RootNamespace>
     <AssemblyName>KavaDocsAddin</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -32,47 +32,46 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ControlzEx">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\ControlzEx.dll</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\ControlzEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Dragablz">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\Dragablz.dll</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\Dragablz.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="FontAwesome.WPF">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\FontAwesome.WPF.dll</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\FontAwesome.WPF.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MahApps.Metro">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\MahApps.Metro.dll</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\MahApps.Metro.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MarkdownMonster">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\MarkdownMonster.exe</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\MarkdownMonster.exe</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\Microsoft.WindowsAPICodePack.dll</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\Microsoft.WindowsAPICodePack.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack.Shell">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Microsoft.Xaml.Behaviors">
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\Microsoft.Xaml.Behaviors.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\System.Windows.Interactivity.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationCore" />
     <Reference Include="Westwind.Utilities">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\Westwind.Utilities.dll</HintPath>
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\Westwind.Utilities.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="WindowsBase" />

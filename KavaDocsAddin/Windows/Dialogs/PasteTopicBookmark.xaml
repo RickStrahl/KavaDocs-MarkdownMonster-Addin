@@ -10,7 +10,6 @@
             mc:Ignorable="d"   Icon="../../icon.png"                    
             Title="Insert Topic Link"
             TitleCharacterCasing="Normal"                      
-            TitlebarHeight="35"
             WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
             Padding="4"
             WindowStartupLocation="CenterOwner"                                   

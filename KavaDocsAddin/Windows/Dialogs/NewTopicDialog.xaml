@@ -10,7 +10,6 @@
         Icon="../../icon.png"                    
         Title="New Topic"
         TitleCharacterCasing="Normal"                      
-        TitlebarHeight="35"
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
                        Padding="4"
         WindowStartupLocation="CenterOwner"                                   
