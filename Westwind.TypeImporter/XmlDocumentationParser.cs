@@ -63,7 +63,7 @@ namespace Westwind.TypeImporter
 
 
                 dotnetObjectHelpText = dotnetObjectHelpText.Replace("\r", "");
-                dotnetObjectHelpText = dotnetObjectHelpText.Replace("\n\n", "#$#$#$");                
+                dotnetObjectHelpText = dotnetObjectHelpText.Replace("\n\n", "#$#$#$");
                 dotnetObjectHelpText = dotnetObjectHelpText.Replace("\n", " ");
                 dotnetObjectHelpText = dotnetObjectHelpText.Replace("#$#$#$","\r\n\r\n");
 
@@ -197,11 +197,6 @@ namespace Westwind.TypeImporter
                         property.Signature.Replace("()","") + "']";
 
                     Match = oDom.SelectSingleNode(xPath);
-
-                    if (property.Name == "TerminalCommand")
-                    {
-                        int x = 0;
-                    }
 
                     property.HelpText = GetNodeValue(Match, "summary");
                     property.Remarks = GetNodeValue(Match, "remarks");

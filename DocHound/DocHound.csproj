@@ -35,9 +35,8 @@
       <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\HtmlAgilityPack.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Markdig">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net462\win-x86\Markdig.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Markdig, Version=0.20.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\Markdig.dll</HintPath>
     </Reference>
     <Reference Include="MarkdownMonster">
       <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\MarkdownMonster.exe</HintPath>

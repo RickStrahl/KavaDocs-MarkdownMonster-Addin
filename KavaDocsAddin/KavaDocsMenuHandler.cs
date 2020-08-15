@@ -9,10 +9,15 @@ using System.Windows.Input;
 using DocHound.Configuration;
 using DocHound.Model;
 using DocHound.Windows.Dialogs;
+using MarkdownMonster.AddIns;
 using Westwind.Utilities;
 
 namespace KavaDocsAddin
 {
+
+    /// <summary>
+    /// This class creates the KavaDocs main menu dynamically at runtime
+    /// </summary>
     public class KavaDocsMenuHandler
     {
         public KavaDocsModel Model { get; set; }
@@ -49,8 +54,8 @@ namespace KavaDocsAddin
             mi = new MenuItem()
             {
                 Header = "Recent Projects",
-                Name="MenuRecentItems",                
-                Command = Model.Commands.NewProjectCommand,                
+                Name="MenuRecentItems",
+                Command = Model.Commands.NewProjectCommand,
             };
             mi.SubmenuOpened += MenuRecentItems_SubmenuOpened;
             mi.Items.Add(new MenuItem());  // empty item so it pops open otherwise it won't
@@ -60,7 +65,7 @@ namespace KavaDocsAddin
             mi = new MenuItem()
             {
                 Header = "_Close Project",
-                Command = Model.Commands.CloseProjectCommand                
+                Command = Model.Commands.CloseProjectCommand
             };
             topMi.Items.Add(mi);
 
@@ -84,7 +89,7 @@ namespace KavaDocsAddin
             var mic = new MenuItem()
             {
                 Header = "_Link to another Topic",
-                Command = Model.Commands.LinkTopicDialogCommand             
+                Command = Model.Commands.LinkTopicDialogCommand
             };
             mi.Items.Add(mic);
 
@@ -152,7 +157,7 @@ namespace KavaDocsAddin
             // Settings children
             mic = new MenuItem()
             {
-                Header = "Project Settings",                                                
+                Header = "Project Settings",
             };
             mic.Click += MenuProjectSettings_Click;
             mi.Items.Add(mic);
@@ -162,13 +167,12 @@ namespace KavaDocsAddin
                 Header = "Kava Docs Settings",
             };
             mic.Click += MenuKavaDocsSettings_Click;
-            mi.Items.Add(mic);            
+            mi.Items.Add(mic);
 
 
             // insert Item after MainMenuEdit item on Main menu
-            Model.Addin.AddMenuItem(topMi, "MainMenuTools",mode: 0);
+            Model.Addin.AddMenuItem(topMi, "MainMenuTools", addMode: AddMenuItemModes.AddAfter );
             KavaDocsMenuItem = topMi;
-
 
             // Add Shortcut to main mane
             // ButtonShowFavorites MainMenuView

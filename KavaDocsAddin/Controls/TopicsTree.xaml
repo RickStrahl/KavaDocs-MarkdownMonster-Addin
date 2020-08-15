@@ -125,7 +125,7 @@
 			         Foreground="{DynamicResource BlueItem}" Padding="7,0,7,0"  
 			         Name="ButtonClosePanel" BorderThickness="0" FontSize="12"
 			         ToolTip="Close Kava Docs Panel" BorderBrush="Transparent"
-			         Command="{Binding MarkdownMonsterModel.ShowFolderBrowserCommand}" />
+			         Command="{Binding MarkdownMonsterModel.Commands.CloseLeftSidebarPanelCommand}" />
             
         </Grid>
 
