@@ -416,42 +416,42 @@ namespace KavaDocsAddin
 
         void Command_LinkTopicDialog()
         {
-            LinkTopicDialogCommand = new CommandBase((parameter, command) =>
+            LinkTopicDialogCommand = new CommandBase(async (parameter, command) =>
             {
-                var form = new PasteTopicBookmark();
-                form.Owner = mmApp.Model.Window;
-                form.ShowDialog();
+                //var form = new PasteTopicBookmark();
+                //form.Owner = mmApp.Model.Window;
+                //form.ShowDialog();
 
-                if (!form.Cancelled && form.SelectedTopic != null && mmApp.Model.ActiveEditor != null)
-                {
-                    var selText = mmApp.Model.ActiveEditor.GetSelection();
-                    var link = form.SelectedTopic.Link;
-                    if (string.IsNullOrEmpty(link))
-                        link = form.SelectedTopic.Slug;
+                //if (!form.Cancelled && form.SelectedTopic != null && mmApp.Model.ActiveEditor != null)
+                //{
+                //    var selText = await mmApp.Model.ActiveEditor.GetSelection();
+                //    var link = form.SelectedTopic.Link;
+                //    if (string.IsNullOrEmpty(link))
+                //        link = form.SelectedTopic.Slug;
 
-                    string origLink = link;
+                //    string origLink = link;
 
-                    if (!File.Exists(link))
-                    {
-                        if (!link.EndsWith(".md"))
-                            link += ".md";
+                //    if (!File.Exists(link))
+                //    {
+                //        if (!link.EndsWith(".md"))
+                //            link += ".md";
 
-                        if (!File.Exists(link))
-                        {
-                            if (!link.EndsWith(".html"))
-                                link += ".html";
-                            if (!File.Exists(link))
-                                link = origLink;
-                        }
-                    }
+                //        if (!File.Exists(link))
+                //        {
+                //            if (!link.EndsWith(".html"))
+                //                link += ".html";
+                //            if (!File.Exists(link))
+                //                link = origLink;
+                //        }
+                //    }
 
-                    if (string.IsNullOrEmpty(selText))
-                        selText = form.SelectedTopic.Title;
+                //    if (string.IsNullOrEmpty(selText))
+                //        selText = form.SelectedTopic.Title;
 
-                    string md = $"[{selText}]({link})";
+                //    string md = $"[{selText}]({link})";
 
-                    mmApp.Model.ActiveEditor.SetSelectionAndFocus(md);
-                }
+                //    await mmApp.Model.ActiveEditor.SetSelectionAndFocus(md);
+                //}
             });
         }
 

@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DocHound.Configuration;
 using KavaDocsAddin;
+using Westwind.Utilities.Configuration;
 
 namespace KavaDocsAddin.Core.Configuration
 {
@@ -26,7 +27,8 @@ namespace KavaDocsAddin.Core.Configuration
 
         static KavaApp()
         {
-            Configuration = KavaDocsConfiguration.Current;            
+            Configuration = KavaDocsConfiguration.Current;
+
         }
 
     }

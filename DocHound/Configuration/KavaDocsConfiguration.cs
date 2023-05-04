@@ -13,19 +13,31 @@ using Westwind.Utilities.Configuration;
 
 namespace DocHound.Configuration
 {
-    public class KavaDocsConfiguration : BaseAddinConfiguration<KavaDocsConfiguration>
+    public class KavaDocsConfiguration : BaseAddinConfiguration<KavaDocsConfiguration>, INotifyPropertyChanged
     {
+
+        public static KavaDocsConfiguration Current { get; set; }
+
+
+        static KavaDocsConfiguration()
+        {
+            Current = new KavaDocsConfiguration();
+            Current.Initialize();
+        }
 
         public KavaDocsConfiguration()
         {
-            ConfigurationFilename = "KavaDocsAddin.json";
+            
             DocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Kava Docs");         
             RecentProjects = new ObservableCollection<RecentProjectItem>();
             HomeFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
 
-        protected override void OnInitialize(IConfigurationProvider provider, string sectionName, object configData)
+        protected void OnInitialize(IConfigurationProvider provider, string sectionName, object configData)
         {
+            var fileProvider = provider as JsonFileConfigurationProvider<KavaDocsConfiguration>;
+            fileProvider.JsonConfigurationFile = "KavaDocsAddin.json";
+
             base.OnInitialize(provider, sectionName, configData);
             CleanupRecentProjects();
         }
@@ -176,6 +188,26 @@ namespace DocHound.Configuration
         }
 
         #endregion
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+
+    public class BaseAddinConfiguration<T> : AppConfiguration
+    {
+
 
     }
 

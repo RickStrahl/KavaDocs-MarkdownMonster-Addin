@@ -206,7 +206,7 @@ namespace KavaDocsAddin.Controls
         /// </summary>
         /// <param name="topic"></param>
         /// <returns></returns>
-        public TabItem OpenTopicInMMEditor(DocTopic topic = null)
+        public async Task<TabItem> OpenTopicInMMEditor(DocTopic topic = null)
         {
             if (topic == null)
                 topic = TreeTopicBrowser.SelectedItem as DocTopic;
@@ -222,7 +222,7 @@ namespace KavaDocsAddin.Controls
                 if (!File.Exists(file))
                     File.WriteAllText(file, "");
 
-                tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, isPreview: false, noFocus: false);
+                tab = await Model.KavaDocsModel.Window.RefreshTabFromFile(file, isPreview: false, noFocus: false);
                 Model.KavaDocsModel.Window.BindTabHeaders();
 
                 if (tab.Tag is MarkdownDocumentEditor editor)
@@ -240,7 +240,7 @@ namespace KavaDocsAddin.Controls
         /// Opens read
         /// </summary>
         /// <returns></returns>
-        public TabItem OpenTopicInEditor(bool setFocus = false)
+        public async Task<TabItem> OpenTopicInEditor(bool setFocus = false)
         {
             Debug.WriteLine("OpenTopicInEditor");
 
@@ -253,7 +253,7 @@ namespace KavaDocsAddin.Controls
             TabItem tab;
             if (topic != null && topic.Body != null && (topic.IsLink || topic.Body.StartsWith("http")))
             {
-                tab = Model.MarkdownMonsterModel.Window.OpenBrowserTab(topic.Link ?? topic.Body);
+                tab = await Model.MarkdownMonsterModel.Window.OpenBrowserTab(topic.Link ?? topic.Body);
                 return tab;
             }
 
@@ -276,7 +276,7 @@ namespace KavaDocsAddin.Controls
                 // Assign topic first then explicitly select
                 //tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, noFocus: !setFocus, isPreview: true, noSelectTab:true);
 
-                tab = Model.KavaDocsModel.Window.ActivateTab(file,
+                tab = await Model.KavaDocsModel.Window.ActivateTab(file,
                     noFocus: !setFocus,
                     isPreview: true,
                     noSelectTab: true);
@@ -295,7 +295,7 @@ namespace KavaDocsAddin.Controls
             SetEditorWithTopic(editor, topic, isUnEdited: true); // kavaUi.AddinModel.ActiveTopic);
            
             // Explicitly read in the current text from an open tab and save to body                
-            var body = editor.GetMarkdown();
+            var body = await editor.GetMarkdown();
             if (!string.IsNullOrEmpty(body))
                 topic.Body = topic.StripYaml(body);
 
@@ -311,7 +311,7 @@ namespace KavaDocsAddin.Controls
             }
 
             if (body != topic.Body)
-                editor.SetMarkdown(topic.Body);
+                await editor.SetMarkdown(topic.Body);
 
             window.TabControl.SelectedItem = tab;
 
@@ -557,7 +557,7 @@ namespace KavaDocsAddin.Controls
 
         void CreateMoveTopicCommand()
         {
-            MoveTopicCommand = new CommandBase((parameter, command) =>
+            MoveTopicCommand = new CommandBase(async (parameter, command) =>
             {
 
                 _dragContextMenu.Visibility = Visibility.Collapsed;
@@ -659,12 +659,12 @@ namespace KavaDocsAddin.Controls
             }, (p, c) => true);
         }
 
-        void UpdateMovedTopic(DocTopic topic)
+        async Task UpdateMovedTopic(DocTopic topic)
         {
             // TODO: Get latest changes from Editor
             var editorTopic = Model.MarkdownMonsterModel.ActiveEditor?.Properties[Constants.EditorPropertyNames.KavaDocsTopic] as DocTopic;
             if (editorTopic == topic)
-                topic.Body = Model.MarkdownMonsterModel.ActiveEditor.GetMarkdown();            
+                topic.Body = await Model.MarkdownMonsterModel.ActiveEditor.GetMarkdown();            
             else
             {
                 // TODO: Check if the topic is open in another tab
@@ -673,7 +673,7 @@ namespace KavaDocsAddin.Controls
                 {
                     topic = (tab.Tag as MarkdownDocumentEditor)?.Properties[Constants.EditorPropertyNames.KavaDocsTopic] as DocTopic;
                     if(topic != null)
-                        topic.Body = Model.MarkdownMonsterModel.ActiveEditor.GetMarkdown();                    
+                        topic.Body = await Model.MarkdownMonsterModel.ActiveEditor.GetMarkdown();                    
                 }
                 else
                     topic.LoadTopicFile(); // get latest from disk

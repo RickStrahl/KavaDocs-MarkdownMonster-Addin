@@ -32,4 +32,4 @@ copy "$src\..\screenshot.png" "$tgt\screenshot.png"
 "Zipping up setup file..."
 .\7z a -tzip -r  $tgt\addin.zip $dist\*.* 
 
-remove-item $dist -recurse
+# remove-item $dist -recurse

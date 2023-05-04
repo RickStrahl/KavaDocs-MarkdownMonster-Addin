@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -67,10 +68,9 @@ namespace KavaDocsAddin
 
 
         #region Initialization
-        public override void OnApplicationStart()
+        public override async Task OnApplicationStart()
         {
-            base.OnApplicationStart();
-
+            await base.OnApplicationStart();
 
             // Id - should match output folder name. REMOVE 'Addin' from the Id
             Id = "KavaDocs";
@@ -193,7 +193,7 @@ namespace KavaDocsAddin
         }
 
 
-        public override void OnApplicationShutdown()
+        public override async Task OnApplicationShutdown()
         {
             if (KavaDocsModel != null)
             {
@@ -202,22 +202,20 @@ namespace KavaDocsAddin
             }
 
             base.OnApplicationShutdown();
-
-            
         }
 
         #endregion
 
         #region Interception Hooks
 
-        public override void OnWindowLoaded()
+        public override async Task OnWindowLoaded()
         {
             if (kavaUi.Configuration.AutoOpen)
                 OnExecute(null);
         }
 
 
-        public override void OnExecute(object sender)
+        public override async Task OnExecute(object sender)
         {
             if (IsAddinInitialized)
             {
@@ -229,7 +227,7 @@ namespace KavaDocsAddin
         }
 
 
-        public override void OnAfterSaveDocument(MarkdownDocument doc)
+        public override async Task OnAfterSaveDocument(MarkdownDocument doc)
         {
             base.OnAfterSaveDocument(doc);
            
@@ -329,7 +327,7 @@ namespace KavaDocsAddin
             return objTopic as DocTopic;
         }
 
-        public override void OnDocumentActivated(MarkdownDocument doc)
+        public override async Task OnDocumentActivated(MarkdownDocument doc)
         {
             base.OnDocumentActivated(doc);
             if (KavaDocsModel == null || Model?.ActiveEditor == null)
@@ -343,7 +341,7 @@ namespace KavaDocsAddin
             topic.TopicState.IsSelected = true;
         }
 
-        public override void OnDocumentUpdated()
+        public override async Task OnDocumentUpdated()
         {
             if (KavaDocsModel == null || Model?.ActiveEditor == null || Model.ActiveEditor.Identifier != "KavaDocsDocument")
                 return;
@@ -353,9 +351,9 @@ namespace KavaDocsAddin
 
 
 
-        public override void OnExecuteConfiguration(object sender)
+        public override async Task OnExecuteConfiguration(object sender)
         {
-            Model.Window.OpenTab(Path.Combine(Model.Configuration.CommonFolder, "KavaDocsAddin.json"));
+            await Model.Window.OpenTab(Path.Combine(Model.Configuration.CommonFolder, "KavaDocsAddin.json"));
         }
 
         public override bool OnCanExecute(object sender)
@@ -373,7 +371,7 @@ namespace KavaDocsAddin
         /// <param name="renderedHtml"></param>
         /// <param name="markdownHtml"></param>
         /// <returns></returns>
-        public override string OnModifyPreviewHtml(string renderedHtml, string markdownHtml)
+        public override async Task<string> OnModifyPreviewHtml(string renderedHtml, string markdownHtml)
         {
             // default rendering if specified
             if (kavaUi.Configuration.TopicRenderMode == TopicRenderingModes.MarkdownDefault)
@@ -389,7 +387,7 @@ namespace KavaDocsAddin
             if (topic == null || topic != KavaDocsModel.ActiveTopic)
                 return renderedHtml;
 
-            topic.Body = mmApp.Model.ActiveEditor.GetMarkdown();
+            topic.Body = await mmApp.Model.ActiveEditor.GetMarkdown();
 
             topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Preview;
             topic.TopicState.IsPreview = true;

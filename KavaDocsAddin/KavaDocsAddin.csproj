@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\Users\rstrahl\AppData\Roaming\Markdown Monster\Addins\KavaDocs\</OutputPath>
+    <OutputPath>C:\Users\rstrahl\AppData\Roaming\Markdown Monster\Addins\KavaDocs\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,42 +25,49 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\Users\rstrahl\AppData\Roaming\Markdown Monster\Addins\KavaDocs\</OutputPath>
+    <OutputPath>C:\Users\rstrahl\AppData\Roaming\Markdown Monster\Addins\KavaDocs\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ControlzEx">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\ControlzEx.dll</HintPath>
+      <HintPath>C:\Users\rstrahl\AppData\Local\Markdown Monster\ControlzEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Dragablz">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\Dragablz.dll</HintPath>
+      <HintPath>C:\Users\rstrahl\AppData\Local\Markdown Monster\Dragablz.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="FontAwesome.WPF">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\FontAwesome.WPF.dll</HintPath>
+      <HintPath>C:\Users\rstrahl\AppData\Local\Markdown Monster\FontAwesome.WPF.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>C:\Users\rstrahl\AppData\Local\Markdown Monster\HtmlAgilityPack.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MahApps.Metro">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\MahApps.Metro.dll</HintPath>
+      <HintPath>C:\Users\rstrahl\AppData\Local\Markdown Monster\MahApps.Metro.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MarkdownMonster">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\MarkdownMonster.exe</HintPath>
+      <HintPath>C:\Users\rstrahl\AppData\Local\Markdown Monster\MarkdownMonster.exe</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\Microsoft.WindowsAPICodePack.dll</HintPath>
+      <HintPath>C:\Users\rstrahl\AppData\Local\Markdown Monster\Microsoft.WindowsAPICodePack.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack.Shell">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+      <HintPath>C:\Users\rstrahl\AppData\Local\Markdown Monster\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Xaml.Behaviors">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\Microsoft.Xaml.Behaviors.dll</HintPath>
+      <HintPath>C:\Users\rstrahl\AppData\Local\Markdown Monster\Microsoft.Xaml.Behaviors.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -71,8 +78,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationCore" />
     <Reference Include="Westwind.Utilities">
-      <HintPath>..\..\..\MarkdownMonster\MarkdownMonster\bin\Release\net472\win-x86\Westwind.Utilities.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>C:\Users\rstrahl\AppData\Local\Markdown Monster\Westwind.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -101,9 +107,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows\Dialogs\NewProjectDialog.xaml.cs">
       <DependentUpon>NewProjectDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\Dialogs\PasteTopicBookmark.xaml.cs">
-      <DependentUpon>PasteTopicBookmark.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Dialogs\ProjectSettings.xaml.cs">
       <DependentUpon>ProjectSettings.xaml</DependentUpon>
@@ -516,10 +519,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\Dialogs\PasteTopicBookmark.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Windows\Dialogs\ProjectSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -533,6 +532,7 @@
     <ProjectReference Include="..\DocHound\DocHound.csproj">
       <Project>{f7cf7101-6c60-4f3a-8036-ca77351aa2a2}</Project>
       <Name>DocHound</Name>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\Westwind.TypeImporter\Westwind.TypeImporter.csproj">
       <Project>{fced37a2-d418-4e9c-846a-abb52ea93954}</Project>
