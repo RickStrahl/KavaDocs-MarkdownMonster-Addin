@@ -85,7 +85,7 @@
             <StackPanel Orientation="Horizontal" >
                 <Image Source="../Assets/icon_16.png" Width="16" Height="16" Margin="4,0,0,0"/>
                 <TextBlock Height="Auto" 
-					   Text="Kava Docs"  
+					   Text="Documentation Monster"  
 					   FontWeight="Medium" FontSize="11"  Padding="4,5,2,5" />
             </StackPanel>
 

@@ -96,8 +96,17 @@ namespace KavaDocsAddin.Controls
 
         #region Selection Handling
 
+        private long _HandleSelectionDoubleExecTicks;
+
         public bool HandleSelection(DocTopic topic = null, bool forceFocus = false)
         {
+            var ticks = DateTime.Now.Ticks;
+            if (ticks - _HandleSelectionDoubleExecTicks  < 10_000 * 100)
+            {
+                return true;
+            }
+            _HandleSelectionDoubleExecTicks = ticks;
+
             bool selectTopic = false;
             if (topic == null)
                 topic = TreeTopicBrowser.SelectedItem as DocTopic;
@@ -129,17 +138,16 @@ namespace KavaDocsAddin.Controls
                 kavaUi.AddinModel.RecentTopics =
                     new ObservableCollection<DocTopic>(kavaUi.AddinModel.RecentTopics.Take(14));
 
-            //OpenTopicInEditor();
-            Dispatcher.InvokeAsync(() => OpenTopicInEditor(),DispatcherPriority.ApplicationIdle);
-            
-            var file = topic.GetTopicFileName();
-            var doc = new MarkdownDocument();
-            doc.Load(file);
+            //var file = topic.GetTopicFileName();
+            //var doc = new MarkdownDocument();
+            //doc.Load(file);
 
             // set topic state to selected and unchanged
             if (selectTopic)
                 topic.TopicState.IsSelected = true;
             topic.TopicState.IsDirty = false;
+
+            Dispatcher.InvokeAsync(() => OpenTopicInEditor().FireAndForget(), DispatcherPriority.Background);
 
             return true;
         }
@@ -161,7 +169,7 @@ namespace KavaDocsAddin.Controls
 
         private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            OpenTopicInMMEditor();                    
+            OpenTopicInMMEditor().FireAndForget();                  
         }
 
 
@@ -220,10 +228,10 @@ namespace KavaDocsAddin.Controls
                     return null;
                 
                 if (!File.Exists(file))
-                    File.WriteAllText(file, "");
+                    await File.WriteAllTextAsync(file, "");
 
                 tab = await Model.KavaDocsModel.Window.RefreshTabFromFile(file, isPreview: false, noFocus: false);
-                Model.KavaDocsModel.Window.BindTabHeaders();
+                Model?.KavaDocsModel?.Window?.BindTabHeaders();
 
                 if (tab.Tag is MarkdownDocumentEditor editor)
                 {
@@ -244,7 +252,7 @@ namespace KavaDocsAddin.Controls
         {
             Debug.WriteLine("OpenTopicInEditor");
 
-            DocTopic topic = TreeTopicBrowser.SelectedItem as DocTopic;
+            var topic = TreeTopicBrowser.SelectedItem as DocTopic;
             if (topic == null)
                 return null;
 
@@ -382,7 +390,7 @@ namespace KavaDocsAddin.Controls
 
                     HandleSelection();
                 }
-            }, e, DispatcherPriority.ApplicationIdle, Dispatcher);
+            }, e, DispatcherPriority.Background, Dispatcher);
         }
 
         private void TreeViewItem_KeyDown(object sender, KeyEventArgs e)

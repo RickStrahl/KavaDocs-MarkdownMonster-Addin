@@ -32,7 +32,7 @@ namespace KavaDocsAddin
         }
         public MenuItem CreateKavaDocsMainMenu()
         {
-            var topMi = new MenuItem() {  Name = "MainMenuKavaDocsMenu", Header = "_Kava Docs" };
+            var topMi = new MenuItem() {  Name = "MainMenuKavaDocsMenu", Header = "_Doc Monster" };
             topMi.DataContext = Model.TopicsTree.Model;
 
             var mi = new MenuItem()
