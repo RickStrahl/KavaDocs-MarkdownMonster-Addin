@@ -100,6 +100,7 @@ namespace KavaDocsAddin.Controls
 
         public bool HandleSelection(DocTopic topic = null, bool forceFocus = false)
         {
+            // avoid double selection from here
             var ticks = DateTime.Now.Ticks;
             if (ticks - _HandleSelectionDoubleExecTicks  < 10_000 * 100)
             {
@@ -284,10 +285,14 @@ namespace KavaDocsAddin.Controls
                 // Assign topic first then explicitly select
                 //tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, noFocus: !setFocus, isPreview: true, noSelectTab:true);
 
-                tab = await Model.KavaDocsModel.Window.ActivateTab(file,
-                    noFocus: !setFocus,
-                    isPreview: true,
-                    noSelectTab: true);
+                var window1 = Model.KavaDocsModel.Window;
+                await window1.RefreshTabFromFile(file, isPreview: true, noFocus: true,
+                    existingTab: window1.PreviewTab);
+
+                //tab = await window1.ActivateTab(file,
+                //    noFocus: !setFocus,
+                //    isPreview: true,
+                //    noSelectTab: true);
 
                 //RefreshTabFromFile(file, noFocus: !setFocus, isPreview: true, noSelectTab: true);
 
@@ -451,12 +456,13 @@ namespace KavaDocsAddin.Controls
             if (e.ChangedButton == MouseButton.Left)
                 _lastMouseDownPoint = e.GetPosition(TreeTopicBrowser);
 
+            e.Handled = true;
             if (!HandleSelection(topic))
                 return;
 
             if (TreeTopicBrowser.SelectedItem is DocTopic)
             {
-                TreeViewItem tvi = e.OriginalSource as TreeViewItem;
+                var tvi = e.OriginalSource as TreeViewItem;
                 tvi?.BringIntoView();
             }
         }
