@@ -956,10 +956,13 @@ namespace DocHound.Model
                     }
                     catch
                     {                        
-                        if (i > 2)
+                        if (i > 3)
                             return false;
                     }
                 }
+
+                if (string.IsNullOrEmpty(_body))
+                    return false;
 
                 // normalize line feeds
                 _body = _body.Replace("\r\n", "\n");

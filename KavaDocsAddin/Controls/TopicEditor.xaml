@@ -18,7 +18,7 @@
 
 
    
-            <Grid Name="MainGrid" >
+            <Grid Name="MainGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -56,7 +56,9 @@
 			                 Command="{Binding KavaDocsModel.Commands.CloseRightSidebarCommand}" />
                 </Grid>
 
-        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Left"  Grid.Row="1">
+        <ScrollViewer VerticalScrollBarVisibility="Visible"
+                      HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"
+                      HorizontalAlignment="Stretch"  Grid.Row="1" >
 
             <StackPanel Margin="5,10" Name="MainPanel">
 

@@ -30,16 +30,17 @@ namespace DocHound.Configuration
             
             DocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Kava Docs");         
             RecentProjects = new ObservableCollection<RecentProjectItem>();
-            HomeFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            HomeFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);            
         }
 
-        protected void OnInitialize(IConfigurationProvider provider, string sectionName, object configData)
+        protected override IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)
         {
-            var fileProvider = provider as JsonFileConfigurationProvider<KavaDocsConfiguration>;
-            fileProvider.JsonConfigurationFile = "KavaDocsAddin.json";
+            var provider = new JsonFileConfigurationProvider<KavaDocsConfiguration>()
+            {
+                JsonConfigurationFile = Path.Combine(mmApp.Configuration.CommonFolder, "KavaDocsAddin.json")
+            };
 
-            base.OnInitialize(provider, sectionName, configData);
-            CleanupRecentProjects();
+            return provider;
         }
 
         #region Static Configuration Options

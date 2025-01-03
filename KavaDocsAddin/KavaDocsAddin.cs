@@ -3,11 +3,9 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DocHound;
-using DocHound.Annotations;
 using DocHound.Configuration;
 using DocHound.Model;
 using FontAwesome6;
@@ -17,8 +15,6 @@ using MahApps.Metro.Controls;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using MarkdownMonster.Controls;
-using MarkdownMonster.Controls.LeftSidebar;
-using MarkdownMonster.RenderExtensions;
 using MarkdownMonster.Utilities;
 using MarkdownMonster.Windows;
 using Westwind.Utilities;
@@ -129,6 +125,7 @@ namespace KavaDocsAddin
                 KavaDocsModel.Addin = this;
                 Configuration = kavaUi.Configuration;
                 KavaDocsModel.Configuration = Configuration;
+                Configuration.Initialize();
 
 
                 // Set up the KavaDocs Topic Tree in the Left Sidebar
@@ -164,7 +161,7 @@ namespace KavaDocsAddin
                 IsAddinInitialized = true;
 
                 // Activate the Tab
-                Model.Window.ShowFolderBrowser();
+                Model?.Window?.ShowFolderBrowser();
                 OpenDocMonsterTab(false);
 
                 // If no project is open try to open one
@@ -261,6 +258,16 @@ namespace KavaDocsAddin
         }
 
 
+        public override async Task OnExecuteConfiguration(object sender)
+        {
+            
+            var configFile = Path.Combine(mmApp.Configuration.CommonFolder, "KavaDocsAddin.json");
+            if (!File.Exists(configFile))
+                KavaDocsConfiguration.Current.Write();
+          
+            await Model.Window.OpenTab(configFile);
+        }
+
         public override async Task OnAfterSaveDocument(MarkdownDocument doc)
         {
             base.OnAfterSaveDocument(doc);
@@ -272,7 +279,7 @@ namespace KavaDocsAddin
             // Reload settings after saving them in the editor
             if (doc.Filename.IndexOf("kavadocsaddin.json", StringComparison.InvariantCultureIgnoreCase) > -1)
             {                
-                KavaDocsModel.Configuration.Read(); 
+                KavaDocsModel.Configuration.Read();                
                 return;
             }
 
@@ -386,12 +393,6 @@ namespace KavaDocsAddin
             Model.ActiveEditor.Properties[Constants.EditorPropertyNames.KavaDocsUnedited] = false;
         }
 
-
-
-        public override async Task OnExecuteConfiguration(object sender)
-        {
-            await Model.Window.OpenTab(Path.Combine(Model.Configuration.CommonFolder, "KavaDocsAddin.json"));
-        }
 
         public override bool OnCanExecute(object sender)
         {
