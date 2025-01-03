@@ -7,13 +7,17 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DocHound;
+using DocHound.Annotations;
 using DocHound.Configuration;
 using DocHound.Model;
-using FontAwesome.WPF;
+using FontAwesome6;
+using FontAwesome6.Fonts;
 using KavaDocsAddin.Controls;
 using MahApps.Metro.Controls;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
+using MarkdownMonster.Controls;
+using MarkdownMonster.Controls.LeftSidebar;
 using MarkdownMonster.RenderExtensions;
 using MarkdownMonster.Utilities;
 using MarkdownMonster.Windows;
@@ -98,7 +102,7 @@ namespace KavaDocsAddin
 
                 // if an icon is specified it shows on the toolbar
                 // if not the add-in only shows in the add-ins menu
-                menuItem.FontawesomeIcon = FontAwesomeIcon.Paw;
+                menuItem.FontawesomeIcon = FontAwesome6.EFontAwesomeIcon.Solid_Paw;
             }
 
             // if you don't want to display config or main menu item clear handler
@@ -137,12 +141,10 @@ namespace KavaDocsAddin
 
                 var icons = new AssociatedIcons();
                 var imgSource = icons.GetIconFromFile("t.kavadocs");  // image source
+                
+                
 
-                Model.Window.AddLeftSidebarPanelTabItem(tabItem,"Topics",imgSource);
 
-                // Kava Docs Topic Editor Tab
-                tabItem = new MetroTabItem() { Name = "KavaDocsTopic" };
-                KavaDocsTopicEditorTab = tabItem;
 
                 TopicEditor = new TopicEditor();
                 tabItem.Content = TopicEditor;
@@ -163,13 +165,42 @@ namespace KavaDocsAddin
 
                 // Activate the Tab
                 Model.Window.ShowFolderBrowser();
-                Model.Window.SidebarContainer.SelectedItem = KavaDocsTopicTreeTab;
+                OpenDocMonsterTab(false);
 
                 // If no project is open try to open one
                 if (KavaDocsModel.ActiveProject == null)
                     KavaDocsModel.Commands.OpenProjectCommand.Execute(null);
             }
+            
         }
+
+        public void OpenDocMonsterTab(bool noSelection = false)
+        {
+            var config = mmApp.Configuration.LeftSidebar;
+            var leftSidebar = mmApp.Model.Window.LeftSidebar;
+
+            var sbtDocMonster = config["Documentation Monster"];
+            if (sbtDocMonster == null)
+            {
+                sbtDocMonster = new SidebarTab()
+                {
+                    Tabname = "Documentation Monster",
+                    TabLocation = SidebarTabLocation.Top,
+                };
+                config.Tabs.Add(sbtDocMonster);
+            }
+            
+            Tree = new TopicsTree();            
+            sbtDocMonster.TabContent = Tree;
+            sbtDocMonster.HeaderImage = new ImageAwesome { Icon = EFontAwesomeIcon.Duotone_CircleQuestion, PrimaryColor = Brushes.White, SecondaryColor = System.Windows.Media.Brushes.SteelBlue, SecondaryOpacity = 1, Height = 23 }.Source;
+            var tabItem = leftSidebar.CreateTabItemFromSidebarTab(sbtDocMonster);
+            KavaDocsTopicEditorTab = tabItem;
+
+            mmApp.Model.Window.LeftSidebar.RefreshTabBindings();
+            if (!noSelection)
+                leftSidebar.SelectTab(sbtDocMonster.TabItem);
+        }
+
 
 
         /// <summary>
@@ -179,8 +210,11 @@ namespace KavaDocsAddin
         {
             if (IsAddinInitialized)
             {
+                var config = mmApp.Configuration.LeftSidebar;
+                var sbtDocMonster = config["Documentation Monster"];
+                config?.Tabs?.Remove(sbtDocMonster);
+
                 // Set up the KavaDocs Topic Tree in the Left Sidebar
-                mmApp.Model.Window.SidebarContainer.Items.Remove(KavaDocsTopicTreeTab);
                 mmApp.Model.Window.RightSidebarContainer.Items.Remove(KavaDocsTopicEditorTab);
                 mmApp.Model.Window.MainMenu.Items.Remove(KavaDocsMenu.KavaDocsMenuItem);
                 mmApp.Model.Window.ShowRightSidebar(true);
@@ -330,6 +364,7 @@ namespace KavaDocsAddin
         public override async Task OnDocumentActivated(MarkdownDocument doc)
         {
             base.OnDocumentActivated(doc);
+
             if (KavaDocsModel == null || Model?.ActiveEditor == null)
                 return;
             
@@ -337,6 +372,8 @@ namespace KavaDocsAddin
                  return;            
 
             var topic = objTopic as DocTopic;
+            if (topic == null) return;
+
             KavaDocsModel.ActiveTopic = topic;
             topic.TopicState.IsSelected = true;
         }

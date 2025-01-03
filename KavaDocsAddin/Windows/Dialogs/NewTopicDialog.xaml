@@ -6,6 +6,7 @@
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:fa="http://schemas.fontawesome.io/icons/"        
         xmlns:interfaces="clr-namespace:DocHound.Interfaces;assembly=DocHound"
+        xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
         mc:Ignorable="d"
         Icon="../../icon.png"                    
         Title="New Topic"
@@ -118,7 +119,7 @@
                 <Button Name="ButtonCreateTopic" Margin="0,20" Height="40" FontSize="15" Width="160"
                         HorizontalAlignment="Left"   IsDefault="True" Click="Button_CreateTopicClick"  >
                     <StackPanel Orientation="Horizontal">
-                        <fa:FontAwesome  Icon="Upload"  FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" Foreground="#FF0E7E28" FontSize="20" />
+                        <fa6:ImageAwesome  Icon="Solid_Upload"  Foreground="#FF0E7E28"  />
                         <TextBlock Margin="10,0,0,0">Create Topic</TextBlock>
                     </StackPanel>
                 </Button>
@@ -126,7 +127,7 @@
                 <Button Name="ButtonCancel" Margin="10,20" Height="40" FontSize="15" Width="160" 
                         HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" >
                     <StackPanel Orientation="Horizontal" >
-                        <fa:FontAwesome Icon="Remove" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" Foreground="DarkRed"  FontSize="20"/>
+                        <fa6:ImageAwesome Icon="Solid_XMark"  Foreground="DarkRed"  />
                         <TextBlock Margin="10,0,0,0">Cancel</TextBlock>
                     </StackPanel>
                 </Button>

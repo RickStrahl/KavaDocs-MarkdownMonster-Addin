@@ -187,8 +187,10 @@ namespace KavaDocsAddin
             };
             mi.Click += (s, e) =>
             {
-                Model.Window.ShowLeftSidebar();
-                Model.Window.SidebarContainer.SelectedItem = Model.Addin.KavaDocsTopicTreeTab;
+                if (Model?.Window == null)
+                    return;
+                Model.Window.ShowLeftSidebar();                
+                Model.Window.LeftSidebar.SelectTab("Documentation Monster");
             };
 
             viewMenu.Items.Insert(viewMenu.Items.IndexOf(viewMenuItem)+1, mi);

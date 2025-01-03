@@ -142,7 +142,7 @@ namespace DocHound.Utilities
             rootTopic.Project = Project;
             
             string error;
-            string html = Project.TemplateRenderer.RenderTemplate("TableOfContents.cshtml", rootTopic, out error);            
+            string html = Project.TemplateHost.RenderTemplate("TableOfContents.cshtml", rootTopic, out error);            
             File.WriteAllText(Path.Combine(OutputPath, "TableOfContents.html"),html); 
         }
 

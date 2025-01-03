@@ -493,7 +493,7 @@ namespace DocHound.Model
             OnPreRender(topic, renderMode);
 
             string error;
-            string html = Project.TemplateRenderer.RenderTemplate(DisplayType + ".cshtml", topic, out error);
+            string html = Project.TemplateHost.RenderTemplate(DisplayType + ".cshtml", topic, out error);
 
             if (string.IsNullOrEmpty(html))
             {
@@ -775,9 +775,9 @@ namespace DocHound.Model
             return html;
         }
 
-        public Westwind.RazorHosting.RawString MarkdownRaw(string markdown)
+        public RawString MarkdownRaw(string markdown)
         {            
-            return new Westwind.RazorHosting.RawString(Markdown(markdown));            
+            return new RawString(Markdown(markdown));            
         }
 
         
@@ -1451,6 +1451,46 @@ namespace DocHound.Model
     {
         Html,
         Preview
-    }       
+    }
+
+    public class RawString : IRawValue
+    {
+        string OrigValue { get; set; }
+
+        public static RawString Empty => new RawString(string.Empty);
+
+        public RawString()
+        {
+            
+        }
+
+        public RawString(string value)
+        {
+            OrigValue = value;
+        }
+
+        public RawString(StringBuilder sb)
+        {
+            OrigValue = sb.ToString();
+        }
+
+
+        public string Raw()
+        {
+            return OrigValue;
+        }
+
+        public void Set(string value)
+        {
+            OrigValue = value;
+        }
+
+
+        public override string ToString() => OrigValue;
+    }
+
+    public interface IRawValue
+    {
+    }
 }
 

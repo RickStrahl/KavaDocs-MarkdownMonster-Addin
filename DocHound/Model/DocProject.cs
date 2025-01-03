@@ -13,7 +13,7 @@ using System.Windows.Threading;
 using DocHound.Annotations;
 using DocHound.Configuration;
 using DocHound.Interfaces;
-using DocHound.Razor;
+using DocHound.Templates;
 using MarkdownMonster;
 using Newtonsoft.Json;
 using Westwind.Utilities;
@@ -234,27 +234,23 @@ namespace DocHound.Model
         /// <summary>
         /// Template Renderer used to render topic templates
         /// </summary>
-        internal RazorTemplates TemplateRenderer
+        internal TemplateHost TemplateHost
         {
             get
             {
-                if (_templateRender == null)
+                if (_templateHost == null)
                 {
-                    _templateRender = new RazorTemplates();
-                    _templateRender.StartRazorHost(ProjectDirectory);
+                    _templateHost = new TemplateHost();
                 }
 
-                return _templateRender;
+                return _templateHost;
             }
             set
-            {
-                if (value == null)
-                    _templateRender?.StopRazorHost();
-                _templateRender = value;
+            {                    
+                _templateHost = value;
             }
         }
-
-        private RazorTemplates _templateRender;
+        private TemplateHost _templateHost;
 
         //public DocProjectConfiguration Configuration { get; set; }
 

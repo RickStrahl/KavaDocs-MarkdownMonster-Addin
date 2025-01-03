@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Windows;
 using DocHound.Configuration;
@@ -7,8 +7,8 @@ using DocHound.Utilities;
 using KavaDocsAddin;
 using KavaDocsAddin.Core.Configuration;
 using MarkdownMonster;
+using MarkdownMonster.Utilities;
 using MarkdownMonster.Windows;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using Westwind.Utilities;
 using KavaDocsModel = KavaDocsAddin.KavaDocsModel;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -141,29 +141,38 @@ Kava Docs requires a new project folder. Please choose another folder for your n
 
             if (string.IsNullOrEmpty(ProjectCreator.ProjectFolder))
             {
-                var dlg = new CommonOpenFileDialog()
-                {
-                    Title = "Select folder for new KavaDocs Project",
-                    IsFolderPicker = true,
-                    RestoreDirectory = true,
-                    ShowPlacesList = true,
-                    Multiselect = false,
-                    EnsureValidNames = false,
-                    EnsureFileExists = false,
-                    EnsurePathExists = false
-                };
-
+                string initialPath = kavaUi.Configuration.DocumentsFolder;
                 if (!string.IsNullOrEmpty(kavaUi.Configuration.LastProjectFile))
-                    dlg.InitialDirectory = System.IO.Path.GetDirectoryName(kavaUi.Configuration.LastProjectFile);
-                else
-                    dlg.InitialDirectory = kavaUi.Configuration.DocumentsFolder;
+                    initialPath  = System.IO.Path.GetDirectoryName(kavaUi.Configuration.LastProjectFile);
 
-                var res = dlg.ShowDialog();
+                string selectedFolder = mmWindowsUtils.ShowFolderDialog(initialPath, "Select folder for new KavaDocs Project");
 
-                if (res != CommonFileDialogResult.Ok)
+                if (string.IsNullOrEmpty(selectedFolder))
                     return;
 
-                ProjectCreator.ProjectFolder = dlg.FileName;
+                //var dlg = new CommonOpenFileDialog()
+                //{
+                //    Title = "Select folder for new KavaDocs Project",
+                //    IsFolderPicker = true,
+                //    RestoreDirectory = true,
+                //    ShowPlacesList = true,
+                //    Multiselect = false,
+                //    EnsureValidNames = false,
+                //    EnsureFileExists = false,
+                //    EnsurePathExists = false
+                //};
+
+                //if (!string.IsNullOrEmpty(kavaUi.Configuration.LastProjectFile))
+                //    dlg.InitialDirectory = System.IO.Path.GetDirectoryName(kavaUi.Configuration.LastProjectFile);
+                //else
+                //    dlg.InitialDirectory = kavaUi.Configuration.DocumentsFolder;
+
+                //var res = dlg.ShowDialog();
+
+                //if (res != CommonFileDialogResult.Ok)
+                //    return;
+
+                ProjectCreator.ProjectFolder = selectedFolder;
             }
 
             
@@ -234,25 +243,33 @@ Kava Docs requires a new project folder. Please choose another folder for your n
 
         private void ButtonGetDirectory_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new CommonOpenFileDialog();
-
-            dlg.Title = "Select folder to open in the Folder Browser";
-            dlg.IsFolderPicker = true;
+            string initialPath = kavaUi.Configuration.DocumentsFolder;
             if (!string.IsNullOrEmpty(kavaUi.Configuration.LastProjectFile))
-                dlg.InitialDirectory = System.IO.Path.GetDirectoryName(kavaUi.Configuration.LastProjectFile);
-            else
-                dlg.InitialDirectory = kavaUi.Configuration.DocumentsFolder;
-            dlg.RestoreDirectory = true;
-            dlg.ShowHiddenItems = true;
-            dlg.ShowPlacesList = true;
-            dlg.EnsurePathExists = false;
+                initialPath = System.IO.Path.GetDirectoryName(kavaUi.Configuration.LastProjectFile);
 
-            var result = dlg.ShowDialog();
-
-            if (result != CommonFileDialogResult.Ok)
+            string selectedFolder = mmWindowsUtils.ShowFolderDialog(initialPath, "Select folder to open in the Folder Browser");
+            if (string.IsNullOrEmpty(selectedFolder))
                 return;
 
-            ProjectCreator.ProjectFolder = dlg.FileName;
+            //var dlg = new CommonOpenFileDialog();
+
+            //dlg.Title = "Select folder to open in the Folder Browser";
+            //dlg.IsFolderPicker = true;
+            //if (!string.IsNullOrEmpty(kavaUi.Configuration.LastProjectFile))
+            //    dlg.InitialDirectory = System.IO.Path.GetDirectoryName(kavaUi.Configuration.LastProjectFile);
+            //else
+            //    dlg.InitialDirectory = kavaUi.Configuration.DocumentsFolder;
+            //dlg.RestoreDirectory = true;
+            //dlg.ShowHiddenItems = true;
+            //dlg.ShowPlacesList = true;
+            //dlg.EnsurePathExists = false;
+
+            //var result = dlg.ShowDialog();
+
+            //if (result != CommonFileDialogResult.Ok)
+            //    return;
+
+            ProjectCreator.ProjectFolder = selectedFolder; // dlg.FileName;
 
         }
         #endregion

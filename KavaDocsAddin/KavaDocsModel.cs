@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -14,7 +14,6 @@ using DocHound;
 using DocHound.Annotations;
 using DocHound.Configuration;
 using DocHound.Model;
-using FontAwesome.WPF;
 using KavaDocsAddin;
 using KavaDocsAddin.Controls;
 using KavaDocsAddin.Core.Configuration;
@@ -219,7 +218,7 @@ namespace KavaDocsAddin
                     {
                         Window.ShowStatus("Failed to load project: " + projectFile,
                             KavaApp.Configuration.StatusMessageTimeout);
-                        Window.SetStatusIcon(FontAwesomeIcon.Warning, Colors.Red);
+                        Window.SetStatusIcon(FontAwesome6.EFontAwesomeIcon.Solid_TriangleExclamation, Colors.Red);
                     }
 
                     Window.ShowStatus();
@@ -264,7 +263,7 @@ namespace KavaDocsAddin
 
                 if (renderedHtml == null)
                 {
-                    Window.SetStatusIcon(FontAwesomeIcon.Warning, Colors.Red, false);
+                    Window.SetStatusIcon(FontAwesome6.EFontAwesomeIcon.Solid_TriangleExclamation, Colors.Red, false);
                     Window.ShowStatus($"Access denied: {System.IO.Path.GetFileName(topic.RenderTopicFilename)}", 5000);
                     return;
                 }

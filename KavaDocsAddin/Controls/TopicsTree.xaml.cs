@@ -482,7 +482,7 @@ namespace KavaDocsAddin.Controls
             if (sourceTopic == null)
                 return;
 
-            var tvItem = WindowUtilities.FindAnchestor<TreeViewItem>((DependencyObject) e.OriginalSource);
+            var tvItem = WindowUtilities.FindAncestor<TreeViewItem>( (DependencyObject) e.OriginalSource);
             if (tvItem == null)
                 return;
             var targetTopic = tvItem.DataContext as DocTopic;

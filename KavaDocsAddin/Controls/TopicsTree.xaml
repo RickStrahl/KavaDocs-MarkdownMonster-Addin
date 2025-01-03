@@ -5,8 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:markdownMonster="clr-namespace:MarkdownMonster;assembly=MarkdownMonster"
-             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             
              xmlns:windows="clr-namespace:MarkdownMonster.Windows;assembly=MarkdownMonster"
+             xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
              mc:Ignorable="d"                
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -104,7 +105,7 @@
                     Command="{Binding KavaDocsModel.Commands.NewProjectCommand}" />-->
 
             <Button  Grid.Column="2"
-                     fa:Awesome.Content="FolderOpen" Background="Transparent" 
+                     fa6:Awesome.Icon="Solid_FolderOpen" Background="Transparent" 
                      Foreground="{DynamicResource BlueItem}" Padding="6,0,6,0"   
                      Name="ButtonOpenFolder" BorderThickness="0"  FontSize="12"
                      ToolTip="Open Project Folder in Folder Browser" 
@@ -113,7 +114,7 @@
             />
 
             <Button  Grid.Column="3"
-                     fa:Awesome.Content="Refresh" Background="Transparent" 
+                     fa6:Awesome.Icon="Solid_Rotate" Background="Transparent" 
 			         Foreground="{DynamicResource BlueItem}" Padding="6,0,6,0"   
 			         Name="ButtonRefreshFolder" BorderThickness="0"  FontSize="12"
 			         ToolTip="Refresh Project Tree" BorderBrush="Transparent"
@@ -121,7 +122,7 @@
 			         />
 
             <Button  Grid.Column="4"
-                     fa:Awesome.Content="ChevronCircleLeft" Background="Transparent" 
+                     fa6:Awesome.Icon="Solid_CircleChevronLeft" Background="Transparent" 
 			         Foreground="{DynamicResource BlueItem}" Padding="7,0,7,0"  
 			         Name="ButtonClosePanel" BorderThickness="0" FontSize="12"
 			         ToolTip="Close Kava Docs Panel" BorderBrush="Transparent"

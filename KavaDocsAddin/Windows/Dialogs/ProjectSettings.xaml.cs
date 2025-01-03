@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -89,7 +89,7 @@ namespace DocHound.Windows.Dialogs
             var creator = new DocProjectCreator();
             if (!creator.CopyProjectAssets(Project))
             {
-                AppModel.Window.SetStatusIcon(FontAwesome.WPF.FontAwesomeIcon.Warning, Colors.Firebrick);
+                AppModel.Window.SetStatusIcon(FontAwesome6.EFontAwesomeIcon.Solid_TriangleExclamation, Colors.Firebrick);
                 AppModel.Window.ShowStatus(creator.ErrorMessage, 6000);
             }
             else
