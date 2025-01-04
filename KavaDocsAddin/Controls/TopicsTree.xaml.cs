@@ -117,6 +117,9 @@ namespace KavaDocsAddin.Controls
             if (topic == null)
                 return false;
 
+            //if (topic.Topics.Count > 0)
+            //    topic.IsExpanded = !topic.IsExpanded;
+
             var lastTopic = kavaUi.AddinModel.ActiveTopic;
             if (lastTopic != null)
                 lastTopic.TopicState.IsSelected = false;
@@ -456,7 +459,6 @@ namespace KavaDocsAddin.Controls
             if (e.ChangedButton == MouseButton.Left)
                 _lastMouseDownPoint = e.GetPosition(TreeTopicBrowser);
 
-            e.Handled = true;
             if (!HandleSelection(topic))
                 return;
 
@@ -738,6 +740,7 @@ namespace KavaDocsAddin.Controls
             TreeTopicBrowser.ContextMenu = ctxHandler.CreateTreeviewContextMenu();
             TreeTopicBrowser.ContextMenu.IsOpen = true;
         }
+
     }
 
 

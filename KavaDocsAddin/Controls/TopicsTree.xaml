@@ -169,6 +169,7 @@
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded,Mode=TwoWay}" />
                         <Setter Property="controls:VisibilityHelper.IsCollapsed" Value="{Binding TopicState.IsHidden,Mode=TwoWay}" />
 
+                    <!--<EventSetter Event="Expanded" Handler="ExpandedOrCollapsed_OnHandler" />-->
                     <EventSetter Event="PreviewMouseDown" Handler="TreeViewItem_MouseDown"  />
                     <EventSetter Event="MouseMove" Handler="TreeViewItem_MouseMove"  />
                     <EventSetter Event="DragOver" Handler="TreeViewItem_DragOver" />

@@ -36,8 +36,8 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Source="../Assets/icon_16.png" Width="16" Height="16" Margin="4,0,0,0"/>
                         <TextBlock Height="Auto" 
-					       Text="Kava Docs Topic"  
-					       FontWeight="Medium" FontSize="11"  Padding="4,5,2,5" />
+					       Text="Doc Monster Topic"  
+					       FontWeight="Medium" FontSize="11"  Padding="4,5,2,5" />  
                     </StackPanel>
 
                     <Button attachedProperties:FontAwesome.Icon="Solid_CircleCheck" Grid.Column="1" Background="Transparent" 

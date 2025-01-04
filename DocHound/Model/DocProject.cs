@@ -831,7 +831,6 @@ namespace DocHound.Model
             if (topics == null)
                 return;
 
-            var list = new ObservableCollection<DocTopic>();
 
             // need to copy so we can clear the root collection
             var allTopics = new ObservableCollection<DocTopic>(topics);
@@ -853,7 +852,6 @@ namespace DocHound.Model
                 top.ParentId = null;
                 top.Parent = null;
                 top.Project = this;
-
 
                 topics.Add(top);
 
@@ -911,8 +909,10 @@ namespace DocHound.Model
                     childTopic.Link = baseSlug + slug + ".md";
 
                 topic.Topics.Add(childTopic);
-
                 childTopic.SaveTopicFile();
+
+                // check for additional children recursively
+                GetChildTopicsForTopicFromFlatList(topics, childTopic);
             }
         }
 

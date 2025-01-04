@@ -992,7 +992,7 @@ namespace DocHound.Model
             }
 
             var serializer = new SerializerBuilder()
-                .WithNamingConvention(new CamelCaseNamingConvention())                   
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)                   
                 .Build();
              
             
@@ -1097,7 +1097,7 @@ namespace DocHound.Model
                 var sr = new StringReader(yaml);
                 var deserializer = new DeserializerBuilder()
                     .IgnoreUnmatchedProperties()
-                    .WithNamingConvention(new CamelCaseNamingConvention())
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
                     .Build();
 
                 try

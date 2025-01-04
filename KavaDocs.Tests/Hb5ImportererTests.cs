@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DocHound.Model;
 using DocHound.Utilities;
+using MarkdownMonster;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Westwind.Utilities;
 
@@ -16,7 +13,13 @@ namespace Westwind.HtmlHelpBuilder.Tests
     [TestClass]
     public class Hbp5ImporterTests
     {
-        private string KavaDocsAddinPath = Environment.ExpandEnvironmentVariables("%appdata%\\Markdown Monster\\Addins\\kavadocs");
+        //private string KavaDocsAddinPath = FileUtils.ExpandPathEnvironmentVariables("%appdata%\\Markdown Monster\\Addins\\kavadocs");
+        private string KavaDocsAddinPath = FileUtils.ExpandPathEnvironmentVariables("~\\Dropbox\\Markdown Monster\\Addins\\kavadocs");
+
+
+        public Hbp5ImporterTests()
+        {
+        }
 
         [TestMethod]
         public void ImportWconnectHb5()
@@ -37,17 +40,29 @@ namespace Westwind.HtmlHelpBuilder.Tests
         [TestMethod]
         public void ImportWebSurgeHb5()
         {
-            string outputFolder = @"c:\temp\websurge3.1_project";
+            string exportJsonFile = @"C:\Users\rstrahl\Documents\Html Help Builder Projects\west wind websurge\west wind websurge.json";
+            string outputFolder = @"d:\temp\websurge3.1_project";
             if (Directory.Exists(outputFolder))
+            {
                 try
                 {
                     Directory.Delete(outputFolder);
                 }
                 catch { }
+            }
             
             var importer = new HelpBuilder5JsonImporter();
-            Assert.IsTrue(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\west wind websurge\west wind websurge.json",
-                outputFolder, KavaDocsAddinPath));
+            bool result = importer.ImportHbp(exportJsonFile, outputFolder, KavaDocsAddinPath);
+            Assert.IsTrue(result);
+
+            var project = DocProject.LoadProject(Path.Combine(outputFolder, "_toc.json"));
+            project.WalkTopicsHierarchy(project.Topics, (topic, project) =>
+            {
+                
+                Console.WriteLine($" {topic.Title}");
+            });
+
+
         }
 
         [TestMethod]

@@ -5,6 +5,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using DocHound;
 using DocHound.Configuration;
 using DocHound.Model;
@@ -189,7 +190,9 @@ namespace KavaDocsAddin
             
             Tree = new TopicsTree();            
             sbtDocMonster.TabContent = Tree;
-            sbtDocMonster.HeaderImage = new ImageAwesome { Icon = EFontAwesomeIcon.Duotone_CircleQuestion, PrimaryColor = Brushes.White, SecondaryColor = System.Windows.Media.Brushes.SteelBlue, SecondaryOpacity = 1, Height = 23 }.Source;
+            sbtDocMonster.HeaderImage = new BitmapImage(new Uri("pack://application:,,,/KavaDocsAddin;component/Assets/icon_128.png"));
+            //new ImageAwesome { Icon = EFontAwesomeIcon.Duotone_CircleQuestion, PrimaryColor = Brushes.White, SecondaryColor = System.Windows.Media.Brushes.SteelBlue, SecondaryOpacity = 1, Height = 23 }.Source;
+
             var tabItem = leftSidebar.CreateTabItemFromSidebarTab(sbtDocMonster);
             KavaDocsTopicEditorTab = tabItem;
 

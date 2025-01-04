@@ -92,6 +92,8 @@ namespace DocHound.Utilities
                 newTopic.Type = format == 2 ? TopicBodyFormats.Markdown : TopicBodyFormats.HelpBuilder;
                 newTopic.SetBodyWithoutSavingTopicFile(oldTopic.body);
 
+
+
                 // Properties have to be parsed out
                 // BodyFormats
                 project.Topics.Add(newTopic);
@@ -135,6 +137,8 @@ namespace DocHound.Utilities
 
                 topic.Body = topic.Body.Replace(find, replace);
             });
+
+            
 
             return project.SaveProject(Path.Combine(outputFolder, "_toc.json"));
         }
