@@ -510,7 +510,7 @@ namespace DocHound.Model
             if (TemplateHost.Script.Error )
             {               
                 SetError(error + "\n\n" + TemplateHost.Script.GeneratedClassCodeWithLineNumbers);
-                return null;
+                return html;
             }
 
             // Fix up any locally linked .md extensions to .html

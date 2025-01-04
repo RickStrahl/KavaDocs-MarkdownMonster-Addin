@@ -73,16 +73,30 @@ namespace DocHound.Templates
 
             if (Script.Error)
             {
-
-                result =
-                    "<h3>Template Rendering Error</h3>\r\n<hr/>\r\n" +
-                    "<pre>" + WebUtility.HtmlEncode(Script.ErrorMessage) + "\n" + Script.GeneratedClassCodeWithLineNumbers + "</pre>";
-
+                result = ErrorHtml();
                 error = Script.ErrorMessage + "\n\n" + Script.GeneratedClassCodeWithLineNumbers;
             }
 
             return result;
 
+        }
+
+        public string ErrorHtml(string errorMessage = null, string code = null)
+        {            
+            if (string.IsNullOrEmpty(errorMessage))
+                errorMessage = Script.ErrorMessage;
+            if (string.IsNullOrEmpty(code))
+                code = Script.GeneratedClassCodeWithLineNumbers;
+
+            string result =
+                    "<style>" +
+                    "body { background: white; color; black; font-family: sans;}" +
+                    "</style>" +
+                    "<h1>Template Rendering Error</h3>\r\n<hr/>\r\n" +
+                    "<pre style='font-weight: 600;margin-bottom: 2em;'>" + WebUtility.HtmlEncode(errorMessage) + "</pre>\n\n" +
+                    "<pre>" + WebUtility.HtmlEncode(code) + "</pre>";                   
+
+            return result;
         }
 
     }
