@@ -487,11 +487,12 @@ namespace DocHound.Model
         /// <returns></returns>
         public string RenderTopic(bool addPragmaLines = false, TopicRenderModes renderMode = TopicRenderModes.Html)
         {
+
             // save body in case something modifies it
-            var topic = Copy();
+            var topic = this; // Copy();           
             topic.TopicState = new TopicState(topic) {NoAutoSave = true};
             topic.TopicState.IsPreview = (renderMode == TopicRenderModes.Preview);
-
+           
             OnPreRender(topic, renderMode);
 
             var model = new RenderTemplateModel
@@ -507,7 +508,7 @@ namespace DocHound.Model
             string html = Project.TemplateHost.RenderTemplateFile(templateFile, model, out error);
 
             if (TemplateHost.Script.Error )
-            {
+            {               
                 SetError(error + "\n\n" + TemplateHost.Script.GeneratedClassCodeWithLineNumbers);
                 return null;
             }
@@ -621,7 +622,7 @@ namespace DocHound.Model
                     }
                 }
                 if (updated)
-                    html = doc.DocumentNode.OuterHtml;
+                    html = doc.DocumentNode.OuterHtml;  
             }
         }
 

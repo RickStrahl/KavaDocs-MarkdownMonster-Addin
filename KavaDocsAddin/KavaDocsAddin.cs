@@ -418,7 +418,9 @@ namespace KavaDocsAddin
         /// <returns></returns>
         public override async Task<string> OnModifyPreviewHtml(string renderedHtml, string markdownHtml)
         {
-            // default rendering if specified
+            // return renderedHtml;
+
+                // default rendering if specified
             if (kavaUi.Configuration.TopicRenderMode == TopicRenderingModes.MarkdownDefault)
                 return renderedHtml;
 
@@ -428,12 +430,16 @@ namespace KavaDocsAddin
                 return renderedHtml;
 
             var topic = objTopic as DocTopic;
-
             if (topic == null || topic != KavaDocsModel.ActiveTopic)
                 return renderedHtml;
 
-            topic.Body = await mmApp.Model.ActiveEditor.GetMarkdown();
+            var editor = mmApp.Model.ActiveEditor;
+            var doc = mmApp.Model.ActiveEditor?.MarkdownDocument;
+            if (doc == null)
+                return renderedHtml;
 
+
+            //topic.Body = await mmApp.Model.ActiveEditor.GetMarkdown();
             topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Preview;
             topic.TopicState.IsPreview = true;
 
@@ -449,14 +455,10 @@ namespace KavaDocsAddin
             else
             {
                 // Currently we're not rendering topics and just using MM to render topic content
-                renderedHtml = topic.RenderTopicToFile(addPragmaLines: true);
+                //string html = "<h1>" + topic.Title + "</h1>";
+                renderedHtml = topic.RenderTopic(addPragmaLines: true);
             }
 
-            topic.TopicState.IsPreview = false;
-            topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Html;
-
-            // render and preview in wwwroot
-            mmApp.Model.ActiveDocument.SetHtmlRenderFilename(topic.RenderTopicFilename);
 
             return renderedHtml; //return base.OnModifyPreviewHtml(renderedHtml, markdownHtml);
         }

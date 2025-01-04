@@ -23,6 +23,7 @@ using DocHound.Windows.Dialogs;
 using KavaDocsAddin.Core.Configuration;
 using MarkdownMonster;
 using MarkdownMonster.Windows;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Westwind.Utilities;
 
 namespace KavaDocsAddin.Controls
@@ -151,7 +152,7 @@ namespace KavaDocsAddin.Controls
                 topic.TopicState.IsSelected = true;
             topic.TopicState.IsDirty = false;
 
-            Dispatcher.InvokeAsync(() => OpenTopicInEditor().FireAndForget(), DispatcherPriority.Background);
+            Dispatcher.InvokeAsync(() => OpenTopicInEditor().FireAndForget(), DispatcherPriority.Normal);
 
             return true;
         }
@@ -288,17 +289,12 @@ namespace KavaDocsAddin.Controls
                 // Assign topic first then explicitly select
                 //tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, noFocus: !setFocus, isPreview: true, noSelectTab:true);
 
-                var window1 = Model.KavaDocsModel.Window;
-                await window1.RefreshTabFromFile(file, isPreview: true, noFocus: true,
-                    existingTab: window1.PreviewTab);
+                
+                tab = await window.RefreshTabFromFile(file, isPreview: true, noFocus: true,
+                    noPreview: true,
+                    existingTab: window.PreviewTab);
 
-                //tab = await window1.ActivateTab(file,
-                //    noFocus: !setFocus,
-                //    isPreview: true,
-                //    noSelectTab: true);
-
-                //RefreshTabFromFile(file, noFocus: !setFocus, isPreview: true, noSelectTab: true);
-
+                
                 editor = tab?.Tag as MarkdownDocumentEditor;
                 if (editor == null)
                     return null;
@@ -308,8 +304,9 @@ namespace KavaDocsAddin.Controls
                 return null;
 
             // make sure topic is associated with editor
-            SetEditorWithTopic(editor, topic, isUnEdited: true); // kavaUi.AddinModel.ActiveTopic);
-           
+            SetEditorWithTopic(editor, topic, isUnEdited: true);
+
+            
             // Explicitly read in the current text from an open tab and save to body                
             var body = await editor.GetMarkdown();
             if (!string.IsNullOrEmpty(body))
@@ -328,9 +325,9 @@ namespace KavaDocsAddin.Controls
 
             if (body != topic.Body)
                 await editor.SetMarkdown(topic.Body);
-
+            
+            await window.PreviewMarkdownAsync();
             window.TabControl.SelectedItem = tab;
-
 
             return tab;
         }

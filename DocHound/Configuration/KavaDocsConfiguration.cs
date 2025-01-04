@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-
+using System.Text.Json.Serialization;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using Westwind.Utilities.Configuration;
@@ -49,18 +49,20 @@ namespace DocHound.Configuration
 
         #endregion
 
-       
+
 
         #region Folder Locations
 
         /// <summary>
         /// Folder from which the addin was started
         /// </summary>
+        [JsonIgnore]
         public string HomeFolder { get;  }
 
         /// <summary>
         /// Generic Addins Folder location
         /// </summary>
+        [JsonIgnore]
         public string AddinsFolder => Path.Combine(mmApp.Configuration.CommonFolder, "Addins");
 
         /// <summary>
