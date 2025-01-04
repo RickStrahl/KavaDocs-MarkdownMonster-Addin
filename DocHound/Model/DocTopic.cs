@@ -12,7 +12,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DocHound.Annotations;
+using DocHound.Configuration;
 using DocHound.Interfaces;
+using DocHound.Templates;
 using DocHound.Utilities;
 using HtmlAgilityPack;
 using MarkdownMonster;
@@ -482,22 +484,31 @@ namespace DocHound.Model
         /// 
         /// </summary>
         /// <param name="addPragmaLines"></param>
-        /// <param name="renderExternalLinks"></param>
         /// <returns></returns>
         public string RenderTopic(bool addPragmaLines = false, TopicRenderModes renderMode = TopicRenderModes.Html)
         {
             // save body in case something modifies it
             var topic = Copy();
             topic.TopicState = new TopicState(topic) {NoAutoSave = true};
+            topic.TopicState.IsPreview = (renderMode == TopicRenderModes.Preview);
 
             OnPreRender(topic, renderMode);
 
-            string error;
-            string html = Project.TemplateHost.RenderTemplate(DisplayType + ".cshtml", topic, out error);
-
-            if (string.IsNullOrEmpty(html))
+            var model = new RenderTemplateModel
             {
-                SetError(error);
+                Topic = this,
+                Project = Project,
+                Configuration = KavaDocsConfiguration.Current
+            };
+
+            var templateFile = Path.Combine(Project.ProjectDirectory, "_kavadocs\\Themes\\" + DisplayType + ".html");
+
+            string error;
+            string html = Project.TemplateHost.RenderTemplateFile(templateFile, model, out error);
+
+            if (TemplateHost.Script.Error )
+            {
+                SetError(error + "\n\n" + TemplateHost.Script.GeneratedClassCodeWithLineNumbers);
                 return null;
             }
 
@@ -509,6 +520,8 @@ namespace DocHound.Model
 
             return html;
         }
+        
+
 
         /// <summary>
         /// Renders a topic to a specified file. If no filename
@@ -589,7 +602,7 @@ namespace DocHound.Model
             doc.LoadHtml(html);
 
             var links = doc.DocumentNode.SelectNodes("//a");
-            if (links.Count > 0)
+            if (links is { Count: > 0 })
             {
                 bool updated = false;
                 foreach (var link in links)
@@ -1159,8 +1172,9 @@ namespace DocHound.Model
 
         #region Topic Body Helpers
 
-        public static readonly Regex YamlExtractionRegex = new Regex(@"\A---[ \t]*\r?\n[\s\S]+?\r?\n(---|\.\.\.)[ \t]*\r?\n", RegexOptions.Multiline | RegexOptions.Compiled);
-        public static readonly Regex YamlExtractionTextOnlyRegex = new Regex(@"\A---[ \t]*\r?\n[\s\S]+?\r?\n(---|\.\.\.)[ \t]*\r?\n", RegexOptions.Multiline | RegexOptions.Compiled);
+        internal static readonly Regex YamlExtractionRegex = new Regex(@"\A---[ \t]*\r?\n[\s\S]+?\r?\n(---|\.\.\.)[ \t]*\r?\n", RegexOptions.Multiline | RegexOptions.Compiled);
+        internal static readonly Regex YamlExtractionTextOnlyRegex = new Regex(@"\A---[ \t]*\r?\n[\s\S]+?\r?\n(---|\.\.\.)[ \t]*\r?\n", RegexOptions.Multiline | RegexOptions.Compiled);
+
         /// <summary>
         /// Extracts Yaml as a string from a markdown block
         /// </summary>

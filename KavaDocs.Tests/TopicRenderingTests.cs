@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DocHound;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Westwind.Utilities;
 
 
 namespace DocumentationMonster.Core.Tests
@@ -17,7 +18,32 @@ namespace DocumentationMonster.Core.Tests
 
         public const string TestProjectFile = "C:\\Temp\\wconnect_help\\wconnect_help.json";
 
-   
+        [TestMethod]
+        public void WebSugeRenderTest()
+        {
+            var project = DocProjectManager.Current.LoadProject("D:\\temp\\websurge3.1_project\\_toc.json");
+
+            Assert.IsNotNull(project);
+
+            var topic = project.LoadByTitle("Command Line Interface");
+
+            if (project.ErrorMessage != null)
+                Console.WriteLine(project.ErrorMessage);
+            Assert.IsNotNull(topic);
+
+            string html = topic.RenderTopic(false);
+
+            if (topic.ErrorMessage != null)
+                Console.WriteLine(topic.ErrorMessage);
+
+            Assert.IsNotNull(html);
+
+            Console.WriteLine(html);
+            
+            ShellUtils.ShowHtml(html);
+        }
+
+
 
         [TestMethod]
         public void WconnectRenderTest()
@@ -40,6 +66,7 @@ namespace DocumentationMonster.Core.Tests
             Assert.IsNotNull(html);
 
             Console.WriteLine(html);
+
         }
 
 

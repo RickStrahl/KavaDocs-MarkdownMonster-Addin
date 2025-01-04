@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using DocHound.Configuration;
+using DocHound.Model;
 using Westwind.Scripting;
 
 namespace DocHound.Templates
@@ -61,11 +63,12 @@ namespace DocHound.Templates
 
         }
 
-        public string RenderTemplateFile(string templateFile, object model, out string error)
+        public string RenderTemplateFile(string templateFile, RenderTemplateModel model, out string error)
         {
-            error = null;
+            model.Topic.TopicState.IsPreview = true;
 
-            string result = Script.ExecuteScriptFile(templateFile, model);
+            error = null;
+            string result = Script.ExecuteScriptFile(templateFile, model, basePath: model.Project.ProjectDirectory );
 
             if (Script.Error)
             {
@@ -79,5 +82,13 @@ namespace DocHound.Templates
             return result;
 
         }
+
+    }
+
+    public class RenderTemplateModel
+    {
+        public DocTopic Topic { get; set;  }
+        public DocProject Project { get; set;  }
+        public KavaDocsConfiguration Configuration { get; set; }
     }
 }

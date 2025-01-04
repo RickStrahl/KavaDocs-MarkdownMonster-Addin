@@ -294,8 +294,19 @@ namespace DocHound.Model
         /// <returns></returns>
         public DocTopic LoadByTitle(string title)
         {
-            Topic = Topics.FirstOrDefault(t => !string.IsNullOrEmpty(t.Title) && t.Title.ToLower() == title.ToLower());
-            return AfterTopicLoaded(Topic);
+            DocTopic match = null;
+
+            WalkTopicsHierarchy(Topics, (topic, project) => {
+                if (match is not null) return;
+
+                if (!string.IsNullOrEmpty(topic.Title) && topic.Title.Equals(title, StringComparison.OrdinalIgnoreCase))
+                {
+                    match = topic;
+                    return;
+                }
+            });
+         
+            return AfterTopicLoaded(match);
         }
 
 
@@ -324,6 +335,7 @@ namespace DocHound.Model
             {
                 Topic = null;
                 SetError("Topic not found.");
+                return null;
             }
 
             topic.Project = this;
