@@ -7,11 +7,12 @@
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
         mc:Ignorable="d"
-        Icon="../../icon.png"                    
-        Title="New Topic"
+        Icon="../../Assets/icon_128.png"                    
+        Title="Project Settings"
         TitleCharacterCasing="Normal"                      
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"                      
-        WindowStartupLocation="CenterOwner"         
+        WindowStartupLocation="CenterOwner"        
+                       
         IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
         Width="700" Height="450" MinWidth="640" MinHeight="320">
     <Window.Resources>
@@ -30,7 +31,7 @@
                     <Button Name="ButtonSave" 
                         HorizontalAlignment="Left"   IsDefault="True" Click="Button_SaveSettings"  >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome  Icon="Solid_CircleCheck"   />
+                            <fa6:ImageAwesome  Icon="Solid_CircleCheck" Height="21" PrimaryColor="ForestGreen"   />
                             <TextBlock Margin="5,0,5,0" >Save Project Settings</TextBlock>
                         </StackPanel>
                     </Button>
@@ -38,20 +39,20 @@
                     <Button Name="ButtonCancel" 
                         HorizontalAlignment="Left" IsCancel="True" Click="Button_Cancel" >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome Icon="Solid_XMark" PrimaryColor="Firebrick" />
+                            <fa6:ImageAwesome Icon="Solid_XMark" PrimaryColor="Firebrick" Height="20"/>
                             <TextBlock Margin="5,0,5,0">Cancel</TextBlock>
                         </StackPanel>
                     </Button>
                 
                     <Button Name="ButtonUpdateProjectTemplate" HorizontalAlignment="Left"   IsDefault="True" Click="Button_UpdateProjectTemplate" Margin="20,0"  >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome  Icon="Solid_CircleArrowRight"  Foreground="DarkGoldenrod"  />
+                            <fa6:ImageAwesome  Icon="DuoTone_CircleArrowRight"  PrimaryColor="White" SecondaryColor="DarkGoldenrod"  SecondaryOpacity="1" Height="22"/>
                             <TextBlock Margin="10,0,0,0" FontSize="14">Update Project Template</TextBlock>
                         </StackPanel>
                     </Button>
                     <Button Name="ButtonOpenProjectFile" HorizontalAlignment="Left" Click="Button_OpenProjectFile"  >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome  Icon="Solid_FolderOpen"   Foreground="DarkGoldenrod"  />
+                            <fa6:ImageAwesome  Icon="Solid_FolderOpen"   PrimaryColor="DarkGoldenrod"  Height="20" />
                             <TextBlock Margin="10,0,0,0" FontSize="14">View Project File</TextBlock>
                         </StackPanel>
                     </Button>
@@ -66,9 +67,9 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Margin="10,15,40,0">
-                <Image Source="../../Assets/KavaDocs.png"                   
-                   Width="180" VerticalAlignment="Top" />
+            <StackPanel Margin="10,12,40,0">
+                <Image Source="../../Assets/Icon_128.png"                   
+                   Width="150" VerticalAlignment="Top" />
 
                 <Separator Margin="0,15,0,15" />
                 <TextBlock FontWeight="DemiBold" FontSize="20" >Project Settings</TextBlock>

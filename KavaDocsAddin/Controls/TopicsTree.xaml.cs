@@ -411,7 +411,7 @@ namespace KavaDocsAddin.Controls
                     return;
 
                 var topic = tvi.Tag as DocTopic;
-                OpenTopicInMMEditor();
+                OpenTopicInMMEditor().FireAndForget();
             }
 
             // this works without a selection

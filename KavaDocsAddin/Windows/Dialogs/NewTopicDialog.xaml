@@ -8,7 +8,7 @@
         xmlns:interfaces="clr-namespace:DocHound.Interfaces;assembly=DocHound"
         xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
         mc:Ignorable="d"
-        Icon="../../icon.png"                    
+        Icon="../../Assets/Icon_128.png"                    
         Title="New Topic"
         TitleCharacterCasing="Normal"                      
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
@@ -23,11 +23,11 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Margin="25,25,40,0">
-            <Image Source="../../Assets/KavaDocs.png"                   
-                   Width="180" VerticalAlignment="Top" />
+        <StackPanel Margin="25,20,40,0">
+            <Image Source="../../Assets/Icon_128.png"                   
+                   Width="170" VerticalAlignment="Top" />
             
-            <Separator Margin="0,20,0,15" />
+            <Separator Margin="0,15,0,10" />
             <TextBlock FontWeight="DemiBold" FontSize="20" >New Topic</TextBlock>
         </StackPanel>
 
@@ -55,8 +55,7 @@
 
                 <StackPanel>
                     <Label>Process as</Label>
-                    <ComboBox Name="ComboBodyType" Padding="6"                          
-                              
+                    <ComboBox Name="ComboBodyType" Padding="6"                                                        
                               SelectedValue="{Binding Topic.Type}"                                 
                           Grid.Column="0" ToolTip="Topic source type that input format"
                           ItemsSource="{Binding Source={x:Static interfaces:TopicBodyFormats.TopicBodyFormatsList}}"

@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SupportProjects", "SupportP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkdownMonster", "..\..\MarkdownMonsterCode\MarkdownMonster\MarkdownMonster.csproj", "{46308646-0EB0-4455-B127-56B673C4625B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Scripting", "..\..\Libraries\Westwind.Scripting\Westwind.Scripting\Westwind.Scripting.csproj", "{81A07B0F-2CC1-4B9A-A180-ADFD72C097FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{46308646-0EB0-4455-B127-56B673C4625B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46308646-0EB0-4455-B127-56B673C4625B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46308646-0EB0-4455-B127-56B673C4625B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81A07B0F-2CC1-4B9A-A180-ADFD72C097FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81A07B0F-2CC1-4B9A-A180-ADFD72C097FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81A07B0F-2CC1-4B9A-A180-ADFD72C097FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81A07B0F-2CC1-4B9A-A180-ADFD72C097FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -47,6 +53,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{14E6ECBA-EAFC-4233-8E92-8DE15900608D} = {035F0508-FCE5-4F6E-BF42-E33C609F5873}
 		{46308646-0EB0-4455-B127-56B673C4625B} = {035F0508-FCE5-4F6E-BF42-E33C609F5873}
+		{81A07B0F-2CC1-4B9A-A180-ADFD72C097FA} = {035F0508-FCE5-4F6E-BF42-E33C609F5873}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7048FA7C-E2F7-4263-A120-5B2967938962}

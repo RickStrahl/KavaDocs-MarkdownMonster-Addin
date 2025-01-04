@@ -4,13 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:local="clr-namespace:DocHound.Windows.Dialogs"
-        xmlns:fa="http://schemas.fontawesome.io/icons/"
-        xmlns:attachedProperties="http://schemas.fontawesome.com/icons/fonts/properties"
         xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
         mc:Ignorable="d"
         Title="New Kava Docs Project" 
         TitleCharacterCasing="Normal"
+        TitleBarHeight="34"                       
         WindowStyle="SingleBorderWindow"  ResizeMode="CanResize"
         WindowStartupLocation="CenterOwner"
         Icon="../../Assets/icon_128.png"                                           
@@ -29,7 +27,7 @@
                     <Button Name="ButtonOk" 
                         HorizontalAlignment="Left"   IsDefault="True" Click="Button_CreateProjectClick"  >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome Icon="Solid_Gear"  Foreground="#FF0E7E28" Height="22" />
+                            <fa6:ImageAwesome Icon="Solid_Gear"  PrimaryColor="ForestGreen" Height="22" />
                             <TextBlock Margin="5,0,5,0" >Create Project</TextBlock>
                         </StackPanel>
                     </Button>
@@ -37,7 +35,7 @@
                     <Button Name="ButtonCancel" 
                         HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome Icon="Solid_XMark"  Foreground="DarkRed"  />
+                            <fa6:ImageAwesome Icon="Solid_XMark"  PrimaryColor="Firebrick"  Height="20"/>
                             <TextBlock Margin="5,0,5,0">Cancel</TextBlock>
                         </StackPanel>
                     </Button>
@@ -52,7 +50,7 @@
                             </TextBlock>
                         </Button.ToolTip>
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome  Icon="Solid_CircleLeft" Foreground="DarkGoldenrod"  />
+                            <fa6:ImageAwesome  Icon="DuoTone_CircleLeft" PrimaryColor="White" SecondaryColor=" DarkGoldenrod"  SecondaryOpacity="1" Height="22" />
                             <TextBlock Margin="5,0,5,0">Import from Help Builder</TextBlock>
                         </StackPanel>
                     </Button>
@@ -68,9 +66,9 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Margin="25,35,40,0">
-                <Image Source="../../Assets/KavaDocs.png"                   
-                   Width="180" VerticalAlignment="Top" />
+            <StackPanel Margin="25,25,40,0">
+                <Image Source="../../Assets/Icon_128.png"                   
+                   Width="150" VerticalAlignment="Top" />
 
                 <Separator Margin="0,20,0,15" />
                 <TextBlock FontWeight="DemiBold" FontSize="20" >New Project</TextBlock>

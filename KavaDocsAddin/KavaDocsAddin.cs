@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -18,6 +19,7 @@ using MarkdownMonster.AddIns;
 using MarkdownMonster.Controls;
 using MarkdownMonster.Utilities;
 using MarkdownMonster.Windows;
+using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Westwind.Utilities;
 
 namespace KavaDocsAddin
@@ -140,9 +142,6 @@ namespace KavaDocsAddin
                 var icons = new AssociatedIcons();
                 var imgSource = icons.GetIconFromFile("t.kavadocs");  // image source
                 
-                
-
-
 
                 TopicEditor = new TopicEditor();
                 tabItem.Content = TopicEditor;
@@ -210,15 +209,20 @@ namespace KavaDocsAddin
         {
             if (IsAddinInitialized)
             {
-                var config = mmApp.Configuration.LeftSidebar;
-                var sbtDocMonster = config["Documentation Monster"];
-                config?.Tabs?.Remove(sbtDocMonster);
-
                 // Set up the KavaDocs Topic Tree in the Left Sidebar
                 mmApp.Model.Window.RightSidebarContainer.Items.Remove(KavaDocsTopicEditorTab);
                 mmApp.Model.Window.MainMenu.Items.Remove(KavaDocsMenu.KavaDocsMenuItem);
                 mmApp.Model.Window.ShowRightSidebar(true);
                 mmApp.Model.Window.ShowFolderBrowser();
+
+                // Hide  Sidebar  Tab
+                var lsb = mmApp.Model.Window.LeftSidebar;
+                var config = lsb?.Configuration;
+                if (config != null)
+                {
+                    var sbtDocMonster = config["Documentation Monster"];
+                    sbtDocMonster.TabItem.Visibility = Visibility.Collapsed;
+                }
 
                 KavaDocsModel = null;                
 
