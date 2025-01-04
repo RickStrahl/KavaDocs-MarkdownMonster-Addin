@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using MarkdownMonster;
 using Westwind.Utilities;
 
 namespace KavaDocsAddin
@@ -72,8 +73,8 @@ namespace KavaDocsAddin
             };
             sub.Click += (s, e) =>
             {
-                var path = Path.Combine(Model.ActiveProject.ProjectDirectory, $"_kavadocs\\Themes\\{Model.ActiveTopic?.DisplayType}.cshtml");
-                ShellUtils.GoUrl(path);
+                var path = Path.Combine(Model.ActiveProject.ProjectDirectory, $"_kavadocs\\Themes\\{Model.ActiveTopic?.DisplayType}.html");
+                ShellUtils.OpenFileInExplorer(path);
             };
             mi.Items.Add(sub);
 

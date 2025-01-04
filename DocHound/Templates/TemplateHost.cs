@@ -54,7 +54,8 @@ namespace DocHound.Templates
             {
                 result =
                     "<h3>Template Rendering Error</h3>\r\n<hr/>\r\n" +
-                    "<pre>" + WebUtility.HtmlEncode(Script.ErrorMessage) + "</pre>";
+                    "<pre>" + WebUtility.HtmlEncode(Script.ErrorMessage) + "\n" + Script.GeneratedClassCodeWithLineNumbers + "</pre>";
+
 
                 error = Script.ErrorMessage;
             }
@@ -72,11 +73,12 @@ namespace DocHound.Templates
 
             if (Script.Error)
             {
+
                 result =
                     "<h3>Template Rendering Error</h3>\r\n<hr/>\r\n" +
-                    "<pre>" + WebUtility.HtmlEncode(Script.ErrorMessage) + "</pre>";
+                    "<pre>" + WebUtility.HtmlEncode(Script.ErrorMessage) + "\n" + Script.GeneratedClassCodeWithLineNumbers + "</pre>";
 
-                error = Script.ErrorMessage;
+                error = Script.ErrorMessage + "\n\n" + Script.GeneratedClassCodeWithLineNumbers;
             }
 
             return result;
