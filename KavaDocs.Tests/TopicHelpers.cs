@@ -1,20 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DocHound.Model;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 
 namespace DocumentationMonster.Core.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class TopicHelpersTests
     {
         
 
-        [Test]
+        [TestMethod]
         public void SlugTests()
         {
             var topicName = "This is a simple topic name";

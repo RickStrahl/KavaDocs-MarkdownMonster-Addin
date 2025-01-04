@@ -6,19 +6,19 @@ using System.Text;
 using System.Threading.Tasks;
 using DocHound.Model;
 using DocHound.Utilities;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Westwind.Utilities;
 
 
 namespace Westwind.HtmlHelpBuilder.Tests
 {
 
-    [TestFixture]
+    [TestClass]
     public class Hbp5ImporterTests
     {
         private string KavaDocsAddinPath = Environment.ExpandEnvironmentVariables("%appdata%\\Markdown Monster\\Addins\\kavadocs");
 
-        [Test]
+        [TestMethod]
         public void ImportWconnectHb5()
         {
             string outputFolder = @"c:\temp\wconnect_help";
@@ -30,14 +30,14 @@ namespace Westwind.HtmlHelpBuilder.Tests
                 catch { }
 
             var importer = new HelpBuilder5JsonImporter();
-            Assert.True(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\webconnection\wconnect_help.json",
+            Assert.IsTrue(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\webconnection\wconnect_help.json",
                 outputFolder, KavaDocsAddinPath)); 
         }
 
-        [Test]
+        [TestMethod]
         public void ImportWebSurgeHb5()
         {
-            string outputFolder = @"c:\temp\websurge_help";
+            string outputFolder = @"c:\temp\websurge3.1_project";
             if (Directory.Exists(outputFolder))
                 try
                 {
@@ -46,11 +46,11 @@ namespace Westwind.HtmlHelpBuilder.Tests
                 catch { }
             
             var importer = new HelpBuilder5JsonImporter();
-            Assert.True(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\west wind websurge\west wind websurge.json",
+            Assert.IsTrue(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\west wind websurge\west wind websurge.json",
                 outputFolder, KavaDocsAddinPath));
         }
 
-        [Test]
+        [TestMethod]
         public void ImportMarkdownMonsterHb5()
         {
             string outputFolder = @"c:\temp\markdownmonster_help";
@@ -62,10 +62,10 @@ namespace Westwind.HtmlHelpBuilder.Tests
                 catch { }
 
             var importer = new HelpBuilder5JsonImporter();
-            Assert.True(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\markdownmonster\markdownmonster-10-01-18.json", outputFolder));
+            Assert.IsTrue(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\markdownmonster\markdownmonster-10-01-18.json", outputFolder));
         }
 
-        [Test]
+        [TestMethod]
         public void ImportHb5WestwindUtilities()
         {
             string outputFolder = @"C:\temp\Westwind.Utilities_help";
@@ -77,42 +77,42 @@ namespace Westwind.HtmlHelpBuilder.Tests
                 catch { }
 
             var importer = new HelpBuilder5JsonImporter();
-            Assert.True(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\Westwind.Toolkit\westwind.toolkit_help.json", outputFolder));
+            Assert.IsTrue(importer.ImportHbp(@"C:\Users\rstrahl\Documents\Html Help Builder Projects\Westwind.Toolkit\westwind.toolkit_help.json", outputFolder));
         }
 
 
 
-        [Test]
+        [TestMethod]
         public void LoadTopicTest()
         {
             var project = DocProject.LoadProject(@"c:\temp\wconnect_help\wconnect_help.json");
 
             var topic = project.LoadByTitle("West Wind Web Connection");
-            Assert.True(topic != null, project.ErrorMessage);
+            Assert.IsTrue(topic != null, project.ErrorMessage);
 
             Console.WriteLine(topic.Body);
-            Assert.NotNull(topic.Body);
+            Assert.IsNotNull(topic.Body);
             Assert.IsTrue( topic.Body.Contains("Welcome to West Wind Web Connection"));
         }
 
-        [Test]
+        [TestMethod]
         public void LoadTopicAndSaveTest()
         {
             var project = DocProject.LoadProject(@"c:\temp\wconnect_help\wconnect_help.json");
 
             var topic = project.LoadTopic("INDEX");
-            Assert.True(topic != null, project.ErrorMessage);
+            Assert.IsTrue(topic != null, project.ErrorMessage);
 
             Console.WriteLine(topic.Body);
-            Assert.NotNull(topic.Body);
+            Assert.IsNotNull(topic.Body);
             Assert.IsTrue(topic.Body.Contains("Welcome to West Wind Web Connection"));
 
             topic.Title = "West Wind Web Connection " + DataUtils.GenerateUniqueId(5);
             topic.Body = "Updated " + DataUtils.GenerateUniqueId(5) + " " + topic.Body;
 
-            Assert.True(project.SaveTopic(topic), project.ErrorMessage);
+            Assert.IsTrue(project.SaveTopic(topic), project.ErrorMessage);
 
-            Assert.True(project.SaveProject());
+            Assert.IsTrue(project.SaveProject());
 
         }
 

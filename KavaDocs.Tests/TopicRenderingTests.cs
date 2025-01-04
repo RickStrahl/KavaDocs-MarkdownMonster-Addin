@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DocHound;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace DocumentationMonster.Core.Tests
 {
 
-    [TestFixture]
+    [TestClass]
     public class TopicRenderingTests
     {
 
@@ -18,57 +19,57 @@ namespace DocumentationMonster.Core.Tests
 
    
 
-        [Test]
+        [TestMethod]
         public void WconnectRenderTest()
         {
             var project = DocProjectManager.Current.LoadProject("C:\\Temp\\wconnect_help\\wconnect_help.json");
 
-            Assert.NotNull(project);
+            Assert.IsNotNull(project);
 
             var topic = project.LoadByTitle("Step 3 - Finish and configure Web Connection for SQL tables");
 
             if (project.ErrorMessage != null)
                 Console.WriteLine(project.ErrorMessage);
-            Assert.NotNull(topic);
+            Assert.IsNotNull(topic);
 
             string html = topic.RenderTopic(false);
 
             if (topic.ErrorMessage != null)
                 Console.WriteLine(topic.ErrorMessage);
 
-            Assert.NotNull(html);
+            Assert.IsNotNull(html);
 
             Console.WriteLine(html);
         }
 
 
-        [Test]
+        [TestMethod]
         public void WconnectRenderToFileTest()
         {
             var project = DocProjectManager.Current.LoadProject("C:\\Temp\\wconnect_help\\_kavadocs-project.json");
 
-            Assert.NotNull(project);
+            Assert.IsNotNull(project);
 
             var topic = project.LoadByTitle("Step 3 - Finish and configure Web Connection for SQL tables");
 
             if (project.ErrorMessage != null)
                 Console.WriteLine(project.ErrorMessage);
-            Assert.NotNull(topic);
+            Assert.IsNotNull(topic);
 
             string result = topic.RenderTopicToFile();
 
-            Assert.True(result != null, topic.ErrorMessage);
-            Assert.True(File.Exists(topic.RenderTopicFilename),"File wasn't created.");
+            Assert.IsTrue(result != null, topic.ErrorMessage);
+            Assert.IsTrue(File.Exists(topic.RenderTopicFilename),"File wasn't created.");
         }
 
 
-        [Test]
+        [TestMethod]
         public void WconnectRenderAllTopicsFileTest()
         {
             var project = DocProjectManager.Current.LoadProject("C:\\Temp\\wconnect_help\\_kavadocs-project.json");
             
-            Assert.NotNull(project);
-            Assert.True(project.Topics.Count > 0);
+            Assert.IsNotNull(project);
+            Assert.IsTrue(project.Topics.Count > 0);
             var topics = project.Topics.Where(t => t.DisplayType.ToLower() == "topic");
 
             int x = 0;
@@ -81,18 +82,18 @@ namespace DocumentationMonster.Core.Tests
             Console.WriteLine(x + " topics written");
         }
 
-        [Test]
+        [TestMethod]
         public void CreateTopicTreeTest()
         {
             var project = DocProjectManager.Current.LoadProject("C:\\Temp\\wconnect_help\\wconnect_help.json");
 
-            Assert.NotNull(project);
-            Assert.True(project.Topics.Count > 0);
+            Assert.IsNotNull(project);
+            Assert.IsTrue(project.Topics.Count > 0);
             project.GetTopicTree();
 
-            Assert.NotNull(project.Topics);
+            Assert.IsNotNull(project.Topics);
             Assert.IsTrue(project.Topics.Count > 0);
-            Assert.NotNull(project.Topics[0].Topics.Count > 0);
+            Assert.IsNotNull(project.Topics[0].Topics.Count > 0);
 
 
         }

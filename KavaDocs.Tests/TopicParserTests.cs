@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using DocHound;
 using DocHound.Model;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace DocumentationMonster.Core.Tests
 {
     public class TopicParserTests
     {
-        [Test]
+        [TestMethod]
         public void TopicParserParseAssemblyTest()
         {
 

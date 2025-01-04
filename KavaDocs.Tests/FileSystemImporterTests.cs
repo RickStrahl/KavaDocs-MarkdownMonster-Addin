@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,16 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using DocHound.Model;
 using DocHound.Utilities;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Westwind.Utilities;
 
 
 namespace Westwind.HtmlHelpBuilder.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class FileSystemImporterTests
     {
-        [Test]
+        [TestMethod]
         public void ImportWikiData()
         {
             string outputFolder = @"c:\temp\CodeFrameworkDocs_help";
@@ -41,7 +41,7 @@ namespace Westwind.HtmlHelpBuilder.Tests
             };
 
             var importer = new FileSystemImporter();
-            Assert.True(importer.ImportFileSystem(@"C:\Temp\CODEFrameworkDocs", projectCreator));
+            Assert.IsTrue(importer.ImportFileSystem(@"C:\Temp\CODEFrameworkDocs", projectCreator));
         }
     }
 }

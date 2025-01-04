@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 using DocHound;
 using DocHound.Model;
 using DocHound.Utilities;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace DocumentationMonster.Core.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class HtmlOutputGeneratorTests
     {
-        [Test]
+        [TestMethod]
         public void ProjectOutputTest()
         {
             
@@ -23,7 +24,7 @@ namespace DocumentationMonster.Core.Tests
 
         }
 
-        [Test]
+        [TestMethod]
         public void GenerateTableOfContentsTest()
         {
 

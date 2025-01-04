@@ -2,11 +2,13 @@ using System;
 using System.IO;
 using DocHound;
 using DocHound.Model;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DocumentationMonster.Core.Tests
 {
-    [TestFixture]
+    // Convert all test classes in this project to MSTest 
+
+    [TestClass]
     public class BasicHelpProjectTests
     {
         
@@ -14,48 +16,48 @@ namespace DocumentationMonster.Core.Tests
 
         
 
-        [Test]
+        [TestMethod]
         public void CreateTopicsTest()
         {
             var project = CreateTopics();
             
-            Assert.True(project.Topics.Count >0, "Should have 3 topics.");
+            Assert.IsTrue(project.Topics.Count >0, "Should have 3 topics.");
         }
 
-        [Test]
+        [TestMethod]
         public void CreateTopicsAndSaveTest()
         {
             string outputFile = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "_TopicsFileText.json");
 
             var project = CreateTopics();
-            Assert.True(project.Topics.Count == 3, "Should have 3 topics.");
+            Assert.IsTrue(project.Topics.Count == 3, "Should have 3 topics.");
             
             project.SaveProject(outputFile);
 
-            Assert.True(File.Exists(outputFile));
+            Assert.IsTrue(File.Exists(outputFile));
 
             string json = File.ReadAllText(outputFile);
             //File.Delete(outputFile);
-            Assert.IsNotEmpty(json);
-            Assert.True(json.Contains("Custom Field 3"));
+            Assert.IsNotNull(json);
+            Assert.IsTrue(json.Contains("Custom Field 3"));
         }
 
-        [Test]
+        [TestMethod]
         public void LoadTopicsTest()
         {
             CreateTopicsAndSaveTest();
             
             var project = DocProjectManager.Current.LoadProject(outputFile);
             
-            Assert.True(project.Topics.Count > 2, "Should have 3 topics.");
+            Assert.IsTrue(project.Topics.Count > 2, "Should have 3 topics.");
             
             string json = File.ReadAllText(outputFile);
 
             Console.WriteLine(json);
 
             //File.Delete(outputFile);
-            Assert.IsNotEmpty(json);
-            Assert.True(json.Contains("Custom Field 3"));
+            Assert.IsNotNull(json);
+            Assert.IsTrue(json.Contains("Custom Field 3"));
         }
 
    
@@ -76,7 +78,7 @@ namespace DocumentationMonster.Core.Tests
 
             var rootParentId = topic.Id;
 
-            Assert.True(project.SaveTopic(topic), project.ErrorMessage);
+            Assert.IsTrue(project.SaveTopic(topic), project.ErrorMessage);
 
             topic = new DocTopic(project)
             {
@@ -87,7 +89,7 @@ namespace DocumentationMonster.Core.Tests
             topic.Properties.Add("Custom", "Custom Field");
             topic.Properties.Add("Custom2", "Custom Field 2");
 
-            Assert.True(project.SaveTopic(topic), project.ErrorMessage);
+            Assert.IsTrue(project.SaveTopic(topic), project.ErrorMessage);
 
 
             topic = new DocTopic(project)
@@ -100,7 +102,7 @@ namespace DocumentationMonster.Core.Tests
             topic.Properties.Add("Custom", "Custom Field");
             topic.Properties.Add("Custom3", "Custom Field 3");
 
-            Assert.True(project.SaveTopic(topic), project.ErrorMessage);
+            Assert.IsTrue(project.SaveTopic(topic), project.ErrorMessage);
 
             return project;
         }

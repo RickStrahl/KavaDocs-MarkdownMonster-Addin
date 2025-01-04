@@ -1,21 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DocHound.Model;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DocumentationMonster.Core.Tests
 {
-    [TestFixture]
+    [TestClass]
     class ProjectManagementTests
     {
         private string hbImportProjectFile = @"C:\Temp\markdownmonster_help\_toc_original.json";
         private string projectFile = @"C:\Temp\markdownmonster_help\_toc.json";
 
-        [Test]
+        [TestMethod]
         public void LoadAndSaveFlatProjectTest()
         {
             var project = DocProject.LoadProject(hbImportProjectFile);
@@ -26,7 +26,7 @@ namespace DocumentationMonster.Core.Tests
             project.SaveProject();
         }
 
-        [Test]
+        [TestMethod]
         public void LoadProjectTest()
         {
             var project = DocProject.LoadProject(projectFile);
@@ -35,7 +35,7 @@ namespace DocumentationMonster.Core.Tests
 
         }
 
-        [Test]
+        [TestMethod]
         public void LoadAndSaveProjectTest()
         {
             var project = DocProject.LoadProject(projectFile);
