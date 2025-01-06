@@ -39,7 +39,7 @@ namespace DocHound
 						Formatting = Formatting.Indented,
 						MissingMemberHandling = MissingMemberHandling.Ignore,
 						NullValueHandling = NullValueHandling.Ignore,
-                        DefaultValueHandling = DefaultValueHandling.Ignore,
+                        DefaultValueHandling = DefaultValueHandling.Include,
 						ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
 						ContractResolver = new CamelCaseAndIgnoreEmptyEnumerablesResolver()                        
 					};

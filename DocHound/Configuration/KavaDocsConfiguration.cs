@@ -110,6 +110,7 @@ namespace DocHound.Configuration
 
         public string DocumentsFolder { get; set; }
 
+        [JsonIgnore]
         public string CommonFolder { get => mmApp.Configuration.CommonFolder; }
         
         

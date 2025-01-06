@@ -1367,7 +1367,8 @@ namespace DocHound.Model
         #endregion
 
         #region Error Handling
-
+        [YamlIgnore]
+        [JsonIgnore]
         public string ErrorMessage { get; set; }
      
 
@@ -1471,7 +1472,7 @@ namespace DocHound.Model
         Preview
     }
 
-    public class RawString : IRawValue
+    public class RawString : IRawString
     {
         string OrigValue { get; set; }
 
@@ -1507,7 +1508,7 @@ namespace DocHound.Model
         public override string ToString() => OrigValue;
     }
 
-    public interface IRawValue
+    public interface IRawString
     {
     }
 }

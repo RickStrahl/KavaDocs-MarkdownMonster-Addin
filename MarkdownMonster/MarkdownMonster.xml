@@ -7620,9 +7620,17 @@
             </summary>
         </member>
         <member name="P:MarkdownMonster.MarkdownConfiguration.RenderLinksAsExternal">
-            <summary>
-            Renders all links as external links with `target='_blank'`
-            </summary>
+             <summary>
+             Renders all http/https links as external links with `target='_blank'
+             attribute to force links to open in a new tab/window. This setting
+             applies to rendered output for Html or PDF exports as well as the
+             previewer.
+            
+               Note: The Previewer has a separate `Previewer.PreviewHttpLinksExternal` 
+               setting that is `true` by default to open any Http links
+               in an external browser. However, this setting uses internal scripts
+               and it overrides default link behavior in the previewer.       
+             </summary>
         </member>
         <member name="P:MarkdownMonster.MarkdownConfiguration.ItalicSymbol">
             <summary>
@@ -7647,7 +7655,9 @@
              Comma or + separated list of extension names:
              gridtables+pipetables+customcontainers
             
-             If options are availe
+             You can create custom Markdig Extensions via addins
+             register them in OnApplicationStart() and then enable
+             them here by their id.
              </summary>
         </member>
         <member name="P:MarkdownMonster.MarkdownConfiguration.AllowRenderScriptTags">
@@ -8352,6 +8362,18 @@
             the right context always.
             </summary>
         </member>
+        <member name="P:MarkdownMonster.MarkdownDocument.IsPreviewRendering">
+             <summary>
+             Operational flag that tells if the document is in the
+             process of rendering a preview.
+            
+             Provided primarily for addins and RenderExtesions
+             to determine which mode the document is in.
+            
+             The property is set at the beginning of rendering,
+             and then reset to false at the end.
+             </summary>
+        </member>
         <member name="E:MarkdownMonster.MarkdownDocument.IsDirtyChanged">
             <summary>
             Event fired when the dirty changed of the document changes
@@ -8846,12 +8868,17 @@
             <returns></returns>
         </member>
         <member name="M:MarkdownMonster.MarkdownDocumentEditor.PrefixSelectedLine(System.String,System.Char[])">
-            <summary>
-            Prefixes the currently selected line with characters specified.
-            </summary>
-            <param name="prefix">Characters to prefix.</param>
-            <param name="trimStartCharacters">Optional - characters to trim from the beginning</param>
-            <returns></returns>
+             <summary>
+             Prefixes the currently selected line with characters specified.
+            
+             Note: Line Selection includes \n at the end of the line so the selection
+             includes the line feed which results in the cursor going after the linefeed.
+             If you want to leave the cursor at the line, use `cursorMovement = -1` to
+             backtrack over the `\n`
+             </summary>
+             <param name="prefix">Characters to prefix.</param>
+             <param name="trimStartCharacters">Optional - characters to trim from the beginning</param>
+             <returns></returns>
         </member>
         <member name="M:MarkdownMonster.MarkdownDocumentEditor.AddLinkReference(System.String,System.String)">
             <summary>
@@ -9398,11 +9425,15 @@
             <returns></returns>
         </member>
         <member name="M:MarkdownMonster.MarkdownParserBase.ParseExternalLinks(System.String)">
-            <summary>
-            Replaces all links with target="top" links
-            </summary>
-            <param name="html"></param>
-            <returns></returns>
+             <summary>
+             Replaces all http/https links with target="_blank" links that open
+             in a new browser tab/window.
+            
+             Note: the Previewer has a separate setting for this that applies
+                   only to the previewer and is handled via script
+             </summary>
+             <param name="html"></param>
+             <returns></returns>
         </member>
         <member name="T:MarkdownMonster.MarkdownParserDocFxMarkdig">
             <summary>

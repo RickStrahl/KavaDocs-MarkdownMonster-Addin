@@ -34,6 +34,7 @@
 using System.IO;
 using Markdig;
 using Markdig.Renderers;
+using MarkdownMonster;
 
 namespace DocHound.MarkdownParser
 {
@@ -68,20 +69,23 @@ namespace DocHound.MarkdownParser
             if (string.IsNullOrEmpty(markdown))
                 return string.Empty;
 
-            var htmlWriter = new StringWriter();
-            var renderer = CreateRenderer(htmlWriter);
+            string html = Markdown.ToHtml(markdown, Pipeline);
 
-            Markdig.Markdown.Convert(markdown, renderer, Pipeline);
-
-            var html = htmlWriter.ToString();
-            
-            html = ParseFontAwesomeIcons(html);
             html = ParseExternalLinks(html);
 
-            //if (!mmApp.Configuration.MarkdownOptions.AllowRenderScriptTags)
-            html = ParseScript(html);  
-                      
+            if (!mmApp.Configuration.MarkdownOptions.AllowRenderScriptTags)
+                html = ParseScript(html);
+
             return html;
+
+
+            //var htmlWriter = new StringWriter();
+            //var renderer = CreateRenderer(htmlWriter);
+
+            //Markdig.Markdown.Convert(markdown, renderer, Pipeline);
+
+            //var html = htmlWriter.ToString();            
+            //return html;
         }
 
         protected virtual MarkdownPipelineBuilder CreatePipelineBuilder()

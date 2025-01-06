@@ -163,14 +163,8 @@ namespace DocHound.Model
         /// <summary>
         /// KavaDocs Project Settings - these are projected to
         /// settings from the Settings dictionary.
-        /// </summary>
-        [JsonIgnore]
+        /// </summary>        
         public DocProjectSettings ProjectSettings { get; set; }
-
-        /// <summary>
-        /// KavaDocs online processing settings
-        /// </summary>
-        public Dictionary<string, object> Settings { get; set; }
 
         #endregion
 
@@ -260,9 +254,7 @@ namespace DocHound.Model
         #region Topic Loading
 
         public DocProject()
-        {
-            Settings = new Dictionary<string, object>();
-
+        {            
             // Make sure this is last
             ProjectSettings = new DocProjectSettings(this);
         }
@@ -1079,55 +1071,14 @@ namespace DocHound.Model
         #endregion
 
 
-        #region Settings Handling
-
-        public string GetSetting(SettingsEnum settingsKey, string defaultValue = null)
-        {
-            return GetSetting(settingsKey.ToString(), defaultValue);
-        }
-
-        public T GetSetting<T>(SettingsEnum settingsKey, object defaultValue = null)
-        {
-            return GetSetting<T>(settingsKey.ToString(), defaultValue);
-        }
-
-
-        public string GetSetting(string key, string defaultValue = null)
-        {
-            if (Settings.TryGetValue(key, out object result))
-                return result as string;
-
-            return defaultValue;
-        }
-
-
-        public T GetSetting<T>(string key, object defaultValue = null)
-        {
-            if (Settings.TryGetValue(key, out object result))
-                return (T) result;
-
-            if (defaultValue == null)
-                return default(T);
-
-            return (T) defaultValue;
-        }
-
-        public void SetSetting(SettingsEnum settingsKey, object value)
-        {
-            Settings[settingsKey.ToString()] = value;
-        }
         
-        public void SetSetting(string key, object value)
-        {
-            Settings[key] = value;
-        }
-        #endregion
 
 
 
         #region Error Handling
 
-        [JsonIgnore] public string ErrorMessage { get; set; }
+        [JsonIgnore]
+        public string ErrorMessage { get; set; }
 
         protected void SetError()
         {

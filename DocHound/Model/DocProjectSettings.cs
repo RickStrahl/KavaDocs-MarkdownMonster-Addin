@@ -41,9 +41,7 @@ namespace DocHound.Model
                     {"datafunction", "Data function"},
                     {"datastoredproc", "Data stored procedure"},
                     {"datatable", "Data table"},
-                    {"dataview", "Data view"},
-                    {"vstsworkitem", "VSTS work item"},
-                    {"vstsworkitemquery", "VSTS work item query"}
+                    {"dataview", "Data view"}
                 };
             }
         }
@@ -59,60 +57,19 @@ namespace DocHound.Model
         /// <summary>
         /// Configured Topic Types that can be used with this project
         /// </summary>        
-        public Dictionary<string, string> TopicTypes
-        {
-            get
-            {
-                if (_topicTypes == null)
-                {
-                    JObject objDict = _project.GetSetting<JObject>("topicTypes");
-                    _topicTypes = objDict?.ToObject<Dictionary<string, string>>();
-                }
+        public Dictionary<string, string> TopicTypes { get; set;  }
+        
 
-                return _topicTypes;
-            }
-            set => _project.SetSetting("topicTypes", value);
-        }
-        public Dictionary<string, string> _topicTypes;
-
-        public bool AutoSortTopics
-        {
-            get => _project.GetSetting<bool>(SettingsEnum.AutoSortTopics, false);
-            set => _project.SetSetting(SettingsEnum.AutoSortTopics, value);
-        }
-
+        public bool AutoSortTopics { get; set;  }
+        
         /// <summary>
         /// If true stores Yaml information in each topic
         /// </summary>
-        public bool StoreYamlInTopics
-        {
-            get => _project.GetSetting<bool>(SettingsEnum.StoreYamlInTopics, false);
-            set => _project.SetSetting(SettingsEnum.StoreYamlInTopics, value);
-        }
+        public bool StoreYamlInTopics { get; set; }
 
-        public bool RenderProjectTitle
-        {
-            get => _project.GetSetting<bool>(SettingsEnum.RenderProjectTitle, true);
-            set => _project.SetSetting(SettingsEnum.RenderProjectTitle, value);
-        }
-
-        /// <summary>
-        /// Determines whether the topic should render a title in the topic. Depends on
-        /// doc type - existing documents likely have headers but KavaDocs documents have an
-        /// external document title and want to have the title embedded.
-        /// </summary>
-        public TrueFalseAuto RenderTitleInTopic
-        {
-            get => _project.GetSetting<TrueFalseAuto>(SettingsEnum.RenderTitleInTopic,TrueFalseAuto.False);
-            set => _project.SetSetting(SettingsEnum.RenderTitleInTopic, value);
-        }
-
-
-        public bool ShowEstimatedReadingTime
-        {
-            get => _project.GetSetting<bool>(SettingsEnum.ShowEstimatedReadingTime, false);
-            set => _project.SetSetting(SettingsEnum.ShowEstimatedReadingTime,value);
-        }
+        public bool RenderProjectTitle { get; set; }
+                
+        public bool ShowEstimatedReadingTime { get; set;  }        
 
     }
 }
