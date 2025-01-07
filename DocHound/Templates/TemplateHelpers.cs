@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -6,7 +7,7 @@ using DocHound.Model;
 using DocHound.Templates;
 using MarkdownMonster;
 using MarkdownMonster.RenderExtensions;
-
+using Westwind.Scripting;
 using Westwind.Utilities;
 
 namespace DocHound.Templates
@@ -17,9 +18,10 @@ namespace DocHound.Templates
     public class TemplateHelpers
     {
 
-        public TemplateHelpers(DocTopic topic,TemplateModel template)
-        {
-            Topic = topic;
+        public TemplateHelpers(RenderTemplateModel model)
+        {            
+            Model = model;
+            Topic = model.Topic;
             Project = Topic?.Project;
         }
 
@@ -28,16 +30,29 @@ namespace DocHound.Templates
         /// </summary>
         public DocTopic Topic { get; set; }
 
+
         /// <summary>
         /// Active Project for this page rendered
         /// </summary>
         public DocProject Project { get; set; }
+
+        /// <summary>
+        ///  For good measure the entire model is here
+        /// </summary>
+        public RenderTemplateModel Model { get; }
+
         
 
-        public TemplateHost Template { get; set; }
+        // public TemplateHost Template { get; set; }
 
 
         #region Links
+
+        public RawString HelloWorld()
+        {
+            return new RawString("<div class='alert alert-warning'>Rick</div>");
+        }
+
         /// <summary>
         /// Returns a topic link
         /// </summary>
@@ -124,11 +139,13 @@ namespace DocHound.Templates
         /// <summary>
         /// Display a list of child topics
         /// </summary>
-        public RawString ChildTopicsList(string topicTypesList)
+        public RawString ChildTopicsList(string topicTypesList = null)
         {
-            StringBuilder sb = new StringBuilder();
-            
-            var topicTypes = topicTypesList.Split();
+            var sb = new StringBuilder();
+
+            topicTypesList = topicTypesList ?? string.Empty;
+
+            var topicTypes = topicTypesList.Split(',' , StringSplitOptions.RemoveEmptyEntries);
             List<DocTopic> childTopics;
             if (topicTypes.Length > 0)
                 childTopics = Topic.Topics.Where(t => GenericUtils.Inlist<string>(t.DisplayType, topicTypes)).ToList();
@@ -142,7 +159,11 @@ namespace DocHound.Templates
 
             foreach (var childTopic in childTopics)
             {
-                sb.AppendLine($@"<li><img src='icons/{childTopic.DisplayType}.png' /> {WebUtility.HtmlEncode(childTopic.Title)}</li>");
+                sb.AppendLine($"""
+<li><img src='_kavadocs/icons/{childTopic.DisplayType}.png' />
+<a href="/{ childTopic.Slug }">                
+{WebUtility.HtmlEncode(childTopic.Title)}</a></li>
+""");
             }
             sb.AppendLine("</ul>");
 
@@ -155,8 +176,6 @@ namespace DocHound.Templates
         /// <returns></returns>
         public RawString InsertMethodOverloads()
         {
-            
-
             if (string.IsNullOrEmpty(Topic.ClassInfo.Signature))
                 return RawString.Empty;
 

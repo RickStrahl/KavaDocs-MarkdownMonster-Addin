@@ -4,9 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using DocHound.Configuration;
-using DocHound.Model;
 using Westwind.Scripting;
+using Westwind.Utilities;
 
 namespace DocHound.Templates
 {
@@ -35,12 +34,22 @@ namespace DocHound.Templates
 
         public static ScriptParser CreateScriptParser()
         {
+            
             var script = new ScriptParser();
             script.ScriptEngine.AddDefaultReferencesAndNamespaces();
             script.ScriptEngine.AddLoadedReferences();
+            script.ScriptEngine.AddNamespace("Westwind.Utilities");            
+            script.ScriptEngine.AddNamespace("DocHound.Templates");
+
             script.ScriptEngine.SaveGeneratedCode = true;
             script.ScriptEngine.CompileWithDebug = true;
-
+            script.AdditionalMethodHeaderCode = """
+                var Topic = Model.Topic;
+                var Project = Model.Project;
+                var Configuration = Model.Configuration;
+                var Helpers = Model.Helpers;
+                var BasePath = new Uri(FileUtils.NormalizePath( Project.ProjectDirectory + "\\") );
+                """;
             return script;
         }
 
@@ -72,7 +81,15 @@ namespace DocHound.Templates
             error = null;
 
             Script.ScriptEngine.ObjectInstance = null; // make sure we don't cache
-            string result = Script.ExecuteScriptFile(templateFile, model, basePath: model.Project.ProjectDirectory );
+
+            var basePath = model.Project.ProjectDirectory;
+
+            if (model.Topic.Body.Contains("{{ "))
+            {
+                model.Topic.Body = Script.ExecuteScript(model.Topic.Body, model, null, basePath);
+            }
+
+            string result = Script.ExecuteScriptFile(templateFile, model, basePath: basePath);
 
             if (Script.Error)
             {
@@ -101,12 +118,5 @@ namespace DocHound.Templates
             return result;
         }
 
-    }
-
-    public class RenderTemplateModel
-    {
-        public DocTopic Topic { get; set;  }
-        public DocProject Project { get; set;  }
-        public KavaDocsConfiguration Configuration { get; set; }
     }
 }

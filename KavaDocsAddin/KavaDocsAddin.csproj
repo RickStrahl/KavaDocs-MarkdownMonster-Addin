@@ -30,7 +30,6 @@
     <Resource Include="Assets\icon_128.png" />
     <Resource Include="Assets\KavaDocs.png" />
     <Resource Include="Assets\icon_16.png" />
-    <Resource Include="icon.png" />
     
     <Content Include="ProjectTemplates\icons\classconstructor.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

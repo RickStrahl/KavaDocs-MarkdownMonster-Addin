@@ -416,7 +416,7 @@ namespace KavaDocsAddin
 
         void Command_LinkTopicDialog()
         {
-            LinkTopicDialogCommand = new CommandBase(async (parameter, command) =>
+            LinkTopicDialogCommand = new CommandBase((parameter, command) =>
             {
                 //var form = new PasteTopicBookmark();
                 //form.Owner = mmApp.Model.Window;

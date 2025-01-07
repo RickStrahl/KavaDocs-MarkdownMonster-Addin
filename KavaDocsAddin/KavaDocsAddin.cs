@@ -138,27 +138,7 @@ namespace KavaDocsAddin
                 // this doesn't work for in combination with the Topic browser so turn it off
                 mmApp.Configuration.FolderBrowser.TrackDocumentInFolderBrowser = false;
 
-                // Set up the KavaDocs Topic Tree in the Left Sidebar
-                var tabItem = new MetroTabItem() {Name = "KavaDocsTopic"};
-
-                // Create the tab content user control
-                KavaDocsTopicTreeTab = tabItem;
-                Tree = new TopicsTree();
-                tabItem.Content = Tree;
-
-                var icons = new AssociatedIcons();
-                var imgSource = KavaDocsIconImageSource; // icons.GetIconFromFile("t.kavadocs");  // image source
-                
-
-                TopicEditor = new TopicEditor();
-                tabItem.Content = TopicEditor;
-
-                Model.Window.AddRightSidebarPanelTabItem(tabItem, "Topic", imgSource);
-                
-
-                KavaDocsMenu = new KavaDocsMenuHandler();
-                KavaDocsMenu.CreateKavaDocsMainMenu();
-
+ 
                 if (Configuration.OpenLastProject)
                 {
                     KavaDocsModel.ActiveProject = DocProjectManager.Current.LoadProject(Configuration.LastProjectFile);
@@ -167,9 +147,7 @@ namespace KavaDocsAddin
                 }
                 IsAddinInitialized = true;
 
-                // Activate the Tab
-                Model?.Window?.ShowFolderBrowser();
-                OpenDocMonsterTab(false);
+                OpenDocMonsterTabs(false);
 
                 // If no project is open try to open one
                 if (KavaDocsModel.ActiveProject == null)
@@ -178,58 +156,13 @@ namespace KavaDocsAddin
             
         }
 
-        public void OpenDocMonsterTab(bool noSelection = false)
-        {
-            var config = mmApp.Configuration.LeftSidebar;
-            var leftSidebar = mmApp.Model.Window.LeftSidebar;
-
-            var sbtDocMonster = config["Documentation Monster"];
-            if (sbtDocMonster == null)
-            {
-                sbtDocMonster = new SidebarTab()
-                {
-                    Tabname = "Documentation Monster",
-                    TabLocation = SidebarTabLocation.Top,
-                };
-                config.Tabs.Add(sbtDocMonster);
-            }
-            
-            Tree = new TopicsTree();            
-            sbtDocMonster.TabContent = Tree;
-            sbtDocMonster.HeaderImage = KavaDocsIconImageSource;
-            //new ImageAwesome { Icon = EFontAwesomeIcon.Duotone_CircleQuestion, PrimaryColor = Brushes.White, SecondaryColor = System.Windows.Media.Brushes.SteelBlue, SecondaryOpacity = 1, Height = 23 }.Source;
-
-            var tabItem = leftSidebar.CreateTabItemFromSidebarTab(sbtDocMonster);
-            KavaDocsTopicEditorTab = tabItem;
-
-            mmApp.Model.Window.LeftSidebar.RefreshTabBindings();
-            if (!noSelection)
-                leftSidebar.SelectTab(sbtDocMonster.TabItem);
-
-            tabItem = null;
-            foreach(var item in mmApp.Model.Window.RightSidebarContainer.Items)
-            {
-                tabItem = item as MetroTabItem;
-                if (tabItem == null)
-                    continue;
-
-                if (tabItem.Name == "KavaDocsTopic")
-                    break;
-            }
-            Model.Window.RightSidebarContainer.Items.Remove(tabItem);
-        }
-
-
-
         /// <summary>
         /// Remove the Addin from Markdown Monster
         /// </summary>
         public void UninitializeKavaDocs()
         {
             if (IsAddinInitialized)
-            {
-                // Set up the KavaDocs Topic Tree in the Left Sidebar
-                mmApp.Model.Window.RightSidebarContainer.Items.Remove(KavaDocsTopicEditorTab);
+            {                
                 mmApp.Model.Window.MainMenu.Items.Remove(KavaDocsMenu.KavaDocsMenuItem);
                 mmApp.Model.Window.ShowRightSidebar(true);
                 mmApp.Model.Window.ShowFolderBrowser();
@@ -243,11 +176,63 @@ namespace KavaDocsAddin
                     sbtDocMonster.TabItem.Visibility = Visibility.Collapsed;
                 }
 
-                KavaDocsModel = null;                
+                KavaDocsModel.Model.Window.RemoveRightSideBarPanelTabItem(KavaDocsTopicEditorTab);
 
+                KavaDocsModel = null;                
                 IsAddinInitialized = false;
             }
         }
+
+
+        public void OpenDocMonsterTabs(bool noSelection = false)
+        {
+
+            
+            var config = mmApp.Configuration.LeftSidebar;
+            var leftSidebar = mmApp.Model.Window.LeftSidebar;
+
+            // Activate the Sidebar
+            Model?.Window?.ShowFolderBrowser();
+
+
+            var sbtDocMonster = config["Documentation Monster"];
+            if (sbtDocMonster == null)
+            {
+                sbtDocMonster = new SidebarTab()
+                {
+                    Tabname = "Documentation Monster",
+                    TabLocation = SidebarTabLocation.Top,
+                };
+                config.Tabs.Add(sbtDocMonster);
+            }
+
+            Tree = new TopicsTree();    // set in mainline
+            sbtDocMonster.TabContent = Tree;
+            sbtDocMonster.HeaderImage = KavaDocsIconImageSource;
+
+            //new ImageAwesome { Icon = EFontAwesomeIcon.Duotone_CircleQuestion, PrimaryColor = Brushes.White, SecondaryColor = System.Windows.Media.Brushes.SteelBlue, SecondaryOpacity = 1, Height = 23 }.Source;
+
+            var tabItem = leftSidebar.CreateTabItemFromSidebarTab(sbtDocMonster);
+            KavaDocsTopicTreeTab = tabItem;
+
+            mmApp.Model.Window.LeftSidebar.RefreshTabBindings();
+            if (!noSelection)
+                leftSidebar.SelectTab(sbtDocMonster.TabItem);
+
+            // Set up the KavaDocs Topic Tree in the Left Sidebar
+            tabItem = new MetroTabItem() { Name = "KavaDocsTopic" };
+            KavaDocsTopicEditorTab = tabItem;
+            TopicEditor = new TopicEditor();
+            tabItem.Content = TopicEditor;
+
+            Model.Window.AddRightSidebarPanelTabItem(tabItem, "Topic", KavaDocsIconImageSource);
+
+
+            KavaDocsMenu = new KavaDocsMenuHandler();
+            KavaDocsMenu.CreateKavaDocsMainMenu();
+
+        }
+
 
 
         public override Task OnApplicationShutdown()

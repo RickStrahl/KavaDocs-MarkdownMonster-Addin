@@ -10,8 +10,8 @@
              xmlns:interfaces="clr-namespace:DocHound.Interfaces;assembly=DocHound"
              xmlns:attachedProperties="http://schemas.fontawesome.com/icons/fonts/properties"
              mc:Ignorable="d" 
-             FontSize="14"
-             d:DesignHeight="300" d:DesignWidth="300">
+             FontSize="14"             
+             d:DesignHeight="500" d:DesignWidth="300">
     <UserControl.InputBindings>
         <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding KavaDocsModel.Commands.SaveProjectCommand}" />
     </UserControl.InputBindings>

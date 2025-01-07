@@ -19,6 +19,7 @@ using DocHound.Utilities;
 using HtmlAgilityPack;
 using MarkdownMonster;
 using Newtonsoft.Json;
+using Westwind.Scripting;
 using Westwind.Utilities;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
@@ -32,9 +33,9 @@ namespace DocHound.Model
 
         private void Test()
         {
-            
+
         }
-        
+
         /// <summary>
         /// References the the containing project that this 
         /// topic belongs to.
@@ -100,7 +101,7 @@ namespace DocHound.Model
         [YamlIgnore]
         [JsonIgnore]
         public DocTopic Parent { get; set; }
-       
+
 
         /// <summary>
         /// The display title for this topic
@@ -141,7 +142,7 @@ namespace DocHound.Model
 
                 if (DisplayType == "classproperty" || DisplayType == "classmethod" || DisplayType == "classevent")
                     return ClassInfo.MemberName;
-                
+
                 return Title;
             }
         }
@@ -179,7 +180,7 @@ namespace DocHound.Model
                 TopicState.OldLink = _Link;
                 _Link = value;
                 OnPropertyChanged(nameof(Link));
-                
+
             }
         }
         private string _Link;
@@ -199,7 +200,7 @@ namespace DocHound.Model
             }
         }
 
-        
+
 
         /// <summary>
         /// The Topic type (ie. topic,header,classheader,classproperty etc.)
@@ -209,7 +210,7 @@ namespace DocHound.Model
             get
             {
                 var type = _displayType?.ToLower();
-                if (type==null)
+                if (type == null)
                 {
                     if (Topics != null && Topics.Count > 0)
                         type = "header";
@@ -227,9 +228,9 @@ namespace DocHound.Model
                 if (value == null)
                 {
                     if (Topics != null && Topics.Count > 0)
-                        value= "header";
+                        value = "header";
                     else
-                        value= "topic";                    
+                        value = "topic";
                 }
                 _displayType = value.ToLower();
                 OnPropertyChanged(nameof(DisplayType));
@@ -260,10 +261,12 @@ namespace DocHound.Model
                 if (value == _body) return;
                 _body = value;
 
+                Updated = DateTime.Now;
                 if (!TopicState.NoAutoSave)
                     SaveTopicFile();
 
                 OnPropertyChanged();
+
             }
         }
         private string _body;
@@ -283,7 +286,7 @@ namespace DocHound.Model
         private string _keywords;
 
         public string SeeAlso { get; set; }
-        
+
         [YamlIgnore]
         public string Remarks
         {
@@ -402,10 +405,10 @@ namespace DocHound.Model
         {
             get { return _topicState; }
             set
-            {                
+            {
                 if (Equals(value, _topicState)) return;
                 _topicState = value;
-               // OnPropertyChanged();
+                // OnPropertyChanged();
             }
         }
         private TopicState _topicState;
@@ -425,7 +428,7 @@ namespace DocHound.Model
             }
         }
         private ObservableCollection<DocTopic> _topics;
-        
+
 
 
         /// <summary>
@@ -446,7 +449,7 @@ namespace DocHound.Model
             {
                 if (_properties == null)
                     _properties = new Dictionary<string, string>();
-                
+
                 return _properties;
             }
             set => _properties = value;
@@ -470,9 +473,10 @@ namespace DocHound.Model
         {
             TopicState = new TopicState(this);
             Topics = new ObservableCollection<DocTopic>();
+            ClassInfo = new ClassInfo();
         }
 
-        public DocTopic(DocProject project)  
+        public DocTopic(DocProject project)
         {
             Id = DataUtils.GenerateUniqueId(10);
             TopicState = new TopicState(this);
@@ -490,25 +494,20 @@ namespace DocHound.Model
 
             // save body in case something modifies it
             var topic = this; // Copy();           
-            topic.TopicState = new TopicState(topic) {NoAutoSave = true};
+            topic.TopicState = new TopicState(topic) { NoAutoSave = true };
             topic.TopicState.IsPreview = (renderMode == TopicRenderModes.Preview);
-           
+
             OnPreRender(topic, renderMode);
 
-            var model = new RenderTemplateModel
-            {
-                Topic = this,
-                Project = Project,
-                Configuration = KavaDocsConfiguration.Current
-            };
-
+            var model = new RenderTemplateModel(topic);
+            
             var templateFile = Path.Combine(Project.ProjectDirectory, "_kavadocs\\Themes\\" + DisplayType + ".html");
 
             string error;
             string html = Project.TemplateHost.RenderTemplateFile(templateFile, model, out error);
 
-            if (TemplateHost.Script.Error )
-            {               
+            if (TemplateHost.Script.Error)
+            {
                 SetError(error + "\n\n" + TemplateHost.Script.GeneratedClassCodeWithLineNumbers);
                 return html;
             }
@@ -521,7 +520,7 @@ namespace DocHound.Model
 
             return html;
         }
-        
+
 
 
         /// <summary>
@@ -535,7 +534,7 @@ namespace DocHound.Model
         public string RenderTopicToFile(string filename = null, bool addPragmaLines = false)
         {
             var html = RenderTopic(addPragmaLines);
-            if (html==null)
+            if (html == null)
                 return null;
 
             int written = 0; // try to write 4 times
@@ -554,14 +553,14 @@ namespace DocHound.Model
                 else
                     relRootPath = string.Empty;
 
-                html = html.Replace("\"~/","\"" + relRootPath);
-                
+                html = html.Replace("\"~/", "\"" + relRootPath);
+
                 try
-                {                                        
+                {
                     File.WriteAllText(filename, html, Encoding.UTF8);
                     written = 10;  // done
                 }
-                catch(DirectoryNotFoundException)
+                catch (DirectoryNotFoundException)
                 {
                     try
                     {
@@ -572,14 +571,14 @@ namespace DocHound.Model
 
                         // and just retry
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         mmApp.Log("Warning: Unable to create output folder for topic file: " + filename + "\r\n" + ex.Message);
                         return null;
-                    }                                      
+                    }
                 }
                 catch (Exception ex)
-                {                    
+                {
                     written++;
                     if (written == 4)
                     {
@@ -611,7 +610,7 @@ namespace DocHound.Model
                     var href = link.Attributes["href"]?.Value;
                     if (href == null)
                         continue;
-                    
+
                     if (string.IsNullOrEmpty(href) || href.StartsWith("http://") || href.StartsWith("https://"))
                         continue;
 
@@ -622,7 +621,7 @@ namespace DocHound.Model
                     }
                 }
                 if (updated)
-                    html = doc.DocumentNode.OuterHtml;  
+                    html = doc.DocumentNode.OuterHtml;
             }
         }
 
@@ -638,7 +637,7 @@ namespace DocHound.Model
         /// </summary>
         /// <param name="renderMode"></param>
         private void OnPreRender(DocTopic topic, TopicRenderModes renderMode)
-        {           
+        {
             PreRenderAction?.Invoke(topic, renderMode);
 
             if (string.IsNullOrEmpty(topic.Body))
@@ -693,7 +692,7 @@ namespace DocHound.Model
         /// <param name="renderMode"></param>
         /// <returns></returns>
         private List<ProcessDirective> ParseRenderDirectives(DocTopic topic, TopicRenderModes renderMode)
-        {            
+        {
             var list = new List<ProcessDirective>();
 
             if (string.IsNullOrEmpty(topic.Body))
@@ -709,7 +708,7 @@ namespace DocHound.Model
                     DirectiveText = text,
                     Directive = StringUtils.ExtractString(text, "<kavadocs:", " ")
                 };
-                
+
                 if (string.IsNullOrEmpty(dir.Directive))
                     continue;
 
@@ -717,7 +716,7 @@ namespace DocHound.Model
                 if (!string.IsNullOrEmpty(text))
                 {
 
-                    dir.Arguments = text.Split(new[] {"\",", "\" />"}, StringSplitOptions.None);
+                    dir.Arguments = text.Split(new[] { "\",", "\" />" }, StringSplitOptions.None);
                     for (int i = 0; i < dir.Arguments.Length; i++)
                     {
                         dir.Arguments[i] = dir.Arguments[i].Trim(' ', '"');
@@ -732,20 +731,20 @@ namespace DocHound.Model
 
         private void ProcessRenderDirectives(DocTopic topic, TopicRenderModes renderMode)
         {
-            var directives = ParseRenderDirectives(topic,renderMode);
+            var directives = ParseRenderDirectives(topic, renderMode);
 
-            foreach(var dir in directives)
+            foreach (var dir in directives)
             {
                 // <kavadocs:child-topics-list "no-icons" />
                 if (dir.Directive == "child-topics-list" || dir.Directive == "ChildTopicsList")
-                {                    
+                {
                     if (topic.Topics != null)
                     {
                         var sb = new StringBuilder();
 
                         foreach (var top in topic.Topics)
                         {
-                            if( dir.Arguments.Any(s=> s == "no-icons"))
+                            if (dir.Arguments.Any(s => s == "no-icons"))
                                 sb.AppendLine($"* [{top.Title}]({top.Link})");
                             else
                                 sb.AppendLine($"* <img style='' src=\"~/_kavadocs/icons/{top.DisplayType}.png\" /> [{top.Title}]({top.Link})");
@@ -790,11 +789,11 @@ namespace DocHound.Model
         }
 
         public RawString MarkdownRaw(string markdown)
-        {            
-            return new RawString(Markdown(markdown));            
+        {
+            return new RawString(Markdown(markdown));
         }
 
-        
+
 
         #endregion
 
@@ -824,7 +823,7 @@ namespace DocHound.Model
             StringBuilder sb = new StringBuilder();
 
             bool isInvalidBreakChar = true;
-            foreach (char ch in titleText.Trim(' ','*','-','.','!','?'))
+            foreach (char ch in titleText.Trim(' ', '*', '-', '.', '!', '?'))
             {
                 if (ch == ' ' || ch == '.' || ch == ',')
                 {
@@ -886,11 +885,11 @@ namespace DocHound.Model
             // update file links
             if (topic.Link == null ||
                 !(topic.Link.StartsWith("http://") || topic.Link.StartsWith("https://") ||
-                topic.Link.StartsWith("vsts:") || topic.Link.StartsWith("git:")) )
-                topic.Link = topic.Slug + ".md";            
+                topic.Link.StartsWith("vsts:") || topic.Link.StartsWith("git:")))
+                topic.Link = topic.Slug + ".md";
         }
 
-        
+
 
         /// <summary>
         /// Updates
@@ -910,12 +909,12 @@ namespace DocHound.Model
         /// which is the Slug.md or Slug.html
         /// </summary>
         /// <returns>Filename or null if topic file doesn't exist or topic filename is a URL or other format</returns>
-        public string GetTopicFileName(string link = null, bool force = false)       
+        public string GetTopicFileName(string link = null, bool force = false)
         {
             if (string.IsNullOrEmpty(link))
                 link = Link;
 
-            if (!force && link != null && ( link.StartsWith("http://") || link.StartsWith("https://")))
+            if (!force && link != null && (link.StartsWith("http://") || link.StartsWith("https://")))
                 return null;
 
             if (string.IsNullOrEmpty(Project?.ProjectDirectory))
@@ -948,7 +947,7 @@ namespace DocHound.Model
 
 
 
-        
+
         /// <summary>
         /// Loads a topic file from disk and loads it into the topic body
         /// and other fields that are managed externally
@@ -969,7 +968,7 @@ namespace DocHound.Model
                         break;
                     }
                     catch
-                    {                        
+                    {
                         if (i > 3)
                             return false;
                     }
@@ -980,8 +979,8 @@ namespace DocHound.Model
 
                 // normalize line feeds
                 _body = _body.Replace("\r\n", "\n");
-                
-                return UpdateTopicFromYaml(_body,this);
+
+                return UpdateTopicFromYaml(_body, this);
             }
 
             return false;
@@ -1006,10 +1005,10 @@ namespace DocHound.Model
             }
 
             var serializer = new SerializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)                   
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
-             
-            
+
+
             markdownText = StripYaml(markdownText);
 
             if (string.IsNullOrEmpty(Title))
@@ -1028,7 +1027,7 @@ namespace DocHound.Model
 
                 if (string.IsNullOrEmpty(markdownText))
                     try
-                    {                        
+                    {
                         File.Delete(file);
                     }
                     catch { }
@@ -1047,7 +1046,7 @@ namespace DocHound.Model
                         }
                         catch
                         {
-                            _body = markdownText;                            
+                            _body = markdownText;
                             if (i > 3)
                                 return false;
                         }
@@ -1056,7 +1055,7 @@ namespace DocHound.Model
             }
             else
                 return false;
-            
+
             return true;
         }
 
@@ -1068,7 +1067,7 @@ namespace DocHound.Model
         /// <returns></returns>
         public bool DeleteTopicFile(string file = null)
         {
-             if (file == null)
+            if (file == null)
                 file = GetExternalFilename();
 
             try
@@ -1079,7 +1078,7 @@ namespace DocHound.Model
                 if (!Directory.GetFiles(folder).Any())
                     Directory.Delete(folder);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 string msg = $"Couldn't delete topic detail: {ex.Message}";
                 SetError(msg);
@@ -1151,7 +1150,7 @@ namespace DocHound.Model
                 _body = _body.Replace(extractedYaml, "");
 
                 if (string.IsNullOrEmpty(Title))
-                    Title = GetTitleHeader(_body);                
+                    Title = GetTitleHeader(_body);
             }
 
             return true;
@@ -1164,7 +1163,7 @@ namespace DocHound.Model
         /// <returns></returns>
         public DocTopic Copy()
         {
-            var topic= new DocTopic();
+            var topic = new DocTopic();
             DataUtils.CopyObjectData(this, topic);
             return topic;
         }
@@ -1189,8 +1188,8 @@ namespace DocHound.Model
             string extractedYaml = null;
 
             var match = MarkdownUtilities.YamlExtractionRegex.Match(markdown);
-            if (match.Success)            
-                extractedYaml = match.Value;                            
+            if (match.Success)
+                extractedYaml = match.Value;
 
             if (noDelimiters)
                 return StringUtils.ExtractString(extractedYaml, "---", "\n---")?.Trim();
@@ -1303,11 +1302,11 @@ namespace DocHound.Model
         /// <param name="link"></param>
         /// <returns></returns>
         public string GetTopicLink(string displayText,
-            string anchor = null, 
-            string attributes = null,             
-            HtmlRenderModes mode = HtmlRenderModes.None, 
+            string anchor = null,
+            string attributes = null,
+            HtmlRenderModes mode = HtmlRenderModes.None,
             string link = null)
-        {            
+        {
             string anchorString = (string.IsNullOrEmpty(anchor) ? "" : "#" + anchor);
             string linkText = WebUtility.HtmlEncode(displayText);
             if (link == null)
@@ -1370,7 +1369,7 @@ namespace DocHound.Model
         [YamlIgnore]
         [JsonIgnore]
         public string ErrorMessage { get; set; }
-     
+
 
 
         protected void SetError()
@@ -1416,10 +1415,10 @@ namespace DocHound.Model
         public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if(TopicState != null)
+            if (TopicState != null)
                 TopicState.IsDirty = true;
         }
-        
+
         #endregion
 
     }
@@ -1456,13 +1455,14 @@ namespace DocHound.Model
         public string Contract { get; set; }
         public string Namespace { get; set; }
         public bool IsStatic { get; set; }
-	    public string Exceptions { get; set; }
-        
+        public string Exceptions { get; set; }
 
+
+        public bool IsEmpty => string.IsNullOrEmpty(Classname) && string.IsNullOrEmpty(MemberName);
 
         public override string ToString()
         {
-            return Signature ?? base.ToString();
+            return Signature ?? Classname ?? base.ToString();
         }
     }
 
@@ -1470,46 +1470,6 @@ namespace DocHound.Model
     {
         Html,
         Preview
-    }
-
-    public class RawString : IRawString
-    {
-        string OrigValue { get; set; }
-
-        public static RawString Empty => new RawString(string.Empty);
-
-        public RawString()
-        {
-            
-        }
-
-        public RawString(string value)
-        {
-            OrigValue = value;
-        }
-
-        public RawString(StringBuilder sb)
-        {
-            OrigValue = sb.ToString();
-        }
-
-
-        public string Raw()
-        {
-            return OrigValue;
-        }
-
-        public void Set(string value)
-        {
-            OrigValue = value;
-        }
-
-
-        public override string ToString() => OrigValue;
-    }
-
-    public interface IRawString
-    {
     }
 }
 
