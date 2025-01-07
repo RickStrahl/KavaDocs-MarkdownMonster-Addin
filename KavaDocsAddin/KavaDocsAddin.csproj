@@ -12,7 +12,7 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 
     <Authors>Rick Strahl, West Wind Technologies</Authors>
-    <NoWarn>1701;1702;3106;XDG0010</NoWarn>
+    <NoWarn>1701;1702;3106;XDG0010;CA1416</NoWarn>
     <DefineConstants>NETCORE</DefineConstants>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>

@@ -236,9 +236,6 @@ namespace KavaDocsAddin
             Window.ShowStatus($"Project '{project.Title}' opened.", KavaApp.Configuration.StatusMessageTimeout);
         }
 
-        // IMPORTANT: for browser COM CSE errors which can happen with script errors
-        [HandleProcessCorruptedStateExceptions]
-        [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
         public void PreviewTopic(bool keepScrollPosition = false, bool usePragmaLines = true,
             bool showInBrowser = false)
         {

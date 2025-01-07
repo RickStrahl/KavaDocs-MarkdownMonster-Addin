@@ -570,7 +570,7 @@ namespace KavaDocsAddin.Controls
 
         void CreateMoveTopicCommand()
         {
-            MoveTopicCommand = new CommandBase(async (parameter, command) =>
+            MoveTopicCommand = new CommandBase((parameter, command) =>
             {
 
                 _dragContextMenu.Visibility = Visibility.Collapsed;
@@ -614,7 +614,7 @@ namespace KavaDocsAddin.Controls
                         topic.SortOrder = so;
                     }
 
-                    UpdateMovedTopic(dragResult.SourceTopic);
+                    UpdateMovedTopic(dragResult.SourceTopic).FireAndForget();
                 }
                 else if (dragResult.DropLocation == DropLocations.Before)
                 {
@@ -639,7 +639,7 @@ namespace KavaDocsAddin.Controls
                         so -= 10;
                         topic.SortOrder = so;
                     }
-                    UpdateMovedTopic(dragResult.SourceTopic);
+                    UpdateMovedTopic(dragResult.SourceTopic).FireAndForget();
                 }
                 else if (dragResult.DropLocation == DropLocations.After)
                 {
@@ -665,7 +665,7 @@ namespace KavaDocsAddin.Controls
                         so -= 10;
                         docTopic.SortOrder = so;
                     }                    
-                    UpdateMovedTopic(dragResult.SourceTopic);
+                    UpdateMovedTopic(dragResult.SourceTopic).FireAndForget();
                 }
 
                 Model.KavaDocsModel.ActiveProject.SaveProject();

@@ -1100,6 +1100,13 @@
             <param name="tabHeaderIcon"></param>
             <param name="selectItem"></param>
         </member>
+        <member name="M:MarkdownMonster.MainWindow.RemoveRightSideBarPanelTabItem(System.Windows.Controls.TabItem)">
+            <summary>
+            Removes a right side bar panel by tab item
+            </summary>
+            <param name="tabItem"></param>
+            <returns></returns>
+        </member>
         <member name="M:MarkdownMonster.MainWindow.SetWindowTitle(System.String)">
              <summary>
              Sets the Window Title followed by Markdown Monster (registration status)

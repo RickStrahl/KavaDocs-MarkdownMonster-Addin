@@ -39,6 +39,7 @@ namespace DocHound.Templates
             script.ScriptEngine.AddDefaultReferencesAndNamespaces();
             script.ScriptEngine.AddLoadedReferences();
             script.ScriptEngine.SaveGeneratedCode = true;
+            script.ScriptEngine.CompileWithDebug = true;
 
             return script;
         }
@@ -59,7 +60,7 @@ namespace DocHound.Templates
 
                 error = Script.ErrorMessage;
             }
-
+            
             return result;
 
         }
@@ -69,6 +70,8 @@ namespace DocHound.Templates
             model.Topic.TopicState.IsPreview = true;
 
             error = null;
+
+            Script.ScriptEngine.ObjectInstance = null; // make sure we don't cache
             string result = Script.ExecuteScriptFile(templateFile, model, basePath: model.Project.ProjectDirectory );
 
             if (Script.Error)
@@ -78,7 +81,6 @@ namespace DocHound.Templates
             }
 
             return result;
-
         }
 
         public string ErrorHtml(string errorMessage = null, string code = null)

@@ -72,10 +72,7 @@ namespace DocHound.MarkdownParser
             string html = Markdown.ToHtml(markdown, Pipeline);
 
             html = ParseExternalLinks(html);
-
-            if (!mmApp.Configuration.MarkdownOptions.AllowRenderScriptTags)
-                html = ParseScript(html);
-
+            
             return html;
 
 

@@ -67,6 +67,9 @@ namespace KavaDocsAddin
         /// Reference to the the Topic Tree Control
         /// </summary>
         public TopicsTree Tree { get; set; }
+
+        public ImageSource KavaDocsIconImageSource => new BitmapImage(new Uri("pack://application:,,,/KavaDocsAddin;component/Assets/icon_128.png"));
+
         #endregion
 
 
@@ -93,7 +96,9 @@ namespace KavaDocsAddin
 
             try
             {
+#pragma warning disable CA1416
                 menuItem.IconImageSource = new ImageSourceConverter()
+#pragma warning restore CA1416
                     .ConvertFromString("pack://application:,,,/KavaDocsAddin;component/Assets/icon_16.png") as ImageSource;
             }
             catch
@@ -130,9 +135,11 @@ namespace KavaDocsAddin
                 KavaDocsModel.Configuration = Configuration;
                 Configuration.Initialize();
 
+                // this doesn't work for in combination with the Topic browser so turn it off
+                mmApp.Configuration.FolderBrowser.TrackDocumentInFolderBrowser = false;
 
                 // Set up the KavaDocs Topic Tree in the Left Sidebar
-                var tabItem = new MetroTabItem() {Name = "KavaDocsTree"};
+                var tabItem = new MetroTabItem() {Name = "KavaDocsTopic"};
 
                 // Create the tab content user control
                 KavaDocsTopicTreeTab = tabItem;
@@ -140,14 +147,14 @@ namespace KavaDocsAddin
                 tabItem.Content = Tree;
 
                 var icons = new AssociatedIcons();
-                var imgSource = icons.GetIconFromFile("t.kavadocs");  // image source
+                var imgSource = KavaDocsIconImageSource; // icons.GetIconFromFile("t.kavadocs");  // image source
                 
 
                 TopicEditor = new TopicEditor();
                 tabItem.Content = TopicEditor;
-                
-                Model.Window.AddRightSidebarPanelTabItem(tabItem, "Topic",imgSource);
 
+                Model.Window.AddRightSidebarPanelTabItem(tabItem, "Topic", imgSource);
+                
 
                 KavaDocsMenu = new KavaDocsMenuHandler();
                 KavaDocsMenu.CreateKavaDocsMainMenu();
@@ -189,7 +196,7 @@ namespace KavaDocsAddin
             
             Tree = new TopicsTree();            
             sbtDocMonster.TabContent = Tree;
-            sbtDocMonster.HeaderImage = new BitmapImage(new Uri("pack://application:,,,/KavaDocsAddin;component/Assets/icon_128.png"));
+            sbtDocMonster.HeaderImage = KavaDocsIconImageSource;
             //new ImageAwesome { Icon = EFontAwesomeIcon.Duotone_CircleQuestion, PrimaryColor = Brushes.White, SecondaryColor = System.Windows.Media.Brushes.SteelBlue, SecondaryOpacity = 1, Height = 23 }.Source;
 
             var tabItem = leftSidebar.CreateTabItemFromSidebarTab(sbtDocMonster);
@@ -198,6 +205,18 @@ namespace KavaDocsAddin
             mmApp.Model.Window.LeftSidebar.RefreshTabBindings();
             if (!noSelection)
                 leftSidebar.SelectTab(sbtDocMonster.TabItem);
+
+            tabItem = null;
+            foreach(var item in mmApp.Model.Window.RightSidebarContainer.Items)
+            {
+                tabItem = item as MetroTabItem;
+                if (tabItem == null)
+                    continue;
+
+                if (tabItem.Name == "KavaDocsTopic")
+                    break;
+            }
+            Model.Window.RightSidebarContainer.Items.Remove(tabItem);
         }
 
 
@@ -231,7 +250,7 @@ namespace KavaDocsAddin
         }
 
 
-        public override async Task OnApplicationShutdown()
+        public override Task OnApplicationShutdown()
         {
             if (KavaDocsModel != null)
             {
@@ -240,28 +259,31 @@ namespace KavaDocsAddin
             }
 
             base.OnApplicationShutdown();
+            return Task.CompletedTask;
         }
 
         #endregion
 
         #region Interception Hooks
 
-        public override async Task OnWindowLoaded()
+        public override Task OnWindowLoaded()
         {
             if (kavaUi.Configuration.AutoOpen)
                 OnExecute(null);
+            return Task.CompletedTask;
         }
 
 
-        public override async Task OnExecute(object sender)
+        public override Task OnExecute(object sender)
         {
             if (IsAddinInitialized)
             {
                 UninitializeKavaDocs();
-                return;
+                return Task.CompletedTask;
             }
 
             InitializeKavaDocs();  // will check if already loaded
+            return Task.CompletedTask;
         }
 
 
@@ -275,19 +297,19 @@ namespace KavaDocsAddin
             await Model.Window.OpenTab(configFile);
         }
 
-        public override async Task OnAfterSaveDocument(MarkdownDocument doc)
+        public override Task OnAfterSaveDocument(MarkdownDocument doc)
         {
             base.OnAfterSaveDocument(doc);
            
             if (doc == null || KavaDocsModel == null)
-                return;
+                return Task.CompletedTask;
 
 
             // Reload settings after saving them in the editor
             if (doc.Filename.IndexOf("kavadocsaddin.json", StringComparison.InvariantCultureIgnoreCase) > -1)
-            {                
-                KavaDocsModel.Configuration.Read();                
-                return;
+            {
+                KavaDocsModel.Configuration.Read();
+                return Task.CompletedTask;
             }
 
 
@@ -296,7 +318,7 @@ namespace KavaDocsAddin
                 KavaDocsModel.ActiveProject.Filename.Equals(doc.Filename,StringComparison.InvariantCultureIgnoreCase))
             {
                 KavaDocsModel.LoadProject(KavaDocsModel.ActiveProject.Filename);
-                return;
+                return Task.CompletedTask;
             }
             
             if (KavaDocsModel?.ActiveTopic != null )
@@ -306,9 +328,11 @@ namespace KavaDocsAddin
                 {
                     InitializeKavaDocs(); // will check if already loaded
                     OnTopicFilesSaved(topic, doc);
-                    return;
+                    return Task.CompletedTask;
                 }                
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -375,29 +399,32 @@ namespace KavaDocsAddin
             return objTopic as DocTopic;
         }
 
-        public override async Task OnDocumentActivated(MarkdownDocument doc)
+        public override Task OnDocumentActivated(MarkdownDocument doc)
         {
             base.OnDocumentActivated(doc);
 
             if (KavaDocsModel == null || Model?.ActiveEditor == null)
-                return;
+                return Task.CompletedTask;
             
             if (!Model.ActiveEditor.Properties.TryGetValue(Constants.EditorPropertyNames.KavaDocsTopic, out object objTopic))                                                    
-                 return;            
+                 return Task.CompletedTask;            
 
             var topic = objTopic as DocTopic;
-            if (topic == null) return;
+            if (topic == null) return Task.CompletedTask;
 
             KavaDocsModel.ActiveTopic = topic;
             topic.TopicState.IsSelected = true;
+
+            return Task.CompletedTask;
         }
 
-        public override async Task OnDocumentUpdated()
+        public override Task OnDocumentUpdated()
         {
             if (KavaDocsModel == null || Model?.ActiveEditor == null || Model.ActiveEditor.Identifier != "KavaDocsDocument")
-                return;
+                return Task.CompletedTask;
 
             Model.ActiveEditor.Properties[Constants.EditorPropertyNames.KavaDocsUnedited] = false;
+            return Task.CompletedTask;
         }
 
 
@@ -416,27 +443,26 @@ namespace KavaDocsAddin
         /// <param name="renderedHtml"></param>
         /// <param name="markdownHtml"></param>
         /// <returns></returns>
-        public override async Task<string> OnModifyPreviewHtml(string renderedHtml, string markdownHtml)
+        public override Task<string> OnModifyPreviewHtml(string renderedHtml, string markdownHtml)
         {
-            // return renderedHtml;
-
-                // default rendering if specified
-            if (kavaUi.Configuration.TopicRenderMode == TopicRenderingModes.MarkdownDefault)
-                return renderedHtml;
+            // default rendering if specified
+            if (KavaDocsModel == null ||
+                kavaUi.Configuration.TopicRenderMode == TopicRenderingModes.MarkdownDefault)
+                return Task.FromResult(renderedHtml);
 
             if (mmApp.Model.ActiveEditor == null ||
                 !mmApp.Model.ActiveEditor.Properties.TryGetValue(Constants.EditorPropertyNames.KavaDocsTopic,
                     out object objTopic))
-                return renderedHtml;
+                return Task.FromResult(renderedHtml);
 
             var topic = objTopic as DocTopic;
             if (topic == null || topic != KavaDocsModel.ActiveTopic)
-                return renderedHtml;
+                return Task.FromResult(renderedHtml);
 
             var editor = mmApp.Model.ActiveEditor;
             var doc = mmApp.Model.ActiveEditor?.MarkdownDocument;
             if (doc == null)
-                return renderedHtml;
+                return Task.FromResult(renderedHtml);
 
 
             //topic.Body = await mmApp.Model.ActiveEditor.GetMarkdown();
@@ -460,7 +486,7 @@ namespace KavaDocsAddin
             }
 
 
-            return renderedHtml; //return base.OnModifyPreviewHtml(renderedHtml, markdownHtml);
+            return Task.FromResult(renderedHtml); //return base.OnModifyPreviewHtml(renderedHtml, markdownHtml);
         }
 
         // Completely take over preview rendering
@@ -564,9 +590,7 @@ namespace KavaDocsAddin
         //    }
         //}
 
-        // IMPORTANT: for browser COM CSE errors which can happen with script errors
-        [HandleProcessCorruptedStateExceptions]
-        [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
+
         public void PreviewTopicExternal()
         {
 

@@ -9,6 +9,7 @@ using DocHound.Model;
 using KavaDocsAddin;
 using KavaDocsAddin.Controls;
 using MarkdownMonster;
+using Westwind.Utilities;
 
 namespace DocHound.Windows.Dialogs
 {
@@ -234,7 +235,7 @@ namespace DocHound.Windows.Dialogs
                 //        AppModel.TopicsTree.OpenTopicInMMEditor(Topic),
                 //        System.Windows.Threading.DispatcherPriority.ApplicationIdle);
 
-                AppModel.TopicsTree.OpenTopicInMMEditor(Topic);
+                AppModel.TopicsTree.OpenTopicInMMEditor(Topic).FireAndForget();
             },System.Windows.Threading.DispatcherPriority.ApplicationIdle);
 
             return Topic;
