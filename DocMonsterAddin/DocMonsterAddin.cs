@@ -7,8 +7,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using DocMonster;
 using DocMonster.Configuration;
+using DocMonster.MarkdownParser;
 using DocMonster.Model;
 using DocMonsterAddin.Controls;
 using FontAwesome6;
@@ -113,8 +115,7 @@ namespace DocMonsterAddin
             // Must add the menu to the collection to display menu and toolbar items            
             MenuItems.Add(menuItem);
 
-
-            
+        
         }      
 
 
@@ -232,6 +233,26 @@ namespace DocMonsterAddin
         }
 
 
+        public override Task OnWindowLoaded()
+        {
+            LoadRenderExtensions();
+
+            if (kavaUi.Configuration.AutoOpen)
+                OnExecute(null);
+            return Task.CompletedTask;
+        }
+
+        private void LoadRenderExtensions()
+        {
+            Model.Window.Dispatcher.InvokeAsync(() =>
+            {
+                DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.FontAwesomeRenderExtension());
+                DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.PlantUmlMarkdownRenderExtension());
+                DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.MermaidRenderExtension());
+                DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.MathRenderExtension());
+
+            }, DispatcherPriority.ApplicationIdle);
+        }
 
         public override Task OnApplicationShutdown()
         {
@@ -248,14 +269,6 @@ namespace DocMonsterAddin
         #endregion
 
         #region Interception Hooks
-
-        public override Task OnWindowLoaded()
-        {
-            if (kavaUi.Configuration.AutoOpen)
-                OnExecute(null);
-            return Task.CompletedTask;
-        }
-
 
         public override Task OnExecute(object sender)
         {

@@ -32,9 +32,12 @@
 #endregion
 
 using System.IO;
+using DocMonster.Model;
 using Markdig;
 using Markdig.Renderers;
 using MarkdownMonster;
+using MarkdownMonster.RenderExtensions;
+using PlantUml.Net;
 
 namespace DocMonster.MarkdownParser
 {
@@ -43,11 +46,13 @@ namespace DocMonster.MarkdownParser
     /// Wrapper around the CommonMark.NET parser that provides a cached
     /// instance of the Markdown parser. Hooks up custom processing.
     /// </summary>
-    public class  MarkdownParserMarkdig : MarkdownParserBase
+    public class MarkdownParserMarkdig : MarkdownParserBase
     {
         public static MarkdownPipeline Pipeline;
 
         private readonly bool _usePragmaLines;
+
+        private bool _isPreview = false;
 
         public MarkdownParserMarkdig(bool usePragmaLines = false, bool force = false)
         {
@@ -69,20 +74,24 @@ namespace DocMonster.MarkdownParser
             if (string.IsNullOrEmpty(markdown))
                 return string.Empty;
 
+            var args = new DocMonster.MarkdownParser.ModifyMarkdownArguments(markdown)
+            {
+                IsPreview = _isPreview
+            };
+            DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.ProcessAllBeforeMarkdownRenderedHooks(args);
+
             string html = Markdown.ToHtml(markdown, Pipeline);
+
+            var args2 = new DocMonster.MarkdownParser.ModifyHtmlAndHeadersArguments(html)
+            {
+                IsPreview = _isPreview
+            };
+            DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.ProcessAllAfterMarkdownRenderedHooks(args2);
 
             html = ParseExternalLinks(html);
             
             return html;
 
-
-            //var htmlWriter = new StringWriter();
-            //var renderer = CreateRenderer(htmlWriter);
-
-            //Markdig.Markdown.Convert(markdown, renderer, Pipeline);
-
-            //var html = htmlWriter.ToString();            
-            //return html;
         }
 
         protected virtual MarkdownPipelineBuilder CreatePipelineBuilder()

@@ -25,6 +25,7 @@ using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using MarkdownParserFactory = DocMonster.MarkdownParser.MarkdownParserFactory;
+using MarkdownMonster.RenderExtensions;
 
 namespace DocMonster.Model
 {
@@ -797,8 +798,27 @@ namespace DocMonster.Model
         /// <returns></returns>
         public string Markdown(string markdown)
         {
-            var parser = MarkdownParser.MarkdownParserFactory.GetParser(usePragmaLines: this.TopicState.IsPreview, forceLoad: true);
+
+            var args = new DocMonster.MarkdownParser.ModifyMarkdownArguments(markdown, null)
+            {
+                IsPreview = TopicState.IsPreview
+            };
+            DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.ProcessAllBeforeMarkdownRenderedHooks(args);
+
+            markdown = args.Markdown;
+
+            var parser = DocMonster.MarkdownParser.MarkdownParserFactory.GetParser(usePragmaLines: TopicState.IsPreview, forceLoad: true);            
             var html = parser.Parse(markdown);
+
+
+
+            var arg2 = new DocMonster.MarkdownParser.ModifyHtmlAndHeadersArguments(html, markdown, null)
+            {
+                IsPreview = TopicState.IsPreview
+
+            };
+            DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.ProcessAllAfterMarkdownRenderedHooks(arg2);
+
             return html;
         }
 
