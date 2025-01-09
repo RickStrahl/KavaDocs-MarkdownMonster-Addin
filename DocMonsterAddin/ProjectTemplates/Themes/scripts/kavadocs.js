@@ -41,7 +41,7 @@ helpBuilder = null;
 	        navigator.userAgent.indexOf("MSIE 7") > -1)
             $(document.body).addClass("old-ie");
 
-        // modes: none/0 - with sidebar,  1 no sidebar
+        // modes: none/0 - with sidebdebar,  1 no sidebar
         var mode = getUrlEncodedKey("mode");
         if (mode)
             mode = mode * 1;

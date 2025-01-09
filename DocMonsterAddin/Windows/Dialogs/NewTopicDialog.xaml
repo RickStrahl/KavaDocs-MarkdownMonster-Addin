@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"        
         xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
-        xmlns:interfaces1="clr-namespace:DocMonster.Interfaces;assembly=DocMonster"
+        xmlns:model="clr-namespace:DocMonster.Model;assembly=DocMonster"
         mc:Ignorable="d"
         Icon="../../Assets/Icon_128.png"                    
         Title="New Topic"
@@ -57,7 +57,7 @@
                     <ComboBox Name="ComboBodyType" Padding="6"                                                        
                               SelectedValue="{Binding Topic.Type}"                                 
                           Grid.Column="0" ToolTip="Topic source type that input format"
-                          ItemsSource="{Binding Source={x:Static interfaces1:TopicBodyFormats.TopicBodyFormatsList}}"
+                          ItemsSource="{Binding Source={x:Static model:TopicBodyFormats.TopicBodyFormatsList}}"
                           Margin="0,0,10,0">
                     </ComboBox>
                 </StackPanel>

@@ -6,7 +6,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocMonsterAddin", "DocMonst
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocMonster", "DocMonster\DocMonster.csproj", "{F7CF7101-6C60-4F3A-8036-CA77351AA2A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KavaDocs.Tests", "KavaDocs.Tests\KavaDocs.Tests.csproj", "{14E6ECBA-EAFC-4233-8E92-8DE15900608D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocMonster.Tests", "KavaDocs.Tests\DocMonster.Tests.csproj", "{14E6ECBA-EAFC-4233-8E92-8DE15900608D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.TypeImporter", "..\..\Libraries\Westwind.TypeImporter\Westwind.TypeImporter.csproj", "{4067B194-D1C4-4ED7-9771-C5BF6BB64EBB}"
 EndProject

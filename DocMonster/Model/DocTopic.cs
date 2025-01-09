@@ -2,30 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using DocMonster.Configuration;
-using DocMonster.Utilities;
 using DocMonster.Annotations;
-using DocMonster.Interfaces;
 using DocMonster.Templates;
 using HtmlAgilityPack;
 using MarkdownMonster;
 using Newtonsoft.Json;
 using Westwind.Scripting;
 using Westwind.Utilities;
-using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-using MarkdownParserFactory = DocMonster.MarkdownParser.MarkdownParserFactory;
-using MarkdownMonster.RenderExtensions;
 
 namespace DocMonster.Model
 {
@@ -492,21 +483,25 @@ namespace DocMonster.Model
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="addPragmaLines"></param>
+        /// <param name="addPragmaLines"></param>        
         /// <returns></returns>
-        public string RenderTopic(bool addPragmaLines = false, TopicRenderModes renderMode = TopicRenderModes.Html)
+        public string RenderTopic( TopicRenderModes renderMode = TopicRenderModes.Html)
         {
 
             // save body in case something modifies it
             var topic = this; // Copy();           
-            topic.TopicState = new TopicState(topic) { NoAutoSave = true };
+            topic.TopicState.NoAutoSave = true;            
             topic.TopicState.IsPreview = (renderMode == TopicRenderModes.Preview);
 
             OnPreRender(topic, renderMode);
 
             var model = new RenderTemplateModel(topic);
-            
-            var templateFile = Path.Combine(Project.ProjectDirectory, "_kavadocs\\Themes\\" + DisplayType + ".html");
+
+            string templateFile = null;
+            if (TopicState.IsToc)
+                templateFile = Path.Combine(Project.ProjectDirectory, "_kavadocs\\Themes\\TableOfContents.html");
+            else 
+                templateFile = Path.Combine(Project.ProjectDirectory, "_kavadocs\\Themes\\" + DisplayType + ".html");
 
             string error;
             string html = Project.TemplateHost.RenderTemplateFile(templateFile, model, out error);
@@ -546,9 +541,9 @@ namespace DocMonster.Model
         /// <param name="filename"></param>
         /// <param name="addPragmaLines"></param>
         /// <returns></returns>
-        public string RenderTopicToFile(string filename = null, bool addPragmaLines = false)
+        public string RenderTopicToFile(string filename = null, TopicRenderModes renderMode = TopicRenderModes.Html)
         {
-            var html = RenderTopic(addPragmaLines);
+            var html = RenderTopic( renderMode);
             if (html == null)
                 return null;
 
@@ -1503,6 +1498,31 @@ namespace DocMonster.Model
     {
         Html,
         Preview
+    }
+
+    public class TopicBodyFormats
+    {
+        public static List<string> TopicBodyFormatsList { get; } = new List<string>();
+
+        static TopicBodyFormats()
+        {
+            var pi = typeof(TopicBodyFormats).GetProperties(System.Reflection.BindingFlags.Static |
+                                                            System.Reflection.BindingFlags.Public |
+                                                            System.Reflection.BindingFlags.GetProperty).Where(p =>
+                    p.Name != nameof(TopicBodyFormatsList))
+                .OrderBy(p => p.Name)
+                .ToList();
+
+            foreach (var p in pi)
+            {
+                TopicBodyFormatsList.Add(p.GetValue(null).ToString());
+            }
+        }
+
+        public static string Markdown => "markdown";
+        public static string Html => "html";
+        public static string ImageUrl => "imageurl";
+        public static string HelpBuilder => "helpbuilder";
     }
 }
 

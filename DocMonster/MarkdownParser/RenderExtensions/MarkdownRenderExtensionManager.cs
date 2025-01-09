@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using MarkdownMonster;
 
+//using MarkdownMonster;
+
 namespace DocMonster.MarkdownParser;
 
 /// <summary>
@@ -62,7 +64,8 @@ public class MarkdownRenderExtensionManager
             }
             catch (Exception ex)
             {
-                mmApp.Log($"AfterMarkdownRendered RenderExtension failed: {extension.GetType().Name}", ex);
+                
+                //mmApp.Log($"AfterMarkdownRendered RenderExtension failed: {extension.GetType().Name}", ex);
             }
 
         }

@@ -4,9 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using DocMonster.Configuration;
-using DocMonster.Interfaces;
 using DocMonster.Model;
-using MarkdownMonster;
 using Westwind.Utilities;
 
 namespace DocMonster.Utilities

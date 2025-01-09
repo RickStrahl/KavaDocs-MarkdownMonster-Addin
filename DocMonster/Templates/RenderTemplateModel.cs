@@ -25,4 +25,5 @@ public class RenderTemplateModel
     public DocProject Project { get; set; }
     public DocMonsterConfiguration Configuration { get; set; }
     public TemplateHelpers Helpers {get; set; }
+    public bool IsPreview { get; set;  }
 }

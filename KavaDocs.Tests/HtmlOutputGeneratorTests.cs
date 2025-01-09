@@ -21,7 +21,6 @@ namespace DocumentationMonster.Core.Tests
             var project = DocProjectManager.Current.LoadProject(TestConfiguration.Current.Paths.projectMarkdownMonsterHelpFile);
             var output = new HtmlOutputGenerator(project);
             output.Generate();
-
         }
 
         [TestMethod]

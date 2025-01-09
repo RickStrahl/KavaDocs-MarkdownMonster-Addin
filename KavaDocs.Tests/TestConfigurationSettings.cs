@@ -17,7 +17,7 @@ namespace DocumentationMonster.Core.Tests
 
     public class PathConfiguration
     {
-        public string hbImportProjectFile = @"C:\Temp\markdownmonster_help\_toc_original.json";
-        public string projectMarkdownMonsterHelpFile = @"C:\Temp\markdownmonster_help\_kavadocs-project.json";
+        public string hbImportProjectFile = @"d:\Temp\markdownmonster_help\_toc_original.json";
+        public string projectMarkdownMonsterHelpFile = @"d:\temp\websurge3.1_project\_toc.json";
     }
 }

@@ -2,7 +2,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using DocMonster.Annotations;
-using MarkdownMonster.Utilities;
 
 
 namespace DocMonster.Model
@@ -77,7 +76,7 @@ namespace DocMonster.Model
         }
         private bool _IsDirty = false;
 
-
+      
         public bool IsPreview { get; set; }
 
         /// <summary>
@@ -137,6 +136,8 @@ namespace DocMonster.Model
                 return Path.Combine(outfolder, "_kavadocs", "icons", type.ToLower() + ".png");
             }
         }
+
+        public bool IsToc { get; set; }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

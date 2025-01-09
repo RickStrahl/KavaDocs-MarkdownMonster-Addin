@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DocMonster.Model;
+using DocMonster.Templates;
 using Westwind.Utilities;
 
 namespace DocMonster.Utilities
@@ -124,8 +125,9 @@ namespace DocMonster.Utilities
         public void GenerateHtml()
         {
             Project.WalkTopicsHierarchy( Project.Topics, (topic,project)=>
-            {
+            {                
                 topic.Project = project;
+                topic.TopicState.IsPreview = false;
                 topic.RenderTopicToFile();
             });            
         }
@@ -138,13 +140,20 @@ namespace DocMonster.Utilities
             if (string.IsNullOrEmpty(OutputPath))
                 OutputPath = Project.OutputDirectory;
 
-            var rootTopic = Project.Topics[0];
+            var rootTopic = Project.LoadTopic("index");
+            if (rootTopic == null)
+                rootTopic = Project.Topics[0];
             rootTopic.Project = Project;
-            
-            string error;
-            string html = Project.TemplateHost.RenderTemplate("TableOfContents.cshtml", rootTopic, out error);            
-            File.WriteAllText(Path.Combine(OutputPath, "TableOfContents.html"),html); 
+            rootTopic.TopicState.IsPreview = false;
+            rootTopic.TopicState.IsToc = true;
+
+
+            string file = Path.Combine(Project.ProjectDirectory,"_kavadoces","Themes", "TableOfContents.html");
+            string html = rootTopic.RenderTopicToFile(file, TopicRenderModes.Html);            
+            File.WriteAllText(Path.Combine(OutputPath, "TableOfContents.html"),html);
+
         }
+
 
         public void WriteStatus()
         {

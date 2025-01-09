@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:DocMonsterAddin.Controls"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:attachedProperties="http://schemas.fontawesome.com/icons/fonts/properties"
-             xmlns:interfaces1="clr-namespace:DocMonster.Interfaces;assembly=DocMonster"
+             xmlns:interfaces1="clr-namespace:DocMonster.Model;assembly=DocMonster"
+
              mc:Ignorable="d" 
              FontSize="14"             
              d:DesignHeight="500" d:DesignWidth="300">

@@ -35,8 +35,6 @@ using System.IO;
 using DocMonster.Model;
 using Markdig;
 using Markdig.Renderers;
-using MarkdownMonster;
-using MarkdownMonster.RenderExtensions;
 using PlantUml.Net;
 
 namespace DocMonster.MarkdownParser

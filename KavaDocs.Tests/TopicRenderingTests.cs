@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DocMonster;
+using DocMonster.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Westwind.Utilities;
 
@@ -31,7 +32,7 @@ namespace DocumentationMonster.Core.Tests
                 Console.WriteLine(project.ErrorMessage);
             Assert.IsNotNull(topic);
 
-            string html = topic.RenderTopic(false);
+            string html = topic.RenderTopic( DocMonster.Model.TopicRenderModes.Preview);
 
             if (topic.ErrorMessage != null)
                 Console.WriteLine(topic.ErrorMessage);
@@ -58,7 +59,7 @@ namespace DocumentationMonster.Core.Tests
                 Console.WriteLine(project.ErrorMessage);
             Assert.IsNotNull(topic);
 
-            string html = topic.RenderTopic(false);
+            string html = topic.RenderTopic(TopicRenderModes.Html);
 
             if (topic.ErrorMessage != null)
                 Console.WriteLine(topic.ErrorMessage);

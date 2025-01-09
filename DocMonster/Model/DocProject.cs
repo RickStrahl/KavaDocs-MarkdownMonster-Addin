@@ -10,7 +10,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using DocMonster.Interfaces;
 using DocMonster.Annotations;
 using DocMonster.Configuration;
 using DocMonster.Templates;

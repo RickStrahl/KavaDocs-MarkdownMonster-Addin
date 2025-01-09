@@ -58,7 +58,14 @@ namespace DocMonster.Templates
             return script;
         }
 
-
+        /// <summary>
+        /// Make sure the topic.TopicState is set to determine whether to render in
+        /// preview mode or Html
+        /// </summary>
+        /// <param name="templateText"></param>
+        /// <param name="model"></param>
+        /// <param name="error"></param>
+        /// <returns></returns>
         public string RenderTemplate(string templateText, object model, out string error)
         {
             error = null;
@@ -81,8 +88,6 @@ namespace DocMonster.Templates
 
         public string RenderTemplateFile(string templateFile, RenderTemplateModel model, out string error)
         {
-            model.Topic.TopicState.IsPreview = true;
-
             error = null;
 
             Script.ScriptEngine.ObjectInstance = null; // make sure we don't cache

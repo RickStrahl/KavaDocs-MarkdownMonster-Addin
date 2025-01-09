@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using DocMonster.Templates;
 using DocMonster.Model;
-using MarkdownMonster;
-using MarkdownMonster.RenderExtensions;
 using Westwind.Scripting;
 using Westwind.Utilities;
 

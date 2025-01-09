@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using MarkdownMonster;
-using MarkdownMonster.AddIns;
 using Westwind.Utilities.Configuration;
 
 namespace DocMonster.Configuration
@@ -206,8 +205,10 @@ namespace DocMonster.Configuration
             field = value;
             OnPropertyChanged(propertyName);
             return true;
-        }
+        }        
     }
+
+
 
     public class BaseAddinConfiguration<T> : AppConfiguration
     {

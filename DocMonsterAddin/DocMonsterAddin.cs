@@ -26,6 +26,8 @@ namespace DocMonsterAddin
 {
     public class DocMonsterAddin : MarkdownMonster.AddIns.MarkdownMonsterAddin
     {
+        public static DocMonsterAddin Current;
+
         /// <summary>
         /// KavaDocs global configuration settings
         /// </summary>
@@ -72,10 +74,13 @@ namespace DocMonsterAddin
 
         #endregion
 
+        
 
         #region Initialization
         public override async Task OnApplicationStart()
         {
+            Current = this;
+
             await base.OnApplicationStart();
 
             // Id - should match output folder name. REMOVE 'Addin' from the Id
@@ -479,7 +484,7 @@ namespace DocMonsterAddin
             {
                 // Currently we're not rendering topics and just using MM to render topic content
                 //string html = "<h1>" + topic.Title + "</h1>";
-                renderedHtml = topic.RenderTopic(addPragmaLines: true, TopicRenderModes.Preview);
+                renderedHtml = topic.RenderTopic( TopicRenderModes.Preview);
             }
 
 
@@ -610,5 +615,5 @@ namespace DocMonsterAddin
 
     }
 
-    
+
 }
