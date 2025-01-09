@@ -21,6 +21,8 @@ namespace DocMonster.MarkdownParser
         /// <param name="args"></param>
         public void BeforeMarkdownRendered(ModifyMarkdownArguments args)
         {
+            if (string.IsNullOrEmpty(args.Markdown)) return;
+                
             while (true)
             {
                 string extract = StringUtils.ExtractString(args.Markdown, "```mermaid", "```", returnDelimiters: true);
@@ -42,6 +44,8 @@ namespace DocMonster.MarkdownParser
         /// <param name="args"></param>
         public void AfterMarkdownRendered(ModifyHtmlAndHeadersArguments args)
         {
+            if (string.IsNullOrEmpty(args.Markdown)) return;
+
             if (args.Markdown.Contains(" class=\"mermaid\"") || args.Markdown.Contains("```mermaid"))
                 args.HeadersToEmbed = MermaidHeaderScript;
         }

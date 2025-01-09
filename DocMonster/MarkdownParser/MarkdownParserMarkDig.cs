@@ -82,7 +82,7 @@ namespace DocMonster.MarkdownParser
 
             string html = Markdown.ToHtml(markdown, Pipeline);
 
-            var args2 = new DocMonster.MarkdownParser.ModifyHtmlAndHeadersArguments(html)
+            var args2 = new DocMonster.MarkdownParser.ModifyHtmlAndHeadersArguments(html,markdown)
             {
                 IsPreview = _isPreview
             };

@@ -90,8 +90,8 @@ namespace DocMonsterAddin
                     Title = "Open Kava Docs Project"
                 };
 
-                if (!string.IsNullOrEmpty(KavaApp.Configuration.LastProjectFile))
-                    fd.InitialDirectory = KavaApp.Configuration.LastProjectFile;
+                if (!string.IsNullOrEmpty(dmApp.Configuration.LastProjectFile))
+                    fd.InitialDirectory = dmApp.Configuration.LastProjectFile;
 
                 bool? res = null;
                 try
@@ -158,7 +158,7 @@ namespace DocMonsterAddin
                 Model.ActiveMarkdownEditor?.GetMarkdown();
                 Model.ActiveProject?.SaveProject();
 
-                Model.Window.ShowStatus("Project saved.", KavaApp.Configuration.StatusMessageTimeout);
+                Model.Window.ShowStatus("Project saved.", dmApp.Configuration.StatusMessageTimeout);
             });
         }
 
@@ -187,7 +187,7 @@ namespace DocMonsterAddin
                 Model.TopicsTree.LoadProject(null);
 
                 Model.Window.ShowStatus("Project " + projectName + " has been closed.",
-                    KavaApp.Configuration.StatusMessageTimeout);
+                    dmApp.Configuration.StatusMessageTimeout);
             });
         }
 

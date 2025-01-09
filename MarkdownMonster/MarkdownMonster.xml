@@ -4344,17 +4344,6 @@
             to normalized linefeeds for rendering, but if you test locally make sure to pre-format the args.Markdown
             </remarks>
         </member>
-        <member name="T:MarkdownMonster.RenderExtensions.FontAwesomeRenderExtension">
-             <summary>
-             Render Extension that extends markdown rendering via `@icon-` sytnax
-             with a name of a font-awsome icon. 
-            
-             * @icon-home  - renders `fas fa-home`
-             * @icon-regular-home - renders `far fa-home`
-             * @icon-duotone-home - renders `fad fa-home`
-             * @icon-solid-home - renders `fas fa-home`
-             </summary>
-        </member>
         <member name="T:MarkdownMonster.RenderExtensions.IMarkdownRenderExtension">
              <summary>
              Interface implemented for RenderExtensions that allow modification
@@ -10294,6 +10283,21 @@
             The requests content type. Typically will be JSON object unless no
             data is returned.
             </summary>
+        </member>
+        <member name="T:Westwind.AspNetCore.Markdown.FontAwesomeRenderExtension">
+             <summary>
+             Render Extension that extends markdown rendering via `@icon-` sytnax
+             with a name of a font-awsome icon. 
+            
+             * @icon-home  - renders `fas fa-home`
+             * @icon-regular-home - renders `far fa-home`
+             * @icon-duotone-home - renders `fad fa-home`
+             * @icon-solid-home - renders `fas fa-home`
+            
+             Other:
+             Ends in -spin to spin
+             -color:steelblue   (anywhere) to change base color
+             </summary>
         </member>
         <member name="T:HtmlSearchValue">
             <summary>

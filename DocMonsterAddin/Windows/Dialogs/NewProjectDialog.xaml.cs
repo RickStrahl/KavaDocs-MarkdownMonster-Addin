@@ -96,7 +96,7 @@ Kava Docs requires a new project folder. Please choose another folder for your n
                 kavaUi.AddinModel.OpenProject(project.Filename);
 
                 Window.ShowStatus($"New Project '{project.Title}' has been created.",
-                    KavaApp.Configuration.StatusMessageTimeout);
+                    dmApp.Configuration.StatusMessageTimeout);
                 return true;
             }
 
@@ -235,7 +235,7 @@ Kava Docs requires a new project folder. Please choose another folder for your n
             {
 
                 ProjectCreator.Filename = FileUtils.CamelCaseSafeFilename(ProjectCreator.Title) + ".kavadocs";
-                ProjectCreator.ProjectFolder = System.IO.Path.Combine(KavaApp.Configuration.DocumentsFolder,
+                ProjectCreator.ProjectFolder = System.IO.Path.Combine(dmApp.Configuration.DocumentsFolder,
                     FileUtils.SafeFilename(ProjectCreator.Title));
             }
         }

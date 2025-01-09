@@ -31,14 +31,14 @@ namespace DocMonsterAddin
         {
             MarkdownMonsterModel = mmApp.Model;
             AddinModel = new DocMonsterModel(mmApp.Model.Window);
-            Configuration = KavaApp.Configuration;
+            Configuration = dmApp.Configuration;
             
         }
 
         public static void NotImplementedDialog(string title = null, string additionalText = null)
         {
             if (string.IsNullOrEmpty(title))
-                title = KavaApp.ApplicationName;
+                title = dmApp.ApplicationName;
 
 
             if (!string.IsNullOrEmpty(additionalText))

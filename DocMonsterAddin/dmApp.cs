@@ -9,7 +9,7 @@ using Westwind.Utilities.Configuration;
 
 namespace DocMonsterAddin.Core.Configuration
 {
-    public class KavaApp
+    public class dmApp
     {
 
         /// <summary>
@@ -22,10 +22,10 @@ namespace DocMonsterAddin.Core.Configuration
         /// </summary>
         public static string ActiveHelpContext { get; set; }
 
-        public static string ApplicationName { get; set; } = "Kava Docs Addin";
+        public static string ApplicationName { get; set; } = "Documentation Monster Addin";
 
 
-        static KavaApp()
+        static dmApp()
         {
             Configuration = DocMonsterConfiguration.Current;
 

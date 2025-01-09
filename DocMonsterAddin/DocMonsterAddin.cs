@@ -246,6 +246,7 @@ namespace DocMonsterAddin
         {
             Model.Window.Dispatcher.InvokeAsync(() =>
             {
+                // Explicitly reference namespaces to ensure we're using the DocMonster extensions not the default MM ones
                 DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.FontAwesomeRenderExtension());
                 DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.PlantUmlMarkdownRenderExtension());
                 DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.MermaidRenderExtension());

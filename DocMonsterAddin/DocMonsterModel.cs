@@ -136,7 +136,7 @@ namespace DocMonsterAddin
 
         public DocMonsterModel(MainWindow window)
         {
-            Configuration = KavaApp.Configuration;
+            Configuration = dmApp.Configuration;
             Window = window;
             Model = window.Model;
             Commands = new AppCommands(this);
@@ -211,13 +211,13 @@ namespace DocMonsterAddin
                 {
                     if (!noErrorDisplay)
                         MessageBox.Show("Failed to load project.",
-                            KavaApp.ApplicationName,
+                            dmApp.ApplicationName,
                             MessageBoxButton.OK,
                             MessageBoxImage.Warning);
                     else
                     {
                         Window.ShowStatus("Failed to load project: " + projectFile,
-                            KavaApp.Configuration.StatusMessageTimeout);
+                            dmApp.Configuration.StatusMessageTimeout);
                         Window.SetStatusIcon(FontAwesome6.EFontAwesomeIcon.Solid_TriangleExclamation, Colors.Red);
                     }
 
@@ -233,7 +233,7 @@ namespace DocMonsterAddin
 
             PreviewTopic();
 
-            Window.ShowStatus($"Project '{project.Title}' opened.", KavaApp.Configuration.StatusMessageTimeout);
+            Window.ShowStatus($"Project '{project.Title}' opened.", dmApp.Configuration.StatusMessageTimeout);
         }
 
         public void PreviewTopic(bool keepScrollPosition = false, bool usePragmaLines = true,
