@@ -138,10 +138,10 @@ namespace DocHound.Model
 
 
                 if (DisplayType == "classheader")
-                    return ClassInfo.Classname;
+                    return ClassInfo?.Classname ?? Title;
 
                 if (DisplayType == "classproperty" || DisplayType == "classmethod" || DisplayType == "classevent")
-                    return ClassInfo.MemberName;
+                    return ClassInfo?.MemberName ?? Title;
 
                 return Title;
             }
@@ -392,7 +392,12 @@ namespace DocHound.Model
         /// Optional class information for this topic
         /// Anything related to code based topics
         /// </summary>
-        public ClassInfo ClassInfo { get; set; }
+        public ClassInfo ClassInfo { get; set; } = new ClassInfo();
+        //{
+        //    get => _classInfo ?? new ClassInfo();                                
+        //    set { _classInfo = value; }
+        //}
+        //private ClassInfo _classInfo;
 
         /// <summary>
         /// Contains various state settings for this topic
@@ -472,8 +477,7 @@ namespace DocHound.Model
         public DocTopic()
         {
             TopicState = new TopicState(this);
-            Topics = new ObservableCollection<DocTopic>();
-            ClassInfo = new ClassInfo();
+            Topics = new ObservableCollection<DocTopic>();            
         }
 
         public DocTopic(DocProject project)
@@ -481,7 +485,7 @@ namespace DocHound.Model
             Id = DataUtils.GenerateUniqueId(10);
             TopicState = new TopicState(this);
             Project = project;
-            Topics = new ObservableCollection<DocTopic>();
+            Topics = new ObservableCollection<DocTopic>();            
         }
 
         /// <summary>
@@ -514,7 +518,17 @@ namespace DocHound.Model
 
             // Fix up any locally linked .md extensions to .html
             if (renderMode == TopicRenderModes.Html)
+            {
                 FixupHtmlLinks(ref html);
+                html = html.Replace("=\"~/", "=\"/");
+            }
+
+            if (renderMode == TopicRenderModes.Preview)
+            {
+                var basePath = Path.TrimEndingDirectorySeparator(Project.ProjectDirectory).Replace("\\", "//") + "/";
+                html = html.Replace("=\"~/","=\"" + basePath);
+                html = html.Replace("=\"/", "=\"" + basePath);
+            }
 
             OnAfterRender(html, renderMode);
 
@@ -1004,11 +1018,10 @@ namespace DocHound.Model
                 }
             }
 
+            // Yaml serialization
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
-
-
             markdownText = StripYaml(markdownText);
 
             if (string.IsNullOrEmpty(Title))
@@ -1457,7 +1470,7 @@ namespace DocHound.Model
         public bool IsStatic { get; set; }
         public string Exceptions { get; set; }
 
-
+        [JsonIgnore]
         public bool IsEmpty => string.IsNullOrEmpty(Classname) && string.IsNullOrEmpty(MemberName);
 
         public override string ToString()

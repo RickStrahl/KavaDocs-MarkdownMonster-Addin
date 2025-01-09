@@ -41,17 +41,17 @@ namespace DocHound.Templates
         /// </summary>
         public RenderTemplateModel Model { get; }
 
-        
+
 
         // public TemplateHost Template { get; set; }
 
 
         #region Links
 
-        public RawString HelloWorld()
-        {
-            return new RawString("<div class='alert alert-warning'>Rick</div>");
-        }
+        public RawString Raw(string value) => RawString.Raw(value);   // RawString implements IRawString
+
+        public RawString Raw(object value) => RawString.Raw(value);
+      
 
         /// <summary>
         /// Returns a topic link
@@ -61,8 +61,9 @@ namespace DocHound.Templates
         /// <param name="anchor"></param>
         /// <returns></returns>
         public RawString TopicLink(string display, string id, string anchor = null)
-        {            
+        {
             return new RawString(Project.GetTopicLink(display, id));
+            //RawString.Raw(Project.GetTopicLink(display, id));
         }
         #endregion
 
@@ -77,6 +78,7 @@ namespace DocHound.Templates
             string descriptionLabel = "Description"
             )
         {
+          
             var childTopics = Topic.Topics.Where(t => GenericUtils.Inlist(t.DisplayType, "classproperty", "classmethod",
                 "classevent", "classfield", "classconstructor")).ToList();
 
@@ -141,7 +143,7 @@ namespace DocHound.Templates
         /// </summary>
         public RawString ChildTopicsList(string topicTypesList = null)
         {
-            var sb = new StringBuilder();
+            var sb = new StringBuilder();            
 
             topicTypesList = topicTypesList ?? string.Empty;
 

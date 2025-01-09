@@ -467,7 +467,7 @@ namespace KavaDocsAddin
             {
                 // Currently we're not rendering topics and just using MM to render topic content
                 //string html = "<h1>" + topic.Title + "</h1>";
-                renderedHtml = topic.RenderTopic(addPragmaLines: true);
+                renderedHtml = topic.RenderTopic(addPragmaLines: true, TopicRenderModes.Preview);
             }
 
 

@@ -124,6 +124,50 @@
                                  />
 
 
+                <!-- Class and Member Panel -->
+                <StackPanel Name="ClassPanel" controls:VisibilityHelper.IsVisible="{Binding IsClassPanelVisible}">
+                    <Separator Margin="0,15" />
+
+                    <!-- Class or Class Header type display-->
+                    <StackPanel controls:VisibilityHelper.IsVisible="{Binding IsClass}">
+
+                        <Label>Class Name:</Label>
+                        <TextBox Text="{Binding KavaDocsModel.ActiveTopic.ClassInfo.Classname}" />
+
+
+                        <Label Margin="0,6,0,0">Inherits:</Label>
+                        <TextBox Text="{Binding KavaDocsModel.ActiveTopic.ClassInfo.Inherits}" />
+
+
+                        <Label Margin="0,6,0,0">Inheritance Tree: (one per line)</Label>
+                        <TextBox AcceptsReturn="True"
+                                 Height="65"
+                                 Text="{Binding KavaDocsModel.ActiveTopic.ClassInfo.InheritanceTree}" />
+
+                    </StackPanel>
+
+                    <StackPanel controls:VisibilityHelper.IsVisible="{Binding IsMethod}">
+
+                        <Label>Method Name:</Label>
+                        <TextBox Text="{Binding KavaDocsModel.ActiveTopic.ClassInfo.MemberName}" />
+
+
+                        <Label Margin="0,6,0,0">Syntax:</Label>
+                        <TextBox AcceptsReturn="True"
+                                 Height="65"
+                                 Text="{Binding KavaDocsModel.ActiveTopic.ClassInfo.Syntax}" />
+
+
+                        <Label Margin="0,6,0,0">Parameters:</Label>
+                        <TextBox AcceptsReturn="True"
+                                 Height="65"
+                                 Text="{Binding KavaDocsModel.ActiveTopic.ClassInfo.Parameters}" />
+                    </StackPanel>
+                </StackPanel>
+
+
+
+
                 <Label  Margin="0,6,0,0">Code Example:</Label>
                 <TextBox  
                                  Text="{Binding KavaDocsModel.ActiveTopic.Example}" 
@@ -150,47 +194,10 @@
 
 
 
-                <StackPanel Name="ClassPanel" controls:VisibilityHelper.IsVisible="{Binding IsClassPanelVisible}">
-                    <Separator Margin="0,15" />
 
-                    <!-- Class or Class Header type display-->
-                    <StackPanel controls:VisibilityHelper.IsVisible="{Binding IsClass}">
-
-                        <Label>Class Name:</Label>
-                        <TextBox Text="{Binding KavaDocsModel.ActiveTopic.ClassInfo.Classname}" />
-
-
-                        <Label Margin="0,6,0,0">Inherits:</Label>
-                        <TextBox Text="{Binding KavaDocsModel.ActiveTopic.ClassInfo.Inherits}" />
-
-
-                        <Label Margin="0,6,0,0">Inheritance Tree: (one per line)</Label>
-                        <TextBox AcceptsReturn="True"
-                             Height="65"
-                             Text="{Binding KavaDocsModel.ActiveTopic.ClassInfo.InheritanceTree}" />
-
-                    </StackPanel>
-
-                    <StackPanel controls:VisibilityHelper.IsVisible="{Binding IsMethod}">
-
-                        <Label>Method Name:</Label>
-                        <TextBox Text="{Binding KavaDocsModel.ActiveTopic.ClassInfo.MemberName}" />
-
-
-                        <Label Margin="0,6,0,0">Syntax:</Label>
-                        <TextBox AcceptsReturn="True"
-                             Height="65"
-                             Text="{Binding KavaDocsModel.ActiveTopic.ClassInfo.Syntax}" />
-
-
-                        <Label Margin="0,6,0,0">Parameters:</Label>
-                        <TextBox AcceptsReturn="True"
-                             Height="65"
-                             Text="{Binding KavaDocsModel.ActiveTopic.ClassInfo.Parameters}" />
-                    </StackPanel>
-                </StackPanel>
 
             </StackPanel>
+
         </ScrollViewer>
 
 
@@ -204,9 +211,6 @@
                             TextWrapping="Wrap" VerticalAlignment="Stretch"                              
                             Height="120"
                             FontSize="16"/>-->
-
-
-
     </Grid>
        
 </UserControl>
