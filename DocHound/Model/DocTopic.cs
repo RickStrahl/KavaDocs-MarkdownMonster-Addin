@@ -11,11 +11,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DocHound.Annotations;
-using DocHound.Configuration;
-using DocHound.Interfaces;
-using DocHound.Templates;
-using DocHound.Utilities;
+using DocMonster.Configuration;
+using DocMonster.Utilities;
+using DocMonster.Annotations;
+using DocMonster.Interfaces;
+using DocMonster.Templates;
 using HtmlAgilityPack;
 using MarkdownMonster;
 using Newtonsoft.Json;
@@ -24,9 +24,9 @@ using Westwind.Utilities;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-using MarkdownParserFactory = DocHound.MarkdownParser.MarkdownParserFactory;
+using MarkdownParserFactory = DocMonster.MarkdownParser.MarkdownParserFactory;
 
-namespace DocHound.Model
+namespace DocMonster.Model
 {
     public class DocTopic : INotifyPropertyChanged
     {
@@ -797,7 +797,7 @@ namespace DocHound.Model
         /// <returns></returns>
         public string Markdown(string markdown)
         {
-            var parser = MarkdownParserFactory.GetParser(usePragmaLines: this.TopicState.IsPreview, forceLoad: true);
+            var parser = MarkdownParser.MarkdownParserFactory.GetParser(usePragmaLines: this.TopicState.IsPreview, forceLoad: true);
             var html = parser.Parse(markdown);
             return html;
         }

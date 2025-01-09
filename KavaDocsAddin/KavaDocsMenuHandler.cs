@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using DocHound.Configuration;
-using DocHound.Model;
-using DocHound.Windows.Dialogs;
+using DocMonster.Configuration;
+using DocMonster.Model;
+using DocMonster.Windows.Dialogs;
 using MarkdownMonster.AddIns;
 using Westwind.Utilities;
 
@@ -107,7 +107,7 @@ namespace KavaDocsAddin
             {
                 Header = "Preview using Topic Template",
                 IsCheckable = true,
-                IsChecked = Model.Configuration.TopicRenderMode == DocHound.Configuration.TopicRenderingModes.TopicTemplate
+                IsChecked = Model.Configuration.TopicRenderMode == DocMonster.Configuration.TopicRenderingModes.TopicTemplate
             };
             mi.Unchecked += OnRenderModeToggled;
             mi.Checked += OnRenderModeToggled;

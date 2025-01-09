@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DocHound.Model;
+using DocMonster.Model;
 using Westwind.Utilities;
 
-namespace DocHound.Utilities
+namespace DocMonster.Utilities
 {
     public class HtmlOutputGenerator
     {

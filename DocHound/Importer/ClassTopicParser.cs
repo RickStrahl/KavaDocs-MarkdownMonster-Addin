@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using DocHound.Model;
+using DocMonster.Model;
 using Westwind.TypeImporter;
 
-namespace DocHound.Importer
+namespace DocMonster.Importer
 {
     /// <summary>
     /// Class used to parse type information into topics by

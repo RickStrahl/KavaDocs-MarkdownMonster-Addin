@@ -10,15 +10,15 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using DocHound.Annotations;
-using DocHound.Configuration;
-using DocHound.Interfaces;
-using DocHound.Templates;
+using DocMonster.Interfaces;
+using DocMonster.Annotations;
+using DocMonster.Configuration;
+using DocMonster.Templates;
 using MarkdownMonster;
 using Newtonsoft.Json;
 using Westwind.Utilities;
 
-namespace DocHound.Model
+namespace DocMonster.Model
 {
     /// <summary>
     /// A Kava Docs Project File that contains

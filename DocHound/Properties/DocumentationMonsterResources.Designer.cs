@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DocHound.Properties {
+namespace DocMonster.Properties {
     using System;
     
     

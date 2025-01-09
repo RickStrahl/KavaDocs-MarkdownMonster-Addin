@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Westwind.Scripting;
 using Westwind.Utilities;
 
-namespace DocHound.Templates
+namespace DocMonster.Templates
 {
     public class TemplateHost
     {
@@ -38,8 +38,10 @@ namespace DocHound.Templates
             var script = new ScriptParser();
             script.ScriptEngine.AddDefaultReferencesAndNamespaces();
             script.ScriptEngine.AddLoadedReferences();
-            script.ScriptEngine.AddNamespace("Westwind.Utilities");            
-            script.ScriptEngine.AddNamespace("DocHound.Templates");
+            script.ScriptEngine.AddNamespace("Westwind.Utilities");
+            script.ScriptEngine.AddNamespace("DocMonster");
+            script.ScriptEngine.AddNamespace("DocMonster.Configuration");
+            script.ScriptEngine.AddNamespace("DocMonster.Templates");
 
             script.ScriptEngine.SaveGeneratedCode = true;
             script.ScriptEngine.CompileWithDebug = true;

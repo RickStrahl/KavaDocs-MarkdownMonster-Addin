@@ -7,8 +7,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using DocHound.Annotations;
-using DocHound.Model;
+using DocMonster.Annotations;
+using DocMonster.Model;
 using MarkdownMonster;
 
 namespace KavaDocsAddin.Controls

@@ -5,10 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:KavaDocsAddin.Controls"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:fa="http://schemas.fontawesome.io/icons/"
-             xmlns:model="clr-namespace:DocHound.Model;assembly=DocHound"
-             xmlns:interfaces="clr-namespace:DocHound.Interfaces;assembly=DocHound"
              xmlns:attachedProperties="http://schemas.fontawesome.com/icons/fonts/properties"
+             xmlns:interfaces1="clr-namespace:DocMonster.Interfaces;assembly=DocMonster"
              mc:Ignorable="d" 
              FontSize="14"             
              d:DesignHeight="500" d:DesignWidth="300">
@@ -73,7 +71,7 @@
 
                     <ComboBox Name="ComboBodyType" SelectedValue="{Binding KavaDocsModel.ActiveTopic.Type}"                                 
                               Grid.Column="0" ToolTip="Topic source type that input format"
-                              ItemsSource="{Binding Source={x:Static interfaces:TopicBodyFormats.TopicBodyFormatsList}}"
+                              ItemsSource="{Binding Source={x:Static interfaces1:TopicBodyFormats.TopicBodyFormatsList}}"
                               Margin="0,0,10,0">
                     </ComboBox>
 

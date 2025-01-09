@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DocHound.Model;
+using DocMonster.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 

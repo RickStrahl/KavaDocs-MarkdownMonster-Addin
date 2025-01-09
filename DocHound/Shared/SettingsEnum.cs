@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace DocHound.Interfaces
+namespace DocMonster.Interfaces
 {
     /// <summary>All available settings supported by the system either as global configuration or as settings on a TOC or an invidual Topic</summary>
     /// <remarks>Settings in JSON files are usually set in camelCase, but our system can handle settings in a non-case-sensitive fashion.</remarks>

@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Windows;
-using DocHound.Configuration;
-using DocHound.Model;
-using DocHound.Utilities;
+using DocMonster.Configuration;
+using DocMonster.Model;
+using DocMonster.Utilities;
 using KavaDocsAddin;
 using KavaDocsAddin.Core.Configuration;
 using MarkdownMonster;
@@ -15,7 +15,7 @@ using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
-namespace DocHound.Windows.Dialogs
+namespace DocMonster.Windows.Dialogs
 {
     /// <summary>
     /// Interaction logic for NewProjectDialog.xaml

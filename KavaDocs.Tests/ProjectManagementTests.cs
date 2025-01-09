@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DocHound.Model;
+using DocMonster.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DocumentationMonster.Core.Tests

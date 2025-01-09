@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
-using DocHound.Interfaces;
+using DocMonster.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace DocHound.Model
+namespace DocMonster.Model
 {
     /// <summary>
     /// Client project settings for a KavaDocs project

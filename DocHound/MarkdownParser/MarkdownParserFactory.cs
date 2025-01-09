@@ -1,4 +1,4 @@
-﻿namespace DocHound.MarkdownParser
+﻿namespace DocMonster.MarkdownParser
 {
     /// <summary>
     /// Retrieves an instance of a markdown parser

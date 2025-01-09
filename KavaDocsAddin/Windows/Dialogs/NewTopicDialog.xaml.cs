@@ -4,14 +4,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
-using DocHound.Annotations;
-using DocHound.Model;
+using DocMonster.Annotations;
+using DocMonster.Model;
 using KavaDocsAddin;
 using KavaDocsAddin.Controls;
 using MarkdownMonster;
 using Westwind.Utilities;
 
-namespace DocHound.Windows.Dialogs
+namespace DocMonster.Windows.Dialogs
 {
     /// <summary>
     /// Interaction logic for NewTopicDialog.xaml

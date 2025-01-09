@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
-using DocHound.Configuration;
-using DocHound.Interfaces;
-using DocHound.Model;
+using DocMonster.Configuration;
+using DocMonster.Interfaces;
+using DocMonster.Model;
 using MarkdownMonster;
 using Westwind.Utilities;
 
-namespace DocHound.Utilities
+namespace DocMonster.Utilities
 {
     public class HelpBuilder5JsonImporter
     {

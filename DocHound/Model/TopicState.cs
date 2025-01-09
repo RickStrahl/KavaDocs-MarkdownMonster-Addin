@@ -1,11 +1,11 @@
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
-using DocHound.Annotations;
+using DocMonster.Annotations;
 using MarkdownMonster.Utilities;
 
 
-namespace DocHound.Model
+namespace DocMonster.Model
 {
 
     public class TopicState : INotifyPropertyChanged

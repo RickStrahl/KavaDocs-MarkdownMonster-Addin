@@ -5,11 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using DocHound.Annotations;
+using DocMonster.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace DocHound.Utilities
+namespace DocMonster.Utilities
 {
     public class CamelCaseAndIgnoreEmptyEnumerablesResolver : CamelCasePropertyNamesContractResolver
     {

@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DocHound.Model;
-using DocHound.Utilities;
+using DocMonster.Model;
+using DocMonster.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Westwind.Utilities;
 

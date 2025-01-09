@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace DocHound.MarkdownParser
+namespace DocMonster.MarkdownParser
 {
     /// <summary>
     /// Base class that includes various fix up methods for custom parsing

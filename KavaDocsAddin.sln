@@ -4,7 +4,7 @@ VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KavaDocsAddin", "KavaDocsAddin\KavaDocsAddin.csproj", "{50BEB3B4-4211-465D-BEC6-3FCDC1050DD4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocHound", "DocHound\DocHound.csproj", "{F7CF7101-6C60-4F3A-8036-CA77351AA2A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocMonster", "DocHound\DocMonster.csproj", "{F7CF7101-6C60-4F3A-8036-CA77351AA2A2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KavaDocs.Tests", "KavaDocs.Tests\KavaDocs.Tests.csproj", "{14E6ECBA-EAFC-4233-8E92-8DE15900608D}"
 EndProject

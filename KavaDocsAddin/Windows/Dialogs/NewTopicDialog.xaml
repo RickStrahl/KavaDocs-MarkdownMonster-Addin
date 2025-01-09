@@ -1,12 +1,11 @@
-﻿<controls:MetroWindow  x:Class="DocHound.Windows.Dialogs.NewTopicDialog"
+﻿<controls:MetroWindow  x:Class="DocMonster.Windows.Dialogs.NewTopicDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
-        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:fa="http://schemas.fontawesome.io/icons/"        
-        xmlns:interfaces="clr-namespace:DocHound.Interfaces;assembly=DocHound"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"        
         xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
+        xmlns:interfaces1="clr-namespace:DocMonster.Interfaces;assembly=DocMonster"
         mc:Ignorable="d"
         Icon="../../Assets/Icon_128.png"                    
         Title="New Topic"
@@ -58,7 +57,7 @@
                     <ComboBox Name="ComboBodyType" Padding="6"                                                        
                               SelectedValue="{Binding Topic.Type}"                                 
                           Grid.Column="0" ToolTip="Topic source type that input format"
-                          ItemsSource="{Binding Source={x:Static interfaces:TopicBodyFormats.TopicBodyFormatsList}}"
+                          ItemsSource="{Binding Source={x:Static interfaces1:TopicBodyFormats.TopicBodyFormatsList}}"
                           Margin="0,0,10,0">
                     </ComboBox>
                 </StackPanel>

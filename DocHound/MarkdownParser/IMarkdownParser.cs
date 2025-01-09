@@ -1,4 +1,4 @@
-﻿namespace DocHound.MarkdownParser
+﻿namespace DocMonster.MarkdownParser
 {
     public interface IMarkdownParser
     {

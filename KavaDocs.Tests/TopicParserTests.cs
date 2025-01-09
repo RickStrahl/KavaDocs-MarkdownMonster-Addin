@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DocHound;
-using DocHound.Model;
+using DocMonster;
+using DocMonster.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
@@ -34,7 +34,7 @@ namespace DocumentationMonster.Core.Tests
             proj.Topics.Add(topic);
             topic.SaveTopicFile();
 
-            var parser = new DocHound.Importer.TypeTopicParser(proj, topic)
+            var parser = new DocMonster.Importer.TypeTopicParser(proj, topic)
             {
                  NoInheritedMembers = true,
                  ClassesToImport = null

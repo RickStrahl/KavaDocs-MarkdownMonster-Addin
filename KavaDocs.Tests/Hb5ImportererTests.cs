@@ -1,7 +1,7 @@
 using System;
 using System.IO;
-using DocHound.Model;
-using DocHound.Utilities;
+using DocMonster.Model;
+using DocMonster.Utilities;
 using MarkdownMonster;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Westwind.Utilities;

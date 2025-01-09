@@ -5,12 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DocHound.Configuration;
-using DocHound.Interfaces;
-using DocHound.Model;
+using DocMonster.Configuration;
+using DocMonster.Interfaces;
+using DocMonster.Model;
 using Westwind.Utilities;
 
-namespace DocHound.Utilities
+namespace DocMonster.Utilities
 {
     public class FileSystemImporter
     {

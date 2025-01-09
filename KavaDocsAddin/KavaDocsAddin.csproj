@@ -24,7 +24,7 @@
       <Private>false</Private>
       <IncludeAssets>compile</IncludeAssets>
     </ProjectReference>    
-    <ProjectReference Include="..\DocHound\DocHound.csproj" />          
+    <ProjectReference Include="..\DocHound\DocMonster.csproj" />          
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\icon_128.png" />

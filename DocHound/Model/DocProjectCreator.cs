@@ -3,11 +3,11 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using DocHound.Annotations;
-using DocHound.Utilities;
+using DocMonster.Annotations;
+using DocMonster.Utilities;
 using Westwind.Utilities;
 
-namespace DocHound.Model
+namespace DocMonster.Model
 {
     /// <summary>
     /// Use this class to create new DocProject.

@@ -19,7 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\MarkdownMonsterCode\MarkdownMonster\MarkdownMonster.csproj" />
-    <ProjectReference Include="..\DocHound\DocHound.csproj" />
+    <ProjectReference Include="..\DocHound\DocMonster.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />

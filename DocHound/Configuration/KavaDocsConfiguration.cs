@@ -11,7 +11,7 @@ using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using Westwind.Utilities.Configuration;
 
-namespace DocHound.Configuration
+namespace DocMonster.Configuration
 {
     public class KavaDocsConfiguration : BaseAddinConfiguration<KavaDocsConfiguration>, INotifyPropertyChanged
     {

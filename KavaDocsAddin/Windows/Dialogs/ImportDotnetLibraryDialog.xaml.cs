@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using DocHound.Model;
+using DocMonster.Model;
 using KavaDocsAddin.Controls;
 using MahApps.Metro.Controls;
 using MarkdownMonster;
@@ -97,7 +97,7 @@ namespace KavaDocsAddin.Windows.Dialogs
             {
                 await Task.Run(() =>
                 {
-                    var parser = new DocHound.Importer.TypeTopicParser(Model.AddinModel.ActiveProject, importRootTopic)
+                    var parser = new DocMonster.Importer.TypeTopicParser(Model.AddinModel.ActiveProject, importRootTopic)
                     {
                         NoInheritedMembers = Model.NoInheritedMembers,
                         ClassesToImport = Model.ClassList

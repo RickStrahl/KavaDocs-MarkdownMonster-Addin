@@ -36,7 +36,7 @@ using Markdig;
 using Markdig.Renderers;
 using MarkdownMonster;
 
-namespace DocHound.MarkdownParser
+namespace DocMonster.MarkdownParser
 {
 
     /// <summary>

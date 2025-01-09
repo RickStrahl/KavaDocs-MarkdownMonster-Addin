@@ -1,7 +1,7 @@
 using System;
 using System.IO;
-using DocHound;
-using DocHound.Model;
+using DocMonster;
+using DocMonster.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DocumentationMonster.Core.Tests

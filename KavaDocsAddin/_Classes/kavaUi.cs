@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 using System.Windows;
-using DocHound.Configuration;
+using DocMonster.Configuration;
 using KavaDocsAddin.Core.Configuration;
 using MarkdownMonster;
 

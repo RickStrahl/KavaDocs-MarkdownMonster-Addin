@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using DocHound.Model;
-using DocHound.Templates;
+using DocMonster.Templates;
+using DocMonster.Model;
 using MarkdownMonster;
 using MarkdownMonster.RenderExtensions;
 using Westwind.Scripting;
 using Westwind.Utilities;
 
-namespace DocHound.Templates
+namespace DocMonster.Templates
 {
     /// <summary>
     /// Provides various helper functions for displaying common HTML features on the page

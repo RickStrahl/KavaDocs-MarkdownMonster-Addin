@@ -1,7 +1,7 @@
-using DocHound.Configuration;
-using DocHound.Model;
+using DocMonster.Configuration;
+using DocMonster.Model;
 
-namespace DocHound.Templates;
+namespace DocMonster.Templates;
 
 /// <summary>
 /// This is the model that is passed into the Razor template

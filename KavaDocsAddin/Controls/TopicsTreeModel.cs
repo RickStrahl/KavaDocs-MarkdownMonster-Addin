@@ -8,9 +8,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
-using DocHound.Model;
-using DocHound.Annotations;
-using DocHound.Utilities;
+using DocMonster.Model;
+using DocMonster.Annotations;
+using DocMonster.Utilities;
 using MarkdownMonster.Windows;
 using MarkdownMonster;
 

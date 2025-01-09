@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DocHound.Configuration;
+using DocMonster.Configuration;
 using KavaDocsAddin;
 using Westwind.Utilities.Configuration;
 

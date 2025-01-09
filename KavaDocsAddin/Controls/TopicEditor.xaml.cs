@@ -1,7 +1,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using DocHound.Model;
+using DocMonster.Model;
 using MarkdownMonster;
 using MarkdownMonster.Windows;
 

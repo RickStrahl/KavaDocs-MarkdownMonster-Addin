@@ -4,13 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DocHound.Model;
-using DocHound.Properties;
-using DocHound.Utilities;
+using DocMonster.Model;
+using DocMonster.Properties;
+using DocMonster.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace DocHound
+namespace DocMonster
 {
     /// <summary>
     /// Doc Project manager used to load and save project
