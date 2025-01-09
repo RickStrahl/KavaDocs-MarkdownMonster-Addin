@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWPF>true</UseWPF>
+
+    <Authors>Rick Strahl, West Wind Technologies</Authors>
+    
+    <OutDir>C:\Users\rstrahl\Dropbox\Markdown Monster\Addins\DocMonster</OutDir>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+    <Authors>Rick Strahl, West Wind Technologies</Authors>
+    <NoWarn>1701;1702;3106;XDG0010;CA1416</NoWarn>
+    <DefineConstants>NETCORE</DefineConstants>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+
+    
+  </PropertyGroup>
+  <ItemGroup>
+    
+    <ProjectReference Include="D:\projects\MarkdownMonsterCode\MarkdownMonster\MarkdownMonster.csproj">
+      <Private>false</Private>
+      <IncludeAssets>compile</IncludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\DocMonster\DocMonster.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\icon_128.png" />
+    <Resource Include="Assets\icon_16.png" />
+    
+    <Content Include="ProjectTemplates\icons\classconstructor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    
+    
+    <Content Include="ProjectTemplates\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Update="ProjectTemplates\Themes\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="version.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    
+    <Folder Include="Windows\Helpers\" />
+  </ItemGroup>
+</Project>
