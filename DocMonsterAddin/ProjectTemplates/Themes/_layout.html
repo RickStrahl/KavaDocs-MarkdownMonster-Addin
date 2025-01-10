@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    
+    {{% if(Topic.TopicState.IsPreview) { }}
+    <base href="{{ BasePath }}" />
+    {{% } }}
+    <meta charset="utf-8" />    
+    <title>{{ Topic.Title }} - {{ Project.Title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1" />
+    <link rel="stylesheet" type="text/css" href="/_kavadocs/themes/scripts/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/_kavadocs/themes/scripts/fontawesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="/_kavadocs/themes/kavadocs.css" />
+
+    <script src="/_kavadocs/themes/scripts/jquery/jquery.min.js"></script>
+
+    <script src="/_kavadocs/themes/scripts/highlightjs/highlight.pack.js"></script>
+    <link href="/_kavadocs/themes/scripts/highlightjs/styles/twilight.css" rel="stylesheet" />
+
+    <script src="/_kavadocs/themes/scripts/ww.jquery.min.js"></script>
+    <script src="/_kavadocs/themes/scripts/kavadocs.js"></script>
+
+    {{% if(Topic.TopicState.IsPreview) { }}
+    <script src="/_kavadocs/themes/scripts/preview.js" />
+    {{% } }}
+    
+    {{% if(Topic.TopicState.IsPreview) { }}
+    	<script src="{{ System.IO.Path.Combine(System.Environment.CurrentDirectory,"PreviewThemes\\scripts\\preview.js") }}"></script>
+    {{% } }}
+    <topictype value="{{ Topic.DisplayType }}" />
+
+    <script>    
+        $(document).ready(function () {
+            helpBuilder.initializeLayout();
+            // expand all top level topics
+            setTimeout(helpBuilder.tocExpandTop, 5);
+        });
+    </script>
+</head>
+<body>    
+    <!-- Documentation Monster Content -->
+    <div class="flex-master">
+        <div class="banner">
+
+            <div class="pull-right sidebar-toggle">
+                <i class="fa fa-bars"
+                   title="Show or hide the topics list"></i>
+            </div>
+            <img src="/images/logo.png" class="banner-logo" />
+         
+            	<div class="projectname"> {{ Project.Title }}</div>
+            
+
+            <div class="byline">
+                {{ Topic.Title }}
+            </div>
+        </div>
+        <div class="page-content">
+            <div id="toc" class="sidebar-left toc-content">
+                <nav class="visually-hidden">
+                    <a href="/tableofcontents.htm">Table of Contents</a>
+                </nav>
+            </div>
+
+            <div class="splitter">
+            </div>
+
+            <div class="main-content">
+                <!-- Rendered Content -->
+                <article class="content-pane">
+                    {{ Script.RenderContent() }}
+                </article>
+
+                <hr />
+                <div class="pull-right">
+                    <a href="http://helpbuilder.west-wind.com" target="_blank"><img src="images/wwhelp.png" /></a>
+                </div>
+
+                <small>
+                    &copy; {{ Project.Owner }}, {{ DateTime.Now.Year }} &bull;
+                    Updated: {{ Topic.Updated.ToString("yyyy-MM-dd") }}
+                    <br />
+                    <a href="mailto:support@yoursite.com?subject={{ Topic.Title }} ({{Topic.Id}}&body=Topic: {{ Project.Title }} - http://yoursite.com/docs/{{ Topic.Id }}.htm">Comment or report problem with topic</a>
+                </small>
+                <br class="clearfix" />
+                <br />
+                <!-- End Rendered Content -->
+            </div>
+        </div>
+    </div>
+    <!-- End Documentation Monster Content -->
+</body>
+</html>
+

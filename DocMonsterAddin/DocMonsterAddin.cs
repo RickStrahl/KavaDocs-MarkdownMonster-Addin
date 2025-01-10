@@ -239,26 +239,12 @@ namespace DocMonsterAddin
 
 
         public override Task OnWindowLoaded()
-        {
-            LoadRenderExtensions();
-
+        {     
             if (kavaUi.Configuration.AutoOpen)
                 OnExecute(null);
             return Task.CompletedTask;
         }
 
-        private void LoadRenderExtensions()
-        {
-            Model.Window.Dispatcher.InvokeAsync(() =>
-            {
-                // Explicitly reference namespaces to ensure we're using the DocMonster extensions not the default MM ones
-                DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.FontAwesomeRenderExtension());
-                DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.PlantUmlMarkdownRenderExtension());
-                DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.MermaidRenderExtension());
-                DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.MathRenderExtension());
-
-            }, DispatcherPriority.ApplicationIdle);
-        }
 
         public override Task OnApplicationShutdown()
         {

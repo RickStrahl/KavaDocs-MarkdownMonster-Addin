@@ -1,8 +1,15 @@
 html, body {
     font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 15px;  
-    color: #333;
+    font-size: 18px;  
+    color: #555;
     height: 100%;    
+    margin: 0;
+    overflow: hidden;  
+    scrollbar-track-color: Whitesmoke;
+    scrollbar-arrow-color: silver;
+    scrollbar-base-color: #ddd;
+    scrollbar-face-color: #ddd;
+    scrollbar-width: 8px;
 } 
 
 h1,h2,h3,h4,h5,h6, .byline,.content-title {
@@ -266,7 +273,17 @@ td, th  {
     border: none;
     transition:  width 0.2s ease-in-out;
     z-index: 100;    
+    -webkit-overflow-scrolling: touch;        
 }
+    /* Chrome/Opera/mobile Webkit browsers */
+    .sidebar-left::-webkit-scrollbar {                                        
+        width: 8px;
+        height: 8px;
+        background: #777;
+    }
+    .sidebar-left::-webkit-scrollbar-thumb {                    
+        background: #a2a2a2;
+    }
 .splitter {
     flex: 0 0 auto; 
     background: url('../images/vsizegrip.png') center center no-repeat #535353;
@@ -284,6 +301,14 @@ td, th  {
     width: 100%;
     overflow: auto;    
     -webkit-overflow-scrolling: touch;     
+}
+.main-content::-webkit-scrollbar {
+    width: 7px;
+    background-color: #ccc;
+}
+.main-content::-webkit-scrollbar-thumb {
+    background: #777;
+    height: 6px;
 }
 #parameters {
     margin-bottom: 10px;
@@ -340,10 +365,6 @@ ul>li>img {
     }    
 }
 #toc {
-	scrollbar-track-color: #535353;
-	scrollbar-arrow-color: silver;
-	scrollbar-face-color: #555;
-	-ms-overflow-style: -ms-autohiding-scrollbar !important; 
 }
 .toc .selected {
     font-weight: bold;
@@ -363,7 +384,7 @@ ul>li>img {
 .toc {
     padding: 0;
     margin: 10px;  
-    font-size: 0.925em;  
+    font-size: 0.8em;  
 }
     .toc ul {
         margin-left: 0;

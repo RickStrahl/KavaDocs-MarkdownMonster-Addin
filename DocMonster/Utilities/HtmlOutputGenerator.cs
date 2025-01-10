@@ -147,6 +147,10 @@ namespace DocMonster.Utilities
             rootTopic.TopicState.IsPreview = false;
             rootTopic.TopicState.IsToc = true;
 
+            var sb = new StringBuilder();
+            RenderTocLevel(Project.Topics, sb);
+
+            rootTopic.TopicState.Data = sb.ToString();
 
             string file = Path.Combine(Project.ProjectDirectory,"_kavadoces","Themes", "TableOfContents.html");
             string html = rootTopic.RenderTopicToFile(file, TopicRenderModes.Html);            
@@ -154,6 +158,44 @@ namespace DocMonster.Utilities
 
         }
 
+        public void RenderTocLevel(IList<DocTopic> topics, StringBuilder sb, int level = 0 )
+        {
+            foreach(var topic in topics)
+            {
+                string pad = string.Empty;
+                if (level > 0)
+                    pad = " style=\"margin-left: " + level * 2.5 + "em\"";
+
+                if (topic.Topics.Count > 0)
+                {
+                    // nesting 
+                    var html =
+$"""
+<li{pad}>
+    <img src="/_kavadocs/icons/{topic.DisplayType}.png"> <a href="/{topic.Slug}.html" id="{topic.Id}">An Introduction to Markdown</a>
+""";
+                    sb.AppendLine(html);
+
+                    RenderTocLevel(topic.Topics, sb, level +1);
+
+                    sb.AppendLine("</li>");
+                }
+                else
+                {
+                    var html =
+$"""
+<li{pad}>
+        <img src="/_kavadocs/icons/{topic.DisplayType}.png"> <a href="/{topic.Slug}.html" id="{topic.Id}">{topic.Title}</a> 
+</li>
+""";
+                    sb.AppendLine(html);
+                }
+
+
+
+            }
+
+        }
 
         public void WriteStatus()
         {

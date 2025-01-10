@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Threading;
 using MarkdownMonster;
 
 //using MarkdownMonster;
@@ -20,13 +21,34 @@ public class MarkdownRenderExtensionManager
     /// Signleton instance of the MarkdownRenderExtensionManager that
     /// globally manages RenderExtensions during the rendering process
     /// </summary>
-    public static MarkdownRenderExtensionManager Current { get; set; } = new();
+    public static MarkdownRenderExtensionManager Current { get; set; } 
 
     /// <summary>
     /// A list of MarkdownRenderExtensions that are executed before and after rendering
     /// and that allow for customization of the rendered Markdown output
     /// </summary>
     internal List<IMarkdownRenderExtension> RenderExtensions { get; set; } = new();
+
+    static MarkdownRenderExtensionManager()
+    {
+        Current = new MarkdownRenderExtensionManager();
+        LoadDefaultExtensions();
+    }
+
+
+    /// <summary>
+    /// Default extensions that are loaded when the class is instantiated.
+    ///
+    /// You can remove these or add to them.
+    /// </summary>
+    public static void LoadDefaultExtensions()
+    {
+            // Explicitly reference namespaces to ensure we're using the DocMonster extensions not the default MM ones
+            DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.FontAwesomeRenderExtension());
+            DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.PlantUmlMarkdownRenderExtension());
+            DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.MermaidRenderExtension());
+            DocMonster.MarkdownParser.MarkdownRenderExtensionManager.Current.AddRenderExtension(new DocMonster.MarkdownParser.MathRenderExtension());
+    }
 
     public void ProcessAllBeforeMarkdownRenderedHooks(ModifyMarkdownArguments args)
     {

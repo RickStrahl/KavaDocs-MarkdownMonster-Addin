@@ -1,16 +1,15 @@
 ﻿<header class="content-title">
-    <img src="icons/@(Topic.Type).png">    
-    @Topic.Title
+    <img src="icons/{{Topic.Type}}.png">    
+    {{Topic.Title }}
 </header>
 
-
 <div class="content-body" id="body">
-    @Topic.MarkdownRaw(Topic.Body)
+    {{ Topic.MarkdownRaw(Topic.Body) }}
 </div>
 
-@if(!string.IsNullOrEmpty(Topic.ClassInfo.Syntax)) {
+{{% if(!string.IsNullOrEmpty(Topic.ClassInfo.Syntax)) { }}
 <pre class="syntaxbox" id="syntax">@Topic.ClassInfo.Syntax</pre>
-}
+{{ } }}
 
 
 @if(!string.IsNullOrEmpty(Topic.ClassInfo.Returns)) {

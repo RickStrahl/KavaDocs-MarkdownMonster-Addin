@@ -139,6 +139,8 @@ namespace DocMonster.Model
 
         public bool IsToc { get; set; }
 
+        public dynamic Data { get; set; }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -35,13 +35,7 @@ helpBuilder = null;
     //}    
 
     function initializeLayout(notused) {
-       // for old IE versions work around no FlexBox
-        if (navigator.userAgent.indexOf("MSIE 9") > -1 ||
-	        navigator.userAgent.indexOf("MSIE 8") > -1 || 
-	        navigator.userAgent.indexOf("MSIE 7") > -1)
-            $(document.body).addClass("old-ie");
-
-        // modes: none/0 - with sidebdebar,  1 no sidebar
+        // modes: none/0 - with sidebar,  1 no sidebar
         var mode = getUrlEncodedKey("mode");
         if (mode)
             mode = mode * 1;
@@ -77,8 +71,8 @@ helpBuilder = null;
 
         if (isLocalUrl() || mode === 1) {
             hideSidebar();                        
-        } else {
-            $.get("tableofcontents.htm", loadTableOfContents);
+        } else {            
+            $.get("/TableOfContents.html", loadTableOfContents);
 
             // sidebar or hamburger click handler
             $(document.body).on("click", ".sidebar-toggle", toggleSidebar);
@@ -138,6 +132,7 @@ helpBuilder = null;
         return false;
     }
     function loadTopicAjax(href) {
+       
         var hrefPassed = true;
 
         if (typeof href != "string") {
@@ -154,10 +149,9 @@ helpBuilder = null;
 
 
         // ajax navigation
-        if (href.startsWith("_")) {
+        if (href.startsWith("_") || href.startsWith("/")) {
             $.get(href, function (html) {
                 var $html = $(html);
-
                 var title = html.extract("<title>", "</title>");
                 window.document.title = title;
 
@@ -167,11 +161,8 @@ helpBuilder = null;
                     $(".main-content").html(html);
 
                     // update the navigation history/url in addressbar
-                    if (window.history.pushState && href.startsWith('_'))
-                        window.history.pushState({ title: '', URL: href }, "", href);
-                    else
-                        expandParents(href.replace(".htm", ""));
-
+                    window.history.pushState({ title: '', URL: href }, "", href);
+                    
                     $(".main-content").scrollTop(0);
                 } else
                     return;

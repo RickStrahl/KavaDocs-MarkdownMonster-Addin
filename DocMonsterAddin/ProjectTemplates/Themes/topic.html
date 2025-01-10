@@ -1,0 +1,35 @@
+﻿
+{{%
+    Script.Layout = "_kavadocs\\Themes\\_layout.html";    
+}}
+
+
+<header class="content-title">
+    <img src="/_kavadocs/icons/{{ Model.Topic.DisplayType }}.png">
+    {{ Model.Topic.Title }}
+</header>
+
+<div class="content-body" id="body">
+    {{ Model.Topic.MarkdownRaw(Model.Topic.Body) }}
+</div>
+
+
+
+
+{{% if (!string.IsNullOrEmpty(Model.Topic.Remarks)) {  }}
+ 
+    <h3 class="outdent" id="remarks">Remarks</h3>
+    {{ Model.Topic.MarkdownRaw(Model.Topic.Remarks) }}
+{{% } }}
+
+{{% if (!string.IsNullOrEmpty(Model.Topic.Example))  {  }}
+    <h3 class="outdent" id="example">Example</h3>
+    {{ Model.Topic.MarkdownRaw(Model.Topic.Example) }}
+{{% } }}
+
+{{% if (!string.IsNullOrEmpty(Model.Topic.SeeAlso)) { }}
+{
+    <h3 class="outdent" id="seealso">See also</h3>
+    {{ Model.Topic.SeeAlso }}
+
+{{% } }}

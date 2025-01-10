@@ -1,0 +1,65 @@
+﻿{{%
+    Script.Layout = "_kavadocs\\Themes\\_Layout.html";
+}}
+<header class="content-title">
+    <img src="/_kavadocs/icons/{{ Topic.DisplayType }}.png">
+    {{ Model.Topic.Title }}
+</header>
+
+
+<div class="content-body" id="body">
+    {{! Model.Topic.MarkdownRaw(Topic.Body) }}
+</div>
+
+
+{{% if (!string.IsNullOrEmpty(Topic.ClassInfo.InheritanceTree)) { }}
+    <small>
+        {{! HtmlUtils.DisplayMemo(Topic.ClassInfo.InheritanceTree) }}
+    </small>
+{{% } }}
+
+{{% if (!string.IsNullOrEmpty(Topic.Remarks)) { }}
+
+    <h3 class="outdent" id="remarks">Remarks</h3>
+    {{! Topic.MarkdownRaw(Topic.Remarks) }}
+{{% } }}
+
+<h3 id="classmembers">Class Members</h3>
+
+{{ Helpers.ClassMemberTableHtml() }}
+
+
+
+{{% if (!string.IsNullOrEmpty(Topic.Example)) { }}
+    <h3 class="outdent" id="example">Example</h3>
+    {{! Topic.MarkdownRaw(Topic.Example) }}
+{{% } }}
+
+
+{{% if (!string.IsNullOrEmpty(Topic.ClassInfo.Contract))  { }}
+    <h3 class="contracts" id="example">Contracts</h3>
+    {{! Topic.MarkdownRaw(Topic.ClassInfo.Contract) }}
+{{% } }}
+
+{{% if (!string.IsNullOrEmpty(Topic.ClassInfo.Namespace)) { }}
+    <b>Namespace:</b> {{ Topic.ClassInfo.Namespace }}
+{{% } }}
+
+{{% if (!string.IsNullOrEmpty(Topic.ClassInfo.Assembly)) { }}
+    <b>Assembly:</b> {{ Topic.ClassInfo.Assembly }}
+    <br />
+{{% } }}
+
+{{% if (!string.IsNullOrEmpty(Topic.SeeAlso))  { }}
+    <h3 class="outdent" id="seealso">See also</h3>
+    {{! HtmlUtils.DisplayMemo(Topic.SeeAlso) }}
+{{% } }}
+
+
+<ul>
+
+    {{% foreach (var t in Topic.Topics) { }}
+        <li>t.Title</li>
+    {{% } }}
+
+</ul>
