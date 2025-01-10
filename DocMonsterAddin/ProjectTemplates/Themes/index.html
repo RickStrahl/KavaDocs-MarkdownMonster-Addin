@@ -2,10 +2,9 @@
     Script.Layout = "_kavadocs\\Themes\\_Layout.html";
 }}
 <header class="content-title">
-    <img src="_kavadocs/icons/{{ Topic.Type }}.png">    
+    <img src="/_kavadocs/icons/{{ Topic.DisplayType }}.png">    
     {{ Topic.Title }}
 </header>
-
 
 <div class="content-body" id="body">
     {{ Topic.MarkdownRaw(Topic.Body) }}

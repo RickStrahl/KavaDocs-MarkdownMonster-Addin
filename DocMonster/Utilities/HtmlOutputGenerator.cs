@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -129,10 +130,20 @@ namespace DocMonster.Utilities
                 topic.Project = project;
                 topic.TopicState.IsPreview = false;
                 topic.RenderTopicToFile();
-            });            
-        }
+            });
 
-        
+            var rootTopic = Project.LoadTopic("index");
+            if (rootTopic == null && Project.Topics.Count > 0)
+                rootTopic = Project.Topics[0];
+            if (rootTopic == null)
+                return;
+
+            // Create Default Page (same as the Index)
+            rootTopic.TopicState.IsToc = false;
+            rootTopic.TopicState.Data = false;
+            var file = Path.Combine(OutputPath, "index.html");
+            rootTopic.RenderTopicToFile(file, TopicRenderModes.Html);            
+        }
 
         public void GenerateTableOfContents()
         {
@@ -148,31 +159,40 @@ namespace DocMonster.Utilities
             rootTopic.TopicState.IsToc = true;
 
             var sb = new StringBuilder();
-            RenderTocLevel(Project.Topics, sb);
+            RenderTocLevel(Project.Topics, sb, 0);
 
             rootTopic.TopicState.Data = sb.ToString();
 
-            string file = Path.Combine(Project.ProjectDirectory,"_kavadoces","Themes", "TableOfContents.html");
+            string file = Path.Combine(Project.ProjectDirectory,"_kavadocs","Themes", "TableOfContents.html");
             string html = rootTopic.RenderTopicToFile(file, TopicRenderModes.Html);            
             File.WriteAllText(Path.Combine(OutputPath, "TableOfContents.html"),html);
-
         }
 
         public void RenderTocLevel(IList<DocTopic> topics, StringBuilder sb, int level = 0 )
         {
-            foreach(var topic in topics)
+            if (level > 0)
+                sb.AppendLine("<ul>");
+
+            foreach (var topic in topics)
             {
                 string pad = string.Empty;
-                if (level > 0)
-                    pad = " style=\"margin-left: " + level * 2.5 + "em\"";
+
 
                 if (topic.Topics.Count > 0)
                 {
+                    if (!topic.Id.Equals("index", StringComparison.OrdinalIgnoreCase))
+                        topic.IsExpanded = false;
+
                     // nesting 
                     var html =
 $"""
-<li{pad}>
-    <img src="/_kavadocs/icons/{topic.DisplayType}.png"> <a href="/{topic.Slug}.html" id="{topic.Id}">An Introduction to Markdown</a>
+<li>
+    <i class="fa fa-caret-{(topic.IsExpanded ? "right" : "down")}"></i>
+    <div>
+        <img src="/_kavadocs/icons/{topic.DisplayType}.png">
+        <a href="/{topic.Slug}.html" id="{topic.Id}">{topic.Title}</a>
+    </div>
+    
 """;
                     sb.AppendLine(html);
 
@@ -184,16 +204,19 @@ $"""
                 {
                     var html =
 $"""
-<li{pad}>
-        <img src="/_kavadocs/icons/{topic.DisplayType}.png"> <a href="/{topic.Slug}.html" id="{topic.Id}">{topic.Title}</a> 
+<li>
+    <div>
+        <img src="/_kavadocs/icons/{topic.DisplayType}.png">
+        <a href="/{topic.Slug}.html" id="{topic.Id}">{topic.Title}</a>
+    </div>
 </li>
 """;
                     sb.AppendLine(html);
                 }
-
-
-
             }
+
+            if (level > 0)
+            sb.AppendLine("</ul>");
 
         }
 

@@ -286,8 +286,8 @@ td, th  {
     }
 .splitter {
     flex: 0 0 auto; 
-    background: url('../images/vsizegrip.png') center center no-repeat #535353;
-    width: 13px;
+    background: #444;
+    width: 7px;
     cursor: col-resize;    
 }
 .sidebar-toggle {
@@ -366,8 +366,15 @@ ul>li>img {
 }
 #toc {
 }
-.toc .selected {
-    font-weight: bold;
+
+.toc li div {
+    padding: 2px 5px;    
+}
+.toc li div.selected, .toc li div.selected a {
+    font-weight: 500;
+    background: #ccc;
+    color: #111 !important; 
+    text-decoration: none;
 }
 .toc-content {
     background: #636363;
@@ -397,6 +404,9 @@ ul>li>img {
         padding-left: 0;
         white-space: nowrap;
         padding-top: 6px;
+    }
+    .toc li img {
+        width: 16px;
     }
     .toc-content{
         white-space: nowrap;

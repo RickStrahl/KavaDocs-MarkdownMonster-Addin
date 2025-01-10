@@ -56,13 +56,15 @@ helpBuilder = null;
 	                return false; // stop navigation
 	            } 
 	        });
-
+            
             var id = getIdFromUrl();
+
             if (id){
                 setTimeout(function() {
-                    $(".toc li a").removeClass("selected");
+                    $(".toc li .selected").removeClass("selected");
+
                     var $a = $("#" + id);
-                    $a.addClass("selected");
+                    $a.parent().addClass("selected");
                     if ($a.length > 0)                    
                         $a[0].scrollIntoView(); 
                 },100);
@@ -140,8 +142,8 @@ helpBuilder = null;
             href = $a.attr("href");
             hrefPassed = false;
             
-            $(".toc li a").removeClass("selected");
-            $a.addClass("selected");   
+            $(".toc li .selected").removeClass("selected");
+            $a.parent().addClass("selected");   
         }
 
         if ($(this).parent().find("i.fa").length > 0)
@@ -193,33 +195,54 @@ helpBuilder = null;
 
         // Handle clicks on + and -
         $("#toc").on("click","li>i.fa",function () {            
-            expandTopic($(this).find("~a").prop("id") );
+            expandTopic($(this).find("~div a").prop("id") );
         });
 
-        expandTopic('index');
-
-        var page = getUrlEncodedKey("page");
-        if (page) {
-            page = page.replace(/.htm/i, "");
-            expandParents(page);
-        }
-        if (!page) {
-            page = window.location.href.extract("/_", ".htm");
-            if (page)
-                expandParents("_" + page);
-        }
-
-        var topic = getUrlEncodedKey("topic");
-        if (topic) {
-            var id = findIdByTopic();
-            if (id) {
-                var link = document.getElementById(id);
-                var id = link.id;
-                expandTopic(id);
-                expandParents(id);
-                loadTopicAjax(id + ".htm");
+      
+        // topic selection and expansion of active tree
+        setTimeout(()=> {
+            tocCollapseAll();  
+        
+            var page = getUrlEncodedKey("page");
+            if (page) {
+                page = page.replace(/.htm/i, "");
+                expandParents(page);
             }
-        }
+            if (!page) {
+                page = window.location.href.extract("/_", ".htm");
+                if (page)
+                    expandParents("_" + page);                
+            }
+            if (!page) {
+                page = window.location.href.extract("://", ".html");
+                if (page)
+                {
+                    page = page.replace("://","");
+                    var idx = page.indexOf("/");
+                    page = page.substr(idx);
+
+                    var a = $("[href='" + page + ".html']");
+                    if (a.length > 0)
+                        expandParents(a[0].id);
+                }
+                else
+                    expandTopic("INDEX");
+            }
+
+            
+            var topic = getUrlEncodedKey("topic");
+            if (topic) {
+                var id = findIdByTopic();
+                if (id) {
+                    var link = document.getElementById(id);
+                    var id = link.id;
+                    expandTopic(id);
+                    expandParents(id);
+                    loadTopicAjax(id + ".htm");
+                }
+            }
+        });
+
 
         function searchFilterFunc(target) {
             target.each(function () {
@@ -266,13 +289,13 @@ helpBuilder = null;
         $splitter.show();
     }
     
-    function expandTopic(topicId) {        
-        var $href = $("#" + topicId.replace(".htm", ""));
+    function expandTopic(topicId) {                
+        var $href = $("#" + topicId);
 
-        var $ul = $href.next();
+        var $ul = $href.parent().next();  // div->ul
         $ul.toggle();
 
-        var $button = $href.prev().prev();
+        var $button = $href.parent().prev();
 
         if ($ul.is(":visible"))
             $button.removeClass("fa-caret-right").addClass("fa-caret-down");
@@ -284,7 +307,7 @@ helpBuilder = null;
         if (!id)
             return;
 
-        var $node = $("#" + id.toLowerCase());
+        var $node = $("#" + id);        
         $node.parents("ul").show();
 
         if (noFocus)
@@ -293,6 +316,8 @@ helpBuilder = null;
         var node = $node[0];
         if (!node)
             return;
+
+        $node.parent().addClass("selected");
 
         //node.scrollIntoView(true);
         node.focus();
@@ -320,26 +345,26 @@ helpBuilder = null;
         return id;
     }
     function tocCollapseAll() {
-
-        $("ul.toc > li ul:visible").each(function () {
+        var $uls = $("ul.toc li ul:visible");        
+        $uls.each(function () {            
             var $el = $(this);
-            var $href = $el.prev();
+            var $href = $el.prev().find("a");
             var id = $href[0].id;
             expandTopic(id);
         });
     }
     function tocExpandAll() {
-        $("ul.toc > li ul:not(:visible)").each(function () {
+        $("ul.toc li ul:not(:visible)").each(function () {           
             var $el = $(this);
-            var $href = $el.prev();
+            var $href = $el.prev().find("a");
             var id = $href[0].id;
             expandTopic(id);
         });
     }
     function tocExpandTop() {        
-        $("ul.toc>li>ul:not(:visible)").each(function () {
+        $("ul.toc li ul:not(:visible)").each(function () {
             var $el = $(this);
-            var $href = $el.prev();
+            var $href = $el.prev().find("a");
             var id = $href[0].id;
             expandTopic(id);
         });
