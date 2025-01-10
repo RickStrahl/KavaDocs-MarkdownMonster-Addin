@@ -319,16 +319,6 @@ ul>li>img {
     margin-top: -2px;
 }
 
-
-/* IE 9/8 limited support */
-.old-ie .sidebar-left {
-    float: left;
-    width: 35%;
-}
-.old-ie .main-content {
-    float: left;
-    width: 60%;
-}
 @media(max-width: 768px) {
     .old-ie .sidebar-left {
         width: 0;
@@ -370,10 +360,15 @@ ul>li>img {
 .toc li div {
     padding: 2px 5px;    
 }
+.toc li div a:focus {
+    outline: 1px dotted #222;
+    padding: 0.1em 0.2em;
+}
+    
 .toc li div.selected, .toc li div.selected a {
     font-weight: 500;
-    background: #ccc;
-    color: #111 !important; 
+    background: #888;
+    color: white !important; 
     text-decoration: none;
 }
 .toc-content {
