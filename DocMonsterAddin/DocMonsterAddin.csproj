@@ -7,7 +7,7 @@
 
     <Authors>Rick Strahl, West Wind Technologies</Authors>
     
-    <OutDir>C:\Users\rstrahl\Dropbox\Markdown Monster\Addins\DocMonster</OutDir>
+    <OutDir>$(UserProfile)\DropBox\Markdown Monster\Addins\DocMonster</OutDir>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 
@@ -18,8 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    
-    <ProjectReference Include="D:\projects\MarkdownMonsterCode\MarkdownMonster\MarkdownMonster.csproj">
+    <ProjectReference Include="\projects\MarkdownMonsterCode\MarkdownMonster\MarkdownMonster.csproj">
       <Private>false</Private>
       <IncludeAssets>compile</IncludeAssets>
     </ProjectReference>
