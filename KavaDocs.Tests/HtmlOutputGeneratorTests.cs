@@ -18,7 +18,7 @@ namespace DocumentationMonster.Core.Tests
         public void ProjectOutputTest()
         {
             
-            var project = DocProjectManager.Current.LoadProject(TestConfiguration.Current.Paths.projectMarkdownMonsterHelpFile);
+            var project = DocProjectManager.Current.LoadProject(TestConfiguration.Current.Paths.WebSurgeProjectFile);
             var output = new HtmlOutputGenerator(project);
             output.Generate();
         }
@@ -27,7 +27,7 @@ namespace DocumentationMonster.Core.Tests
         public void GenerateTableOfContentsTest()
         {
 
-            var project = DocProjectManager.Current.LoadProject(TestConfiguration.Current.Paths.projectMarkdownMonsterHelpFile);
+            var project = DocProjectManager.Current.LoadProject(TestConfiguration.Current.Paths.WebSurgeProjectFile);
             var output = new HtmlOutputGenerator(project);
             output.GenerateTableOfContents();
 
