@@ -66,6 +66,8 @@ namespace DocMonster.Templates
 
 
         #region Lists
+        public RawString ClassMemberTableHtml()=> ClassMemberTableHtml(null, "Member", "Description");
+        
         /// <summary>
         /// Renders an Html table for Class members showing
         /// </summary>
@@ -135,10 +137,12 @@ namespace DocMonster.Templates
         }
 
 
+        public RawString ChildTopicsList() => ChildTopicsList(null);
+
         /// <summary>
         /// Display a list of child topics
         /// </summary>
-        public RawString ChildTopicsList(string topicTypesList = null)
+        public RawString ChildTopicsList(string topicTypesList)
         {
             var sb = new StringBuilder();            
 

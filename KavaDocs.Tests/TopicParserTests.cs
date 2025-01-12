@@ -20,7 +20,7 @@ namespace DocumentationMonster.Core.Tests
                 @"C:\projects2010\Westwind.Utilities\Westwind.Utilities\bin\Release\net46\Westwind.Utilities.dll";
 
             var proj = DocProjectManager.Current.LoadProject(TestConfiguration.Current.Paths
-                .projectMarkdownMonsterHelpFile);
+                .WebSurgeProjectFile);
 
             var topic = new DocTopic(proj)
             {
