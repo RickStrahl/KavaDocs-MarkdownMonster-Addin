@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Windows.Controls;
+using Microsoft.CodeAnalysis.Scripting;
+using Westwind.Scripting;
 using Westwind.Utilities;
 
 namespace DocMonster.Templates
@@ -19,7 +22,10 @@ namespace DocMonster.Templates
     ///
     /// Method execution currently only works with non-parameter methods.
     ///
-    /// TODO: Add limited support for string method parameters
+    /// LIMITATIONS: MANY!
+    /// * Methods support only named instance calls
+    /// * Only support string and logic literal values
+    /// * Method nesting is not supported
     /// </summary>
     public class ScriptEvaluator
     {
@@ -36,7 +42,7 @@ namespace DocMonster.Templates
         /// </summary>
         public KeyValuePair<string, object> DefaultInstance { get; set; }
 
-
+        public ScriptingDelimiters Delimiters { get; set; } = new ScriptingDelimiters();
 
         /// <summary>
         /// Expands evaluated {{ expr }} expressions in a content block. Uses
@@ -65,26 +71,21 @@ namespace DocMonster.Templates
             foreach (var script in scripts)
             {
                 if (script.DontProcess ||
-                    !AllowedInstances.TryGetValue(script.Instance, out var instance))
+                    (script.Instance != null &&
+                    !AllowedInstances.TryGetValue(script.Instance, out var instance)))
                     continue;
 
                 try
                 {
-                    if (!script.IsMethod)
-                        script.ResultValue = ReflectionUtils.GetProperty(instance, script.Property);
-                    else
-                    {
-                        script.ResultValue = ReflectionUtils.CallMethod(instance, script.Method);
-                        // TODO deal with parameters
-                    }
+                    script.ResultValue = EvaluateExpression(script.Code);                    
                 }
                 catch (Exception ex)
                 {
-                    content = content.Replace(script.ScriptTag, $"{{ ERROR: {script.Property ?? script.Method} }}");
+                    content = content.Replace(script.ScriptTag, $"{Delimiters.StartDelim} ERROR: {script.Code} - {ex.GetBaseException().Message} {Delimiters.EndDelim}");
                 }
 
                 string evaled = script.ResultValue?.ToString();
-                if (!script.ScriptTag.StartsWith("{{!") || script.ResultValue is IRawString)
+                if (!script.ScriptTag.StartsWith($"{Delimiters.StartDelim}!") && script.ResultValue is not IRawString)
                     evaled = System.Net.WebUtility.HtmlEncode(evaled);
 
                 content = content.Replace(script.ScriptTag, evaled);
@@ -92,6 +93,71 @@ namespace DocMonster.Templates
 
             return content;
         }
+
+        public object EvaluateExpression(string code)
+        {
+            object result = null;
+
+            foreach (var instance in AllowedInstances)
+            {
+                if (code.StartsWith(instance.Key + "."))
+                {
+                    var member = code.Substring(instance.Key.Length + 1);
+                    if (member.Contains("("))
+                    {
+                        var method = member.Substring(0, member.IndexOf('('));
+                        var idx = member.IndexOf("(");
+                        var idx2 = member.LastIndexOf(")");
+                        string parmString = string.Empty;
+                        if (idx2 - idx > 1)
+                            parmString = member.Substring(idx + 1, idx2 - idx -1);
+
+                        var parms = new string[] { };
+                        if (!string.IsNullOrEmpty(parmString))
+                            parms = parmString.Split(',');                        
+                        List<object> args = new List<object>();
+                        foreach (var param in parms)
+                        {
+                            try
+                            {
+                                args.Add(EvaluateExpression(param));
+                            }
+                            catch
+                            {
+                                throw new Exception(param + " expression evaluation failed.");
+                            }
+                        }
+                        if (args is { Count: > 0 })
+                        {
+                            object[] ar=  args.ToArray();
+                            result = ReflectionUtils.CallMethod(instance.Value, method, ar);
+                            return result;
+                        }
+                        else
+                            return ReflectionUtils.CallMethod(instance.Value, method);
+
+                    }
+                    else
+                        return ReflectionUtils.GetProperty(instance.Value, member);
+                }
+
+            }
+
+
+            if (code.StartsWith("\"") && code.EndsWith("\""))
+                return code.Substring(1, code.Length - 2);
+            else if (code == "true")
+                return true;
+            else if (code == "false")
+                return false;
+
+            
+
+            return result;
+        }
+
+        
+
 
         /// <summary>
         /// 
@@ -102,8 +168,9 @@ namespace DocMonster.Templates
         {            
             var scripts = new List<ScriptExpression>();
 
+            var exp = Delimiters.StartDelim + ".*?" + Delimiters.EndDelim;
             // allow Topic, Project, Helpers, Script
-            var matches = Regex.Matches(content, "{{.*?}}", RegexOptions.Singleline | RegexOptions.Multiline);
+            var matches = Regex.Matches(content, exp, RegexOptions.Singleline | RegexOptions.Multiline);
 
             foreach (Match match in matches)
             {
@@ -113,11 +180,12 @@ namespace DocMonster.Templates
                     ScriptTag = text
                 };
 
-                string code = StringUtils.ExtractString(text, "{{", "}}")?
-                                         .TrimStart(':', '!', '@')  // strip expression modifiers
+                string code = StringUtils.ExtractString(text, Delimiters.StartDelim, Delimiters.EndDelim)?
+                                         .TrimStart(':', '!', '@','=')  // strip expression modifiers
                                          .Trim();
+                item.Code = code;
                 var tokens = code.Split('.');
-                if (tokens.Length == 0)
+                if (tokens.Length < 2)
                 {
                     if (string.IsNullOrEmpty(DefaultInstance.Key))
                         item.Instance = DefaultInstance.Key;
@@ -130,12 +198,24 @@ namespace DocMonster.Templates
                     var member = tokens[1];
                     if (member.Contains("("))
                     {
-                        item.IsMethod = true;
+                        item.ExpressionMode = ScriptExpressionModes.Method;
+                        int idx1 = item.Code.IndexOf('(');
+                        int idx2 = item.Code.LastIndexOf(')');
+
                         item.Method = member.Substring(0, member.IndexOf('('));
                         // TODO Parse Parameters -string only allowed
+                        int diff = idx2 - idx1 -1;
+                        
+                        if (diff > 1)
+                        {
+                            var parms = item.Code.Substring(idx1 + 1, diff);
+                            item.MethodParameters.AddRange( parms.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+                        }
+                        
                     }
                     else
                     {
+                        item.ExpressionMode = ScriptExpressionModes.Property;
                         item.Property = member;
                     }
                 }
@@ -153,6 +233,8 @@ public class ScriptExpression
 {
     public string ScriptTag { get; set; }
 
+    public string Code { get; set; }
+
     public string Instance { get; set; }
 
     public string Property { get; set; }
@@ -163,7 +245,17 @@ public class ScriptExpression
 
     public object ResultValue { get; set; }
 
-    public bool IsMethod { get; set; }
+    public ScriptExpressionModes ExpressionMode { get; set; } 
 
     public bool DontProcess { get; set; }
+
+    public override string ToString() => ScriptTag;
+
+}
+
+public enum ScriptExpressionModes
+{
+    Method,
+    Property,
+    Expression
 }

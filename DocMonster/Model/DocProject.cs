@@ -13,9 +13,9 @@ using System.Windows.Threading;
 using DocMonster.Annotations;
 using DocMonster.Configuration;
 using DocMonster.Templates;
-using MarkdownMonster;
 using Newtonsoft.Json;
 using Westwind.Utilities;
+using MarkdownMonster;
 
 namespace DocMonster.Model
 {
@@ -527,7 +527,7 @@ namespace DocMonster.Model
         /// </summary>
         /// <param name="doc">document to update from (from disk)</param>
         /// <param name="topic">topic to update</param>
-        public void UpdateTopicFromMarkdown(MarkdownDocument doc, DocTopic topic, bool noBody = false)
+        public void UpdateTopicFromMarkdown(MarkdownMonster.MarkdownDocument doc, DocTopic topic, bool noBody = false)
         {
             var fileTopic = new DocTopic();
             fileTopic.Project = this;
@@ -1078,6 +1078,8 @@ namespace DocMonster.Model
 
         [JsonIgnore]
         public string ErrorMessage { get; set; }
+
+        
 
         protected void SetError()
         {
