@@ -69,7 +69,9 @@ namespace DocMonster.Model
 
         public bool RenderProjectTitle { get; set; }
                 
-        public bool ShowEstimatedReadingTime { get; set;  }        
+        public bool ShowEstimatedReadingTime { get; set;  }
+
+        public bool DontAllowNestedTopicBodyScripts { get; set;  }
 
     }
 }

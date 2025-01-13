@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using DocMonster.Annotations;
+using DocMonster.Configuration;
 using DocMonster.Templates;
 using HtmlAgilityPack;
 using MarkdownMonster;
@@ -503,6 +504,8 @@ namespace DocMonster.Model
             else 
                 templateFile = Path.Combine(Project.ProjectDirectory, "_kavadocs\\Themes\\" + DisplayType + ".html");
 
+         
+
             string error;
             string html = Project.TemplateHost.RenderTemplateFile(templateFile, model, out error);
 
@@ -522,8 +525,21 @@ namespace DocMonster.Model
             if (renderMode == TopicRenderModes.Preview)
             {
                 var basePath = Path.TrimEndingDirectorySeparator(Project.ProjectDirectory).Replace("\\", "//") + "/";
-                html = html.Replace("=\"~/","=\"" + basePath);
+                html = html.Replace("=\"~/", "=\"" + basePath);
                 html = html.Replace("=\"/", "=\"" + basePath);
+            }
+
+
+            if (!model.Project.ProjectSettings.DontAllowNestedTopicBodyScripts &&
+                html.Contains("{{"))
+            {
+                var script = new ScriptEvaluator();
+                script.AllowedInstances.Add("Topic", topic);
+                script.AllowedInstances.Add("Project", topic.Project);
+                script.AllowedInstances.Add("Helpers", model.Helpers);
+                script.AllowedInstances.Add("Configuration", model.Configuration);
+
+                html = script.Evaluate(html);
             }
 
             OnAfterRender(html, renderMode);

@@ -137,7 +137,19 @@ namespace DocMonster.Templates
         }
 
 
-        public RawString ChildTopicsList() => ChildTopicsList(null);
+        public string GetNameTest(bool includeLast)
+        {
+            if (includeLast)
+                return "Hello Rick Strahl";
+
+            return "Rick";
+        }
+
+
+        public RawString ChildTopicsList()
+        {
+            return ChildTopicsList(null);
+        }
 
         /// <summary>
         /// Display a list of child topics
