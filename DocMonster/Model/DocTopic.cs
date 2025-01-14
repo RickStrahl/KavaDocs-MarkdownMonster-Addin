@@ -13,6 +13,7 @@ using DocMonster.Configuration;
 using DocMonster.Templates;
 using HtmlAgilityPack;
 using MarkdownMonster;
+using Microsoft.CodeAnalysis.Scripting;
 using Newtonsoft.Json;
 using Westwind.Scripting;
 using Westwind.Utilities;
@@ -530,17 +531,27 @@ namespace DocMonster.Model
             }
 
 
+            ScriptEvaluator script = null;
             if (!model.Project.ProjectSettings.DontAllowNestedTopicBodyScripts &&
-                html.Contains("{{"))
-            {
-                var script = new ScriptEvaluator();
+                (html.Contains("{{") || html.Contains("<%")))
+            {                
+                script = new ScriptEvaluator();
                 script.AllowedInstances.Add("Topic", topic);
                 script.AllowedInstances.Add("Project", topic.Project);
                 script.AllowedInstances.Add("Helpers", model.Helpers);
                 script.AllowedInstances.Add("Configuration", model.Configuration);
 
-                html = script.Evaluate(html);
+               if (html.Contains("{{")) 
+                    html = script.Evaluate(html, true);
+
+                if(html.Contains("&lt;%"))
+                {
+                    script.Delimiters.StartDelim = "&lt;%"; // will be encoded
+                    script.Delimiters.EndDelim = "%&gt;";
+                    html = script.Evaluate(html, true);
+                }
             }
+
 
             OnAfterRender(html, renderMode);
 

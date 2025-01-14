@@ -22,22 +22,23 @@ namespace DocumentationMonster.Core.Tests
             var helpers = new TemplateHelpers(model);
 
             string content = """
-                Method with string parameter:
-                {{! Helpers.ChildTopicsList("topic " + "1") }}
+                Topic Title:
+                {{ Topic.Title }}
 
-                Method with Instance Property and nest expression:
-                {{! Topic.MarkdownRaw(Topic.Body.Replace("<img","<IMG")) }}
+                Child Topic List (simple method):
+                {{ Helpers.ChildTopicsList() }}
+
+                Child Topic List (simple method with simple parm):
+                {{ Helpers.ChildTopicsList("topic") }}
 
                 Method with Instance Property:
                 {{! Topic.MarkdownRaw(Topic.Body) }}
 
-                Child Topic List:
-                {{! Helpers.ChildTopicsList() }}
+                Method with Instance Property and nested parameter expr:
+                {{! Topic.MarkdownRaw(Topic.Body.Replace("<img","<IMG")) }}
+
                 
-                Topic Title:
-                {{ Topic.Title }}
-                
-                Markdown Body:
+                Markdown Body (should be encoded):
                 {{ Topic.Body }}
 
                 Unencoded Body:
@@ -98,6 +99,8 @@ namespace DocumentationMonster.Core.Tests
 
             Console.WriteLine(result);
             Assert.IsNotNull(result);
+
+            Assert.IsFalse(result.Contains("ERROR:"));
         }
     }
 }

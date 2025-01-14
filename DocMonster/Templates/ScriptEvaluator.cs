@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using ControlzEx.Standard;
@@ -53,9 +54,9 @@ namespace DocMonster.Templates
         /// </summary>
         /// <param name="content">Content with embedded script expressions</param>
         /// <returns></returns>
-        public string Evaluate(string content)
+        public string Evaluate(string content, bool htmlDecode = false)
         {
-            var scripts = ParseScriptExpressions(content);
+            var scripts = ParseScriptExpressions(content, htmlDecode);
             return ExpandExpressions(content, scripts);
         }
 
@@ -242,7 +243,7 @@ namespace DocMonster.Templates
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        public IList<ScriptExpression> ParseScriptExpressions(string content)
+        public IList<ScriptExpression> ParseScriptExpressions(string content, bool htmlDecode = false)
         {            
             var scripts = new List<ScriptExpression>();
 
@@ -261,6 +262,10 @@ namespace DocMonster.Templates
                 string code = StringUtils.ExtractString(text, Delimiters.StartDelim, Delimiters.EndDelim)?
                                          .TrimStart(':', '!', '@','=')  // strip expression modifiers
                                          .Trim();
+
+                if (htmlDecode)
+                    code = WebUtility.HtmlDecode(code);
+
                 item.Code = code;
                 var tokens = code.Split('.');
                 if (tokens.Length < 2)

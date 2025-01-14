@@ -92,12 +92,7 @@ namespace DocMonster.Templates
 
             Script.ScriptEngine.ObjectInstance = null; // make sure we don't cache
 
-            var basePath = model.Project.ProjectDirectory;
-
-            if (model.Topic.Body.Contains("{{ "))
-            {
-                model.Topic.Body = Script.ExecuteScript(model.Topic.Body, model, null, basePath);
-            }
+            var basePath = model.Project.ProjectDirectory;            
 
             string result = Script.ExecuteScriptFile(templateFile, model, basePath: basePath);
 
