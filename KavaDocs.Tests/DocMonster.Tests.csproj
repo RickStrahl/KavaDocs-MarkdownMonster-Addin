@@ -9,7 +9,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyTitle>DocumentationMonster.Core.Tests</AssemblyTitle>
     <Product>DocumentationMonster.Core.Tests</Product>
-    <Copyright>Copyright ©  2017</Copyright>
+    <Copyright>Copyright © 2017-2025</Copyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
@@ -22,12 +22,12 @@
     <ProjectReference Include="..\DocMonster\DocMonster.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.6.1" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.6.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.7.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.7.2" />
 
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Westwind.Utilities" Version="5.1.3" />
+    <PackageReference Include="Westwind.Utilities" Version="5.1.3.1" />
   </ItemGroup>  
 </Project>
