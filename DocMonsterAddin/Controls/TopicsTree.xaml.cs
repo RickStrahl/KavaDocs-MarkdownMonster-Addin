@@ -121,27 +121,27 @@ namespace DocMonsterAddin.Controls
             //if (topic.Topics.Count > 0)
             //    topic.IsExpanded = !topic.IsExpanded;
 
-            var lastTopic = kavaUi.AddinModel.ActiveTopic;
+            var lastTopic = kavaUi.Model.ActiveTopic;
             if (lastTopic != null)
                 lastTopic.TopicState.IsSelected = false;
 
-            kavaUi.AddinModel.LastTopic = lastTopic;
+            kavaUi.Model.LastTopic = lastTopic;
             
-            bool result = SaveProjectFileForTopic(kavaUi.AddinModel.LastTopic);
+            bool result = SaveProjectFileForTopic(kavaUi.Model.LastTopic);
             
             if (result)
-                kavaUi.AddinModel.Window.ShowStatus("Topic saved.",3000);
+                kavaUi.Model.Window.ShowStatus("Topic saved.",3000);
                 
-            kavaUi.AddinModel.ActiveTopic = topic;
+            kavaUi.Model.ActiveTopic = topic;
             
             // TODO: Move to function
-            if (kavaUi.AddinModel.RecentTopics.Contains(topic))
-                kavaUi.AddinModel.RecentTopics.Remove(topic);
-            kavaUi.AddinModel.RecentTopics.Insert(0, topic);
+            if (kavaUi.Model.RecentTopics.Contains(topic))
+                kavaUi.Model.RecentTopics.Remove(topic);
+            kavaUi.Model.RecentTopics.Insert(0, topic);
 
-            if (kavaUi.AddinModel.RecentTopics.Count > 15)
-                kavaUi.AddinModel.RecentTopics =
-                    new ObservableCollection<DocTopic>(kavaUi.AddinModel.RecentTopics.Take(14));
+            if (kavaUi.Model.RecentTopics.Count > 15)
+                kavaUi.Model.RecentTopics =
+                    new ObservableCollection<DocTopic>(kavaUi.Model.RecentTopics.Take(14));
 
             //var file = topic.GetTopicFileName();
             //var doc = new MarkdownDocument();
@@ -195,7 +195,7 @@ namespace DocMonsterAddin.Controls
                 return false;
 
             if (project == null)
-                project = kavaUi.AddinModel.ActiveProject;
+                project = kavaUi.Model.ActiveProject;
 
 
             if (async)

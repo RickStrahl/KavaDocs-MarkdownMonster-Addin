@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="\projects\MarkdownMonsterCode\MarkdownMonster\MarkdownMonster.csproj">
+    <ProjectReference Include="..\..\..\MarkdownMonsterCode\MarkdownMonster\MarkdownMonster.csproj">
       <Private>false</Private>
       <IncludeAssets>compile</IncludeAssets>
     </ProjectReference>

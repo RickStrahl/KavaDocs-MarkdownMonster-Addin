@@ -185,7 +185,7 @@ namespace DocMonsterAddin.Controls
 
         public TopicsTreeModel(DocProject project)
         {
-            DocMonsterModel = kavaUi.AddinModel;
+            DocMonsterModel = kavaUi.Model;
             MarkdownMonsterModel = kavaUi.MarkdownMonsterModel;
 
             Project = project;

@@ -44,8 +44,8 @@ namespace DocMonsterAddin.Windows.Dialogs
             Model = new ImportDotnetLibraryModel()
             {
                 AppModel = mmApp.Model,
-                AddinModel = kavaUi.AddinModel,
-                ParentTopic = kavaUi.AddinModel.ActiveTopic
+                AddinModel = kavaUi.Model,
+                ParentTopic = kavaUi.Model.ActiveTopic
             };
 
             Model.AssemblyPath =

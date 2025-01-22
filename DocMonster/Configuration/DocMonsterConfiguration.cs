@@ -36,7 +36,7 @@ namespace DocMonster.Configuration
         {
             var provider = new JsonFileConfigurationProvider<DocMonsterConfiguration>()
             {
-                JsonConfigurationFile = Path.Combine(mmApp.Configuration.CommonFolder, "KavaDocsAddin.json")
+                JsonConfigurationFile = Path.Combine(mmApp.Configuration.CommonFolder, "DocMonsterAddin.json")
             };
 
             return provider;
@@ -135,7 +135,7 @@ namespace DocMonster.Configuration
         //{
         //    var provider = new JsonFileConfigurationProvider<KavaDocsConfiguration>()
         //    {
-        //        JsonConfigurationFile = Path.Combine(mmApp.Configuration.CommonFolder, "KavaDocsAddin.json")
+        //        JsonConfigurationFile = Path.Combine(mmApp.Configuration.CommonFolder, "DocMonsterAddin.json")
         //    };
 
         //    if (!File.Exists(provider.JsonConfigurationFile))

@@ -140,7 +140,7 @@ namespace DocMonsterAddin
             Window = window;
             Model = window.Model;
             Commands = new AppCommands(this);
-            kavaUi.AddinModel = this;
+            kavaUi.Model = this;
         }
 
 

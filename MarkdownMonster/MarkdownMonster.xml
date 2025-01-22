@@ -1156,6 +1156,12 @@
              <param name="renderedHtml"></param>
              <returns></returns>
         </member>
+        <member name="M:MarkdownMonster.MainWindow.Navigate(System.String)">
+            <summary>
+            Navigates the PreviewBrowser to a specific URL
+            </summary>
+            <param name="url"></param>
+        </member>
         <member name="M:MarkdownMonster.MainWindow.ShowPreviewBrowser(System.Boolean,System.Boolean)">
             <summary>
             Shows or hides the preview browser
@@ -2452,6 +2458,14 @@
             <summary>
             Handle Text Selection for the filename only
             </summary>
+        </member>
+        <member name="M:MarkdownMonster.Windows.FolderBrowserSidebar.TreeFolderBrowser_PreviewMouseWheel(System.Object,System.Windows.Input.MouseWheelEventArgs)">
+            <summary>
+            Based on this comment on Stack Overflow
+            https://stackoverflow.com/a/50004583/11197
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
         </member>
         <member name="F:MarkdownMonster.Windows.FolderBrowserSidebar.TextSearch">
             <summary>
@@ -4314,6 +4328,14 @@
             The attribute must be mentioned in your member reordering patterns
             </remarks>
         </member>
+        <member name="T:MarkdownMonster.RenderExtensions.AdmonitionsRenderExtension">
+             <summary>
+             Renders Admmonition Markdown Extension blocks that make for
+             warning, information, caution, error, and other types of blocks.
+            
+             MM renders these using DocFx styling using upper case CSS class names.
+             </summary>
+        </member>
         <member name="T:MarkdownMonster.RenderExtensions.DocFxRenderExtension">
             <summary>
             Renders a handful of DocFx Markdown extensions in the previewer or for output
@@ -4371,6 +4393,14 @@
              <param name="args">Arguments that allow you to update the markdown text
               and also see the original document.
              </param>
+             <remarks>
+             If you inject Markdown into the document before rendering you will
+             throw off the line numbering in the document used for document sync
+             for any content below the injected/replaced content.
+            
+             If you want to ensure line number sync stays intact, ensure that whatever text
+             you are replacing maintains the same line count.
+             </remarks>
         </member>
         <member name="M:MarkdownMonster.RenderExtensions.IMarkdownRenderExtension.AfterMarkdownRendered(MarkdownMonster.RenderExtensions.ModifyHtmlAndHeadersArguments)">
              <summary>
@@ -4393,6 +4423,12 @@
              </summary>
              <param name="args">Arguments that let you modify HTML and Headers and
              let you view original Markdown and Document.</param>
+        </member>
+        <member name="P:MarkdownMonster.RenderExtensions.ModifyMarkdownArguments.Data">
+            <summary>
+            Data you can set values on that are passed through this render extension
+            instance call.
+            </summary>
         </member>
         <member name="T:MarkdownMonster.RenderExtensions.MarkdownRenderExtensionsManager">
             <summary>
@@ -4981,6 +5017,17 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:MarkdownMonster.Utilities.GitHelper.Commit(System.Collections.Generic.IList{MarkdownMonster.Utilities.RepositoryStatusItem},System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Commits changes to the repository
+            </summary>
+            <param name="statusItems"></param>
+            <param name="message"></param>
+            <param name="name"></param>
+            <param name="email"></param>
+            <param name="ammendPreviousCommit"></param>
+            <returns></returns>
+        </member>
         <member name="M:MarkdownMonster.Utilities.GitHelper.Merge(System.String,System.String,System.String,System.String)">
             <summary>
             Merges changes from a branch into the current HEAD of the repository
@@ -5409,6 +5456,15 @@
         <member name="T:MarkdownMonster.HtmlToPdfGeneration">
             <summary>
             WebView2 HtmlToPdf generation via Page.DevTools.PrintToPdf interface
+            </summary>
+        </member>
+        <member name="P:MarkdownMonster.HtmlToPdfGeneration.KeepTextTogether">
+            <summary>
+            Attempts to keep paragraphs together on the same page
+            by using CSS overrides.
+            
+            On by default. Turn off if you want to provider your own
+            custom page control via Theme.css for the PDF output.
             </summary>
         </member>
         <member name="M:MarkdownMonster.HtmlToPdfGeneration.GeneratePdfFromHtml(System.String,System.String)">
@@ -6420,6 +6476,11 @@
             Requires an application restart to fully take effect.
             </summary>
         </member>
+        <member name="P:MarkdownMonster.ApplicationConfiguration.IsDarkTheme">
+            <summary>
+            For binding purposes
+            </summary>
+        </member>
         <member name="P:MarkdownMonster.ApplicationConfiguration.OpenInPresentationMode">
             <summary>
             If set this property controls whether the editor is opened in
@@ -6922,6 +6983,15 @@
             Zoom level percentage on top of the EditorFontSize
             </summary>
         </member>
+        <member name="P:MarkdownMonster.Configuration.EditorConfiguration.ScrollSpeed">
+             <summary>
+             The scroll speed in the editor. Determines how fast
+             the scroll wheel or touchpad scrolling moves the editor
+             vertically. Values between 1-20 are reasonably.
+            
+             Default is 5. Baseline is 1
+             </summary>
+        </member>
         <member name="P:MarkdownMonster.Configuration.EditorConfiguration.EditorPreviewFlowDirection">
             <summary>
             Determines how Editor and Preview are rendered.
@@ -7183,6 +7253,13 @@
             <summary>
             Delay used for double click operations to open documents in the folder browser in milliseconds.
             Default: 0 - system default (usually 500)
+            </summary>
+        </member>
+        <member name="P:MarkdownMonster.Configuration.FolderBrowserConfiguration.ScrollSpeed">
+            <summary>
+            Scroll speed for the folder browser tree view.
+            Values between 1 - 30. 0 is the default app behavior.
+            Default = 0.
             </summary>
         </member>
         <member name="P:MarkdownMonster.Configuration.FolderBrowserConfiguration.TrackDocumentInFolderBrowser">
@@ -7708,6 +7785,12 @@
         <member name="P:MarkdownMonster.MarkdownConfiguration.MermaidDiagramsUrl">
             <summary>
             The URL to use for Mermaid Rendering - default uses evergreen url/non-version specific
+            </summary>
+        </member>
+        <member name="P:MarkdownMonster.MarkdownConfiguration.UseAdmonitions">
+            <summary>
+            Parses Adminonition blocks in Markdown and renders them as styled blocks.
+            (Warning, Note, Info, Tip, Important, etc.)
             </summary>
         </member>
         <member name="T:MarkdownMonster.MarkdownSymbolsConfiguration">

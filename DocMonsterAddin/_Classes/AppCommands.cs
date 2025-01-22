@@ -214,7 +214,7 @@ namespace DocMonsterAddin
         {
             SettingsCommand = new CommandBase((parameter, command) =>
             {
-                ShellUtils.GoUrl(Path.Combine(mmApp.Configuration.CommonFolder, "KavaDocsAddin.json"));
+                ShellUtils.GoUrl(Path.Combine(mmApp.Configuration.CommonFolder, "docmonsteraddin.json"));
             });
         }
 
@@ -469,7 +469,7 @@ namespace DocMonsterAddin
 
                 Task.Run(() =>
                 {
-                    var project = kavaUi.AddinModel.ActiveProject;
+                    var project = kavaUi.Model.ActiveProject;
                     var output = new HtmlOutputGenerator(project);
                     output.Generate();
 
@@ -492,7 +492,7 @@ namespace DocMonsterAddin
             {
                 mmApp.Model.Window.ShowStatusProgress("Copying scripts and templates...");
 
-                var generator = new HtmlOutputGenerator(kavaUi.AddinModel.ActiveProject);
+                var generator = new HtmlOutputGenerator(kavaUi.Model.ActiveProject);
                 generator.CopyScriptsAndTemplates();
 
 

@@ -20,7 +20,7 @@ namespace DocMonsterAddin
 
         public TreeviewContextMenuHandler()
         {
-            Model = kavaUi.AddinModel;
+            Model = kavaUi.Model;
         }        
 
         public ContextMenu CreateTreeviewContextMenu()

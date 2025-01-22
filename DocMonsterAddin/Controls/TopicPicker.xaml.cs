@@ -27,7 +27,7 @@ namespace KavaDocsAddinControls
 
             // Create a new instance of the project so we don't navigate
             // the main tree
-            var project = DocProjectManager.Current.LoadProject(kavaUi.AddinModel.ActiveProject?.Filename);            
+            var project = DocProjectManager.Current.LoadProject(kavaUi.Model.ActiveProject?.Filename);            
             project.GetTopicTree();
 
             Model = new TopicsTreeModel(project);

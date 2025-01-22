@@ -409,64 +409,64 @@ function forcedScroll() {
 }
 
 function scrollToPragmaLine(lineno, headerId, noScrollTimeout, noScrollTopAdjustment) {
-  if (typeof lineno !== "number" || lineno < 0) return;
+    if (typeof lineno !== "number" || lineno < 0) return;
 
     //setTimeout(function() {    
-      if (!noScrollTimeout)
+    if (!noScrollTimeout)
         te.setCodeScrolled();
 
-      if (lineno < 2) {
+    if (lineno < 2) {
         $(document).scrollTop(0);
         return;
-      }
+    }
 
-      var $el;
-      if (headerId != null)
+    var $el;
+    if (headerId != null)
         $el = $("#" + CSS.escape(headerId));
-      if (!$el || $el.length < 1)
+    if (!$el || $el.length < 1)
         $el = $("#pragma-line-" + lineno);
 
-      var lines = 10;
-      if ($el.length < 1) {
+    var lines = 10;
+    if ($el.length < 1) {
         var origLine = lineno;
 
         // try forwards with x lines
         for (var i = 0; i < lines; i++) {
-          lineno--;
-          $el = $("#pragma-line-" + lineno);
-          if ($el.length > 0)
-            break;
+            lineno--;
+            $el = $("#pragma-line-" + lineno);
+            if ($el.length > 0)
+                break;
         }
 
         // try backwards with x lines
         if ($el.length < 1) {
-          lineno = origLine;
+            lineno = origLine;
 
-          // try forward with 3 lines
-          for (var i = 0; i < lines; i++) {
-            lineno++;
-            $el = $("#pragma-line-" + lineno);
-            if ($el.length > 0)
-              break;
-          }
+            // try forward with 3 lines
+            for (var i = 0; i < lines; i++) {
+                lineno++;
+                $el = $("#pragma-line-" + lineno);
+                if ($el.length > 0)
+                    break;
+            }
         }
         if ($el.length < 1)  // couldn't match anything
-          return;
-      }
+            return;
+    }
 
-      $(".line-highlight").removeClass("line-highlight");
-      $el.addClass("line-highlight");
-      if (te.highlightTimeout > 0)
-        setTimeout(function() { $el.removeClass("line-highlight"); }, te.highlightTimeout);
+    $(".line-highlight").removeClass("line-highlight");
+    $el.addClass("line-highlight");
+    if (te.highlightTimeout > 0)
+        setTimeout(function () { $el.removeClass("line-highlight"); }, te.highlightTimeout);
 
-      if (!noScrollTopAdjustment) {
+    if (!noScrollTopAdjustment) {
         var scrollTop = 0;
         if (lineno > 1)
-          scrollTop = $el.offset().top - 25; // -150
+            scrollTop = $el.offset().top - 25; // -150
 
-        $(document).scrollTop(scrollTop);
-      }
-//  }, 10);
+        $el.scrollTop(scrollTop);
+    }
+    //  }, 10);
 }
 
 function getScrollTop() {

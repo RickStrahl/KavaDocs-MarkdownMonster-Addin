@@ -28,7 +28,7 @@ namespace DocMonsterAddin
 
         public DocMonsterMenuHandler()
         {
-            Model = kavaUi.AddinModel;
+            Model = kavaUi.Model;
         }
         public MenuItem CreateKavaDocsMainMenu()
         {
@@ -177,8 +177,8 @@ namespace DocMonsterAddin
             // Add Shortcut to main mane
             // ButtonShowFavorites MainMenuView
 
-            var viewMenuItem = kavaUi.AddinModel.Model.Window.ButtonShowFavorites;
-            var viewMenu = kavaUi.AddinModel.Model.Window.MainMenuView;
+            var viewMenuItem = kavaUi.Model.Model.Window.ButtonShowFavorites;
+            var viewMenu = kavaUi.Model.Model.Window.MainMenuView;
 
             mi = new MenuItem
             {
@@ -252,7 +252,7 @@ namespace DocMonsterAddin
 
         private void MenuKavaDocsSettings_Click(object sender, RoutedEventArgs e)
         {
-            kavaUi.MarkdownMonsterModel.Window.OpenTab(System.IO.Path.Combine(kavaUi.MarkdownMonsterModel.Configuration.CommonFolder, "KavaDocsAddin.json"));
+            kavaUi.MarkdownMonsterModel.Window.OpenTab(System.IO.Path.Combine(kavaUi.MarkdownMonsterModel.Configuration.CommonFolder, "docmonsteraddin.json"));
         }
     }
 }

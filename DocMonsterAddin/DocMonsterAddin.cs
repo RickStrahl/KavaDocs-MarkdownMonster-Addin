@@ -1,25 +1,20 @@
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using DocMonster;
 using DocMonster.Configuration;
-using DocMonster.MarkdownParser;
 using DocMonster.Model;
 using DocMonsterAddin.Controls;
-using FontAwesome6;
-using FontAwesome6.Fonts;
 using MahApps.Metro.Controls;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using MarkdownMonster.Controls;
 using MarkdownMonster.Windows;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Westwind.Utilities;
 
 namespace DocMonsterAddin
@@ -132,8 +127,8 @@ namespace DocMonsterAddin
             if (!IsAddinInitialized)
             {
                 kavaUi.Addin = this;
-
-                DocMonsterModel = kavaUi.AddinModel;
+                
+                DocMonsterModel = kavaUi.Model;
                 DocMonsterModel.Addin = this;
                 Configuration = kavaUi.Configuration;
                 DocMonsterModel.Configuration = Configuration;
@@ -141,8 +136,7 @@ namespace DocMonsterAddin
 
                 // this doesn't work for in combination with the Topic browser so turn it off
                 mmApp.Configuration.FolderBrowser.TrackDocumentInFolderBrowser = false;
-
- 
+                 
                 if (Configuration.OpenLastProject)
                 {
                     DocMonsterModel.ActiveProject = DocProjectManager.Current.LoadProject(Configuration.LastProjectFile);
@@ -276,17 +270,34 @@ namespace DocMonsterAddin
 
 
         public override async Task OnExecuteConfiguration(object sender)
-        {
-            
-            var configFile = Path.Combine(mmApp.Configuration.CommonFolder, "KavaDocsAddin.json");
+        {            
+            var configFile = Path.Combine(mmApp.Configuration.CommonFolder, "docmonsteraddin.json");
             if (!File.Exists(configFile))
                 DocMonsterConfiguration.Current.Write();
           
             await Model.Window.OpenTab(configFile);
         }
 
+
+        public override async Task OnDocumentUpdated()
+        {
+            if (DocMonsterModel == null || Model?.ActiveEditor == null || Model.ActiveEditor.Identifier != "KavaDocsDocument")
+                return;
+
+            var topic = GetTopicFromEditor();
+            if (topic != null && Model.ActiveEditor != null)
+            {               
+                var md = await Model.ActiveEditor.GetMarkdown();
+                if(md != null)
+                    topic.Body = md;
+
+                Model.ActiveEditor.Properties[Constants.EditorPropertyNames.KavaDocsUnedited] = false;
+            }            
+        }
+
         public override Task OnAfterSaveDocument(MarkdownDocument doc)
         {
+            
             base.OnAfterSaveDocument(doc);
            
             if (doc == null || DocMonsterModel == null)
@@ -294,7 +305,7 @@ namespace DocMonsterAddin
 
 
             // Reload settings after saving them in the editor
-            if (doc.Filename.IndexOf("kavadocsaddin.json", StringComparison.InvariantCultureIgnoreCase) > -1)
+            if (doc.Filename.IndexOf("docmonsteraddin.json", StringComparison.InvariantCultureIgnoreCase) > -1)
             {
                 DocMonsterModel.Configuration.Read();
                 return Task.CompletedTask;
@@ -406,14 +417,6 @@ namespace DocMonsterAddin
             return Task.CompletedTask;
         }
 
-        public override Task OnDocumentUpdated()
-        {
-            if (DocMonsterModel == null || Model?.ActiveEditor == null || Model.ActiveEditor.Identifier != "KavaDocsDocument")
-                return Task.CompletedTask;
-
-            Model.ActiveEditor.Properties[Constants.EditorPropertyNames.KavaDocsUnedited] = false;
-            return Task.CompletedTask;
-        }
 
 
         public override bool OnCanExecute(object sender)
@@ -582,7 +585,7 @@ namespace DocMonsterAddin
         public void PreviewTopicExternal()
         {
 
-            var model = kavaUi.AddinModel;            
+            var model = kavaUi.Model;            
             var topic = model.ActiveTopic;
 
             try

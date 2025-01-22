@@ -41,7 +41,7 @@ namespace DocMonster.Windows.Dialogs
                 OnPropertyChanged(nameof(AppModel));
             }
         }
-        private DocMonsterModel _appModel = kavaUi.AddinModel;
+        private DocMonsterModel _appModel = kavaUi.Model;
 
         
         public DocTopic Topic
@@ -133,7 +133,7 @@ namespace DocMonster.Windows.Dialogs
 
             Owner = window;
             Window = window;
-            AppModel = kavaUi.AddinModel;
+            AppModel = kavaUi.Model;
 
             Topic = new DocTopic(AppModel.ActiveProject);
 

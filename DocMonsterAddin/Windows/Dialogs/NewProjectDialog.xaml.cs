@@ -36,8 +36,8 @@ namespace DocMonster.Windows.Dialogs
             mmApp.SetThemeWindowOverride(this);
 
             Owner = window;
-            AppModel = kavaUi.AddinModel;
-            Window = kavaUi.AddinModel.Window;
+            AppModel = kavaUi.Model;
+            Window = kavaUi.Model.Window;
             
 
             ProjectCreator = new DocProjectCreator()
@@ -93,7 +93,7 @@ Kava Docs requires a new project folder. Please choose another folder for your n
             if (project != null)
             {
                 // TODO: Need to figure out how to open
-                kavaUi.AddinModel.OpenProject(project.Filename);
+                kavaUi.Model.OpenProject(project.Filename);
 
                 Window.ShowStatus($"New Project '{project.Title}' has been created.",
                     dmApp.Configuration.StatusMessageTimeout);
@@ -211,7 +211,7 @@ Kava Docs requires a new project folder. Please choose another folder for your n
             if(!string.IsNullOrEmpty(ProjectCreator.Owner))
                 kavaUi.Configuration.LastProjectCompany = ProjectCreator.Owner;
 
-            kavaUi.AddinModel.OpenProject(System.IO.Path.Combine(ProjectCreator.ProjectFolder, "_toc.json"));
+            kavaUi.Model.OpenProject(System.IO.Path.Combine(ProjectCreator.ProjectFolder, "_toc.json"));
         }
 
         private void Button_CancelClick(object sender, RoutedEventArgs e)

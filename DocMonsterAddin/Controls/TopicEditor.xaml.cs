@@ -81,7 +81,7 @@ namespace DocMonsterAddin.Controls
 
 
             if (project == null)
-                project = kavaUi.AddinModel.ActiveProject;
+                project = kavaUi.Model.ActiveProject;
 
             project.SaveProjectAsync();
             return true;            

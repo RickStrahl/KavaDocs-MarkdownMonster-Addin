@@ -135,7 +135,7 @@ namespace DocMonsterAddin.Controls
 
         public TopicEditorModel()
         {
-            DocMonsterModel = kavaUi.AddinModel;
+            DocMonsterModel = kavaUi.Model;
             AppModel = kavaUi.MarkdownMonsterModel;
 
             DocMonsterModel.PropertyChanged += DocMonsterModelPropertyChanged;
@@ -185,10 +185,10 @@ namespace DocMonsterAddin.Controls
         {
             get
             {
-                if (DisplayType == null || kavaUi.AddinModel.ActiveProject == null)
+                if (DisplayType == null || kavaUi.Model.ActiveProject == null)
                     return null;
 
-                return Path.Combine(kavaUi.AddinModel.ActiveProject.ProjectDirectory, "_kavadocs", "icons", DisplayType + ".png");
+                return Path.Combine(kavaUi.Model.ActiveProject.ProjectDirectory, "_kavadocs", "icons", DisplayType + ".png");
             }
         }
 

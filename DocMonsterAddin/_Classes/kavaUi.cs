@@ -12,7 +12,7 @@ namespace DocMonsterAddin
         /// <summary>
         /// This addin's model
         /// </summary>
-        public static DocMonsterModel AddinModel { get; set; }
+        public static DocMonsterModel Model { get; set; }
 
                 
         /// <summary>
@@ -30,7 +30,7 @@ namespace DocMonsterAddin
         static kavaUi()
         {
             MarkdownMonsterModel = mmApp.Model;
-            AddinModel = new DocMonsterModel(mmApp.Model.Window);
+            Model = new DocMonsterModel(mmApp.Model.Window);
             Configuration = dmApp.Configuration;
             
         }

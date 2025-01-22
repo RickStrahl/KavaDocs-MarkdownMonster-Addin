@@ -516,17 +516,18 @@ namespace DocMonster.Model
                 return html;
             }
 
-            // Fix up any locally linked .md extensions to .html
-            if (renderMode == TopicRenderModes.Html)
-            {
-                FixupHtmlLinks(ref html);
-                html = html.Replace("=\"~/", "=\"/");
-            }
 
+
+            //// Fix up any locally linked .md extensions to .html
+            //if (renderMode == TopicRenderModes.Html)
+            //{
+            //    FixupHtmlLinks(ref html);
+            //    html = html.Replace("=\"~/", "=\"/").Replace("%7E/", "=\"/");
+            //}
             if (renderMode == TopicRenderModes.Preview)
             {
                 var basePath = Path.TrimEndingDirectorySeparator(Project.ProjectDirectory).Replace("\\", "//") + "/";
-                html = html.Replace("=\"~/", "=\"" + basePath);
+                html = html.Replace("=\"~/", "=\"" + basePath).Replace("=\"%7E/", "=\"" + basePath);
                 html = html.Replace("=\"/", "=\"" + basePath);
             }
 
@@ -590,7 +591,8 @@ namespace DocMonster.Model
                 else
                     relRootPath = string.Empty;
 
-                html = html.Replace("\"~/", "\"" + relRootPath);
+                
+                html = html.Replace("\"~/", "\"" + StringUtils.TerminateString(relRootPath,"/"));
 
                 try
                 {
