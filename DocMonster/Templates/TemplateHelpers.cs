@@ -232,6 +232,16 @@ namespace DocMonster.Templates
             return new RawString(sb);
         }
         #endregion
+
+        #region Formatting Helpers
+        public string Json(object value)
+        {
+            if (value is string jsonString)
+                return StringUtils.ToJsonString(jsonString);
+
+            return JsonSerializationUtils.Serialize(value, formatJsonOutput: true);
+        }
+        #endregion
     }
 
 

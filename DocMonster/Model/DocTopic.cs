@@ -505,8 +505,6 @@ namespace DocMonster.Model
             else
                 templateFile = Path.Combine(Project.ProjectDirectory, "_kavadocs\\Themes\\" + DisplayType + ".html");
 
-
-
             string error;
             string html = Project.TemplateHost.RenderTemplateFile(templateFile, model, out error);
 
