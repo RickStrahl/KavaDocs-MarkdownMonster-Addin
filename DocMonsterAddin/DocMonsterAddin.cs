@@ -485,7 +485,7 @@ namespace DocMonsterAddin
 
 
             //topic.Body = await mmApp.Model.ActiveEditor.GetMarkdown();
-            topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Preview;
+            topic.Project.Settings.ActiveRenderMode = HtmlRenderModes.Preview;
             topic.TopicState.IsPreview = true;
 
             if (topic.IsLink)

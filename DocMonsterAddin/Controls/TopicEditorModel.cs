@@ -58,7 +58,7 @@ namespace DocMonsterAddin.Controls
 
                 var list = new List<DisplayTypeItem>();
 
-                foreach (var type in Project.ProjectSettings.TopicTypes)
+                foreach (var type in Project.Settings.TopicTypes)
                 {
                     var item = new DisplayTypeItem()
                     {

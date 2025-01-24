@@ -111,7 +111,7 @@ namespace DocMonster.Windows.Dialogs
 
                 var list = new List<DisplayTypeItem>();
 
-                foreach (var type in AppModel.ActiveProject.ProjectSettings.TopicTypes)
+                foreach (var type in AppModel.ActiveProject.Settings.TopicTypes)
                 {
                     var item = new DisplayTypeItem()
                     {

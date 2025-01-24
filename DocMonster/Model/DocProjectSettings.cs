@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using System.ComponentModel;
-
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Westwind.Utilities;
 
 namespace DocMonster.Model
 {
     /// <summary>
     /// Client project settings for a KavaDocs project
     /// </summary>
-    public class DocProjectSettings
+    public class DocProjectSettings : INotifyPropertyChanged
     {
         private readonly DocProject _project;
 
@@ -73,5 +74,66 @@ namespace DocMonster.Model
 
         public bool DontAllowNestedTopicBodyScripts { get; set;  }
 
+        /// <summary>
+        /// The project's relative base Url. Typically this is "/"
+        /// If you need something different set it in this property
+        /// for example it's common to use "/docs/".
+        ///
+        /// Path will be auto-terminated with "/"
+        /// </summary>
+        public string RelativeBaseUrl
+        {
+            get { return _relativeBaseUrl; }
+            set
+            {
+                if (value == _relativeBaseUrl) return;
+                _relativeBaseUrl = value;
+                if (!string.IsNullOrEmpty(_relativeBaseUrl))
+                    _relativeBaseUrl = StringUtils.TerminateString(RelativeBaseUrl, "/");
+                else
+                    _relativeBaseUrl = "/";
+
+                OnPropertyChanged();
+            }
+        }
+        private string _relativeBaseUrl = "/";
+
+
+
+        /// <summary>
+        /// The Web Site's base URL to navigate to the home page.
+        /// This will be an online URL like https://docs.west-wind.com
+        /// or https://markdownmonster.west-wind.com/docs/
+        ///
+        /// Url will auto-terminate with a trailing slash
+        /// </summary>
+        public string WebSiteBaseUrl
+        {
+            get => _webSiteBaseUrl;
+            set
+            {
+                if (value == _webSiteBaseUrl) return;
+                _webSiteBaseUrl = value;
+                if (!string.IsNullOrEmpty(_webSiteBaseUrl))
+                    _webSiteBaseUrl = StringUtils.TerminateString(_webSiteBaseUrl, "/");                
+                OnPropertyChanged();
+            }
+        }
+        private string _webSiteBaseUrl;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
     }
 }

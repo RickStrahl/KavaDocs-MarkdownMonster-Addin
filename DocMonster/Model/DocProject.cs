@@ -76,22 +76,7 @@ namespace DocMonster.Model
         private string _owner;
 
 
-        /// <summary>
-        /// The project's base URL from which files are loaded
-        /// </summary>
-        public string BaseUrl
-        {
-            get { return _baseUrl; }
-            set
-            {
-                if (value == _baseUrl) return;
-                _baseUrl = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _baseUrl = "http://markdownmonster.west-wind.com/docs/";
-
+        
 
         /// <summary>
         /// Kava Docs Version used to create this file
@@ -163,7 +148,7 @@ namespace DocMonster.Model
         /// KavaDocs Project Settings - these are projected to
         /// settings from the Settings dictionary.
         /// </summary>        
-        public DocProjectSettings ProjectSettings { get; set; }
+        public DocProjectSettings Settings { get; set; }
 
         #endregion
 
@@ -255,7 +240,7 @@ namespace DocMonster.Model
         public DocProject()
         {            
             // Make sure this is last
-            ProjectSettings = new DocProjectSettings(this);
+            Settings = new DocProjectSettings(this);
         }
 
         public DocProject(string filename = null) : this()
@@ -622,19 +607,6 @@ namespace DocMonster.Model
         #endregion
 
 
-        #region Output Generation
-
-        public void GenerateHtmlOutput()
-        {
-
-        }
-
-        public void GenerateTableOfContents()
-        {
-
-        }
-
-        #endregion
 
         #region Topic Names and Links
 
@@ -662,7 +634,7 @@ namespace DocMonster.Model
             string link = null;
 
             if (mode == HtmlRenderModes.None)
-                mode = ProjectSettings.ActiveRenderMode;
+                mode = Settings.ActiveRenderMode;
 
             // Plain HTML
             if (mode == HtmlRenderModes.Html)
@@ -878,7 +850,7 @@ namespace DocMonster.Model
 
             var query = topics.Where(t => t.ParentId == topic.Id);
 
-            if (ProjectSettings.AutoSortTopics)
+            if (Settings.AutoSortTopics)
             {
                 query = query
                     .OrderByDescending(t => t.SortOrder)
@@ -939,7 +911,7 @@ namespace DocMonster.Model
             var query = topics
                 .OrderByDescending(t => t.SortOrder);
 
-            if (ProjectSettings.AutoSortTopics)
+            if (Settings.AutoSortTopics)
                 query = query.ThenBy(t => t.DisplayType).ThenBy(t => t.Title);
 
             var topicList = query.ToList();

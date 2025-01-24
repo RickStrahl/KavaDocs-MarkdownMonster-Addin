@@ -63,7 +63,7 @@ namespace DocMonster.Windows.Dialogs
             DataContext = this;
             
             // save before we enter
-            AppModel.ActiveProject.SaveProjectAsync();
+            AppModel.ActiveProject.SaveProjectAsync();            
         }
         
         #endregion

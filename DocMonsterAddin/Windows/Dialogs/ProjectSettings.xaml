@@ -88,8 +88,28 @@
                 <Label Margin="0,20,0,0">Owner</Label>
                 <TextBox Name="TextProjectOwner" Text="{Binding Project.Owner}"  />
 
-                <Label Margin="0,10,0,0">Base Project Url</Label>
-                <TextBox Name="TextProjectBaseUrl" Text="{Binding Project.BaseUrl}"  />
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <Label Margin="0,10,0,0">Website Root Url</Label>
+                        <TextBox Name="TextWebSiteBaseUrl" Text="{Binding Project.Settings.WebSiteBaseUrl}" 
+                                 ToolTip="The full Http base Url to the online documentation once published. Used to jump to online topics. "
+                                 controls:TextBoxHelper.Watermark="https://mysite.com/docs"
+                                 />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Width="120" Margin="5 0 0 0">
+                        <Label Margin="0,10,0,0">Site Relative Root</Label>
+                        <TextBox Name="TextRelativeBaseUrl" 
+                                 Text="{Binding Project.Settings.RelativeBaseUrl}" 
+                                 ToolTip="Web Site Relative base path to documentation. Used for fixing up internal links for navigation. Example: / or /docs/" 
+                                 controls:TextBoxHelper.Watermark="Examples: / or /docs/"
+                                 />
+                    </StackPanel>
+                </Grid>
 
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
          

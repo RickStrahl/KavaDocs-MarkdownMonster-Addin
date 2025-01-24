@@ -189,8 +189,8 @@ $"""
 <li>
     <i class="fa fa-caret-{(topic.IsExpanded ? "right" : "down")}"></i>
     <div>
-        <img src="/_kavadocs/icons/{topic.DisplayType}.png">
-        <a href="/{topic.Slug}.html" id="{topic.Id}">{topic.Title}</a>
+        <img src="_kavadocs/icons/{topic.DisplayType}.png">
+        <a href="{topic.Slug}.html" id="{topic.Id}">{topic.Title}</a>
     </div>
     
 """;

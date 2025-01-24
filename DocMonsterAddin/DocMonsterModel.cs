@@ -250,13 +250,13 @@ namespace DocMonsterAddin
                 if (ActiveTopic == null)
                     return;
 
-                topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Preview;
+                topic.Project.Settings.ActiveRenderMode = HtmlRenderModes.Preview;
                 topic.TopicState.IsPreview = usePragmaLines;
 
                 string renderedHtml = topic.RenderTopicToFile(renderMode: TopicRenderModes.Preview);
 
                 topic.TopicState.IsPreview = false;
-                topic.Project.ProjectSettings.ActiveRenderMode = HtmlRenderModes.Html;
+                topic.Project.Settings.ActiveRenderMode = HtmlRenderModes.Html;
 
                 if (renderedHtml == null)
                 {

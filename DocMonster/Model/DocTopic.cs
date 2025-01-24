@@ -531,11 +531,14 @@ namespace DocMonster.Model
                 basePath = Path.TrimEndingDirectorySeparator(Project.ProjectDirectory).Replace("\\", "//") + "/";                
             }
 
-            html = html.Replace("=\"~/", "=\"" + basePath)
+            html = html
+                        .Replace("=\"/", "=\"" + basePath)
+
+                        .Replace("=\"~/", "=\"" + basePath)
                        // UrlEncoded
                        .Replace("=\"%7E/", "=\"" + basePath)
                        // ="/root"
-                       .Replace("=\"/", "=\"" + basePath)
+                       
                        // Escaped
                        .Replace("=\"\\/", "=\"/")
                        .Replace("=\"~\\/", "=\"/");
@@ -543,7 +546,7 @@ namespace DocMonster.Model
 
 
             ScriptEvaluator script = null;
-            if (!model.Project.ProjectSettings.DontAllowNestedTopicBodyScripts &&
+            if (!model.Project.Settings.DontAllowNestedTopicBodyScripts &&
                 (html.Contains("{{") || html.Contains("<%")))
             {
                 script = new ScriptEvaluator();
@@ -646,8 +649,9 @@ namespace DocMonster.Model
         /// relative paths
         /// </summary>
         /// <param name="fileName">Optional - if not passed uses the topic render filename</param>
+        /// <param name="useRelativePath">If true uses relative path syntax ../ rather than the Project Setting RelativeBaseUrl</param>
         /// <returns></returns>
-        public string GetRelativeRootBasePath(string fileName = null)
+        public string GetRelativeRootBasePath(string fileName = null, bool useRelativePath = false)
         {
             if (fileName == null)
                 fileName = RenderTopicFilename;
@@ -655,16 +659,21 @@ namespace DocMonster.Model
             string relRootPath = string.Empty;
             if (!TopicState.IsPreview)
             {
-                relRootPath = FileUtils.GetRelativePath(fileName, Project.OutputDirectory);
-                relRootPath = Path.GetDirectoryName(relRootPath);
-                if (!string.IsNullOrEmpty(relRootPath))
+                if (useRelativePath)
                 {
-                    int length = relRootPath.Split('\\').Length;
-                    relRootPath = StringUtils.Replicate("../", length);
-                    relRootPath = StringUtils.TerminateString(relRootPath, "/");
+                    relRootPath = FileUtils.GetRelativePath(fileName, Project.OutputDirectory);
+                    relRootPath = Path.GetDirectoryName(relRootPath);
+                    if (!string.IsNullOrEmpty(relRootPath))
+                    {
+                        int length = relRootPath.Split('\\').Length;
+                        relRootPath = StringUtils.Replicate("../", length);
+                        relRootPath = StringUtils.TerminateString(relRootPath, "/");
+                    }
+                    else
+                        relRootPath = string.Empty;
                 }
                 else
-                    relRootPath = string.Empty;
+                    relRootPath = Project.Settings.RelativeBaseUrl;
             }
             else
             {
@@ -1119,7 +1128,7 @@ namespace DocMonster.Model
             if (string.IsNullOrEmpty(Title))
                 Title = GetTitleHeader(markdownText);
 
-            if (Project != null && Project.ProjectSettings.StoreYamlInTopics)
+            if (Project != null && Project.Settings.StoreYamlInTopics)
             {
                 string yaml = serializer.Serialize(this);
                 markdownText = $"---\n{yaml}---\n{markdownText}";
