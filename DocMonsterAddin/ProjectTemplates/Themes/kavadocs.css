@@ -421,9 +421,20 @@ ul>li>img {
         padding-right: 5px;
     }
 
+
 .line-highlight {
-    background: #f5f5f5;
-    border-radius: 3px;
+    background: #d7edff !important;
+}
+
+p.line-highlight, h1.line-highlight, h2.line-highlight, h3.line-highlight, h4.line-highlight {
+    border-radius: 4px;
+    margin-left: -0.1em;
+    margin-right: -0.1em;
+    padding-left: 0.1em;
+    padding-right: 0.1em;
+}
+code.line-highlight {
+    background: #555 !important;
 }
 
 @media(min-width: 1200px) {        

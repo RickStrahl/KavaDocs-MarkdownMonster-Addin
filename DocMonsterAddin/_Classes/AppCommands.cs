@@ -14,6 +14,7 @@ using MarkdownMonster;
 using MarkdownMonster.Windows;
 using Microsoft.Win32;
 using Westwind.Utilities;
+using DocMonsterAddin.WebServer;
 
 namespace DocMonsterAddin
 {
@@ -55,6 +56,7 @@ namespace DocMonsterAddin
             // Tools
             Command_Settings();
             Command_ProjectSettings();
+            Command_StartPreviewWebServer();
 
             // Shell
             Command_ShowFileInExplorer();
@@ -228,6 +230,27 @@ namespace DocMonsterAddin
                     Model.Window.OpenTab(Model.ActiveProject.Filename,rebindTabHeaders:true);
                 });
         }
+
+
+        public CommandBase StartPreviewWebServerCommand { get; set; }
+
+        void Command_StartPreviewWebServer()
+        {
+            StartPreviewWebServerCommand = new CommandBase((parameter, command) =>
+            {
+                string mode = parameter as string;
+                if ( mode.Equals("Start", StringComparison.OrdinalIgnoreCase))
+                {
+                    Model.Addin.StartWebServer();                    
+                }
+                else
+                {
+                    Model.Addin.StopWebServer();                    
+                }
+
+            }, (p, c) => true);
+        }
+
 
         #endregion
 

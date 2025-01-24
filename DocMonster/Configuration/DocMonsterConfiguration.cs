@@ -88,6 +88,11 @@ namespace DocMonster.Configuration
         /// </summary>
         public TopicRenderingModes TopicRenderMode { get; set; } = TopicRenderingModes.MarkdownDefault;
 
+        /// <summary>
+        /// The preview WebServer port used for previews
+        /// </summary>
+        public int WebServerPort { get; set; } = 5088;
+
 
         public string LastProjectCompany
         {

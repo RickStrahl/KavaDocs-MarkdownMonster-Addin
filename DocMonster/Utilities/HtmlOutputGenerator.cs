@@ -128,7 +128,7 @@ namespace DocMonster.Utilities
             Project.WalkTopicsHierarchy( Project.Topics, (topic,project)=>
             {                
                 topic.Project = project;
-                topic.TopicState.IsPreview = false;
+                topic.TopicState.IsPreview = false;  // so topics can see           
                 topic.RenderTopicToFile();
             });
 

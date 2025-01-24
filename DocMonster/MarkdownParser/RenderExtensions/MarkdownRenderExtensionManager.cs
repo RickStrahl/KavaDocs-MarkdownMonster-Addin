@@ -84,7 +84,7 @@ public class MarkdownRenderExtensionManager
             {
                 extension.AfterMarkdownRendered(args);
             }
-            catch (Exception ex)
+            catch
             {
                 
                 //mmApp.Log($"AfterMarkdownRendered RenderExtension failed: {extension.GetType().Name}", ex);

@@ -9,6 +9,7 @@ using System.Windows.Input;
 using DocMonster.Configuration;
 using DocMonster.Model;
 using DocMonster.Windows.Dialogs;
+using DocMonsterAddin.WebServer;
 using MarkdownMonster.AddIns;
 using Westwind.Utilities;
 
@@ -101,8 +102,7 @@ namespace DocMonsterAddin
             mi.Items.Add(mic);
 
             topMi.Items.Add(new Separator());
-
-
+            
             mi = new MenuItem()
             {
                 Header = "Preview using Topic Template",
@@ -112,6 +112,30 @@ namespace DocMonsterAddin
             mi.Unchecked += OnRenderModeToggled;
             mi.Checked += OnRenderModeToggled;
             topMi.Items.Add(mi);
+
+            if (Model.ActiveProject != null)
+            {
+                if (SimpleHttpServer.Current == null)
+                {
+                    mi = new MenuItem()
+                    {
+                        Header = "Start Preview Web Server (stopped)",
+                        Command = Model.Commands.StartPreviewWebServerCommand,
+                        CommandParameter = "Start"
+                    };
+                    topMi.Items.Add(mi);
+                }
+                else
+                {
+                    mi = new MenuItem()
+                    {
+                        Header = "Stop Preview Web Server (running)",
+                        Command = Model.Commands.StartPreviewWebServerCommand,
+                        CommandParameter = "Stop"
+                    };
+                    topMi.Items.Add(mi);
+                }            
+            }
 
             topMi.Items.Add(new Separator());
 

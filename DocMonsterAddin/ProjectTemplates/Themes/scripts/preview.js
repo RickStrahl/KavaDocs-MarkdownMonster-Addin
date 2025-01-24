@@ -385,6 +385,10 @@ function updateDocumentContent(html, lineno) {
         }
     }
 
+    var match = html.match(/<!-- Rendered Content -->(.*?)<!-- End Rendered Content -->/s);
+    if (match && match.length > 1)
+      html = match[1];    
+
   var el = document.getElementById("MainContent");
   if (!el)
     return;
@@ -459,12 +463,8 @@ function scrollToPragmaLine(lineno, headerId, noScrollTimeout, noScrollTopAdjust
     if (te.highlightTimeout > 0)
         setTimeout(function () { $el.removeClass("line-highlight"); }, te.highlightTimeout);
 
-    if (!noScrollTopAdjustment) {
-        var scrollTop = 0;
-        if (lineno > 1)
-            scrollTop = $el.offset().top - 25; // -150
-
-        $el.scrollTop(scrollTop);
+    if (!noScrollTopAdjustment) {       
+        $el[0].scrollIntoView({ behavior: "instant", block: "center" });
     }
     //  }, 10);
 }

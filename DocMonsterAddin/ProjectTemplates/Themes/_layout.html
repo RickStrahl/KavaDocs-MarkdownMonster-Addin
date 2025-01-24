@@ -8,20 +8,20 @@
     <meta charset="utf-8" />    
     <title>{{ Topic.Title }} - {{ Project.Title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1" />
-    <link rel="stylesheet" type="text/css" href="/_kavadocs/themes/scripts/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="/_kavadocs/themes/scripts/fontawesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" href="/_kavadocs/themes/kavadocs.css" />
+    <link rel="stylesheet" type="text/css" href="~/_kavadocs/themes/scripts/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/_kavadocs/themes/scripts/fontawesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/_kavadocs/themes/kavadocs.css" />
 
-    <script src="/_kavadocs/themes/scripts/jquery/jquery.min.js"></script>
+    <script src="~/_kavadocs/themes/scripts/jquery/jquery.min.js"></script>
 
-    <script src="/_kavadocs/themes/scripts/highlightjs/highlight.pack.js"></script>
-    <link href="/_kavadocs/themes/scripts/highlightjs/styles/twilight.css" rel="stylesheet" />
+    <script src="~/_kavadocs/themes/scripts/highlightjs/highlight.pack.js"></script>
+    <link href="~/_kavadocs/themes/scripts/highlightjs/styles/twilight.css" rel="stylesheet" />
 
-    <script src="/_kavadocs/themes/scripts/ww.jquery.min.js"></script>
-    <script src="/_kavadocs/themes/scripts/kavadocs.js"></script>
+    <script src="~/_kavadocs/themes/scripts/ww.jquery.min.js"></script>
+    <script src="~/_kavadocs/themes/scripts/kavadocs.js" type="module"></script>
 
     {{% if(Topic.TopicState.IsPreview) { }}
-    <script src="/_kavadocs/themes/scripts/preview.js" />
+    <script src="~/_kavadocs/themes/scripts/preview.js" />
     {{% } }}
     
     {{% if(Topic.TopicState.IsPreview) { }}
@@ -38,7 +38,7 @@
     </script>
 </head>
 <body>    
-    <!-- Documentation Monster Content -->
+    <!-- Markdown Monster Content -->
     <div class="flex-master">
         <div class="banner">
 
@@ -46,7 +46,7 @@
                 <i class="fa fa-bars"
                    title="Show or hide the topics list"></i>
             </div>
-            <img src="/images/logo.png" class="banner-logo" />
+            <img src="~/images/logo.png" class="banner-logo" />
          
             	<div class="projectname"> {{ Project.Title }}</div>
 
@@ -57,14 +57,14 @@
         <div class="page-content">
             <div id="toc" class="sidebar-left toc-content">
                 <nav class="visually-hidden">
-                    <a href="/tableofcontents.htm">Table of Contents</a>
+                    <a href="~/tableofcontents.html">Table of Contents</a>
                 </nav>
             </div>
 
             <div class="splitter">
             </div>
 
-            <div class="main-content">
+            <div id="MainContent" class="main-content">
                 <!-- Rendered Content -->
                 <article class="content-pane">
                     {{ Script.RenderContent() }}
@@ -72,7 +72,7 @@
 
                 <hr />
                 <div class="pull-right">
-                    <a href="http://helpbuilder.west-wind.com" target="_blank"><img src="/_kavadocs/images/docmonster.png" style="height: 2.5em"/></a>
+                    <a href="http://helpbuilder.west-wind.com" target="_blank"><img src="~/_kavadocs/images/docmonster.png" style="height: 2.5em"/></a>
                 </div>
 
                 <small>
@@ -87,7 +87,7 @@
             </div>
         </div>
     </div>
-    <!-- End Documentation Monster Content -->
+    <!-- End Markdown Monster Content -->
 </body>
 </html>
 

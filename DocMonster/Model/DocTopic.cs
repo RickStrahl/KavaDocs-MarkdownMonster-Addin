@@ -471,7 +471,7 @@ namespace DocMonster.Model
         public DocTopic()
         {
             TopicState = new TopicState(this);
-            Topics = new ObservableCollection<DocTopic>();            
+            Topics = new ObservableCollection<DocTopic>();
         }
 
         public DocTopic(DocProject project)
@@ -479,7 +479,7 @@ namespace DocMonster.Model
             Id = DataUtils.GenerateUniqueId(10);
             TopicState = new TopicState(this);
             Project = project;
-            Topics = new ObservableCollection<DocTopic>();            
+            Topics = new ObservableCollection<DocTopic>();
         }
 
         /// <summary>
@@ -487,12 +487,12 @@ namespace DocMonster.Model
         /// </summary>
         /// <param name="addPragmaLines"></param>        
         /// <returns></returns>
-        public string RenderTopic( TopicRenderModes renderMode = TopicRenderModes.Html)
+        public string RenderTopic(TopicRenderModes renderMode = TopicRenderModes.Html)
         {
 
             // save body in case something modifies it
             var topic = this; // Copy();           
-            topic.TopicState.NoAutoSave = true;            
+            topic.TopicState.NoAutoSave = true;
             topic.TopicState.IsPreview = (renderMode == TopicRenderModes.Preview);
 
             OnPreRender(topic, renderMode);
@@ -502,10 +502,10 @@ namespace DocMonster.Model
             string templateFile = null;
             if (TopicState.IsToc)
                 templateFile = Path.Combine(Project.ProjectDirectory, "_kavadocs\\Themes\\TableOfContents.html");
-            else 
+            else
                 templateFile = Path.Combine(Project.ProjectDirectory, "_kavadocs\\Themes\\" + DisplayType + ".html");
 
-         
+
 
             string error;
             string html = Project.TemplateHost.RenderTemplateFile(templateFile, model, out error);
@@ -518,34 +518,39 @@ namespace DocMonster.Model
 
 
 
-            //// Fix up any locally linked .md extensions to .html
-            //if (renderMode == TopicRenderModes.Html)
-            //{
-            //    FixupHtmlLinks(ref html);
-            //    html = html.Replace("=\"~/", "=\"/").Replace("%7E/", "=\"/");
-            //}
+            // Fix up any locally linked .md extensions to .html
+            string basePath = null;
+            if (renderMode == TopicRenderModes.Html)
+            {
+                FixupHtmlLinks(ref html);  // external link formatting
+
+                // returns a root relative path with a trailing '/' or empty for the root
+                // Example:  `../` or `../../` or `` (root)
+                basePath = GetRelativeRootBasePath();
+            }
             if (renderMode == TopicRenderModes.Preview)
             {
-                var basePath = Path.TrimEndingDirectorySeparator(Project.ProjectDirectory).Replace("\\", "//") + "/";
-                html = html.Replace("=\"~/", "=\"" + basePath).Replace("=\"%7E/", "=\"" + basePath);
-                html = html.Replace("=\"/", "=\"" + basePath);
+                basePath = Path.TrimEndingDirectorySeparator(Project.ProjectDirectory).Replace("\\", "//") + "/";                
             }
+
+            html = html.Replace("=\"~/", "=\"" + basePath).Replace("=\"%7E/", "=\"" + basePath);
+            html = html.Replace("=\"/", "=\"" + basePath);
 
 
             ScriptEvaluator script = null;
             if (!model.Project.ProjectSettings.DontAllowNestedTopicBodyScripts &&
                 (html.Contains("{{") || html.Contains("<%")))
-            {                
+            {
                 script = new ScriptEvaluator();
                 script.AllowedInstances.Add("Topic", topic);
                 script.AllowedInstances.Add("Project", topic.Project);
                 script.AllowedInstances.Add("Helpers", model.Helpers);
                 script.AllowedInstances.Add("Configuration", model.Configuration);
 
-               if (html.Contains("{{")) 
+                if (html.Contains("{{"))
                     html = script.Evaluate(html, true);
 
-                if(html.Contains("&lt;%"))
+                if (html.Contains("&lt;%"))
                 {
                     script.Delimiters.StartDelim = "&lt;%"; // will be encoded
                     script.Delimiters.EndDelim = "%&gt;";
@@ -560,7 +565,6 @@ namespace DocMonster.Model
         }
 
 
-
         /// <summary>
         /// Renders a topic to a specified file. If no filename
         /// is specified the default location is used in the 
@@ -568,32 +572,33 @@ namespace DocMonster.Model
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="addPragmaLines"></param>
+        /// <param name="renderMode">Specify preview or html output mode</param>
         /// <returns></returns>
         public string RenderTopicToFile(string filename = null, TopicRenderModes renderMode = TopicRenderModes.Html)
         {
-            var html = RenderTopic( renderMode);
+            var html = RenderTopic(renderMode);
             if (html == null)
                 return null;
+
+            if (filename == null)
+                filename = RenderTopicFilename;
+
+            //string relRootPath = FileUtils.GetRelativePath(filename, Project.OutputDirectory);
+            //relRootPath = Path.GetDirectoryName(relRootPath);
+            //if (!string.IsNullOrEmpty(relRootPath))
+            //{
+            //    int length = relRootPath.Split('\\').Length;
+            //    relRootPath = StringUtils.Replicate("../", length);
+            //    relRootPath = StringUtils.TerminateString(relRootPath, "/");
+            //}
+            //else
+            //    relRootPath = string.Empty;
+            //var relRootPath = GetRelativeRootBasePath(filename);
+            //html = html.Replace("=\"~/", "=\"" + relRootPath);
 
             int written = 0; // try to write 4 times
             while (written < 4)
             {
-                if (filename == null)
-                    filename = RenderTopicFilename;
-
-                string relRootPath = FileUtils.GetRelativePath(filename, Project.OutputDirectory);
-                relRootPath = Path.GetDirectoryName(relRootPath);
-                if (!string.IsNullOrEmpty(relRootPath))
-                {
-                    int length = relRootPath.Split('\\').Length;
-                    relRootPath = StringUtils.Replicate("../", length);
-                }
-                else
-                    relRootPath = string.Empty;
-
-                
-                html = html.Replace("\"~/", "\"" + StringUtils.TerminateString(relRootPath,"/"));
-
                 try
                 {
                     File.WriteAllText(filename, html, Encoding.UTF8);
@@ -628,6 +633,32 @@ namespace DocMonster.Model
             }
 
             return html;
+        }
+
+        /// <summary>
+        /// Returns the relative rootpath for a topic (or filename) so
+        /// that it can be used for linking back to the root using
+        /// relative paths
+        /// </summary>
+        /// <param name="fileName">Optional - if not passed uses the topic render filename</param>
+        /// <returns></returns>
+        public string GetRelativeRootBasePath(string fileName = null)
+        {
+            if (fileName == null)
+                fileName = RenderTopicFilename;
+
+            string relRootPath = FileUtils.GetRelativePath(fileName, Project.OutputDirectory);
+            relRootPath = Path.GetDirectoryName(relRootPath);
+            if (!string.IsNullOrEmpty(relRootPath))
+            {
+                int length = relRootPath.Split('\\').Length;
+                relRootPath = StringUtils.Replicate("../", length);
+                relRootPath = StringUtils.TerminateString(relRootPath, "/");
+            }
+            else
+                relRootPath = string.Empty;
+
+            return relRootPath;
         }
 
         /// <summary>
@@ -831,7 +862,7 @@ namespace DocMonster.Model
 
             markdown = args.Markdown;
 
-            var parser = DocMonster.MarkdownParser.MarkdownParserFactory.GetParser(usePragmaLines: TopicState.IsPreview, forceLoad: true);            
+            var parser = DocMonster.MarkdownParser.MarkdownParserFactory.GetParser(usePragmaLines: TopicState.IsPreview, forceLoad: true);
             var html = parser.Parse(markdown);
 
 
@@ -1358,28 +1389,32 @@ namespace DocMonster.Model
         /// <param name="mode"></param>
         /// <param name="link"></param>
         /// <returns></returns>
-        public string GetTopicLink(string displayText,
+        public string GetTopicLink(string displayText=null,
             string anchor = null,
             string attributes = null,
             HtmlRenderModes mode = HtmlRenderModes.None,
             string link = null)
         {
+            if (string.IsNullOrEmpty(displayText))
+                displayText = Title;
+
             string anchorString = (string.IsNullOrEmpty(anchor) ? "" : "#" + anchor);
             string linkText = WebUtility.HtmlEncode(displayText);
+            var relBasePath = GetRelativeRootBasePath();
             if (link == null)
-                link = Slug;
+                link = relBasePath + Slug.TrimEnd('/') + ".html";                         
 
             if (mode == HtmlRenderModes.None)
                 mode = Project.ProjectSettings.ActiveRenderMode;
 
             // Plain HTML
             if (mode == HtmlRenderModes.Html)
-                link = $"<a href='_{StringUtils.UrlEncode(link)}.html' {anchorString} {attributes}>{linkText}</a>";
+                link = $"<a href=\"{link}\" {anchorString} {attributes}>{linkText}</a>";
             // Preview Mode
             else if (mode == HtmlRenderModes.Preview)
-                link = $"<a href='dm://Topic/{StringUtils.UrlEncode(link)}' {anchorString} {attributes}>{linkText}</a>";
+                link = $"<a href=\"dm://Topic/{link}\" {anchorString} {attributes}>{linkText}</a>";
             if (mode == HtmlRenderModes.Print)
-                link = $"<a href='#{StringUtils.UrlEncode(link)}' {anchorString} {attributes}>{linkText}</a>";
+                link = $"<a href=\"#{link}' {anchorString} {attributes}>{linkText}</a>";
 
             return link;
         }

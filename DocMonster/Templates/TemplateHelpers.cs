@@ -96,6 +96,8 @@ namespace DocMonster.Templates
             bool alternate = false;
             foreach (var childTopic in childTopics)
             {
+                
+
                 sb.AppendLine("<tr" + (alternate ? " class='alternaterow'>" : ">"));
 
                 string icon = childTopic.DisplayType;
@@ -108,6 +110,7 @@ namespace DocMonster.Templates
                 sb.AppendLine("\t</td>");
 
                 string link = childTopic.GetTopicLink(WebUtility.HtmlEncode(childTopic.Title));
+
                 sb.AppendLine($"\t<td>{link}</td>");
                 sb.AppendLine($"\t<td class='col-detail'>{HtmlUtils.HtmlAbstract(childTopic.Body, 200)}");
 
@@ -174,9 +177,14 @@ namespace DocMonster.Templates
 
             foreach (var childTopic in childTopics)
             {
+                var relBasePath = Topic.GetRelativeRootBasePath();
+                var link = relBasePath + childTopic.Slug.TrimEnd('/') + ".html";
+
+                link = childTopic.GetTopicLink(childTopic.Title);
+
                 sb.AppendLine($"""
-<li><img src='_kavadocs/icons/{childTopic.DisplayType}.png' />
-<a href="/{ childTopic.Slug }">                
+<li><img src='{relBasePath}_kavadocs/icons/{childTopic.DisplayType}.png' />
+<a href="{link}">                
 {WebUtility.HtmlEncode(childTopic.Title)}</a></li>
 """);
             }

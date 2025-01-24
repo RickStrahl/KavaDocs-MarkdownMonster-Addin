@@ -9,6 +9,7 @@ using DocMonster;
 using DocMonster.Configuration;
 using DocMonster.Model;
 using DocMonsterAddin.Controls;
+using DocMonsterAddin.WebServer;
 using MahApps.Metro.Controls;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
@@ -36,6 +37,8 @@ namespace DocMonsterAddin
 
         private bool IsAddinInitialized = false;
 
+
+        public SimpleHttpServer WebServer {get; set; }
 
         #region Control References
 
@@ -248,9 +251,34 @@ namespace DocMonsterAddin
                 DocMonsterModel.Configuration.Write();
             }
 
+            // stop web server if its running
+            SimpleHttpServer.StopHttpServerOnThread();
+
             base.OnApplicationShutdown();
             return Task.CompletedTask;
         }
+
+
+        public void StartWebServer()
+        {
+            if (DocMonsterModel?.ActiveProject == null) return;
+   
+            var result = SimpleHttpServer.StartHttpServerOnThread(DocMonsterModel.ActiveProject.OutputDirectory, Configuration.WebServerPort);
+            
+            if (!result)
+            {
+                Model.Window.ShowStatusError("Preview Web Server was not started.");                
+                return;
+            }
+
+            ShellUtils.GoUrl("http://localhost:" + Configuration.WebServerPort);
+        }
+
+        public void StopWebServer()
+        {
+            SimpleHttpServer.StopHttpServerOnThread();
+        }
+
 
         #endregion
 

@@ -1,9 +1,6 @@
-/// <reference path="jquery.js" />
-/// <reference path="ww.jquery.js" />
-/// <reference path="aceconfig.js" />
-
 // global page reference
-helpBuilder = null;
+let helpBuilder = null;
+
 
 (function () {
     helpBuilder = {
@@ -76,7 +73,7 @@ helpBuilder = null;
         } else {            
             $.get("/TableOfContents.html", loadTableOfContents);
 
-            // sidebar or hamburger click handler
+            // sidebar or hamburger click handler`  
             $(document.body).on("click", ".sidebar-toggle", toggleSidebar);
             $(document.body).on("dblclick touchend", ".splitter", toggleSidebar);
              
