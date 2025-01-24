@@ -111,7 +111,7 @@ namespace DocMonster.Templates
                         var idx = member.IndexOf("(");
                         var idx2 = member.LastIndexOf(")");
                         string parmString = string.Empty;
-                        if (idx2 - idx > 1)
+                        if (idx2 - idx > 1)                            
                             parmString = member.Substring(idx + 1, idx2 - idx -1);
 
                         var parms = ParseMethodParameters(parmString);
