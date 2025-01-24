@@ -533,8 +533,15 @@ namespace DocMonster.Model
                 basePath = Path.TrimEndingDirectorySeparator(Project.ProjectDirectory).Replace("\\", "//") + "/";                
             }
 
-            html = html.Replace("=\"~/", "=\"" + basePath).Replace("=\"%7E/", "=\"" + basePath);
-            html = html.Replace("=\"/", "=\"" + basePath);
+            html = html.Replace("=\"~/", "=\"" + basePath)
+                       // UrlEncoded
+                       .Replace("=\"%7E/", "=\"" + basePath)
+                       // ="/root"
+                       .Replace("=\"/", "=\"" + basePath)
+                       // Escaped
+                       .Replace("=\"\\/", "=\"/")
+                       .Replace("=\"~\\/", "=\"/");
+
 
 
             ScriptEvaluator script = null;
@@ -545,7 +552,7 @@ namespace DocMonster.Model
                 script.AllowedInstances.Add("Topic", topic);
                 script.AllowedInstances.Add("Project", topic.Project);
                 script.AllowedInstances.Add("Helpers", model.Helpers);
-                script.AllowedInstances.Add("Configuration", model.Configuration);
+                script.AllowedInstances.Add("Configuration", model.Configuration);                
 
                 if (html.Contains("{{"))
                     html = script.Evaluate(html, true);
@@ -647,16 +654,28 @@ namespace DocMonster.Model
             if (fileName == null)
                 fileName = RenderTopicFilename;
 
-            string relRootPath = FileUtils.GetRelativePath(fileName, Project.OutputDirectory);
-            relRootPath = Path.GetDirectoryName(relRootPath);
-            if (!string.IsNullOrEmpty(relRootPath))
+            string relRootPath = string.Empty;
+            if (!TopicState.IsPreview)
             {
-                int length = relRootPath.Split('\\').Length;
-                relRootPath = StringUtils.Replicate("../", length);
-                relRootPath = StringUtils.TerminateString(relRootPath, "/");
+                relRootPath = FileUtils.GetRelativePath(fileName, Project.OutputDirectory);
+                relRootPath = Path.GetDirectoryName(relRootPath);
+                if (!string.IsNullOrEmpty(relRootPath))
+                {
+                    int length = relRootPath.Split('\\').Length;
+                    relRootPath = StringUtils.Replicate("../", length);
+                    relRootPath = StringUtils.TerminateString(relRootPath, "/");
+                }
+                else
+                    relRootPath = string.Empty;
             }
             else
-                relRootPath = string.Empty;
+            {
+                relRootPath = Project.ProjectDirectory?.Replace("\\", "/");
+                if (!string.IsNullOrEmpty(relRootPath))
+                    relRootPath = StringUtils.TerminateString(relRootPath, "/");
+                else
+                    relRootPath = string.Empty;
+            }
 
             return relRootPath;
         }
@@ -1400,15 +1419,18 @@ namespace DocMonster.Model
 
             string anchorString = (string.IsNullOrEmpty(anchor) ? "" : "#" + anchor);
             string linkText = WebUtility.HtmlEncode(displayText);
-            var relBasePath = GetRelativeRootBasePath();
-            if (link == null)
-                link = relBasePath + Slug.TrimEnd('/') + ".html";                         
 
             if (mode == HtmlRenderModes.None)
-                mode = Project.ProjectSettings.ActiveRenderMode;
+                mode = TopicState.IsPreview ? HtmlRenderModes.Preview : HtmlRenderModes.Html;
+
+            var relBasePath = GetRelativeRootBasePath();
+            
+            if (link == null)
+                link = relBasePath + Slug.TrimEnd('/') + ".html";                         
+                    
 
             // Plain HTML
-            if (mode == HtmlRenderModes.Html)
+            if (mode == HtmlRenderModes.Html || mode == HtmlRenderModes.Preview)
                 link = $"<a href=\"{link}\" {anchorString} {attributes}>{linkText}</a>";
             // Preview Mode
             else if (mode == HtmlRenderModes.Preview)

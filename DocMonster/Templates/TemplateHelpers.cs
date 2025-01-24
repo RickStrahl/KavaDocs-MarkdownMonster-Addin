@@ -177,15 +177,16 @@ namespace DocMonster.Templates
 
             foreach (var childTopic in childTopics)
             {
+                childTopic.TopicState.IsPreview = this.Topic.TopicState.IsPreview;
                 var relBasePath = Topic.GetRelativeRootBasePath();
                 var link = relBasePath + childTopic.Slug.TrimEnd('/') + ".html";
 
                 link = childTopic.GetTopicLink(childTopic.Title);
 
-                sb.AppendLine($"""
+                 sb.AppendLine($"""
 <li><img src='{relBasePath}_kavadocs/icons/{childTopic.DisplayType}.png' />
-<a href="{link}">                
-{WebUtility.HtmlEncode(childTopic.Title)}</a></li>
+{link}
+</li>
 """);
             }
             sb.AppendLine("</ul>");
