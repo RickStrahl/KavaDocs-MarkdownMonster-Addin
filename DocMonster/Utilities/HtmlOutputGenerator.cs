@@ -164,7 +164,7 @@ namespace DocMonster.Utilities
             rootTopic.TopicState.Data = sb.ToString();
 
             string file = Path.Combine(Project.ProjectDirectory,"_kavadocs","Themes", "TableOfContents.html");
-            string html = rootTopic.RenderTopicToFile(file, TopicRenderModes.Html);            
+            string html = rootTopic.RenderTopic(renderMode: TopicRenderModes.Html);            
             File.WriteAllText(Path.Combine(OutputPath, "TableOfContents.html"),html);
         }
 
@@ -177,8 +177,20 @@ namespace DocMonster.Utilities
             {
                 string pad = string.Empty;
 
-
-                if (topic.Topics.Count > 0)
+                if(topic.IsLink && !string.IsNullOrEmpty(topic.Body))
+                {
+                    var html =
+                        $"""
+                         <li>
+                             <div>
+                                 <img src="_kavadocs/icons/{topic.DisplayType}.png">
+                                 <a href="{topic.Body}" id="{topic.Id}" target="_blank">{topic.Title}</a> <i class="fas fa-arrow-up-right-from-square info small"></i>
+                             </div>
+                         </li>
+                         """;
+                    sb.AppendLine(html);
+                }
+                else if (topic.Topics.Count > 0)
                 {
                     if (!topic.Id.Equals("index", StringComparison.OrdinalIgnoreCase))
                         topic.IsExpanded = false;
@@ -192,12 +204,10 @@ $"""
         <img src="_kavadocs/icons/{topic.DisplayType}.png">
         <a href="{topic.Slug}.html" id="{topic.Id}">{topic.Title}</a>
     </div>
-    
+
 """;
                     sb.AppendLine(html);
-
                     RenderTocLevel(topic.Topics, sb, level +1);
-
                     sb.AppendLine("</li>");
                 }
                 else
@@ -206,8 +216,8 @@ $"""
 $"""
 <li>
     <div>
-        <img src="/_kavadocs/icons/{topic.DisplayType}.png">
-        <a href="/{topic.Slug}.html" id="{topic.Id}">{topic.Title}</a>
+        <img src="_kavadocs/icons/{topic.DisplayType}.png">
+        <a href="{topic.Slug}.html" id="{topic.Id}">{topic.Title}</a>
     </div>
 </li>
 """;

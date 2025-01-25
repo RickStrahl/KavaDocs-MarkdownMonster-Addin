@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DocMonster.Configuration;
 using DocMonsterAddin;
+using MarkdownMonster;
 using Westwind.Utilities.Configuration;
 
 namespace DocMonsterAddin.Core.Configuration
@@ -24,11 +25,14 @@ namespace DocMonsterAddin.Core.Configuration
 
         public static string ApplicationName { get; set; } = "Documentation Monster Addin";
 
+        public static DocMonsterModel Model { get; set; }
 
+        public static AppModel AppModel { get; set;  }
         static dmApp()
         {
             Configuration = DocMonsterConfiguration.Current;
-
+            AppModel = mmApp.Model;
+            Model = DocMonsterAddin.Current.DocMonsterModel;
         }
 
     }

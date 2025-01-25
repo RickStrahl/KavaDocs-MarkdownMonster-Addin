@@ -15,6 +15,7 @@ using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using MarkdownMonster.Controls;
 using MarkdownMonster.Windows;
+using MarkdownMonster.Windows.PreviewBrowser;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Westwind.Utilities;
 
@@ -456,14 +457,17 @@ namespace DocMonsterAddin
 
         #region Previewing
 
+   
+
         /// <summary>
-        /// OVerride the Preview rendering for Links and using Topic Rendering logic
+        /// Override the Preview rendering for Links and using Topic Rendering logic
         /// </summary>
         /// <param name="renderedHtml"></param>
         /// <param name="markdownHtml"></param>
         /// <returns></returns>
         public override Task<string> OnModifyPreviewHtml(string renderedHtml, string markdownHtml)
         {
+
             // default rendering if specified
             if (DocMonsterModel == null ||
                 kavaUi.Configuration.TopicRenderMode == TopicRenderingModes.MarkdownDefault)
@@ -499,9 +503,17 @@ namespace DocMonsterAddin
             }
             else
             {
-                // Currently we're not rendering topics and just using MM to render topic content
-                //string html = "<h1>" + topic.Title + "</h1>";
                 renderedHtml = topic.RenderTopic( TopicRenderModes.Preview);
+
+                //topic.TopicState.IsPreview = false;
+                //topic.RenderTopicToFile(renderMode: TopicRenderModes.Html);
+                
+                //var url = "http://localhost:5200/docs/" + topic.Slug + ".html";
+                //ShellUtils.GoUrl(url);
+                //var handler = Model.Window.PreviewBrowser as WebViewPreviewControl;
+                //handler.Background = Brushes.White;
+                //Model.Window.Dispatcher.Delay(100,() =>                 
+                //handler.Navigate(url), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
             }
 
 

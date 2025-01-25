@@ -1,9 +1,10 @@
 // global page reference
-let helpBuilder = null;
+var helpBuilder = null;
 
 
 (function () {
     helpBuilder = {
+        basePath: window.page.basePath,
         initializeLayout: initializeLayout,
         initializeTOC: initializeTOC,
         isLocalUrl: isLocalUrl,        
@@ -25,7 +26,6 @@ let helpBuilder = null;
         configureAceEditor: null // set in aceConfig
     };    
     
-
     //var tocConfig = {
     //    html: null,
     //    timestamp: new Date()
@@ -71,7 +71,7 @@ let helpBuilder = null;
         if (isLocalUrl() || mode === 1) {
             hideSidebar();                        
         } else {            
-            $.get("/TableOfContents.html", loadTableOfContents);
+            $.get(helpBuilder.basePath + "TableOfContents.html", loadTableOfContents);
 
             // sidebar or hamburger click handler`  
             $(document.body).on("click", ".sidebar-toggle", toggleSidebar);
@@ -119,9 +119,28 @@ let helpBuilder = null;
     }
 
     function loadTableOfContents(html) {
-        var $tocContent = $("<div>" + getBodyFromHtmlDocument(html) + "</div>").find(".toc-content");
-        $("#toc").html($tocContent.html());
+        if (!html) {
+            hideSidebar();
+            return;
+        }
 
+        var $tocContent = $("<div>" + getBodyFromHtmlDocument(html) + "</div>").find(".toc-content");
+
+        $tocContent.find("a").each(function () {       
+            var href = $(this).attr("href");
+            if (href && !href.startsWith("http")) 
+                this.href = helpBuilder.basePath + href;                            
+
+            console.log("toc: " + this.href);
+        });
+        $tocContent.find("img").each(function () {
+            var src = $(this).attr("src");
+            if (src && !src.startsWith("http")) 
+                this.src = helpBuilder.basePath + src;                            
+        });
+
+        $("#toc").html($tocContent.html());
+        
         showSidebar();
 
         // handle AJAX loading of topics        
@@ -275,7 +294,7 @@ let helpBuilder = null;
         var $splitter = $(".splitter");
         $sidebar.hide();
         $toggle.hide();
-        $splitter.hide();
+        $splitter.hide();   
     }
     function showSidebar() {
         var $sidebar = $(".sidebar-left");
@@ -366,10 +385,9 @@ let helpBuilder = null;
             expandTopic(id);
         });
     }
-    function isLocalUrl(href) {
+    function isLocalUrl(href) {        
         if (!href)
             href = window.location.href;
-
         return href.startsWith("mk:@MSITStore") ||
 	           href.startsWith("file://")
     }
@@ -432,6 +450,9 @@ let helpBuilder = null;
     }
 
 })();
+
+if(helpBuilder.isLocalUrl())
+    setTimeout(()=> helpBuilder.initializeLayout(),10);
 
 // global functions called from HelpBuilder Dev
 function updatedocumentcontent(html,pragmaLine) {

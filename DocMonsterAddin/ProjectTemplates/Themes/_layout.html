@@ -18,15 +18,17 @@
     <link href="~/_kavadocs/themes/scripts/highlightjs/styles/twilight.css" rel="stylesheet" />
 
     <script src="~/_kavadocs/themes/scripts/ww.jquery.min.js"></script>
-    <script src="~/_kavadocs/themes/scripts/kavadocs.js" type="module"></script>
+    <script>        
+        window.page = {};
+        window.page.basePath = "{{ Project.Settings.RelativeBaseUrl }}";      
+    </script>
+    <script src="~/_kavadocs/themes/scripts/kavadocs.js"></script>
+    {{% if(Topic.TopicState.IsPreview) { }}
+        <script src="~/_kavadocs/themes/scripts/preview.js" />
+    	<!-- <script src="{{ System.IO.Path.Combine(System.Environment.CurrentDirectory,"PreviewThemes\\scripts\\preview.js") }}"></script> -->
+    {{% } }}
 
-    {{% if(Topic.TopicState.IsPreview) { }}
-    <script src="~/_kavadocs/themes/scripts/preview.js" />
-    {{% } }}
-    
-    {{% if(Topic.TopicState.IsPreview) { }}
-    	<script src="{{ System.IO.Path.Combine(System.Environment.CurrentDirectory,"PreviewThemes\\scripts\\preview.js") }}"></script>
-    {{% } }}
+
     <topictype value="{{ Topic.DisplayType }}" />
 
     <script>    
@@ -36,6 +38,13 @@
             setTimeout(helpBuilder.tocExpandTop, 5);
         });
     </script>
+    <style>
+        .toc li .fa-arrow-up-right-from-square {
+            font-size: 0.7em;
+            color: goldenrod;
+            margin-left: 0.1em;
+        }
+    </style>
 </head>
 <body>    
     <!-- Markdown Monster Content -->

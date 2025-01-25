@@ -499,7 +499,9 @@ namespace DocMonsterAddin
                     mmApp.Model.Window.Dispatcher.Invoke(
                         () =>
                         {
-                            ShellUtils.OpenFileInExplorer(project.OutputDirectory);
+                            //ShellUtils.OpenFileInExplorer(project.OutputDirectory);                           
+                            var url = $"http://localhost:{kavaUi.Configuration.WebServerPort}{kavaUi.Model.ActiveProject.Settings.RelativeBaseUrl}";                            
+                            ShellUtils.GoUrl(url);
                             mmApp.Model.Window.ShowStatusSuccess("Project output has been generated.");
                         });
                 });                            
