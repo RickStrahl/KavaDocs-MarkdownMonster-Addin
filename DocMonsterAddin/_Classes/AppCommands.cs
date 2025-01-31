@@ -490,21 +490,24 @@ namespace DocMonsterAddin
             {
                 mmApp.Model.Window.ShowStatusProgress("Generating project to Html output...");
 
-                Task.Run(() =>
-                {
-                    var project = kavaUi.Model.ActiveProject;
-                    var output = new HtmlOutputGenerator(project);
-                    output.Generate();
+                var window = new GenerateHtmlOutputDialog(Model.Window);
+                window.Show();
 
-                    mmApp.Model.Window.Dispatcher.Invoke(
-                        () =>
-                        {
-                            //ShellUtils.OpenFileInExplorer(project.OutputDirectory);                           
-                            var url = $"http://localhost:{kavaUi.Configuration.WebServerPort}{kavaUi.Model.ActiveProject.Settings.RelativeBaseUrl}";                            
-                            ShellUtils.GoUrl(url);
-                            mmApp.Model.Window.ShowStatusSuccess("Project output has been generated.");
-                        });
-                });                            
+                //Task.Run(() =>
+                //{
+                    //var project = kavaUi.Model.ActiveProject;
+                    //var output = new HtmlOutputGenerator(project);
+                    //output.Generate();
+
+                    //mmApp.Model.Window.Dispatcher.Invoke(
+                    //    () =>
+                    //    {
+                    //        //ShellUtils.OpenFileInExplorer(project.OutputDirectory);                           
+                    //        var url = $"http://localhost:{kavaUi.Configuration.WebServerPort}{kavaUi.Model.ActiveProject.Settings.RelativeBaseUrl}";                            
+                    //        ShellUtils.GoUrl(url);
+                    //        mmApp.Model.Window.ShowStatusSuccess("Project output has been generated.");
+                    //    });
+                //});                            
             }, (p, c) => true);
         }
 

@@ -1,0 +1,98 @@
+﻿<controls:MetroWindow  x:Class="DocMonsterAddin.Windows.Dialogs.GenerateHtmlOutputDialog"
+                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
+                           xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"        
+                           xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
+                           xmlns:model="clr-namespace:DocMonster.Model;assembly=DocMonster"
+                           mc:Ignorable="d"
+                           Icon="../../Assets/Icon_128.png"                    
+                           Title="Generate Html Output"
+                           TitleCharacterCasing="Normal"    
+                           FontSize="16"
+                           WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
+                           Padding="4"
+                           WindowStartupLocation="CenterOwner"                                   
+                           IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
+                           Width="800" Height="630" MinWidth="640" MinHeight="320">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Margin="25,20,40,0">
+            <Image Source="../../Assets/Icon_128.png"                   
+                   Width="200" VerticalAlignment="Top" />
+
+            <Separator Margin="0,15,0,10" />
+            <TextBlock FontWeight="DemiBold" FontSize="20" >Generate Html Output</TextBlock>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Margin="15 10 20 0">
+            <TextBlock Margin="0 0 0 10" Style="{DynamicResource HeaderTextBlockStyle}">Generation</TextBlock>
+
+            <Label>Relative Base Url</Label>
+            <TextBox Text="{Binding Project.Settings.RelativeBaseUrl}" />
+
+            <TextBlock Margin="5 7 10 10" 
+                       TextWrapping="Wrap"
+                       FontSize="12" FontStyle="Italic">
+                This path determines where referencing `/` and `~/` links  return to
+                in the generated Html output. By default this is `/` but if you host
+                your Html in a subfolder it may be something like `/docs/` or `/help/`
+                in which case you can specify those subfolders. Any root links will
+                in templates and topics will be fixed up with this path.
+            </TextBlock>
+
+
+            <TextBlock Margin="0 10 0 10" Style="{DynamicResource HeaderTextBlockStyle}">Output</TextBlock>
+
+            <CheckBox IsChecked="{Binding OpenInBrowser}">Open in Browser</CheckBox>
+            <TextBox Margin="25 5 0 15" FontSize="13" Text="{Binding BrowserUrl }" />
+
+            <CheckBox IsChecked="{Binding OpenFolder}">Open Folder</CheckBox>
+            <TextBlock Margin="25 5 0 0" FontSize="13" Foreground="Silver" Text="{Binding Project.OutputDirectory }" />
+
+                
+            
+            <!--<Label Margin="0,10,0,0">Choose a Project Folder</Label>
+            <Grid >
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" Text="{Binding ProjectCreator.ProjectFolder}"></TextBox>
+                <Button Grid.Column="1" Name="ButtonGetDirectory" 
+                        Margin="3,0,0,0" Width="33"
+                        Click="ButtonGetDirectory_Click">...</Button>
+            </Grid>-->
+
+
+            <StackPanel Margin="0,20,20,20" Grid.Column="1">
+
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Name="ButtonCreateTopic" Margin="0,20" Height="40" FontSize="15" Width="160"
+                        HorizontalAlignment="Left"   IsDefault="True" Click="Button_GenerateOutput"  >
+                        <StackPanel Orientation="Horizontal">
+                            <fa6:ImageAwesome  Icon="Solid_Gear" PrimaryColor="#FF0E7E28"  Height="18" />
+                            <TextBlock Margin="10,0,0,0">Generate</TextBlock>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Name="ButtonCancel" Margin="10,20" Height="40" FontSize="15" Width="160" 
+                        HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" >
+                        <StackPanel Orientation="Horizontal" >
+                            <fa6:ImageAwesome Icon="Solid_XMark" PrimaryColor="DarkRed" Height="15" />
+                            <TextBlock Margin="10,0,0,0">Cancel</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</controls:MetroWindow>

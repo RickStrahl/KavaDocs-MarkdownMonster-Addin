@@ -1,0 +1,22 @@
+﻿
+{{%
+    Script.Layout = "_kavadocs\\Themes\\_layout.html";    
+}}
+
+<header class="content-title">
+    <img src="~/_kavadocs/icons/{{ Model.Topic.DisplayType }}.png">
+    {{ Model.Topic.Title }}
+</header>
+
+<div class="content-body" id="body">
+
+    <ul>
+        <li> 
+            <a href="{{! Model.Topic.Body }}" target="_blank">{{ Model.Topic.Title }}</a> 
+            <a href="{{! Model.Topic.Body }}" target="_blank"><i class="fa-solid fa-up-right-from-square" style="font-size: 0.7em; vertical-align: super;"></i></a>
+        </li>
+        </ul>
+</div>
+
+
+

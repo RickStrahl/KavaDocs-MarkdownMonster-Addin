@@ -2,7 +2,8 @@
   "profiles": {
     "MarkdownMonster": {
       "executablePath": "D:\\projects\\MarkdownMonsterCode\\MarkdownMonster\\bin\\Debug\\net9.0-windows\\MarkdownMonster.exe",
-      "commandLineArgs": ""
+      "commandLineArgs": "",
+      "jsWebView2Debugging": false
 
     }
   }

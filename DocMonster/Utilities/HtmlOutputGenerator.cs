@@ -184,7 +184,7 @@ namespace DocMonster.Utilities
                          <li>
                              <div>
                                  <img src="_kavadocs/icons/{topic.DisplayType}.png">
-                                 <a href="{topic.Body}" id="{topic.Id}" target="_blank">{topic.Title}</a> <i class="fas fa-arrow-up-right-from-square info small"></i>
+                                 <a href="{topic.Body}" id="{topic.Id.ToLower()}" target="_blank">{topic.Title}</a> <i class="fas fa-arrow-up-right-from-square info small"></i>
                              </div>
                          </li>
                          """;
@@ -202,7 +202,7 @@ $"""
     <i class="fa fa-caret-{(topic.IsExpanded ? "right" : "down")}"></i>
     <div>
         <img src="_kavadocs/icons/{topic.DisplayType}.png">
-        <a href="{topic.Slug}.html" id="{topic.Id}">{topic.Title}</a>
+        <a href="{topic.Slug}.html" id="{topic.Id.ToLower()}">{topic.Title}</a>
     </div>
 
 """;
@@ -217,7 +217,7 @@ $"""
 <li>
     <div>
         <img src="_kavadocs/icons/{topic.DisplayType}.png">
-        <a href="{topic.Slug}.html" id="{topic.Id}">{topic.Title}</a>
+        <a href="{topic.Slug}.html" id="{topic.Id.ToLower()}">{topic.Title}</a>
     </div>
 </li>
 """;

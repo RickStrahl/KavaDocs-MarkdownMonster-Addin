@@ -117,7 +117,7 @@
                 <Button Name="ButtonCreateTopic" Margin="0,20" Height="40" FontSize="15" Width="160"
                         HorizontalAlignment="Left"   IsDefault="True" Click="Button_CreateTopicClick"  >
                     <StackPanel Orientation="Horizontal">
-                        <fa6:ImageAwesome  Icon="Solid_Upload"  Foreground="#FF0E7E28"  />
+                        <fa6:ImageAwesome  Icon="Solid_FolderGear"  Foreground="#FF0E7E28"  />
                         <TextBlock Margin="10,0,0,0">Create Topic</TextBlock>
                     </StackPanel>
                 </Button>

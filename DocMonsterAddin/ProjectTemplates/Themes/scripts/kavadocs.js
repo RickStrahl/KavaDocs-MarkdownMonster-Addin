@@ -40,9 +40,9 @@ var helpBuilder = null;
             mode = 0;
 
         // Legacy processing page=TopicId urls to load topic by id
-        var page = getUrlEncodedKey("page");
-        if (page)
-            loadTopicAjax(page);
+        var topicId = getUrlEncodedKey("topic");
+        if (topicId)
+            loadTopicAjax(topicId);
 
         if (!isLocalUrl()){
 	        // load internal help links via Ajax
@@ -57,13 +57,16 @@ var helpBuilder = null;
             var id = getIdFromUrl();
 
             if (id){
-                setTimeout(function() {
+                setTimeout(function() {                 
                     $(".toc li .selected").removeClass("selected");
 
                     var $a = $("#" + id);
                     $a.parent().addClass("selected");
-                    if ($a.length > 0)                    
+                    if ($a.length > 0)                     {
                         $a[0].scrollIntoView(); 
+                        var href = $a.attr("href");
+                        loadTopicAjax(href); // new page url
+                    }
                 },100);
             }
     	}
@@ -118,39 +121,7 @@ var helpBuilder = null;
         return true;
     }
 
-    function loadTableOfContents(html) {
-        if (!html) {
-            hideSidebar();
-            return;
-        }
-
-        var $tocContent = $("<div>" + getBodyFromHtmlDocument(html) + "</div>").find(".toc-content");
-
-        $tocContent.find("a").each(function () {       
-            var href = $(this).attr("href");
-            if (href && !href.startsWith("http")) 
-                this.href = helpBuilder.basePath + href;                            
-
-            console.log("toc: " + this.href);
-        });
-        $tocContent.find("img").each(function () {
-            var src = $(this).attr("src");
-            if (src && !src.startsWith("http")) 
-                this.src = helpBuilder.basePath + src;                            
-        });
-
-        $("#toc").html($tocContent.html());
-        
-        showSidebar();
-
-        // handle AJAX loading of topics        
-        $(".toc").on("click", "li a", loadTopicAjax);
-
-        initializeTOC();
-        return false;
-    }
-    function loadTopicAjax(href) {
-       
+    function loadTopicAjax(href) {       
         var hrefPassed = true;
 
         if (typeof href != "string") {
@@ -161,10 +132,10 @@ var helpBuilder = null;
             $(".toc li .selected").removeClass("selected");
             $a.parent().addClass("selected");   
         }
-
-        if ($(this).parent().find("i.fa").length > 0)
-            expandTopic(href);
-
+        
+        var $a = get$Link(href);
+        if ($a.length > 0)
+            expandTopic($a);
 
         // ajax navigation
         if (href.startsWith("_") || href.startsWith("/")) {
@@ -196,21 +167,57 @@ var helpBuilder = null;
         }
         return true;  // pass through click
     }; 
-    function initializeTOC() {
+    function get$Link(hrefOrId) {
+        var $a = hrefOrId;
 
-        // if running in frames mode link to target frame and change mode
-        if (window.parent.frames["wwhelp_right"]) {
-            $(".toc li a").each(function () {
-                var $a = $(this);
-                $a.attr("target", "wwhelp_right");
-                var a = $a[0];
-                a.href = a.href + "?mode=1";
-            });
-            $("ul.toc").css("font-size", "1em");
+        if (typeof $a !== "object") {
+
+            if (hrefOrId.startsWith("/")) {
+                //hrefOrId = hrefOrId.replace(".html", "");
+                $a = $(".toc li a[href='" + hrefOrId + "']");
+            }
+            else
+                $a = $("#" + hrefOrId.toLowerCase());
         }
 
+        return $a;
+    }
+
+    function loadTableOfContents(html) {
+        if (!html) {
+            hideSidebar();
+            return;
+        }
+
+        var $tocContent = $("<div>" + getBodyFromHtmlDocument(html) + "</div>").find(".toc-content");
+
+        $tocContent.find("a").each(function () {       
+            var href = $(this).attr("href");
+            if (href && !href.startsWith("http")) 
+                this.href = helpBuilder.basePath + href;                            
+
+            console.log("toc: " + this.href);
+        });
+        $tocContent.find("img").each(function () {
+            var src = $(this).attr("src");
+            if (src && !src.startsWith("http")) 
+                this.src = helpBuilder.basePath + src;                            
+        });
+
+        $("#toc").html($tocContent.html());
+        
+        showSidebar();
+
+        // handle AJAX loading of topics        
+        $(".toc").on("click", "li a", loadTopicAjax);
+
+        initializeTOC();
+        return false;
+    }
+
+    function initializeTOC() {
         // Handle clicks on + and -
-        $("#toc").on("click","li>i.fa",function () {            
+        $("#toc").on("click",".toc li>i.fa",function () {            
             expandTopic($(this).find("~div a").prop("id") );
         });
 
@@ -218,45 +225,38 @@ var helpBuilder = null;
         // topic selection and expansion of active tree
         setTimeout(()=> {
             tocCollapseAll();  
-        
-            var page = getUrlEncodedKey("page");
-            if (page) {
-                page = page.replace(/.htm/i, "");
-                expandParents(page);
+            
+            var topic = getUrlEncodedKey("topic");
+            a$ = get$Link(topic);  // getUrlEncodedKey("topic");
+
+            debugger
+            if (a$ && a$.length > 0) {
+                var id = a$[0].id;                
+                //expandTopic(id);
+                expandParents(id);
+                //loadTopicAjax(id + ".htm");                
             }
-            if (!page) {
-                page = window.location.href.extract("/_", ".htm");
-                if (page)
-                    expandParents("_" + page);                
-            }
-            if (!page) {
-                page = window.location.href.extract("://", ".html");
-                if (page)
-                {
-                    page = page.replace("://","");
+            else 
+            {
+                var page = window.location.href.extract("://", ".html");
+                if (page) {
+                    page = page.replace("://", "");
                     var idx = page.indexOf("/");
                     page = page.substr(idx);
 
-                    var a = $("[href='" + page + ".html']");
-                    if (a.length > 0)
-                        expandParents(a[0].id);
+                    var a$ = $("[href='" + page + ".html']");
+                    if (a$.length > 0)
+                        expandParents(a$[0].id);
                 }
-                else
-                    expandTopic("INDEX");
+                else {
+                    // expand all root topics
+                    $(".toc>li>div>a").each(function () {
+                        // default show index tre                
+                        expandTopic(this.id);
+                    })
+                }
             }
 
-            
-            var topic = getUrlEncodedKey("topic");
-            if (topic) {
-                var id = findIdByTopic();
-                if (id) {
-                    var link = document.getElementById(id);
-                    var id = link.id;
-                    expandTopic(id);
-                    expandParents(id);
-                    loadTopicAjax(id + ".htm");
-                }
-            }
         });
 
 
@@ -305,10 +305,14 @@ var helpBuilder = null;
         $splitter.show();
     }
     
-    function expandTopic(topicId) {                
-        var $href = $("#" + topicId);
+    function expandTopic(topicId) {  
+        var $href = get$Link(topicId);
 
-        var $ul = $href.parent().next();  // div->ul
+        if (!$href || $href.length < 1) return;
+      
+        var $ul = $href.parent().next();  // div->ul        
+        if ($ul.length < 1) return;
+
         $ul.toggle();
 
         var $button = $href.parent().prev();
@@ -377,6 +381,13 @@ var helpBuilder = null;
             expandTopic(id);
         });
     }
+    function tocExpandTopLevel(){
+        // expand all root topics
+        $(".toc>li>div>a").each(function() {
+            // default show index tre                
+            expandTopic(this.id);
+        })
+    }
     function tocExpandTop() {        
         $("ul.toc li ul:not(:visible)").each(function () {
             var $el = $(this);
@@ -391,20 +402,23 @@ var helpBuilder = null;
         return href.startsWith("mk:@MSITStore") ||
 	           href.startsWith("file://")
     }
-    function getIdFromUrl(href) {
+    function getIdFromUrl(href) {      
+  
         if (!href)
             href = window.location.href;
 
-        if(!href.startsWith("_")) {
-            href = href.extract("/_", ".htm");
-            if(href)
-                href = "_" + href;
-        }
-        
         if (href.startsWith("_"))
-            return href.toLowerCase().replace(".htm","");
+            return href.toLowerCase().replace(".htm","").replace("html","");
         
-        return null;
+        var id = getUrlEncodedKey("topic");
+        if (!id)
+            id = getUrlEncodedKey("id");
+        if (!id)
+            id = getUrlEncodedKey("topicid");        
+        if (!id)
+            return null;
+        
+        return id.toLowerCase();
     }
     function mtoParts(address, domain, query) {
         var url = "ma" + "ilto" + ":" + address + "@" + domain;
