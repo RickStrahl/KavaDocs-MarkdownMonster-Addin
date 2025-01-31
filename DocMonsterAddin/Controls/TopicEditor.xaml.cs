@@ -86,5 +86,11 @@ namespace DocMonsterAddin.Controls
             project.SaveProjectAsync();
             return true;            
         }
+
+        private void ButtonTopicId_Click(object sender, RoutedEventArgs e)
+        {
+            ClipboardHelper.SetText(Model.Topic.Id);
+            mmApp.Model.Window.ShowStatusSuccess("Topic Id copied to clipboard.");
+        }
     }
 }

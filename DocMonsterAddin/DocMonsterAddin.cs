@@ -492,17 +492,7 @@ namespace DocMonsterAddin
             topic.Project.Settings.ActiveRenderMode = HtmlRenderModes.Preview;
             topic.TopicState.IsPreview = true;
 
-            if (topic.IsLink)
-            {
-                renderedHtml = topic.Body;
-                if (renderedHtml == "NoContent")
-                    renderedHtml = null;
-
-                if (string.IsNullOrEmpty(topic.Body) && topic.Link.StartsWith("http"))
-                    renderedHtml = topic.Link;
-            }
-            else
-            {
+           
                 renderedHtml = topic.RenderTopic( TopicRenderModes.Preview);
 
                 //topic.TopicState.IsPreview = false;
@@ -514,7 +504,7 @@ namespace DocMonsterAddin
                 //handler.Background = Brushes.White;
                 //Model.Window.Dispatcher.Delay(100,() =>                 
                 //handler.Navigate(url), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
-            }
+            
 
 
             return Task.FromResult(renderedHtml); //return base.OnModifyPreviewHtml(renderedHtml, markdownHtml);

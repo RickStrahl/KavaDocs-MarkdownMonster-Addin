@@ -1617,6 +1617,13 @@
             and 
             </summary>
         </member>
+        <member name="M:MarkdownMonster.Windows.DocumentOutlineSidebarControl.ListOutline_PreviewMouseWheel(System.Object,System.Windows.Input.MouseWheelEventArgs)">
+            <summary>
+            Control the scroll speed of the listbox
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
         <member name="F:MarkdownMonster.Windows.DocumentOutlineSidebarControl.ListOutline">
             <summary>
             ListOutline Name Field
@@ -3504,6 +3511,19 @@
             <param name="treeItem">Parent item to start search from</param>
             <returns></returns>
         </member>
+        <member name="M:MarkdownMonster.Windows.WindowUtilities.ControlScrollSpeed(System.Object,System.Windows.Input.MouseWheelEventArgs)">
+             <summary>
+             Control the scroll speed of an List/Tree by throttling the mouse wheel
+            
+             Hook up to the itemsControl MouseWheel event  and make sure that
+             `ScrollViewer.CanContentScroll=True` (or False in some cases - try both!)
+             </summary>
+             <remarks>
+             https://stackoverflow.com/a/50004583/11197
+             </remarks>
+             <param name="itemsControl">Tree or List control that has a scrollviewer</param>
+             <param name="e"></param>
+        </member>
         <member name="T:MarkdownMonster.Windows.DebounceDispatcher">
             <summary>
             Provides Debounce() and Throttle() methods.
@@ -4592,6 +4612,17 @@
             </summary>
             <param name="args"></param>
         </member>
+        <member name="T:MarkdownMonster.RenderExtensions.TocRenderExtension">
+             <summary>
+             Render Extension that renders [[_TOC_]] into a Table of Contents
+             in place of the token. The token is common in various documentation
+             platforms.
+            
+             Renders in AfterMarkdownRendered in order to preserve preview sync
+             with line numbers which otherwise get lost if the table expands
+             into the Markdown.
+             </summary>
+        </member>
         <member name="M:MarkdownMonster.RenderExtensions.TocRenderExtension.BeforeMarkdownRendered(MarkdownMonster.RenderExtensions.ModifyMarkdownArguments)">
             <summary>
             Handle Right To Left ACE Editor markdown removal so rendering looks correct
@@ -4610,7 +4641,7 @@
             </summary>
             <param name="args"></param>
         </member>
-        <member name="M:MarkdownMonster.RenderExtensions.TocRenderExtension.CreateDocumentOutline(System.String)">
+        <member name="M:MarkdownMonster.RenderExtensions.TocRenderExtension.CreateDocumentOutlineMarkdown(System.String)">
             <summary>
             Creates a Markdown Document Outline from a Markdown Document
             by walking through the headers.
@@ -6985,11 +7016,14 @@
         </member>
         <member name="P:MarkdownMonster.Configuration.EditorConfiguration.ScrollSpeed">
              <summary>
-             The scroll speed in the editor. Determines how fast
-             the scroll wheel or touchpad scrolling moves the editor
-             vertically. Values between 1-20 are reasonably.
+             The editor vertical scroll or touch scroll speed.
+             Set a decimal value between 0 and 20. Default is 1.
             
-             Default is 5. Baseline is 1
+             The value is a multiplier with 2 being twice the default
+             and 0.5 half the default speed.
+            
+             Values roughly correspond to line height in precision.
+             The higher the value, the less precise scroll positioning becomes.
              </summary>
         </member>
         <member name="P:MarkdownMonster.Configuration.EditorConfiguration.EditorPreviewFlowDirection">
@@ -7255,7 +7289,7 @@
             Default: 0 - system default (usually 500)
             </summary>
         </member>
-        <member name="P:MarkdownMonster.Configuration.FolderBrowserConfiguration.ScrollSpeed">
+        <member name="P:MarkdownMonster.Configuration.FolderBrowserConfiguration.ListScrollSpeed">
             <summary>
             Scroll speed for the folder browser tree view.
             Values between 1 - 30. 0 is the default app behavior.

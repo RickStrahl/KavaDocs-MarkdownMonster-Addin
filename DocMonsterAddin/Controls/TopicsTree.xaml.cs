@@ -263,12 +263,7 @@ namespace DocMonsterAddin.Controls
 
             var window = Model.DocMonsterModel.Window;
 
-            TabItem tab;
-            if (topic != null && topic.Body != null && (topic.IsLink || topic.Body.StartsWith("http")))
-            {
-                tab = await Model.MarkdownMonsterModel.Window.OpenBrowserTab(topic.Link ?? topic.Body);
-                return tab;
-            }
+            TabItem tab;           
 
             var file = topic.GetTopicFileName(force: true);
 
