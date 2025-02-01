@@ -13,6 +13,7 @@
                            FontSize="16"
                            WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
                            Padding="4"
+                       Style="{StaticResource mmWindow}"
                            WindowStartupLocation="CenterOwner"                                   
                            IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
                            Width="800" Height="630" MinWidth="640" MinHeight="320">
@@ -34,7 +35,7 @@
             <TextBlock Margin="0 0 0 10" Style="{DynamicResource HeaderTextBlockStyle}">Generation</TextBlock>
 
             <Label>Relative Base Url</Label>
-            <TextBox Text="{Binding Project.Settings.RelativeBaseUrl}" />
+            <TextBox Text="{Binding Project.Settings.RelativeBaseUrl}" controls:TextBoxHelper.Watermark="/ or /docs/" />
 
             <TextBlock Margin="5 7 10 10" 
                        TextWrapping="Wrap"

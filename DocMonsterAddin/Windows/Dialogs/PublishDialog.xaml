@@ -1,0 +1,52 @@
+﻿<controls:MetroWindow  x:Class="DocMonsterAddin.Windows.Dialogs.PublishDialog"
+                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
+                           xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"        
+                           xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
+                           xmlns:model="clr-namespace:DocMonster.Model;assembly=DocMonster"
+                           mc:Ignorable="d"
+                           Icon="../../Assets/Icon_128.png"                    
+                           Title="Generate Html Output"
+                           TitleCharacterCasing="Normal"    
+                           FontSize="16"
+                           WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
+                           Padding="4"
+                       Style="{StaticResource mmWindow}"
+                           WindowStartupLocation="CenterOwner"                                   
+                           IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
+                           Width="800" Height="630" MinWidth="640" MinHeight="320">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Margin="25,20,40,0">
+            <Image Source="../../Assets/Icon_128.png"                   
+                   Width="200" VerticalAlignment="Top" />
+
+            <Separator Margin="0,15,0,10" />
+            <TextBlock FontWeight="DemiBold" FontSize="20" >Generate Html Output</TextBlock>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Margin="15 10 20 0">
+            <TextBlock Margin="0 0 0 10" Style="{DynamicResource HeaderTextBlockStyle}">Ftp Server</TextBlock>
+
+            <Label>Host Name/Ip Address (ftp.example.com:1111)</Label>
+            <TextBox Text="{Binding Project.Settings.Upload.Hostname}"
+                     Margin="0 4 0 15"
+                     ToolTip="Server Hostname or Ip Address - can include port number (ftp.myserver.com:1111)"
+                     controls:TextBoxHelper.Watermark="ftp.exampleserver.com:1111 or 111.111.111.111:8022" />
+
+            <Label>Server</Label>
+            <TextBox Text="{Binding Project.Settings.Upload.UploadFtpPath}"
+                     Margin="0 4 0 15" 
+                     controls:TextBoxHelper.Watermark="/path/on/the/server/"/>
+
+
+</StackPanel>
+            
+    </Grid>
+</controls:MetroWindow>

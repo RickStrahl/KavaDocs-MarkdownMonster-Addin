@@ -68,25 +68,6 @@ namespace DocMonsterAddin.Windows.Dialogs
 
             mmApp.Model.Window.Activate();
         }
-
-        private void ButtonGetDirectory_Click(object sender, RoutedEventArgs e)
-        {
-            string initialPath = kavaUi.Model.ActiveProject.OutputDirectory;
-            string selectedFolder = mmWindowsUtils.ShowFolderDialog(initialPath, "Select folder to create Html output in.");
-            if (string.IsNullOrEmpty(selectedFolder))
-                return;
-
-            if (!Directory.Exists(selectedFolder))
-            {
-                Directory.CreateDirectory(selectedFolder);
-            }
-            else
-            {
-                MessageBox.Show("All contents in this folder will be deleted\n" +
-                    "before writing the new output files.", "Folder Deletion Warning",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
     }
 
     public class GenerateHtmlModel

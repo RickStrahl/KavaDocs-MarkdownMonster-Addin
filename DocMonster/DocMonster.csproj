@@ -8,6 +8,9 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="FluentFTP" Version="52.0.0" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="d:\projects\MarkdownMonsterCode\MarkdownMonster\MarkdownMonster.csproj">
       <Private>false</Private>
       <IncludeAssets>compile</IncludeAssets>
