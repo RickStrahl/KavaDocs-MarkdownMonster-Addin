@@ -27,7 +27,7 @@ namespace DocumentationMonster.Core.Tests
             var upload = new FtpPublisher(project);
             upload.StatusUpdate = (s =>
             {
-                Console.WriteLine(s.IsError + " " + s.SourceFileInfo.FullName + " " + s.ErrorMessage);
+                Console.WriteLine(s.IsError + " " + s.SourceFileInfo.FullName + " " + s.Message);
                 return true;
             });
             var result = upload.UploadProject();

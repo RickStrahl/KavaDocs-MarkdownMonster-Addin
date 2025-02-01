@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -28,6 +30,8 @@ namespace DocMonsterAddin.Windows.Dialogs
     {
         public PublishDialogModel Model { get; }
 
+        StatusBarHelper Status { get;  }
+
         public PublishDialog(DocProject project = null)
         {
             Owner = mmApp.Model.Window;
@@ -36,20 +40,62 @@ namespace DocMonsterAddin.Windows.Dialogs
             
             Model = new PublishDialogModel(project ?? kavaUi.Model.ActiveProject);
             DataContext = Model;
+            Status = new StatusBarHelper(StatusText, StatusIcon);
+            
         }
 
-        private void Button_Publish(object sender, RoutedEventArgs e)
+        private async void Button_Publish(object sender, RoutedEventArgs e)
         {
             var publish = new FtpPublisher(Model.Project);
-            var result  = publish.UploadProject();
+            Model.FtpPublisher = publish;
+            publish.StatusUpdate = (status) =>
+            {               
+                Dispatcher.Invoke(() =>
+                {
+                    if (status.MessageType == UploadMessageTypes.Progress && status.BytesSent > 0)
+                    {
+                        decimal percent = (decimal)status.BytesSent / (decimal)status.TotalBytes * 100.01m;
+                        StatusText2.Text = $"{status.SourceFileInfo.Name}:  {status.FilesSent} of {status.TotalFiles} sent. {percent:n0}%";
+                    }
+                    else
+                    {
+                        StatusText2.Text = status.Message;
+                    }
+                });
 
-            if (result)
-            {
-                Model.Window.ShowStatusSuccess("Project published.");
-                return;
-            }
+                return true;
+
+            };
 
             DocProjectManager.Current.SaveProject(Model.Project, Model.Project.Filename);
+
+            Status.ShowStatusProgress("Publishing to Ftp Server");
+
+            bool result = false;
+            try
+            {
+                Model.IsUploading = true;
+                result = await publish.UploadProjectAsync();
+            }
+            catch(Exception ex)
+            {
+                Status.ShowStatusError("Project publishing failed." + ex.GetBaseException().Message);
+                return;
+            }
+            finally
+            {
+                Model.IsUploading = false;
+                StatusText2.Text = string.Empty;
+            }
+            
+            if (result)
+            {
+                Status.ShowStatusSuccess("Project published.");                
+                return;
+            }
+            Status.ShowStatusError("Project publishing failed.");
+            
+
 
             WindowsNotifications.ShowInAppNotifications("Publishing failed", publish.ErrorMessage,
                 icon: WindowsNotifications.NotificationInAppTypes.Warning, window: this);
@@ -60,19 +106,55 @@ namespace DocMonsterAddin.Windows.Dialogs
             Close();
             mmApp.Model.Window.Activate();
         }
+
+        private void ButtonCancelUpload_Click(object sender, RoutedEventArgs e)
+        {
+            Model.FtpPublisher.IsCancelled = true;
+        }
     }
 
-    public class PublishDialogModel
+    public class PublishDialogModel : INotifyPropertyChanged
     {
         public PublishDialogModel(DocProject project)
         {
             Project = project;
 
 
-        }
+       }
 
         public DocProject Project { get; set; }
 
+        public FtpPublisher FtpPublisher { get; set; }
+
         public MainWindow Window  => mmApp.Model.Window;
+        
+
+        public bool IsUploading
+        {
+            get => _isUploading;
+            set
+            {
+                if (value == _isUploading) return;
+                _isUploading = value;
+                OnPropertyChanged();
+            }
+        }
+        private bool _isUploading;
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
     }
 }

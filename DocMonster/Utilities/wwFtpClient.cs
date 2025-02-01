@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 using FluentFTP;
 using FluentFTP.Helpers;
 using FluentFTP.Proxy.SyncProxy;
+using static System.Windows.Forms.Design.AxImporter;
 using File = System.IO.File;
 
 
@@ -110,7 +111,7 @@ namespace DocMonster.Ftp
                 if (UseTls)
                 {
                     client.Config.EncryptionMode = FtpEncryptionMode.Explicit;
-                    client.Config.SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12;
+                    client.Config.SslProtocols =  SslProtocols.Tls12 | SslProtocols.Tls13;
                 }                
                 client.ValidateCertificate += new FtpSslValidation((control, e) =>
                 {                    
@@ -360,7 +361,6 @@ namespace DocMonster.Ftp
 
         #region Directory Operations
 
-
         /// <summary>
         /// Get a directory listing of files 
         /// 
@@ -369,13 +369,18 @@ namespace DocMonster.Ftp
         /// Make sure to call Connect() before calling this method
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="options">Add options in</param>
         /// <returns></returns>
-        public List<FtpFile> ListFiles(string path)
+        public List<FtpFile> ListFiles(string path, bool recursive = false)
         {
             try
-            {                
-                var files = FtpClient.GetListing(path);
-
+            {
+                FtpListItem[] files;
+                if (recursive)
+                    files = FtpClient.GetListing(path, FtpListOption.Recursive);
+                else
+                    files = FtpClient.GetListing(path);
+                
                 var fileList = new List<FtpFile>();
                 foreach (var sfile in files)
                 {

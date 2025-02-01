@@ -27,13 +27,13 @@ namespace DocMonster.Utilities
         /// </summary>
         public Func<FtpFileProgress, bool> StatusUpdate { get; set; }
 
-        public bool CancelOperation { get; set; }
+        public bool IsCancelled { get; set; }
 
         /// <summary>
         /// Delete any files that are in the target folder but
         /// are not updated.
         /// </summary>
-        public bool DeleteOldFiles { get; set; }
+        public bool DeleteExtraFiles { get; set; }
 
         public List<FtpFileProgress> Errors { get; set; } = new List<FtpFileProgress>();
 
@@ -44,23 +44,6 @@ namespace DocMonster.Utilities
         }
 
 
-        public bool InitializeFtpClient(string ipOrDomain, int port = 0, string username = null, string password = null, bool useSsl = false)
-        {
-            Ftp = new wwFtpClient()
-            {
-                Hostname = ipOrDomain,
-                Port = port,
-                Username = username,
-                Password = password,
-                UseTls = useSsl,
-                IgnoreCertificateErrors = true,
-                Timeout = 7000,
-                CreateRemoteDirectories = true
-            };
-
-            return true;
-        }
-
         public bool InitializeFtpClient(UploadSettings settings)
         {
             Ftp = new wwFtpClient()
@@ -70,8 +53,9 @@ namespace DocMonster.Utilities
                 Password = settings.Password,
                 UseTls = settings.UseTls,
                 IgnoreCertificateErrors = true,
-                Timeout = 7000
+                Timeout = 7000,                
             };
+            DeleteExtraFiles = settings.DeleteExtraFiles;            
 
             return true;
         }
@@ -91,7 +75,7 @@ namespace DocMonster.Utilities
         /// <returns>Returns a list of non-sucessful upload items or an empty collection.</returns>
         public bool UploadProject(string sourceFolder = null, string targetBasePath = null)
         {
-            CancelOperation = false;
+            IsCancelled = false;
             Errors = new List<FtpFileProgress>();
 
             if (string.IsNullOrEmpty(sourceFolder))
@@ -122,31 +106,50 @@ namespace DocMonster.Utilities
                     MaxRecursionDepth = 9999,
                     AttributesToSkip = FileAttributes.Hidden 
                 });
-
+                var progress = new FtpFileProgress
+                {
+                    IsError = false,
+                    Message = "Consolidating local and server files.",
+                    MessageType = UploadMessageTypes.Message
+                };
+                StatusUpdate?.Invoke(progress);
                 var unchangedFiles = DiffAgainstOnlineFiles(files);
 
-                if (files.Length > 0) 
+                if (unchangedFiles.Length < 1) 
                     return true;
 
-                var totalFiles = files.Length;
-                var totalBytes = files.Sum((f) => f.Length);
+                if (IsCancelled)
+                {
+                    SetError("Publishing has been cancelled.");
+                    return false;
+                }
+
+                var totalFiles = unchangedFiles.Length;
+                var totalBytes = unchangedFiles.Sum((f) => f.Length);
                 int count = 0;
                 long bytesSent = 0;
-                foreach (var file in files) //.OrderBy(f => f.FullName))
+                foreach (var file in unchangedFiles) //.OrderBy(f => f.FullName))
                 {
+                    if (IsCancelled)
+                    {
+                        SetError("Publishing has been cancelled.");
+                        return false;
+                    }
+
                     var fname = file.FullName;
                     var ftpName = FileUtils.GetRelativePath(fname, Project.OutputDirectory).Replace("\\", "/");
                     ftpName = StringUtils.TerminateString(targetBasePath, "/") + ftpName.TrimStart('/');
                    
-                    //var result = Ftp.UploadFile(fname, ftpName);
-                    var result = true;
+                    var result = Ftp.UploadFile(fname, ftpName);
+                    
 
                     bytesSent += file.Length;
 
-                    var progress = new FtpFileProgress
+                    progress = new FtpFileProgress
                     {
-                        IsError = result,
-                        ErrorMessage = result ? Ftp.ErrorMessage : null,
+                        IsError = result,                        
+                        Message = result ? Ftp.ErrorMessage : null,
+                        MessageType = !result ? UploadMessageTypes.Error : UploadMessageTypes.Progress,
                         SourceFileInfo = file,
                         UploadFtpPath = ftpName,
                         TotalFiles = totalFiles,
@@ -154,7 +157,6 @@ namespace DocMonster.Utilities
                         TotalBytes = totalBytes,
                         BytesSent = bytesSent
                     };
-
                     StatusUpdate?.Invoke(progress);
 
                     if (progress.IsError)
@@ -172,6 +174,9 @@ namespace DocMonster.Utilities
             var directories = files.Select( fi => System.IO.Path.GetDirectoryName(fi.FullName)).Distinct().ToList();
             foreach (var dir in directories)
             {
+                if (IsCancelled)
+                    return [];
+
                 var di = new DirectoryInfo(dir);
                 if (!di.Exists) continue;
 
@@ -201,10 +206,12 @@ namespace DocMonster.Utilities
                     updateList.Add(fi);
                 }
 
-                if (DeleteOldFiles)
+                if (DeleteExtraFiles)
                 {
                     foreach (var file in ftpFiles)
                     {
+                        if (file.IsDirectory) continue;                        
+
                         var localFile = dirFiles.FirstOrDefault(f => f.Name == file.Name);
                         if (localFile == null)
                         {
@@ -255,6 +262,13 @@ namespace DocMonster.Utilities
 
     }
 
+    public enum UploadMessageTypes
+    {
+        Message,
+        Progress,        
+        Error
+    }
+
     public class FtpFileProgress
     {
         public FileInfo SourceFileInfo { get; set; }
@@ -272,8 +286,11 @@ namespace DocMonster.Utilities
         public long TotalBytes { get; set; }
         public long BytesSent { get; set; }
 
+
         public bool IsError { get; set; }
-        public string ErrorMessage { get; set; }
-        
+        public string Message { get; set; }
+
+        public UploadMessageTypes MessageType { get; set; } = UploadMessageTypes.Message;
+
     }
 }
