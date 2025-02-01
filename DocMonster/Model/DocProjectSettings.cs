@@ -157,6 +157,10 @@ namespace DocMonster.Model
         }
         private string _uploadFtpPath;
 
+        public string WebSiteUrl { get; set; }
+
+        public bool OpenWebSite { get; set;  } 
+
         public string Username { get; set; }
 
         [JsonIgnore]

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -43,12 +45,15 @@ namespace DocMonsterAddin.Windows.Dialogs
 
         private async void Button_GenerateOutput(object sender, RoutedEventArgs e)
         {
+            Model.IsComplete = false;
             await Task.Run(() =>
             {
-                var output = new HtmlOutputGenerator(Model.Project);
+                Model.IsComplete = false;
+                Model.IsRunning = true;
+                var output = new HtmlOutputGenerator(Model.Project);                
                 output.Generate();
-
-               
+                Model.IsRunning = false;
+                Model.IsComplete = true;
             });
 
             if (Model.OpenInBrowser)
@@ -70,20 +75,116 @@ namespace DocMonsterAddin.Windows.Dialogs
 
             mmApp.Model.Window.Activate();
         }
+
+        private void Button_PublishClick(object sender, RoutedEventArgs e)
+        {
+            var publishDialog = new PublishDialog(Model.Project);
+            publishDialog.Show();
+
+            Close();
+        }
     }
 
-    public class GenerateHtmlModel
+    public class GenerateHtmlModel : INotifyPropertyChanged
     {
-        public DocProject Project { get; set; } = kavaUi.Model.ActiveProject;
+        private DocProject _project = kavaUi.Model.ActiveProject;
 
-        public bool OpenInBrowser { get; set; } = true;
-        public bool OpenFolder { get; set; }
+        public DocProject Project
+        {
+            get => _project;
+            set
+            {
+                if (Equals(value, _project)) return;
+                _project = value;
+                OnPropertyChanged();
+            }
+        }
 
-        public string BrowserUrl { get; set;  }
+        private bool _openInBrowser = true;
+
+        public bool OpenInBrowser
+        {
+            get => _openInBrowser;
+            set
+            {
+                if (value == _openInBrowser) return;
+                _openInBrowser = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool OpenFolder
+        {
+            get => _openFolder;
+            set
+            {
+                if (value == _openFolder) return;
+                _openFolder = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _openFolder;
+
+
+        public string BrowserUrl
+        {
+            get => _browserUrl;
+            set
+            {
+                if (value == _browserUrl) return;
+                _browserUrl = value;
+                OnPropertyChanged();
+            }
+        }
+        private string _browserUrl;
+
+
+        public bool IsComplete
+        {
+            get => _isComplete;
+            set
+            {
+                if (value == _isComplete) return;
+                _isComplete = value;
+                OnPropertyChanged();             
+            }
+        }
+        private bool _isComplete;
+
+
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set
+            {
+                if (value == _isRunning) return;
+                _isRunning = value;
+                OnPropertyChanged();
+            }
+        }
+        private bool _isRunning;
+        
+
 
         public GenerateHtmlModel()
         {
             BrowserUrl = $"http://localhost:{kavaUi.Configuration.WebServerPort}{kavaUi.Model.ActiveProject.Settings.RelativeBaseUrl}";
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
         }
     }
 }

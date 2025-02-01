@@ -20,6 +20,7 @@ using DocMonster.Utilities;
 using MahApps.Metro.Controls;
 using MarkdownMonster;
 using MarkdownMonster.Windows;
+using Westwind.Utilities;
 
 namespace DocMonsterAddin.Windows.Dialogs
 {
@@ -110,6 +111,17 @@ namespace DocMonsterAddin.Windows.Dialogs
         private void ButtonCancelUpload_Click(object sender, RoutedEventArgs e)
         {
             Model.FtpPublisher.IsCancelled = true;
+        }
+
+        private void TextBlock_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void WebSiteUrl_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(Model.Project?.Settings?.Upload?.WebSiteUrl))
+                ShellUtils.GoUrl(Model.Project.Settings.Upload.WebSiteUrl);
         }
     }
 

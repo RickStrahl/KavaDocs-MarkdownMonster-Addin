@@ -6,6 +6,7 @@
                            xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"        
                            xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
                            xmlns:model="clr-namespace:DocMonster.Model;assembly=DocMonster"
+                           xmlns:windows="clr-namespace:MarkdownMonster.Windows;assembly=MarkdownMonster"
                            mc:Ignorable="d"
                            Icon="../../Assets/Icon_128.png"                    
                            Title="Generate Html Output"
@@ -17,6 +18,10 @@
                            WindowStartupLocation="CenterOwner"                                   
                            IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
                            Width="800" Height="630" MinWidth="640" MinHeight="320">
+    <controls:MetroWindow.Resources>
+        <windows:InvertedBooleanConverter x:Key="InvertedBooleanConverter" />
+    </controls:MetroWindow.Resources>
+        
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
@@ -56,43 +61,44 @@
             <CheckBox IsChecked="{Binding OpenFolder}">Open Folder</CheckBox>
             <TextBlock Margin="25 5 0 0" FontSize="13" Foreground="Silver" Text="{Binding Project.OutputDirectory }" />
 
-                
-            
-            <!--<Label Margin="0,10,0,0">Choose a Project Folder</Label>
-            <Grid >
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="auto" />
-                </Grid.ColumnDefinitions>
-
-                <TextBox Grid.Column="0" Text="{Binding ProjectCreator.ProjectFolder}"></TextBox>
-                <Button Grid.Column="1" Name="ButtonGetDirectory" 
-                        Margin="3,0,0,0" Width="33"
-                        Click="ButtonGetDirectory_Click">...</Button>
-            </Grid>-->
 
 
-            <StackPanel Margin="0,20,20,20" Grid.Column="1">
+            <StackPanel Margin="0,20,0,0" Grid.Column="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-
-                <StackPanel Orientation="Horizontal">
-                    <Button Name="ButtonCreateTopic" Margin="0,20" Height="40" FontSize="15" Width="160"
-                        HorizontalAlignment="Left"   IsDefault="True" Click="Button_GenerateOutput"  >
+                    <Button Name="ButtonCreateTopic" Margin="0,20" Height="40" FontSize="15" Width="130"
+                        HorizontalAlignment="Left"
+                        IsDefault="True" 
+                        IsEnabled="{Binding IsRunning, Converter={StaticResource InvertedBooleanConverter}}"
+                        Click="Button_GenerateOutput" Grid.Column="0">
                         <StackPanel Orientation="Horizontal">
                             <fa6:ImageAwesome  Icon="Solid_Gear" PrimaryColor="#FF0E7E28"  Height="18" />
                             <TextBlock Margin="10,0,0,0">Generate</TextBlock>
                         </StackPanel>
                     </Button>
 
-                    <Button Name="ButtonCancel" Margin="10,20" Height="40" FontSize="15" Width="160" 
-                        HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" >
+                    <Button Name="ButtonCancel" Margin="10,20" Height="40" FontSize="15" Width="130" 
+                        HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" Grid.Column="1">
                         <StackPanel Orientation="Horizontal" >
                             <fa6:ImageAwesome Icon="Solid_XMark" PrimaryColor="DarkRed" Height="15" />
                             <TextBlock Margin="10,0,0,0">Cancel</TextBlock>
                         </StackPanel>
                     </Button>
-                </StackPanel>
+
+                    <Button Name="ButtonPublish" Margin="70 20" Height="40" FontSize="15" Width="130"                             
+                            controls:VisibilityHelper.IsVisible="{Binding IsComplete}" HorizontalAlignment="Right"
+                            Click="Button_PublishClick" Grid.Column="2">
+                        <StackPanel Orientation="Horizontal" >
+                            <fa6:ImageAwesome  Icon="Duotone_CloudArrowUp" PrimaryColor="Goldenrod" SecondaryColor="#222" SecondaryOpacity="1"  Height="20" />
+                            <TextBlock Margin="10,0,0,0">Publish</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </Grid>
             </StackPanel>
         </StackPanel>
     </Grid>
