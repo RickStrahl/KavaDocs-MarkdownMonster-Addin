@@ -83,9 +83,22 @@ namespace DocMonsterAddin.Controls
 
         public void SelectTopic(DocTopic topic)
         {
+            var lastTopic = kavaUi.Model.ActiveTopic;
+
             var foundTopic = Model.FindTopic(null,topic);
             if (foundTopic != null)
+            {
+                if (lastTopic != null)
+                    lastTopic.TopicState.IsSelected = false;
+
                 foundTopic.TopicState.IsSelected = true;
+                var parent = foundTopic.Parent;
+                while (parent != null)
+                {                    
+                    parent.IsExpanded = true;
+                    parent = parent.Parent;
+                }
+            }
         }
 
         public void RefreshTree()

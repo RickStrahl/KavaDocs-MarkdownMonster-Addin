@@ -84,8 +84,8 @@ namespace DocMonster.MarkdownParser
         /// <param name="html"></param>
         /// <returns></returns>
         protected string ParseExternalLinks(string html)
-        {
-            return html.Replace("<a href=", "<a target=\"top\" href=");
+        {            
+            return html.Replace("<a href=\"http", "<a target=\"top\" href=\"http");
         }
 
     }

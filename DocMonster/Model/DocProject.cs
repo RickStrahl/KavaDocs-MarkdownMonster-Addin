@@ -16,6 +16,8 @@ using DocMonster.Templates;
 using Newtonsoft.Json;
 using Westwind.Utilities;
 using MarkdownMonster;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace DocMonster.Model
 {
@@ -251,53 +253,136 @@ namespace DocMonster.Model
         }
 
 
+
         /// <summary>
-        /// Loads a topic by id
+        /// Generic Topic loader that works with 
+        /// Loads a topic by topic id, or by dm-topic://, dm-slug:// or dm-title://
+        /// link.
         /// </summary>
-        /// <param name="topicId"></param>
-        /// <returns></returns>
+        /// <param name="topicId">Topic Id or dm:// link</param>
+        /// <returns>Topic or null</returns>
         public DocTopic LoadTopic(string topicId)
         {
-            Topic = Topics.FirstOrDefault(t => t.Id == topicId);
+            if (string.IsNullOrEmpty(topicId))
+                return null;
+
+            topicId = WebUtility.UrlDecode(topicId).Trim();
+
+            DocTopic topic = null;
+            if (topicId.StartsWith('_') || topicId.Equals("index",StringComparison.OrdinalIgnoreCase))
+                topic = LoadTopicById(topicId);
+
+            else if (topicId.StartsWith("dm-topic://", StringComparison.OrdinalIgnoreCase))
+                topic = LoadTopicById(topicId.Replace("dm-topic://", string.Empty));
+
+            else if (topicId.StartsWith("dm-slug://", StringComparison.OrdinalIgnoreCase))
+                topic = LoadTopicBySlug(topicId.Replace("dm-slug://", string.Empty));
+
+            else if (topicId.StartsWith("dm-title://", StringComparison.OrdinalIgnoreCase))
+                topic = LoadTopicByTitle(topicId.Replace("dm-title://", string.Empty));
+
+            else if (topicId.StartsWith("vfps://", StringComparison.OrdinalIgnoreCase))
+            {
+                if (topicId.Contains("/topic/"))
+                {
+                    topicId = topicId.Replace("vfps://topic/", string.Empty, StringComparison.OrdinalIgnoreCase);
+                    if (topicId.StartsWith('_'))
+                        topic = LoadTopicById(topicId);
+                    else
+                        topic = LoadTopicByTitle(topicId);
+                }
+            }
+
+            // fallback to slug and/title
+            if (topic == null)
+            {
+                topic = LoadTopicBySlug(topicId, true);
+            }
+
+            Topic = topic;
+            if (topic == null)
+                return null;
+
             return AfterTopicLoaded(Topic);
+        }
+
+        public DocTopic LoadTopicById(string topicId)
+        {
+            DocTopic match = null;
+
+            using var tokenSource = new CancellationTokenSource();
+
+            WalkTopicsHierarchy(Topics, (topic, project, token) => {
+                if (match is not null || string.IsNullOrEmpty(topic.Id)) return;
+
+                if (topic.Id.Equals(topicId, StringComparison.OrdinalIgnoreCase))
+                {
+                    match = topic;
+                    tokenSource.Cancel();
+                }                
+            }, tokenSource.Token);
+
+            match = AfterTopicLoaded(match);
+            return match;
         }
 
 
         /// <summary>
-        /// Loads a topic by its topic title
+        /// Loads a topic by its topic title and also searches by slug optionally
         /// </summary>
-        /// <param name="title"></param>
+        /// <param name="title">Title to search for</param>
+        /// <param name="alsoSearchBySlug">Search for title in slug also. Title first</param>
         /// <returns></returns>
-        public DocTopic LoadByTitle(string title)
+        public DocTopic LoadTopicByTitle(string title, bool alsoSearchBySlug = false)
+        {
+            DocTopic match = null;
+            using var tokenSource = new CancellationTokenSource();
+
+            WalkTopicsHierarchy(Topics, (topic, project, token) => {
+                if (match is not null || string.IsNullOrEmpty(topic.Title)) return;
+
+                if (topic.Title.Trim().Equals(title, StringComparison.OrdinalIgnoreCase))
+                {
+                    match = topic;                    
+                }
+                else if (alsoSearchBySlug && topic.Slug is not null && topic.Slug.Trim().Equals(title, StringComparison.OrdinalIgnoreCase))
+                {
+                    match = topic;                    
+                }
+            },tokenSource.Token);
+         
+            match =  AfterTopicLoaded(match);
+            return match;
+        }
+
+
+        /// <summary>
+        /// Loads a topic by its topic slug (or title if alsoSearchByTitle is true)
+        /// </summary>
+        /// <param name="slug">Slug to search for</param>
+        /// <param name="alsoSearchByTitle">If true searches both by slug *and* title - slug searched first</param>
+        /// <returns>topic or null</returns>
+        public DocTopic LoadTopicBySlug(string slug, bool alsoSearchByTitle = false)
         {
             DocTopic match = null;
 
             WalkTopicsHierarchy(Topics, (topic, project) => {
-                if (match is not null) return;
+                if (match is not null || string.IsNullOrEmpty(topic.Title)) return;
 
-                if (!string.IsNullOrEmpty(topic.Title) && topic.Title.Equals(title, StringComparison.OrdinalIgnoreCase))
+                if (topic.Slug.Equals(slug, StringComparison.OrdinalIgnoreCase))
+                {
+                    match = topic;
+                    return;
+                }
+                if (alsoSearchByTitle && topic.Title.Equals(slug, StringComparison.OrdinalIgnoreCase))
                 {
                     match = topic;
                     return;
                 }
             });
-         
-            return AfterTopicLoaded(match);
-        }
 
-
-        /// <summary>
-        /// Loads a topic by its topic slug
-        /// </summary>
-        /// <param name="title"></param>
-        /// <returns></returns>
-        public DocTopic LoadBySlug(string slug)
-        {
-            if (slug.StartsWith("_"))
-                slug = slug.Substring(1);
-
-            Topic = Topics.FirstOrDefault(t => t.Slug.ToLower() == slug.ToLower());
-            return AfterTopicLoaded(Topic);
+            match = AfterTopicLoaded(match);
+            return match;
         }
 
         /// <summary>
@@ -320,11 +405,12 @@ namespace DocMonster.Model
             topic.TopicState.OldLink = null;
             topic.TopicState.OldSlug = null;
 
-            if (!topic.LoadTopicFile()) // load disk content
-            {
-                SetError("Topic body content not found.");
-                return null;
-            }
+            topic.LoadTopicFile(); // load disk content
+            //if (!topic.LoadTopicFile()) // load disk content
+            //{
+            //    SetError("Topic body content not found.");
+            //    return null;
+            //}
 
             return topic;
         }
@@ -604,6 +690,26 @@ namespace DocMonster.Model
                     WalkTopicsHierarchy(topic.Topics, onTopicHandler);                    
             }
         }
+        public void WalkTopicsHierarchy(ObservableCollection<DocTopic> topics, Action<DocTopic, DocProject, CancellationToken> onTopicHandler, CancellationToken token)
+        {
+            if (topics == null)
+                topics = Topics;
+
+            foreach (var topic in topics)
+            {
+                if (token.IsCancellationRequested)
+                    break;
+
+                onTopicHandler?.Invoke(topic, this, token);
+                if (topic.Topics != null && topic.Topics.Count > 0)
+                {
+                    if (token.IsCancellationRequested)
+                        break;
+
+                    WalkTopicsHierarchy(topic.Topics, onTopicHandler, token);
+                }
+            }
+        }
         #endregion
 
 
@@ -629,7 +735,7 @@ namespace DocMonster.Model
             if (string.IsNullOrEmpty(topicFile))
                 return null;
 
-            string anchorString = (string.IsNullOrEmpty(anchor) ? "" : "#" + anchor);
+            string anchorString = (string.IsNullOrEmpty(anchor) ? string.Empty : "#" + anchor);
             string linkText = WebUtility.HtmlEncode(displayText);
             string link = null;
 
@@ -638,12 +744,12 @@ namespace DocMonster.Model
 
             // Plain HTML
             if (mode == HtmlRenderModes.Html)
-                link = $"<a href='{StringUtils.UrlEncode(topicFile)}' {anchorString} {attributes}>{linkText}</a>";
+                link = $"<a href='{StringUtils.UrlEncode(topicFile)}{anchorString}' {attributes}>{linkText}</a>";
             // Preview Mode
             else if (mode == HtmlRenderModes.Preview)
-                link = $"<a href='dm://Topic/{StringUtils.UrlEncode(id)}' {anchorString} {attributes}>{linkText}</a>";
+                link = $"<a href='dm-topic://{StringUtils.UrlEncode(id)}{anchorString}' {attributes}>{linkText}</a>";
             if (mode == HtmlRenderModes.Print)
-                link = $"<a href='#{StringUtils.UrlEncode(topicFile)}' {anchorString} {attributes}>{linkText}</a>";
+                link = $"<a href='#{StringUtils.UrlEncode(topicFile)}{anchorString}' {attributes}>{linkText}</a>";
 
             return link;
         }

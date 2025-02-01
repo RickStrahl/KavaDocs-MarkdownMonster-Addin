@@ -57,6 +57,9 @@ namespace DocMonster.Model
 
         /// <summary>
         /// The generated id for this topic - ids start with an underscore
+        ///
+        /// Id's always start with an underscore so they are easy to identify
+        /// as ID values for multiformat Id parsing (Id, slug, title)
         /// </summary>                
         public string Id
         {
@@ -65,6 +68,9 @@ namespace DocMonster.Model
             {
                 if (value == _Id) return;
                 _Id = value;
+                if (!_Id.StartsWith("_"))
+                    _Id = $"_{_Id}";
+
                 OnPropertyChanged(nameof(Id));
             }
         }
@@ -476,7 +482,7 @@ namespace DocMonster.Model
 
         public DocTopic(DocProject project)
         {
-            Id = DataUtils.GenerateUniqueId(10);
+            Id =  DataUtils.GenerateUniqueId(10);
             TopicState = new TopicState(this);
             Project = project;
             Topics = new ObservableCollection<DocTopic>();
@@ -513,8 +519,6 @@ namespace DocMonster.Model
                 SetError(error + "\n\n" + TemplateHost.Script.GeneratedClassCodeWithLineNumbers);
                 return html;
             }
-
-
 
             // Fix up any locally linked .md extensions to .html
             string basePath = null;
@@ -707,12 +711,27 @@ namespace DocMonster.Model
                     if (href == null)
                         continue;
 
-                    if (string.IsNullOrEmpty(href) || href.StartsWith("http://") || href.StartsWith("https://"))
+                    if (string.IsNullOrEmpty(href) || href.StartsWith("http://") || href.StartsWith("https://"))                    
                         continue;
 
                     if (href.EndsWith(".md", StringComparison.InvariantCultureIgnoreCase))
                     {
                         link.Attributes["href"].Value = href.Replace(".md", ".html");
+                        updated = true;
+                    }
+
+                    if((href.StartsWith("dm-") && href.Contains("://"))||
+                        href.StartsWith("vfps://",StringComparison.OrdinalIgnoreCase))
+                    {
+                        var topic = Project.LoadTopic(href);
+
+                        string hreflink;
+                        if (topic == null)
+                            hreflink = "#__0";
+                        else
+                            hreflink =   "~/" + topic.Slug.TrimStart('/') + ".html";
+
+                        link.Attributes["href"].Value = hreflink;
                         updated = true;
                     }
                 }
@@ -1438,12 +1457,12 @@ namespace DocMonster.Model
 
             // Plain HTML
             if (mode == HtmlRenderModes.Html || mode == HtmlRenderModes.Preview)
-                link = $"<a href=\"{link}\" {anchorString} {attributes}>{linkText}</a>";
+                link = $"<a href=\"{link}{anchorString}\" {attributes}>{linkText}</a>";
             // Preview Mode
             else if (mode == HtmlRenderModes.Preview)
-                link = $"<a href=\"dm://Topic/{link}\" {anchorString} {attributes}>{linkText}</a>";
+                link = $"<a href=\"dm://Topic/{link}{anchorString}\" {attributes}>{linkText}</a>";
             if (mode == HtmlRenderModes.Print)
-                link = $"<a href=\"#{link}' {anchorString} {attributes}>{linkText}</a>";
+                link = $"<a href=\"#{link}{anchorString}' {attributes}>{linkText}</a>";
 
             return link;
         }

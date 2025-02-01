@@ -91,7 +91,7 @@ namespace DocMonster.Configuration
         /// <summary>
         /// The preview WebServer port used for previews
         /// </summary>
-        public int WebServerPort { get; set; } = 5088;
+        public int WebServerPort { get; set; } = 5080;
 
 
         public string LastProjectCompany

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -258,8 +259,104 @@ namespace DocMonsterAddin
             base.OnApplicationShutdown();
             return Task.CompletedTask;
         }
+        #endregion
+
+        #region Editor Operations
+        public async Task<TabItem> OpenTopicInEditor(DocTopic topic = null)
+        {
+
+            if (topic == null)
+                topic = DocMonsterModel.ActiveTopic;
+
+            
+            var window = DocMonsterModel.Window;
+
+            TabItem tab;
+
+            var file = topic.GetTopicFileName(force: true);
+
+            MarkdownDocumentEditor editor = null;
+
+            // is tab open already as a file? If so use that
+            tab = window.GetTabFromFilename(file);
+            if (tab != null)
+            {
+                editor = tab?.Tag as MarkdownDocumentEditor;
+                if (editor == null)
+                    return null;
+            }
+            else
+            {
+                // Will also open the tab if not open yet
+                // EXPLICITLY NOT SELECTING THE TAB SO THAT IT'S NOT RENDERED YET
+                // Assign topic first then explicitly select
+                //tab = Model.KavaDocsModel.Window.RefreshTabFromFile(file, noFocus: !setFocus, isPreview: true, noSelectTab:true);
 
 
+                tab = await window.RefreshTabFromFile(file, isPreview: true, noFocus: true,
+                    noPreview: true,
+                    existingTab: window.PreviewTab);
+
+
+                editor = tab?.Tag as MarkdownDocumentEditor;
+                if (editor == null)
+                    return null;
+            }
+
+            if (tab == null)
+                return null;
+
+            // make sure topic is associated with editor
+            SetEditorWithTopic(editor, topic, isUnEdited: true);
+
+
+            // Explicitly read in the current text from an open tab and save to body                
+            var body = await editor.GetMarkdown();
+            if (!string.IsNullOrEmpty(body))
+                topic.Body = topic.StripYaml(body);
+
+            if (string.IsNullOrEmpty(topic.Link))
+            {
+                var relative = FileUtils.GetRelativePath(topic.GetTopicFileName(), topic.Project.ProjectDirectory);
+                if (!string.IsNullOrEmpty(relative))
+                {
+                    topic.Link = FileUtils.NormalizePath(relative);
+                    if (string.IsNullOrEmpty(topic.Link))
+                        topic.Link = topic.Link.Replace("\\", "/");
+                }
+            }
+
+            if (body != topic.Body)
+                await editor.SetMarkdown(topic.Body);
+
+            await window.PreviewMarkdownAsync();
+            window.TabControl.SelectedItem = tab;
+
+            return tab;
+        }
+
+        public void SetEditorWithTopic(MarkdownDocumentEditor editor, DocTopic topic, bool isUnEdited = true)
+        {
+            if (editor == null)
+                return;
+
+            if (topic == null)
+            {
+                editor.Identifier = null;
+                editor.Properties.Remove(Constants.EditorPropertyNames.KavaDocsTopic);
+                editor.Properties.Remove(Constants.EditorPropertyNames.KavaDocsUnedited);
+            }
+            else
+            {
+                editor.Identifier = "KavaDocsDocument";
+                editor.Properties[Constants.EditorPropertyNames.KavaDocsTopic] = topic;
+                editor.Properties[Constants.EditorPropertyNames.KavaDocsUnedited] = isUnEdited;
+            }
+        }
+
+        #endregion
+
+        #region Operations
         public void StartWebServer()
         {
             if (DocMonsterModel?.ActiveProject == null) return;
@@ -279,7 +376,6 @@ namespace DocMonsterAddin
         {
             SimpleHttpServer.StopHttpServerOnThread();
         }
-
 
         #endregion
 
@@ -447,6 +543,27 @@ namespace DocMonsterAddin
         }
 
 
+        public override async Task<bool> OnPreviewLinkNavigation(string url, string src)
+        {
+            if (url.StartsWith("dm-", StringComparison.OrdinalIgnoreCase) || url.StartsWith("vfps://", StringComparison.OrdinalIgnoreCase))
+            {
+                var topic = DocMonsterModel.ActiveProject.LoadTopic(url);
+                if (topic == null)
+                    return true;  // no browser bad navigation - nothing happens here
+
+                DocMonsterModel.ActiveTopic = topic;
+                
+                Model.Window.Dispatcher.Invoke(async () =>
+                {
+                    Tree.SelectTopic(topic);
+                    await OpenTopicInEditor(topic);
+                });
+
+                return true;
+            }            
+
+            return await base.OnPreviewLinkNavigation(url, src);
+        }
 
         public override bool OnCanExecute(object sender)
         {

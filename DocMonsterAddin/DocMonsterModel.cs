@@ -102,6 +102,8 @@ namespace DocMonsterAddin
 
         private DocProject _activeProject;
 
+        public DocProjectManager ProjectManager => DocProjectManager.Current;
+
 
         public DocTopic LastTopic
         {

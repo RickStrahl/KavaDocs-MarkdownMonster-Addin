@@ -19,9 +19,10 @@ namespace DocMonster
 	{
 		public static DocProjectManager Current;
 
-		public DocProject DocTopics { get; set; }
+		//public DocProject DocTopics { get; set; }
 
 		public string ErrorMessage { get; set; }
+        
 
 		static DocProjectManager()
 		{
