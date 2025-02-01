@@ -143,9 +143,7 @@ namespace DocMonster.Model
     public class UploadSettings : INotifyPropertyChanged
     {
         public string Hostname { get; set; }
-
-        private string _uploadFtpPath;
-
+        
         public string UploadFtpPath
         {
             get => _uploadFtpPath;
@@ -157,6 +155,7 @@ namespace DocMonster.Model
                 OnPropertyChanged();
             }
         }
+        private string _uploadFtpPath;
 
         public string Username { get; set; }
 
@@ -166,6 +165,12 @@ namespace DocMonster.Model
         public bool UseTls { get; set; }
 
         public bool DeleteExtraFiles { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Hostname}";
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

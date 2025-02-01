@@ -28,13 +28,15 @@ namespace DocMonsterAddin.Windows.Dialogs
     {
         public GenerateHtmlModel Model { get; }
 
-        public GenerateHtmlOutputDialog(Window owner)
+        public GenerateHtmlOutputDialog(DocProject project = null)
         {
             InitializeComponent();
             mmApp.SetThemeWindowOverride(this);
 
-            Owner = owner;
+            Owner = mmApp.Model.Window;
             Model = new GenerateHtmlModel();
+            if (project != null)
+                Model.Project = project;
 
             DataContext = Model;            
         }

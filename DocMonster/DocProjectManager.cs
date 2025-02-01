@@ -85,8 +85,10 @@ namespace DocMonster
 			return null;
 		}
 
-		public bool SaveProject(DocProject docProject, string filename)
+		public bool SaveProject(DocProject docProject, string filename = null)
 		{
+            if (string.IsNullOrEmpty(filename))
+                filename = docProject?.Filename;
 			try
 			{
 				using(new ProjectWriteLock()) 

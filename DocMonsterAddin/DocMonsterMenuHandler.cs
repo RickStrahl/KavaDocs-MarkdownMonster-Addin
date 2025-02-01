@@ -153,6 +153,16 @@ namespace DocMonsterAddin
                 Command = Model.Commands.BuildHtmlCommand
             };
             mi.Items.Add(mic);
+
+            mic = new MenuItem()
+            {
+                Header = "_Publish Project",
+                IsEnabled = true,
+                Command = Model.Commands.PublishProjectCommand
+            };
+            mi.Items.Add(mic);
+
+
             mic = new MenuItem()
             {
                 Header = "Update Output Scripts and Templates",
@@ -161,14 +171,7 @@ namespace DocMonsterAddin
             };
             mi.Items.Add(mic);
 
-            mic = new MenuItem()
-            {
-                Header = "_Publish Project",
-                IsEnabled = false
-                //Command = Model.Commands.BuildHtmlCommand
-            };
-            mi.Items.Add(mic);
-
+  
 
 
             // Settings Submenu

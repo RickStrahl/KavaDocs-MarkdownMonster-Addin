@@ -28,25 +28,84 @@
                    Width="200" VerticalAlignment="Top" />
 
             <Separator Margin="0,15,0,10" />
-            <TextBlock FontWeight="DemiBold" FontSize="20" >Generate Html Output</TextBlock>
+            <TextBlock FontWeight="DemiBold" FontSize="20" >Ftp Project Publishing</TextBlock>
         </StackPanel>
 
         <StackPanel Grid.Column="1" Margin="15 10 20 0">
-            <TextBlock Margin="0 0 0 10" Style="{DynamicResource HeaderTextBlockStyle}">Ftp Server</TextBlock>
+            <TextBlock Margin="0 0 0 10" Style="{DynamicResource HeaderTextBlockStyle}">Ftp Server Upload</TextBlock>
 
-            <Label>Host Name/Ip Address (ftp.example.com:1111)</Label>
+            <Label>
+                <TextBlock>Host Name or Ip Address
+                    <LineBreak />
+                <Run FontSize="12" FontStyle="Italic" FontWeight="Normal">ftp.example.com:1111 or 123.123.123.123:8022</Run>
+                </TextBlock>
+            </Label>
             <TextBox Text="{Binding Project.Settings.Upload.Hostname}"
                      Margin="0 4 0 15"
                      ToolTip="Server Hostname or Ip Address - can include port number (ftp.myserver.com:1111)"
-                     controls:TextBoxHelper.Watermark="ftp.exampleserver.com:1111 or 111.111.111.111:8022" />
+                     controls:TextBoxHelper.Watermark="ftp.example.com" />
 
-            <Label>Server</Label>
+            <Label>
+                <TextBlock>
+                    Server Relative Path to upload to
+                    <LineBreak />
+                    <Run FontSize="12" FontStyle="Italic" FontWeight="Normal">/ or /path/ or /path/on/the/server/</Run>
+                </TextBlock>
+            </Label>
             <TextBox Text="{Binding Project.Settings.Upload.UploadFtpPath}"
-                     Margin="0 4 0 15" 
-                     controls:TextBoxHelper.Watermark="/path/on/the/server/"/>
+                     Margin="0 4 0 15"
+                     controls:TextBoxHelper.Watermark="/ or /path/" />
 
+            <Grid Margin="0 0 0 10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="*"/>
+                    <ColumnDefinition  Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0" Margin="0 0 10 0">
+                    <Label>Username</Label>
+                    <TextBox Margin="0 4" Text="{Binding Project.Settings.Upload.Username}" />
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Margin="10 0 0 0">
+                    <Label>Password</Label>
+                    <PasswordBox Margin="0 4" 
+                             Password="{Binding Project.Settings.Upload.Password}"
+                             
+                              />
+                </StackPanel>
+            </Grid>
 
-</StackPanel>
+            <CheckBox IsChecked="{Binding Project.Settings.Upload.DeleteExtraFiles}">Delete extra server files</CheckBox>
+            <TextBlock Margin="27 7 0 10" 
+                        TextWrapping="Wrap"
+                        FontSize="12" FontStyle="Italic">
+                If checked deletes any files on the server that are not in the local folder.
+            </TextBlock>
+
+            
+            <StackPanel Margin="0,20,20,20">
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Name="ButtonCreateTopic" Margin="0,20" Height="40" FontSize="15" Width="160"
+                            HorizontalAlignment="Left"   IsDefault="True" Click="Button_Publish"  >
+                        <StackPanel Orientation="Horizontal">
+                            <fa6:ImageAwesome  Icon="Duotone_CloudArrowUp" PrimaryColor="Goldenrod" SecondaryColor="#222" SecondaryOpacity="1"  Height="20" />
+                            <TextBlock Margin="10,0,0,0">Publish</TextBlock>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Name="ButtonCancel" Margin="10,20" Height="40" FontSize="15" Width="160" 
+                            HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" >
+                        <StackPanel Orientation="Horizontal" >
+                            <fa6:ImageAwesome Icon="Solid_XMark" PrimaryColor="DarkRed" Height="15" />
+                            <TextBlock Margin="10,0,0,0">Cancel</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                
+            </StackPanel>
+        </StackPanel>
             
     </Grid>
 </controls:MetroWindow>

@@ -71,6 +71,7 @@ namespace DocMonsterAddin
 
             // Build
             Command_BuildHtml();
+            Command_PublishProject();
         }
 
         #region File Commands
@@ -490,7 +491,7 @@ namespace DocMonsterAddin
             {
                 mmApp.Model.Window.ShowStatusProgress("Generating project to Html output...");
 
-                var window = new GenerateHtmlOutputDialog(Model.Window);
+                var window = new GenerateHtmlOutputDialog(Model.ActiveProject);
                 window.Show();
 
                 //Task.Run(() =>
@@ -511,6 +512,18 @@ namespace DocMonsterAddin
             }, (p, c) => true);
         }
 
+
+        public CommandBase PublishProjectCommand { get; set; }
+
+        void Command_PublishProject()
+        {
+            PublishProjectCommand = new CommandBase((parameter, command) =>
+            {
+                var window = new PublishDialog(Model.ActiveProject);
+                window.Show();
+
+            }, (p, c) => true);
+        }
 
         public CommandBase UpdateScriptsAndTemplatesCommand { get; set; }
 
