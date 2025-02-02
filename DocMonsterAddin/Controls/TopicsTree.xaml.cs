@@ -35,12 +35,15 @@ namespace DocMonsterAddin.Controls
     {
         public TopicsTreeModel Model { get; set; }
 
-        public TopicsTree()
+        public TopicsTree(TopicsTreeModel model = null, DocProject project = null)
         {
             InitializeComponent();
             Loaded += TopicsTree_Loaded;
 
-            Model = new TopicsTreeModel(null);
+            if (model == null)
+                model = new TopicsTreeModel(project);
+
+            Model = model;
             DataContext = Model;            
         }
 
@@ -114,9 +117,11 @@ namespace DocMonsterAddin.Controls
 
         public bool HandleSelection(DocTopic topic = null, bool forceFocus = false)
         {
+
+
             // avoid double selection from here
             var ticks = DateTime.Now.Ticks;
-            if (ticks - _HandleSelectionDoubleExecTicks  < 10_000 * 100)
+            if (ticks - _HandleSelectionDoubleExecTicks < 10_000 * 100)
             {
                 return true;
             }
@@ -128,8 +133,15 @@ namespace DocMonsterAddin.Controls
             else
                 selectTopic = true;
 
+
             if (topic == null)
                 return false;
+
+            if (Model.SelectionHandler != null)
+            {
+                if (Model.SelectionHandler.Invoke(topic))
+                    return true;                
+            }
 
             //if (topic.Topics.Count > 0)
             //    topic.IsExpanded = !topic.IsExpanded;
@@ -139,11 +151,11 @@ namespace DocMonsterAddin.Controls
                 lastTopic.TopicState.IsSelected = false;
 
             kavaUi.Model.LastTopic = lastTopic;
-            
+
             bool result = SaveProjectFileForTopic(kavaUi.Model.LastTopic);
-            
             if (result)
-                kavaUi.Model.Window.ShowStatus("Topic saved.",3000);
+                kavaUi.Model.Window.ShowStatus("Topic saved.", 3000);
+            
                 
             kavaUi.Model.ActiveTopic = topic;
             

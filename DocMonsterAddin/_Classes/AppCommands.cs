@@ -15,6 +15,7 @@ using MarkdownMonster.Windows;
 using Microsoft.Win32;
 using Westwind.Utilities;
 using DocMonsterAddin.WebServer;
+using KavaDocsAddinControls;
 
 namespace DocMonsterAddin
 {
@@ -442,6 +443,10 @@ namespace DocMonsterAddin
         {
             LinkTopicDialogCommand = new CommandBase((parameter, command) =>
             {
+                var window = new TopicLinkDialog();
+                window.Show();
+
+
                 //var form = new PasteTopicBookmark();
                 //form.Owner = mmApp.Model.Window;
                 //form.ShowDialog();

@@ -18,7 +18,20 @@ namespace DocMonsterAddin.Controls
 {
     public class TopicsTreeModel : INotifyPropertyChanged
     {
-        
+
+        /// <summary>
+        /// Optional handler that can be used to override the
+        /// tree selection behavior.  The default opens the topic
+        /// in the MM editor.
+        ///
+        /// You can override to provide different behavior like
+        /// use it as a pick list.
+        ///        
+        /// </summary>
+        /// <returns>true - handled no further processing. False continue processing and opening topic in MM editor.</returns>
+        public Func<DocTopic, bool> SelectionHandler { get; set; }
+
+
         public string TopicsFilter
         {
             get { return _topicsFilter; }
