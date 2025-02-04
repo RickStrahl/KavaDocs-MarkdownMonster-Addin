@@ -3365,6 +3365,13 @@
             </summary>
             <param name="window"></param>
         </member>
+        <member name="M:MarkdownMonster.Windows.WindowUtilities.CenterWindow(System.Windows.Window,System.Windows.Window)">
+            <summary>
+            Centers a window in another window
+            </summary>
+            <param name="window"></param>
+            <param name="centerIn"></param>
+        </member>
         <member name="M:MarkdownMonster.Windows.WindowUtilities.EnsureWindowIsVisible(System.Windows.Window)">
             <summary>
             Ensures that the window rendered is visible and fitting
@@ -5723,11 +5730,14 @@
             <param name="window"></param>
         </member>
         <member name="M:MarkdownMonster.AddIns.AddinManager.AddKeyboardShortcut(MarkdownMonster.AddIns.AddInMenuItem,MarkdownMonster.AddIns.MarkdownMonsterAddin)">
-            <summary>
-            adds a keyboard 
-            </summary>
-            <param name="menuItem"></param>
-            <param name="addin"></param>
+             <summary>
+             adds a keyboard shortcut.
+            
+             Call in OnWindowLoaded or anytime AFTER that hook has fired
+             and the Main window is visible.
+             </summary>
+             <param name="menuItem"></param>
+             <param name="addin"></param>
         </member>
         <member name="M:MarkdownMonster.AddIns.AddinManager.LoadAddins(System.String,System.Boolean)">
             <summary>
@@ -6391,6 +6401,13 @@
             filename
             </summary>
             <param name="filename"></param>
+        </member>
+        <member name="M:MarkdownMonster.AddIns.MarkdownMonsterAddin.AddKeyboardShortcut(System.String,MarkdownMonster.CommandBase)">
+            <summary>
+            Adds a keyboardShortcut to the WPF main window
+            </summary>
+            <param name="keyboardShortcut"></param>
+            <param name="command"></param>
         </member>
         <member name="M:MarkdownMonster.AddIns.MarkdownMonsterAddin.AddMenuItem(System.Windows.Controls.MenuItem,System.String,MarkdownMonster.AddIns.AddMenuItemModes)">
              <summary>

@@ -10,7 +10,10 @@
              xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
              mc:Ignorable="d"                
              d:DesignHeight="300" d:DesignWidth="300">
+   
+
     <UserControl.Resources>
+        
         <windows:UriToCachedImageConverter x:Key="UriToCachedImageConverter"/>
 
         <!--<ContextMenu x:Key="TopicContextMenu" Name="TopicContextMenu">
@@ -73,7 +76,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Background="{StaticResource SidebarHeaderBackground}">
+        <Grid Background="{StaticResource SidebarHeaderBackground}" x:Name="HeaderBar" x:FieldModifier="public">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -130,12 +133,16 @@
             
         </Grid>
 
-        <TextBox Grid.Row="1" Name="TextSearchText" 
+        <Grid Grid.Row="1" Margin="5 0 0 0">
+
+            <TextBox Name="TextSearchText" x:FieldModifier="public"
                  Text="{Binding TopicsFilter,UpdateSourceTrigger=PropertyChanged,Delay=500}"
-                 FontSize="13"
-                 Opacity="0.60" controls:TextBoxHelper.Watermark="Search Topic Titles" controls:TextBoxHelper.ClearTextButton="True"
-                 ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"                 
+                 Foreground="Silver" FontWeight="SemiBold" FontSize="15"
+                 controls:TextBoxHelper.Watermark="Search Topic Titles (ctrl-f)" 
+                 controls:TextBoxHelper.ClearTextButton="True"
+                 PreviewKeyDown="TextSearch_PreviewKeyUp"            
                  BorderThickness="0"  />
+        </Grid>
 
         <!--TreeViewItem.Selected="TreeTopicBrowser_Selected"-->
         <TreeView Grid.Row="2" Name="TreeTopicBrowser" 
@@ -145,7 +152,7 @@
                   GotFocus="TreeTopicBrowser_GotFocus"
                   VirtualizingPanel.IsVirtualizing="True"        
                   ContextMenuOpening="TreeTopicBrowser_ContextMenuOpening"
-                  KeyDown="TreeViewItem_KeyDown" KeyUp="TreeViewItem_KeyUp">
+                  KeyDown="TreeViewItem_KeyDown" KeyUp="TreeViewItem_KeyUp" >
             <TreeView.InputBindings>
                 <KeyBinding Key="Delete" Command="{Binding Commands.DeleteTopicCommand }"  />
             </TreeView.InputBindings>

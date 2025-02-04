@@ -13,11 +13,12 @@ using DocMonster.Annotations;
 using DocMonster.Utilities;
 using MarkdownMonster.Windows;
 using MarkdownMonster;
+using System.Windows.Controls;
 
 namespace DocMonsterAddin.Controls
 {
     public class TopicsTreeModel : INotifyPropertyChanged
-    {
+    {        
 
         /// <summary>
         /// Optional handler that can be used to override the
@@ -26,10 +27,12 @@ namespace DocMonsterAddin.Controls
         ///
         /// You can override to provide different behavior like
         /// use it as a pick list.
-        ///        
+        /// Pass: Topic, CompleteLookup 
         /// </summary>
         /// <returns>true - handled no further processing. False continue processing and opening topic in MM editor.</returns>
-        public Func<DocTopic, bool> SelectionHandler { get; set; }
+        public Func<DocTopic, bool, bool> SelectionHandler { get; set; }
+
+        public bool NonDefaultHandTreeHandling => SelectionHandler != null;
 
 
         public string TopicsFilter
@@ -145,7 +148,7 @@ namespace DocMonsterAddin.Controls
 
         public void SelectTopic(DocTopic topic)
         {
-            var found = FindTopic(null, topic);
+            var found = FindTopicInTree(null, topic);
             if (found != null)
                 found.TopicState.IsSelected = true;    
         }
@@ -163,7 +166,7 @@ namespace DocMonsterAddin.Controls
         /// <param name="parent"></param>
         /// <param name="fullName"></param>
         /// <returns></returns>
-        public DocTopic FindTopic(DocTopic parent, DocTopic topic)
+        public DocTopic FindTopicInTree(DocTopic parent, DocTopic topic)
         {
             var topics = parent?.Topics;
             if (topics == null)
@@ -183,7 +186,7 @@ namespace DocMonsterAddin.Controls
 
                 if (ttopic.Topics != null && ttopic.Topics.Count > 0)
                 {
-                    var ftopic = FindTopic(ttopic, topic);
+                    var ftopic = FindTopicInTree(ttopic, topic);
                     if (ftopic != null)
                         return ftopic;
                 }
@@ -191,6 +194,48 @@ namespace DocMonsterAddin.Controls
 
             return null;            
         }
+
+        /// <summary>
+        /// Searches for a topic in the tree based on its title and optionally the body
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="searchText"></param>
+        /// <param name="searchBodyAlso"></param>
+        /// <returns></returns>
+        public DocTopic FindTopicInTreeByText(DocTopic parent, string searchText)
+        {
+            if (string.IsNullOrEmpty(searchText))
+                return null;
+
+
+            var topics = parent?.Topics;
+            if (topics == null)
+                topics = Project.Topics;
+
+            if (parent != null)
+            {
+                // check for root folder match
+                if (parent.Title.Equals(searchText, StringComparison.OrdinalIgnoreCase) )                    
+                    return parent;
+            }
+
+            foreach (var ttopic in topics)
+            {
+                if (ttopic.Title.Equals(searchText,StringComparison.OrdinalIgnoreCase))
+                    return ttopic;
+
+                if (ttopic.Topics != null && ttopic.Topics.Count > 0)
+                {
+                    var ftopic = FindTopicInTreeByText(ttopic, searchText);
+                    if (ftopic != null)
+                        return ftopic;
+                }
+            }
+
+            return null;
+        }
+
+
 
         public DocMonsterModel DocMonsterModel { get; }
 
@@ -206,6 +251,7 @@ namespace DocMonsterAddin.Controls
                 project.GetTopicTree();
             else
                 TopicTree = new ObservableCollection<DocTopic>();
+
         }
 
       
@@ -217,5 +263,9 @@ namespace DocMonsterAddin.Controls
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+
     }
+
+
 }

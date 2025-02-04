@@ -648,7 +648,7 @@ namespace DocMonster.Model
             {
                 if (string.IsNullOrEmpty(searchPhrase))
                     topic.TopicState.IsHidden = false;
-                else if (topic.Title.IndexOf(searchPhrase, StringComparison.CurrentCultureIgnoreCase) < 0)
+                else if (!topic.Title.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase))
                     topic.TopicState.IsHidden = true;
                 else
                     topic.TopicState.IsHidden = false;

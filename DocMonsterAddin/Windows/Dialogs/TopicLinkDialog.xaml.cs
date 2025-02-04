@@ -13,11 +13,15 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using DocMonster;
 using DocMonster.Model;
 using DocMonsterAddin.Controls;
 using LibGit2Sharp;
 using MahApps.Metro.Controls;
 using MarkdownMonster;
+using MarkdownMonster.Utilities;
+using MarkdownMonster.Windows;
+using Westwind.Utilities;
 
 namespace DocMonsterAddin.Windows.Dialogs
 {
@@ -29,39 +33,143 @@ namespace DocMonsterAddin.Windows.Dialogs
         public TopicsTree TreeTopics { get; set; }
 
         public TopicLinkModel Model { get; set; }
-        public TopicLinkDialog()
+        public TopicLinkDialog(string linkText = null)
         {
+
+            _ = ParseSearchText(linkText);
+
             InitializeComponent();
             mmApp.SetThemeWindowOverride(this);
-
             Model = new TopicLinkModel()
             {
                 Project = kavaUi.Model.ActiveProject,
-                EmbeddingType = "topic",
-                SelectedTopic = kavaUi.Model.ActiveTopic
+                EmbeddingType = "Topic Id",
+                SelectedTopic = kavaUi.Model.ActiveTopic,
+                LinkText = linkText
             };
-            var model = new TopicsTreeModel(kavaUi.Model.ActiveProject);            
-            model.SelectionHandler = (topic) =>
+
+            // load asynchronously
+            Task.Run(() =>
             {
-                Model.SelectedTopic = topic;
-                var file = topic.RenderTopicFilename.Replace(".html", "_topic-link.html");
-                topic.RenderTopicToFile(file, TopicRenderModes.Preview);
-                WebView.Source = new Uri(file);
-                return true; // don't navigate further
-            };
+                // Load a separate copy so we don't navigate the original instance
+                var project = DocProjectManager.Current.LoadProject(kavaUi.Model.ActiveProject.Filename);
+                Dispatcher.Invoke(() =>
+                {                    
+                    Model.Project = project;                    
+                    
+                    var model = new TopicsTreeModel(project);
+                    model.SelectionHandler = (topic, isComplete) =>
+                    {
+                        SelectTopicAndDisplay(topic);
+                        if (isComplete)
+                            Button_Click(ButtonOk, null);
 
+                        return true; // don't navigate further
+                    };
 
-            TreeTopics = new TopicsTree(model: model);    // set in mainline
-            TreeTopics.Visibility = Visibility.Visible;
-            TreeContainer.Children.Add(TreeTopics);
+                    // render with empty project Then fill with project after async load ^^^
+                    TreeTopics = new TopicsTree(model: model);    // set in mainline            
+                    TreeTopics.HeaderBar.Visibility = Visibility.Collapsed;
+                    TreeContainer.Children.Add(TreeTopics);
 
-            DataContext = Model;
+                    TreeTopics.SetSearchText(Model.SearchText, true);
+
+                    var topic = TreeTopics.Model.FindTopicInTreeByText(null, Model.SearchText);
+                    topic = topic ?? TreeTopics.Model.FilteredTopicTree.FirstOrDefault();                    
+                    if (topic != null)
+                    {
+                        SelectTopicAndDisplay(topic);
+                        TreeTopics.SelectTopic(topic);
+                    }
+                                   
+                },System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            });
+
+            WindowUtilities.CenterWindow(this, mmApp.Model.Window);
+
+            DataContext = Model;                      
         }
 
 
+        
+
+        /// <summary>
+        /// Parses search Text if not provided from Clipboard
+        /// </summary>
+        /// <param name="searchText"></param>
+        private async Task ParseSearchText(string searchText)
+        {
+            if (!string.IsNullOrEmpty(searchText)) {
+                Model.SearchText = searchText;
+                return;
+            }
+
+            var selection = await mmApp.Model.ActiveEditor.GetSelection();
+            if (string.IsNullOrEmpty(selection)) return;
+
+            Model.SearchText = selection;
+            Model.LinkText = selection;
+        }
+
+        public void SelectTopicAndDisplay(DocTopic topic = null)
+        {            
+            if (topic == null)
+                topic = kavaUi.Model.ActiveTopic;
+
+            if (string.IsNullOrEmpty(topic?.RenderTopicFilename))
+                return;
+
+            Model.SelectedTopic = topic;            
+            var file = topic.RenderTopicFilename.Replace(".html", "_topic-link.html");
+            topic.RenderTopicToFile(file, TopicRenderModes.Preview);
+            WebView.Source = new Uri(file);            
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (sender == null) return;
 
+            // Just to make sure!
+            Model.SearchText = TreeTopics.TextSearchText.Text;
+
+            if (sender == ButtonOk)
+            {
+                
+                var topic = Model.SelectedTopic;
+
+                string html = null;
+                if (Model.EmbeddingType.StartsWith("Topic", StringComparison.OrdinalIgnoreCase))
+                    html = $"[{Model.LinkText}](dm-topic://{topic.Id})";
+                else if (Model.EmbeddingType.Equals("Link", StringComparison.OrdinalIgnoreCase))
+                    html = $"[{Model.LinkText}](dm-slug://{topic.Slug})";
+                else if (Model.EmbeddingType.Equals("Relative Link"))
+                {
+                    var currentTopic = kavaUi.Model.ActiveTopic;
+                    var relPath = GetRelativePath("/" + currentTopic.Slug.TrimStart('/'), "/" + topic.Slug.TrimStart('/'))+ ".html";
+                    html = $"[{Model.LinkText}]({relPath})";
+                }
+                
+                else if (Model.EmbeddingType.Equals("Title", StringComparison.OrdinalIgnoreCase))
+                    html = $"[{Model.LinkText}](dm-title://{topic.Title.Replace(" ", "%20")})";
+
+
+                Close();
+
+                mmApp.Model.ActiveEditor.SetSelectionAndFocus(html).FireAndForget();                
+            }
+            else if (sender == ButtonCancel)
+            {                
+                Close();
+
+                mmApp.Model.Window.Activate();
+            }
+        }
+
+        string GetRelativePath(string fromPath, string toPath)
+        {
+            Uri fromUri = new Uri("file://" + fromPath);
+            Uri toUri = new Uri("file://" + toPath);
+            return fromUri.MakeRelativeUri(toUri).ToString();
         }
     }
 
@@ -94,13 +202,43 @@ namespace DocMonsterAddin.Windows.Dialogs
         private DocProject _project;
 
 
-        private string _embeddingType;
+        
 
+        /// <summary>
+        /// Topic Id, Link, Title
+        /// </summary>
         public string EmbeddingType
         {
             get => _embeddingType;
-            set => SetField(ref _embeddingType, value);
+            set
+            {
+                if (value == _embeddingType) return;
+                _embeddingType = value;
+                OnPropertyChanged();
+            }
         }
+        private string _embeddingType;
+
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (value == _searchText) return;
+                _searchText = value;
+                OnPropertyChanged();
+            }
+        }
+        private string _searchText;
+
+        public string LinkText
+        {
+            get => _linkText;
+            set => SetField(ref _linkText, value);
+        }
+        private string _linkText;
+
+        public string[] EmbeddingTypes { get; set; } = ["Topic Id", "Link", "Relative Link", "Title"];
 
         #region INotifiyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

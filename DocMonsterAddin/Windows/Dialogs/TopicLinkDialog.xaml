@@ -15,16 +15,17 @@
                            TitleCharacterCasing="Normal"                               
                            WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
                            Padding="4"
-                            Style="{StaticResource mmWindow}"
-                           WindowStartupLocation="CenterOwner"                                   
+                           Style="{StaticResource mmWindow}"
+                                                 
                            IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
-                           Width="800" Height="680" MinWidth="640" MinHeight="320">
+                           Width="960" Height="680" MinWidth="640" MinHeight="320">
     <mah:MetroWindow.Resources>
         <windows:InvertedBooleanConverter x:Key="InvertedBooleanConverter" />
     </mah:MetroWindow.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="5*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -33,7 +34,7 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <ToolBarPanel>
+        <ToolBarPanel Grid.ColumnSpan="3">
             <ToolBarPanel.Resources>
                 <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" TargetType="Button">
                     <Setter Property="Margin" Value="0" />
@@ -41,63 +42,76 @@
                 </Style>
             </ToolBarPanel.Resources>
             <StackPanel Orientation="Horizontal">
-                <ToolBar FontWeight="Normal">
+                <ToolBar FontWeight="Normal" FontSize="17">
+
                     <Button Name="ButtonOk"  
                       IsDefault="True"  
                       Click="Button_Click"
                       Visibility="{Binding IsFileImage, Converter={StaticResource BooleanToVisibilityConverter}}" >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome Margin="0,2,5,0" Icon="DuoTone_CircleCheck"                                             
+                            <fa6:ImageAwesome Margin="0,0,5,0" Icon="DuoTone_CircleCheck"                                             
                                         PrimaryColor="White" SecondaryColor="ForestGreen" 
-                                        SecondaryOpacity="1" Height="19" />
-                            <TextBlock  FontWeight="SemiBold" >Embed Image</TextBlock>
+                                        ToolTip="Embed link at the current document position."
+                                        SecondaryOpacity="1" Height="19"                                         
+                                              />
+                            <TextBlock  FontWeight="SemiBold" >Embed Link</TextBlock>
                         </StackPanel>
                     </Button>
-
-                  
-
 
                     <Button Name="ButtonCancel" IsCancel="True" Click="Button_Click" >
                         <StackPanel Orientation="Horizontal">
                             <fa6:FontAwesome Icon="Solid_XMark"                                             
                                        Foreground="Firebrick" FontSize="18"
-                                       Margin="0,4,5,0" />
+                                       Margin="0,0,5,0" />
                             <TextBlock>Cancel</TextBlock>
                         </StackPanel>
                     </Button>
 
+                    <Separator Margin="15 0" />
+
+                    <ComboBox x:Name="TextEmbeddingType" Width="200"                              
+                              Padding="10 0" MaxHeight="20"
+                              SelectedItem="{Binding EmbeddingType}"
+                              ItemsSource="{Binding EmbeddingTypes}"
+                    />
+
                 </ToolBar>
+
+
             </StackPanel>
         </ToolBarPanel>
 
+
+
+        <GridSplitter Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Width="7" />
+
         <wpf:WebView2 
             x:Name="WebView" 
-            Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" 
+            Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" 
             DefaultBackgroundColor="White" ZoomFactor="0.9">
-            
+
         </wpf:WebView2>
 
+        <Grid  Grid.Row="1" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Column="0" Margin="15 20 20 0" Grid.Row="0">
-            <Label>Selected Topic</Label>
-            <TextBlock x:Name="TextSelectedTopic" 
-                       Text="{Binding SelectedTopic.Title}" />
+            <StackPanel Margin="6 0 6 0" >
+                <TextBlock FontSize="9">Link Text:</TextBlock>
+                <TextBox Text="{Binding LinkText}"  
+                         Padding="5 2 0 0" 
+                         HorizontalAlignment="Stretch" Grid.Column="1"/>
+            </StackPanel>
 
-            <ComboBox x:Name="TextEmbeddingType" SelectedValue="{Binding EmbeddingType}">
-                <ComboBoxItem Tag="topic">Topic Id</ComboBoxItem>
-                <ComboBoxItem Tag="slug">Slug</ComboBoxItem>
-                <ComboBoxItem Tag="title">Encoded Title Text</ComboBoxItem>
-            </ComboBox>
-
-            <Button>Embed</Button>
-        </StackPanel>
-
-
-        <Grid x:Name="TreeContainer"  Grid.Row="1" >
-            <!--   TreeView gets injected here -->
+            <Grid x:Name="TreeContainer" Grid.Row="1">
+                <!--   TreeView gets injected here -->
+            </Grid>
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="0">
+
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
             <StatusBar  Grid.Row="2" Height="30"  VerticalAlignment="Bottom" HorizontalAlignment="Stretch" FontSize="14">
                 <StatusBar.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -120,18 +134,6 @@
                 </StatusBarItem>
                 <StatusBarItem Grid.Column="2">
                     <TextBlock Name="StatusText2" x:FieldModifier="public" HorizontalAlignment="Left"></TextBlock>
-                </StatusBarItem>
-                <StatusBarItem Grid.Column="3">
-                    <Button Name="ButtonCancelUpload"
-                            MaxHeight="20" Height="20" Margin="5 0 2 0"
-                            Padding="8 2" Click="ButtonCancelUpload_Click"
-                            BorderThickness="0" FontWeight="Normal"  HorizontalAlignment="Left"                            
-                            mah:VisibilityHelper.IsVisible="{Binding IsUploading}">
-                        <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome  Icon="Solid_XMark" PrimaryColor="Firebrick" Height="12" Margin="0 0 5 0"/>
-                            <TextBlock>Cancel</TextBlock>
-                        </StackPanel>
-                    </Button>
                 </StatusBarItem>
             </StatusBar>
         </Grid>

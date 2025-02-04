@@ -44,7 +44,8 @@ namespace DocMonsterAddin.Controls
                 model = new TopicsTreeModel(project);
 
             Model = model;
-            DataContext = Model;            
+            DataContext = Model;
+
         }
 
         private void TopicsTree_Loaded(object sender, RoutedEventArgs e)
@@ -88,7 +89,7 @@ namespace DocMonsterAddin.Controls
         {
             var lastTopic = kavaUi.Model.ActiveTopic;
 
-            var foundTopic = Model.FindTopic(null,topic);
+            var foundTopic = Model.FindTopicInTree(null,topic);
             if (foundTopic != null)
             {
                 if (lastTopic != null)
@@ -107,6 +108,18 @@ namespace DocMonsterAddin.Controls
         public void RefreshTree()
         {
             Model.RefreshTree();
+        }
+
+        public void SetSearchText(string searchText, bool selectAll = false)
+        {
+            Dispatcher.Invoke(() => {
+                TextSearchText.Text = searchText;
+                TextSearchText.Focus();
+
+                if (selectAll)
+                    TextSearchText.SelectAll();
+
+            },DispatcherPriority.Background);
         }
 
         #endregion
@@ -139,7 +152,7 @@ namespace DocMonsterAddin.Controls
 
             if (Model.SelectionHandler != null)
             {
-                if (Model.SelectionHandler.Invoke(topic))
+                if (Model.SelectionHandler.Invoke(topic,false))
                     return true;                
             }
 
@@ -197,8 +210,23 @@ namespace DocMonsterAddin.Controls
         //    }
         //}
 
+        private DateTime _lastDoubleClick;
         private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+
+            if (Model.SelectionHandler != null)
+            {
+                var ms =  (DateTime.UtcNow - _lastDoubleClick).TotalMilliseconds;
+                if (ms < 1500)
+                    return;
+
+                _lastDoubleClick = DateTime.UtcNow;
+
+                var topic = TreeTopicBrowser.SelectedItem as DocTopic;
+                if (topic != null && Model.SelectionHandler.Invoke(topic,true))
+                    return;
+            }
+
             OpenTopicInMMEditor().FireAndForget();                  
         }
 
@@ -415,7 +443,38 @@ namespace DocMonsterAddin.Controls
 
                     HandleSelection();
                 }
-            }, e, DispatcherPriority.Background, Dispatcher);
+
+            }, e, DispatcherPriority.Background, Dispatcher);            
+        }
+
+        private void TextSearch_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Tab || e.Key == Key.Down)
+            {                
+                if (TreeTopicBrowser.Items.Count > 0)
+                {
+                    DocTopic topic = null;
+                    var oldTopic = TreeTopicBrowser.SelectedItem as DocTopic;
+                    if (oldTopic != null && !oldTopic.TopicState.IsHidden)
+                        topic = oldTopic;
+                    else
+                    {
+                        // search for first non-hidden item in the root tree list!
+                        topic = Model.FilteredTopicTree.FirstOrDefault(t => !t.TopicState.IsHidden);
+                        if (topic == null)
+                            return;
+                    }
+
+                    SelectTopic(topic);
+
+                    var tvi = WindowUtilities.GetNestedTreeviewItem(topic, TreeTopicBrowser);
+                    if (tvi == null) return;
+                    TreeTopicBrowser.Focus();
+                    tvi.Focus();                    
+
+                    e.Handled = true;
+                }
+            }
         }
 
         private void TreeViewItem_KeyDown(object sender, KeyEventArgs e)
@@ -423,6 +482,9 @@ namespace DocMonsterAddin.Controls
             // Tabbing out of treeview sets focus to editor
             if (e.Key == Key.Tab || e.Key == Key.Enter)
             {
+                if (Model.NonDefaultHandTreeHandling) return; 
+
+
                 var tvi = e.OriginalSource as TreeViewItem;
                 if (tvi == null)
                     return;
@@ -440,6 +502,13 @@ namespace DocMonsterAddin.Controls
             {
                 Model.DocMonsterModel.Commands.DeleteTopicCommand.Execute(null);
             }
+            // Find
+            else if (e.Key == Key.F && Keyboard.IsKeyDown(Key.LeftCtrl) )
+            {
+                TextSearchText.Focus();
+                e.Handled = true;
+            }
+
         }
 
         public TreeViewItem GetTreeviewItem(DocTopic item)

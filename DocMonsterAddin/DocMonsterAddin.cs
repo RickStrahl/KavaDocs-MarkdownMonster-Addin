@@ -15,6 +15,7 @@ using MahApps.Metro.Controls;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using MarkdownMonster.Controls;
+using MarkdownMonster.Utilities;
 using MarkdownMonster.Windows;
 using MarkdownMonster.Windows.PreviewBrowser;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -121,7 +122,9 @@ namespace DocMonsterAddin
             MenuItems.Add(menuItem);
 
         
-        }      
+        }
+
+        
 
 
         /// <summary>
@@ -241,6 +244,10 @@ namespace DocMonsterAddin
         {     
             if (kavaUi.Configuration.AutoOpen)
                 OnExecute(null);
+            
+            AddKeyboardShortcut("Alt+K", DocMonsterModel.Commands.LinkTopicDialogCommand);
+            
+
             return Task.CompletedTask;
         }
 
