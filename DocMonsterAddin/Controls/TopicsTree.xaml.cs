@@ -85,25 +85,7 @@ namespace DocMonsterAddin.Controls
             Model.DocMonsterModel.Configuration.AddRecentProjectItem(project.Filename,projectTitle: project.Title);
         }
 
-        public void SelectTopic(DocTopic topic)
-        {
-            var lastTopic = kavaUi.Model.ActiveTopic;
-
-            var foundTopic = Model.FindTopicInTree(null,topic);
-            if (foundTopic != null)
-            {
-                if (lastTopic != null)
-                    lastTopic.TopicState.IsSelected = false;
-
-                foundTopic.TopicState.IsSelected = true;
-                var parent = foundTopic.Parent;
-                while (parent != null)
-                {                    
-                    parent.IsExpanded = true;
-                    parent = parent.Parent;
-                }
-            }
-        }
+  
 
         public void RefreshTree()
         {
@@ -128,7 +110,42 @@ namespace DocMonsterAddin.Controls
 
         private long _HandleSelectionDoubleExecTicks;
 
-        public bool HandleSelection(DocTopic topic = null, bool forceFocus = false)
+        /// <summary>
+        /// Selects a topic in the treeview by making the topic
+        /// selected and then ensuring it's visible.
+        ///
+        /// This method does not update the topic in the editor or
+        /// update the preview, or save the previous topic - if you
+        /// need this behavior use HandleSelection() instead.
+        /// </summary>
+        /// <param name="topic"></param>
+        public void SelectTopic(DocTopic topic)
+        {
+            var lastTopic = kavaUi.Model.ActiveTopic;
+
+            var foundTopic = Model.FindTopicInTree(null, topic);
+            if (foundTopic != null)
+            {
+                if (lastTopic != null)
+                    lastTopic.TopicState.IsSelected = false;
+
+                foundTopic.TopicState.IsSelected = true;
+                var parent = foundTopic.Parent;
+                while (parent != null)
+                {
+                    parent.IsExpanded = true;
+                    parent = parent.Parent;
+                }
+            }
+        }
+        /// <summary>
+        /// Selects a new topic updates the editor and preview.
+        /// This method is more complete than SetSelection()
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <param name="forceFocus"></param>
+        /// <returns></returns>
+        public async Task<bool> HandleSelection(DocTopic topic = null, bool forceFocus = false, bool dontSaveProject = false)
         {
 
             // avoid double selection from here
@@ -163,13 +180,20 @@ namespace DocMonsterAddin.Controls
 
             kavaUi.Model.LastTopic = lastTopic;
 
-            bool result = SaveProjectFileForTopic(kavaUi.Model.LastTopic);
-            if (result)
-                kavaUi.Model.Window.ShowStatus("Topic saved.", 3000);
+            // TODO: This doesn't seem to work correctly - saves, but also affects
+            //       the new topic.
+            // Save the previously active topic 
+            //if (!dontSaveProject)
+            //{
+                
+            //    bool result = await SaveProjectFileForTopic(kavaUi.Model.LastTopic);
+            //    if (result)
+            //        kavaUi.Model.Window.ShowStatus("Topic saved.", 3000);
+            //}
             
                 
             kavaUi.Model.ActiveTopic = topic;
-            
+
             // TODO: Move to function
             if (kavaUi.Model.RecentTopics.Contains(topic))
                 kavaUi.Model.RecentTopics.Remove(topic);
@@ -237,7 +261,7 @@ namespace DocMonsterAddin.Controls
         /// <param name="project"></param>
         /// <param name="async"></param>
         /// <returns>false if data wasn't written (could be because there's nothing that's changed)</returns>
-        public bool SaveProjectFileForTopic(DocTopic topic, DocProject project = null, bool async = false)
+        public async Task<bool> SaveProjectFileForTopic(DocTopic topic, DocProject project = null, bool async = false)
         {
             if (topic == null)
                 return false;
@@ -248,14 +272,13 @@ namespace DocMonsterAddin.Controls
             if (project == null)
                 project = kavaUi.Model.ActiveProject;
 
-
             if (async)
             {
                 project.SaveProjectAsync();
                 topic.TopicState.IsDirty = false;
                 return true;
             }
-
+           
             bool result =  project.SaveProject();
             if (result)
                 topic.TopicState.IsDirty = false;
@@ -533,7 +556,7 @@ namespace DocMonsterAddin.Controls
 
         public CommandBase MoveTopicCommand { get; set; }
 
-        private void TreeViewItem_MouseDown(object sender, MouseButtonEventArgs e)
+        private async void TreeViewItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
 
             var topic = (e.OriginalSource as FrameworkElement)?.DataContext as DocTopic;
@@ -542,8 +565,8 @@ namespace DocMonsterAddin.Controls
 
             if (e.ChangedButton == MouseButton.Left)
                 _lastMouseDownPoint = e.GetPosition(TreeTopicBrowser);
-
-            if (!HandleSelection(topic))
+            
+            if (!await HandleSelection(topic))
                 return;
 
             if (TreeTopicBrowser.SelectedItem is DocTopic)

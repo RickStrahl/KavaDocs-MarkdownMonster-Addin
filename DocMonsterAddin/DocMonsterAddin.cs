@@ -425,8 +425,7 @@ namespace DocMonsterAddin
             if (topic != null && Model.ActiveEditor != null)
             {               
                 var md = await Model.ActiveEditor.GetMarkdown();
-                if(md != null)
-                    topic.Body = md;
+                topic.Body = md ?? string.Empty;
 
                 Model.ActiveEditor.Properties[Constants.EditorPropertyNames.KavaDocsUnedited] = false;
             }            

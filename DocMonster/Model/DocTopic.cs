@@ -251,7 +251,7 @@ namespace DocMonster.Model
         {
             get
             {
-                if (string.IsNullOrEmpty(_body))
+                if (_body == null)
                     LoadTopicFile();
 
                 return _body;

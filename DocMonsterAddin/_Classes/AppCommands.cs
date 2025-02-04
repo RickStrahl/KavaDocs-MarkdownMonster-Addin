@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Threading;
 using DocMonster;
 using DocMonster.Configuration;
+using DocMonster.Model;
 using DocMonster.Utilities;
 using DocMonster.Windows.Dialogs;
 using DocMonsterAddin.Core.Configuration;
@@ -304,7 +305,7 @@ namespace DocMonsterAddin
 
         public void Command_DeleteTopic()
         {
-            DeleteTopicCommand = new CommandBase( (parameter, command) =>
+            DeleteTopicCommand = new CommandBase( async (parameter, command) =>
             {
                 if (!mmApp.Model.IsEditorActive)
                     return;
@@ -329,21 +330,27 @@ namespace DocMonsterAddin
                 Model.ActiveProject.SaveProjectAsync();
 
                 var parent = topic.Parent;
+
+                DocTopic newTopic = null;
                 if (parent != null)
                 {
                     if (topicIndex < 1)
-                        parent.TopicState.IsSelected = true;
+                        newTopic = parent; //Model.TopicsTree.SelectTopic(parent);
                     else
-                        parent.Topics[topicIndex - 1].TopicState.IsSelected = true;
+                        newTopic = parent.Topics[topicIndex - 1]; // Model.TopicsTree.SelectTopic(parent.Topics[topicIndex - 1]);
                 }
                 // root topic / project
                 else
                 {
                     if (topicIndex > -0)
-                        parentTopics[topicIndex - 1].TopicState.IsSelected = true;
+                        newTopic = parentTopics[topicIndex - 1];  // Model.TopicsTree.SelectTopic(parentTopics[topicIndex - 1]);
                 }
 
-                Model.TopicsTree.Dispatcher.Delay(300,(p) => Model.TopicsTree.TreeTopicBrowser.Focus(), DispatcherPriority.ApplicationIdle);
+                if (newTopic != null)
+                {
+                    Model.TopicsTree.HandleSelection(newTopic, dontSaveProject: true);
+         
+                }
             });
         }
 
