@@ -89,14 +89,16 @@ namespace DocMonster.Templates
             StringBuilder sb = new StringBuilder();
             sb.Append($@"
 <table class='detailtable' {tableAttributes}>
+<thead>
 <tr><th colspan='2'>{memberLabel}</th><th>{descriptionLabel}</th></tr>
+</thead>
+<tbody>
             ");
 
             
             bool alternate = false;
             foreach (var childTopic in childTopics)
             {
-                
 
                 sb.AppendLine("<tr" + (alternate ? " class='alternaterow'>" : ">"));
 
@@ -133,7 +135,7 @@ namespace DocMonster.Templates
 
                 alternate = !alternate;
             }
-            sb.AppendLine("</table>");
+            sb.AppendLine("<tbody>\n</table>");
 
 
             return new RawString(sb.ToString());

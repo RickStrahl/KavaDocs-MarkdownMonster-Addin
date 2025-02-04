@@ -557,7 +557,8 @@ namespace DocMonster.Model
                 script.AllowedInstances.Add("Topic", topic);
                 script.AllowedInstances.Add("Project", topic.Project);
                 script.AllowedInstances.Add("Helpers", model.Helpers);
-                script.AllowedInstances.Add("Configuration", model.Configuration);                
+                script.AllowedInstances.Add("Configuration", model.Configuration);
+                
 
                 if (html.Contains("{{"))
                     html = script.Evaluate(html, true);

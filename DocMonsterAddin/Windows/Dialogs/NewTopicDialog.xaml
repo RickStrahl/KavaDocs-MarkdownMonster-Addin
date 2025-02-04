@@ -1,20 +1,19 @@
-﻿<controls:MetroWindow  x:Class="DocMonster.Windows.Dialogs.NewTopicDialog"
+﻿<mah:MetroWindow  x:Class="DocMonster.Windows.Dialogs.NewTopicDialog"
+                  Style="{StaticResource mmWindow}"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
-        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"        
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"        
         xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
         xmlns:model="clr-namespace:DocMonster.Model;assembly=DocMonster"
         mc:Ignorable="d"
         Icon="../../Assets/Icon_128.png"                    
         Title="New Topic"
-        TitleCharacterCasing="Normal"                      
         WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
-                       Padding="4"
-        WindowStartupLocation="CenterOwner"                                   
+        Padding="4"                                          
         IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
-        Width="800" Height="630" MinWidth="640" MinHeight="320">
+        Width="800" Height="570" MinWidth="640" MinHeight="570" MaxHeight="570">
     <Grid>
         
         <Grid.ColumnDefinitions>
@@ -33,7 +32,7 @@
         <StackPanel Margin="0,20,20,20" Grid.Column="1">
             <TextBox Name="TextTopicTitle" Text="{Binding Topic.Title,UpdateSourceTrigger=PropertyChanged}"  
                      Style="{StaticResource HeaderTextBoxStyle}" 
-                     controls:TextBoxHelper.Watermark="New Topic Title" 
+                     mah:TextBoxHelper.Watermark="New Topic Title" 
                      KeyUp="TextTopicTitle_KeyUp"
                      />
 
@@ -104,10 +103,12 @@
             </StackPanel>
 
             <Label Margin="0,10,0,0">Slug</Label>
-            <TextBox Text="{Binding Topic.Slug}"  Padding="3"></TextBox>
+            <TextBox Text="{Binding Topic.Slug}"  Padding="3" 
+                     mah:TextBoxHelper.Watermark="Fixed display slug for output file generation"/>
 
             <Label Margin="0,10,0,0">Link</Label>
-            <TextBox Text="{Binding Topic.Link}"  Padding="3"></TextBox>
+            <TextBox Text="{Binding Topic.Link}"  Padding="3"                      
+                    mah:TextBoxHelper.Watermark="Markdown file name for body content"/>
 
             <!--<CheckBox  Margin="0,4,0,0" IsEnabled="{Binding IsHeaderTopic}" 
                        Content="Create  topic in new folder"                       
@@ -117,7 +118,7 @@
                 <Button Name="ButtonCreateTopic" Margin="0,20" Height="40" FontSize="15" Width="160"
                         HorizontalAlignment="Left"   IsDefault="True" Click="Button_CreateTopicClick"  >
                     <StackPanel Orientation="Horizontal">
-                        <fa6:ImageAwesome  Icon="Solid_FolderGear"  Foreground="#FF0E7E28"  />
+                        <fa6:ImageAwesome  Icon="DuoTone_CirclePlus"  PrimaryColor="White" SecondaryColor="ForestGreen" Height="19"  />
                         <TextBlock Margin="10,0,0,0">Create Topic</TextBlock>
                     </StackPanel>
                 </Button>
@@ -125,7 +126,7 @@
                 <Button Name="ButtonCancel" Margin="10,20" Height="40" FontSize="15" Width="160" 
                         HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" >
                     <StackPanel Orientation="Horizontal" >
-                        <fa6:ImageAwesome Icon="Solid_XMark"  Foreground="DarkRed"  />
+                        <fa6:ImageAwesome Icon="Solid_XMark"  PrimaryColor="Firebrick"  Height="15"/>
                         <TextBlock Margin="10,0,0,0">Cancel</TextBlock>
                     </StackPanel>
                 </Button>
@@ -133,4 +134,4 @@
 
         </StackPanel>
     </Grid>
-</controls:MetroWindow>
+</mah:MetroWindow>

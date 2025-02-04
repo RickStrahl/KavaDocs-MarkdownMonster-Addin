@@ -35,11 +35,9 @@ namespace DocMonster.Windows.Dialogs
             InitializeComponent();
             mmApp.SetThemeWindowOverride(this);
 
-            Owner = window;
             AppModel = kavaUi.Model;
             Window = kavaUi.Model.Window;
             
-
             ProjectCreator = new DocProjectCreator()
             {
                 Owner = kavaUi.Configuration.LastProjectCompany
@@ -49,7 +47,8 @@ namespace DocMonster.Windows.Dialogs
 
             Loaded += NewProjectDialog_Loaded;
             Closing += NewProjectDialog_Closing;
-         
+
+            WindowUtilities.CenterWindow(this, window);
         }
 
         private void NewProjectDialog_Closing(object sender, System.ComponentModel.CancelEventArgs e)

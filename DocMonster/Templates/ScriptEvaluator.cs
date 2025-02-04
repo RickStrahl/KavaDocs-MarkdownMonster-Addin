@@ -2,9 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Windows.Controls;
-using ControlzEx.Standard;
-using Microsoft.CodeAnalysis.Scripting;
 using Westwind.Scripting;
 using Westwind.Utilities;
 
@@ -34,13 +31,16 @@ namespace DocMonster.Templates
         /// <summary>
         /// Instances that are allowed to be used in expressions. Specify the instance
         /// name that is in scope in expressions (ie. {{ Project.Title }}) == "Project")
-        /// and the actual instance.
+        /// and the actual instance.                
         /// </summary>
         public Dictionary<string, object> AllowedInstances { get;  } = new Dictionary<string, object>();
 
         /// <summary>
         /// Optional - Default expressions instance if the expression is not providing an
         /// instance prefix.
+        ///
+        /// This key value pair has to match one of the items in the AllowedInstances so
+        /// you are mapping the non-prefixed to an actual instance.
         /// </summary>
         public KeyValuePair<string, object> DefaultInstance { get; set; }
 
@@ -137,12 +137,11 @@ namespace DocMonster.Templates
                             result = ReflectionUtils.CallMethodEx(instance.Value, method, ar);
                             return result;
                         }
-                        else
-                            return ReflectionUtils.CallMethodEx(instance.Value, method);
-
+                       
+                        return ReflectionUtils.CallMethodEx(instance.Value, method);
                     }
-                    else
-                        return ReflectionUtils.GetProperty(instance.Value, member);
+                    
+                    return ReflectionUtils.GetProperty(instance.Value, member);
                 }
 
             }
@@ -202,39 +201,6 @@ namespace DocMonster.Templates
             }
 
             return result;
-
-            //List<string> result = new List<string>();
-            //if (string.IsNullOrEmpty(parameterString))
-            //    return result;
-
-            //int parenthesesCount = 0;
-            //var currentParam = new List<char>();
-
-            //foreach (char ch in parameterString)
-            //{
-            //    if (ch == ',' && parenthesesCount == 0)
-            //    {
-            //        result.Add(new string(currentParam.ToArray()).Trim());
-            //        currentParam.Clear();
-            //    }
-            //    else
-            //    {
-            //        if (ch == '(')
-            //            parenthesesCount++;
-            //        else if (ch == ')')
-            //            parenthesesCount--;
-
-            //        currentParam.Add(ch);
-            //    }
-            //}
-
-            //// Add the last parameter
-            //if (currentParam.Count > 0)
-            //{
-            //    result.Add(new string(currentParam.ToArray()).Trim());
-            //}
-
-            //return result;
         }
 
 
@@ -270,7 +236,7 @@ namespace DocMonster.Templates
                 var tokens = code.Split('.');
                 if (tokens.Length < 2)
                 {
-                    if (string.IsNullOrEmpty(DefaultInstance.Key))
+                    if (!string.IsNullOrEmpty(DefaultInstance.Key))
                         item.Instance = DefaultInstance.Key;
                     else
                         item.DontProcess = true;

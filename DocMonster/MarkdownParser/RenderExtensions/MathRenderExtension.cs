@@ -23,6 +23,7 @@ public class MathRenderExtension : IMarkdownRenderExtension
     /// <param name="args"></param>
     public void AfterMarkdownRendered(ModifyHtmlAndHeadersArguments args)
     {
+        if (string.IsNullOrEmpty(args.Markdown)) return;
       
         if (mmApp.Configuration.Markdown.UseMathematics &&
             (args.Html.Contains(" class=\"math\"") || args.Markdown.Contains("useMath: true")))

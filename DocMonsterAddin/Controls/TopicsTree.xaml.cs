@@ -131,13 +131,11 @@ namespace DocMonsterAddin.Controls
         public bool HandleSelection(DocTopic topic = null, bool forceFocus = false)
         {
 
-
             // avoid double selection from here
             var ticks = DateTime.Now.Ticks;
             if (ticks - _HandleSelectionDoubleExecTicks < 10_000 * 100)
-            {
                 return true;
-            }
+
             _HandleSelectionDoubleExecTicks = ticks;
 
             bool selectTopic = false;

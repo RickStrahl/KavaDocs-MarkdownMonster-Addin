@@ -269,7 +269,7 @@ namespace DocMonsterAddin
         #endregion
 
         #region Editor Operations
-        public async Task<TabItem> OpenTopicInEditor(DocTopic topic = null)
+        public async Task<TabItem> OpenTopicInEditor(DocTopic topic = null, bool setFocus = false)
         {
 
             if (topic == null)
@@ -338,6 +338,11 @@ namespace DocMonsterAddin
 
             await window.PreviewMarkdownAsync();
             window.TabControl.SelectedItem = tab;
+
+            if (setFocus)
+            {
+                await editor.SetEditorFocus();               
+            }
 
             return tab;
         }

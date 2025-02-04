@@ -9,6 +9,8 @@ using DocMonster.Model;
 using DocMonsterAddin;
 using DocMonsterAddin.Controls;
 using MarkdownMonster;
+using MarkdownMonster.Utilities;
+using MarkdownMonster.Windows;
 using Westwind.Utilities;
 
 namespace DocMonster.Windows.Dialogs
@@ -131,13 +133,15 @@ namespace DocMonster.Windows.Dialogs
             InitializeComponent();
             mmApp.SetThemeWindowOverride(this);
 
-            Owner = window;
+            //Owner = window;
             Window = window;
             AppModel = kavaUi.Model;
 
             Topic = new DocTopic(AppModel.ActiveProject);
 
             Loaded += NewTopicDialog_Loaded;
+
+            WindowUtilities.CenterWindow(this, window);
         }
         
 
@@ -207,13 +211,11 @@ namespace DocMonster.Windows.Dialogs
             {
                 Topic.ParentId = null;
                 Topic.Parent = null;
-                AppModel.ActiveProject.Topics.Add(Topic);
-                  
+                AppModel.ActiveProject.Topics.Add(Topic);                  
             }
 
-            Topic.Body = "# " + Topic.Title;
+            Topic.Body = "*Type your " + Topic.Title + " text here.*";
             Topic.SaveTopicFile();
-
             AppModel.ActiveTopic = Topic;
 
 
@@ -222,20 +224,28 @@ namespace DocMonster.Windows.Dialogs
             AppModel.ActiveProject.SaveProject();
 
 
-            Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(async () =>
             {
+                
+
                 // HACK: Filtered Collection won't update on its own
                 AppModel.TopicsTree.Model.OnPropertyChanged(nameof(TopicsTreeModel.FilteredTopicTree));
                 //CollectionViewSource.GetDefaultView(Window.TopicsTree.Model.FilteredTopicTree).Refresh();
 
                 Topic.TopicState.IsSelected = true;
-            
+
                 //AppModel.Window.PreviewMarkdownAsync();
                 //Dispatcher.InvokeAsync(() =>
                 //        AppModel.TopicsTree.OpenTopicInMMEditor(Topic),
                 //        System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+                await AppModel.Addin.OpenTopicInEditor(Topic, true);
 
-                AppModel.TopicsTree.OpenTopicInMMEditor(Topic).FireAndForget();
+                await AppModel.ActiveMarkdownEditor.SetSelectionRange(0, 0, 1, 9999);
+                //await AppModel.ActiveMarkdownEditor.SetEditorFocus();
+
+
+
+
             },System.Windows.Threading.DispatcherPriority.ApplicationIdle);
 
             return Topic;

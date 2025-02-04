@@ -1,4 +1,5 @@
 ﻿<controls:MetroWindow  x:Class="DocMonster.Windows.Dialogs.NewProjectDialog"
+                       Style="{StaticResource mmWindow}"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,11 +7,9 @@
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
         mc:Ignorable="d"
-        Title="New Kava Docs Project" 
-        TitleCharacterCasing="Normal"
-        TitleBarHeight="34"                       
-        WindowStyle="SingleBorderWindow"  ResizeMode="CanResize"
-        WindowStartupLocation="CenterOwner"
+        Title="New Documentation Monster Project"                      
+        WindowStyle="SingleBorderWindow"  
+        ResizeMode="CanResize"
         Icon="../../Assets/icon_128.png"                                           
         Height="500" Width="800" >
     <Grid>
@@ -27,16 +26,16 @@
                     <Button Name="ButtonOk" 
                         HorizontalAlignment="Left"   IsDefault="True" Click="Button_CreateProjectClick"  >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome Icon="Solid_Gear"  PrimaryColor="ForestGreen" Height="22" />
-                            <TextBlock Margin="5,0,5,0" >Create Project</TextBlock>
+                            <fa6:ImageAwesome Icon="Solid_Gear"  PrimaryColor="ForestGreen" Height="19" />
+                            <TextBlock Margin="7,0,5,0" >Create Project</TextBlock>
                         </StackPanel>
                     </Button>
 
                     <Button Name="ButtonCancel" 
                         HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome Icon="Solid_XMark"  PrimaryColor="Firebrick"  Height="20"/>
-                            <TextBlock Margin="5,0,5,0">Cancel</TextBlock>
+                            <fa6:ImageAwesome Icon="Solid_XMark"  PrimaryColor="Firebrick"  Height="15"/>
+                            <TextBlock Margin="7,0,5,0">Cancel</TextBlock>
                         </StackPanel>
                     </Button>
               

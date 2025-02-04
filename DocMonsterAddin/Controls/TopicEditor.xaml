@@ -118,10 +118,14 @@
                 </Grid>
 
                 <Label Margin="0,6,0,0">Slug:</Label>
-                <TextBox Name="TextSlug"  Text="{Binding DocMonsterModel.ActiveTopic.Slug}" />
+                <TextBox Name="TextSlug"  Text="{Binding DocMonsterModel.ActiveTopic.Slug}"
+                         controls:TextBoxHelper.Watermark="Fixed display slug for output file generation"
+                         />
 
                 <Label Margin="0,6,0,0">Link:</Label>
-                <TextBox Name="TextLink"  Text="{Binding DocMonsterModel.ActiveTopic.Link}" />
+                <TextBox Name="TextLink"  Text="{Binding DocMonsterModel.ActiveTopic.Link}"
+                         controls:TextBoxHelper.Watermark="Markdown file name for body content"
+                         />
 
                 <Label Margin="0,6,0,0">Keywords: (comma delimited)</Label>
                 <TextBox Name="TextKeywords"  Text="{Binding DocMonsterModel.ActiveTopic.Keywords}" />
