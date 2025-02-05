@@ -3481,7 +3481,7 @@
             <param name="dispatcher"></param>
             <returns></returns>
         </member>
-        <member name="M:MarkdownMonster.Windows.WindowUtilities.FixFocus(System.Windows.Window,System.Windows.Controls.Control)">
+        <member name="M:MarkdownMonster.Windows.WindowUtilities.FixFocus(System.Windows.DependencyObject,System.Windows.Controls.Control)">
             <summary>
             Forces lost focus on the active control in a Window to force the selected control
             to databind.
@@ -3489,7 +3489,7 @@
             latest control state of the active control because it doesn't know focus has
             changed. This forces the active control to unbind       
             </summary>
-            <param name="window">Active window</param>
+            <param name="formParentControl">Parent control that hosts the 'form' - typically Window or UserControl/control</param>
             <param name="control">Control to force focus to briefly to force active control to bind</param>
         </member>
         <member name="M:MarkdownMonster.Windows.WindowUtilities.FindVisualChild``1(System.Windows.DependencyObject)">

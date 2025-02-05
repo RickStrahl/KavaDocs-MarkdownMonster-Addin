@@ -81,7 +81,7 @@ namespace DocMonster.Templates
             var childTopics = Topic.Topics.Where(t => GenericUtils.Inlist(t.DisplayType, "classproperty", "classmethod",
                 "classevent", "classfield", "classconstructor")).ToList();
 
-
+            
             if (childTopics.Count < 1)
                 return new RawString(string.Empty);
             
@@ -99,6 +99,7 @@ namespace DocMonster.Templates
             bool alternate = false;
             foreach (var childTopic in childTopics)
             {
+                childTopic.TopicState.IsPreview = Topic.TopicState.IsPreview;
 
                 sb.AppendLine("<tr" + (alternate ? " class='alternaterow'>" : ">"));
 
@@ -106,12 +107,12 @@ namespace DocMonster.Templates
                 if (childTopic.ClassInfo.Scope == "protected")
                     icon += "protected";
 
-                sb.AppendLine($"\t<td class='col-icon'><img src='~/kavadocs/icons/{icon}.png' />");
+                sb.AppendLine($"\t<td class='col-icon'><img src=\"~/_kavadocs/icons/{icon}.png\" />");
                 if (childTopic.ClassInfo.IsStatic)
-                    sb.Append("<img src='~/_kavadocs/icons/static.gif'/>");
+                    sb.Append("<img src=\"~/_kavadocs/icons/static.png\"/>");
                 sb.AppendLine("\t</td>");
 
-                string link = childTopic.GetTopicLink(WebUtility.HtmlEncode(childTopic.Title));
+                string link = childTopic.GetTopicLink(WebUtility.HtmlEncode(childTopic.ClassInfo?.MemberName));
 
                 sb.AppendLine($"\t<td>{link}</td>");
                 sb.AppendLine($"\t<td class='col-detail'>{HtmlUtils.HtmlAbstract(childTopic.Body, 200)}");

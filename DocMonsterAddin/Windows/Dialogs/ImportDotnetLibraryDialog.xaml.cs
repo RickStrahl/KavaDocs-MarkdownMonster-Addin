@@ -50,7 +50,7 @@ namespace DocMonsterAddin.Windows.Dialogs
 
             Model.AssemblyPath =
                 @"C:\projects2010\Westwind.Utilities\Westwind.Utilities\bin\Release\net46\Westwind.Utilities.dll";
-
+                
             DataContext = Model;
 
             TopicPicker.SelectTopic(Model.AddinModel.ActiveTopic);
@@ -59,6 +59,7 @@ namespace DocMonsterAddin.Windows.Dialogs
 
             StatusBar = new StatusBarHelper(StatusText, StatusIcon);
 
+            WindowUtilities.CenterWindow(this, mmApp.Model.Window);
         }
 
         

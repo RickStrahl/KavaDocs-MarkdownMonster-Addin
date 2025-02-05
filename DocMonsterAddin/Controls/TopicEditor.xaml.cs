@@ -1,8 +1,10 @@
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using DocMonster.Model;
 using MarkdownMonster;
+using MarkdownMonster.Utilities;
 using MarkdownMonster.Windows;
 
 namespace DocMonsterAddin.Controls
@@ -23,19 +25,25 @@ namespace DocMonsterAddin.Controls
             InitializeComponent();
             Model = new TopicEditorModel();
             DataContext = Model;
-            Loaded += TopicEditor_Loaded;               
+            Loaded += TopicEditor_Loaded;
+
+            Model.DocMonsterModel.ActiveTopic.PropertyChanged += OnActiveTopicOnPropertyChanged;
+            Unloaded += (s, e) => Model.DocMonsterModel.ActiveTopic.PropertyChanged -= OnActiveTopicOnPropertyChanged;            
         }
+
+        private DebounceDispatcher _debounce = new DebounceDispatcher();
+
+        private void OnActiveTopicOnPropertyChanged(object s, PropertyChangedEventArgs e)
+        {
+            _debounce.Debounce(800,(p)=>kavaUi.Model.Addin.RefreshPreview());
+        }
+
 
         private void TopicEditor_Loaded(object sender, RoutedEventArgs e)
         {            
             //kavaUi.AddinModel.PropertyChanged += AddinModel_PropertyChanged;            
         }
 
-        public void LoadTopic(DocTopic topic)
-        {
-            Model.DocMonsterModel.ActiveTopic = topic;
-            topic.TopicState.IsSelected = true;
-        }
 
         #endregion
 
@@ -62,6 +70,8 @@ namespace DocMonsterAddin.Controls
             if (!topic.TopicState.IsDirty)
                 return false;
 
+            WindowUtilities.FixFocus(this, TextSortOrder);
+
             if (!string.IsNullOrEmpty(topic.TopicState.OldLink) && topic.TopicState.OldLink != topic.Link)
             {
                 if (MessageBox.Show(
@@ -79,11 +89,13 @@ namespace DocMonsterAddin.Controls
 
             }
 
-
             if (project == null)
                 project = kavaUi.Model.ActiveProject;
 
             project.SaveProjectAsync();
+
+            Model.DocMonsterModel.Addin.RefreshPreview();
+
             return true;            
         }
 

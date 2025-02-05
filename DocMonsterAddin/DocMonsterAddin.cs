@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DocMonster;
+using DocMonster.Annotations;
 using DocMonster.Configuration;
 using DocMonster.Model;
 using DocMonsterAddin.Controls;
@@ -20,6 +21,7 @@ using MarkdownMonster.Windows;
 using MarkdownMonster.Windows.PreviewBrowser;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Westwind.Utilities;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DocMonsterAddin
 {
@@ -97,7 +99,6 @@ namespace DocMonsterAddin
             var menuItem = new AddInMenuItem(this)
             {
                 Caption = Name,
-              
             };
 
             try
@@ -693,7 +694,7 @@ namespace DocMonsterAddin
         //            {
         //                dynamic dom = webBrowser.Document;
         //                //var content = dom.getElementById("MainContent");
-                        
+
         //                if (string.IsNullOrEmpty(renderedHtml))
         //                    PreviewTopic(false, false); // fully reload document
         //                else
@@ -738,6 +739,7 @@ namespace DocMonsterAddin
         //    {
         //    }
         //}
+
 
 
         public void PreviewTopicExternal()

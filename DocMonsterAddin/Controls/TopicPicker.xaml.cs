@@ -7,6 +7,9 @@ using DocMonster;
 using DocMonster.Model;
 using DocMonsterAddin;
 using DocMonsterAddin.Controls;
+using MarkdownMonster;
+using MarkdownMonster.Utilities;
+using MarkdownMonster.Windows;
 
 namespace KavaDocsAddinControls
 {
@@ -34,6 +37,7 @@ namespace KavaDocsAddinControls
             
             
             DataContext = Model;
+
         }
 
 

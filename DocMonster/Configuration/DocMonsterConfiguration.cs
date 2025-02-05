@@ -82,6 +82,8 @@ namespace DocMonster.Configuration
         /// </summary>
         public bool AutoOpen { get; set; }
 
+        public bool CloseTopicsOnDeselection { get; set; }
+
         /// <summary>
         /// Determines how topics are rendered either using the default Markdown Monster template
         /// or the Topic Template

@@ -155,6 +155,8 @@ namespace DocMonsterAddin.Controls
 
             _HandleSelectionDoubleExecTicks = ticks;
 
+            var editor = Model.DocMonsterModel?.ActiveMarkdownEditor;
+
             bool selectTopic = false;
             if (topic == null)
                 topic = TreeTopicBrowser.SelectedItem as DocTopic;
@@ -176,22 +178,36 @@ namespace DocMonsterAddin.Controls
 
             var lastTopic = kavaUi.Model.ActiveTopic;
             if (lastTopic != null)
+            {
                 lastTopic.TopicState.IsSelected = false;
-
+                if (editor != null)
+                {
+                    var md = await editor.GetMarkdown();
+                    if (md != null)
+                    {
+                        if(lastTopic.SaveTopicFile(md))
+                           await editor.SetDirty(false);
+                    }
+                    if (Model.DocMonsterModel.Configuration.CloseTopicsOnDeselection)
+                        await mmApp.Model.Window.CloseTab(editor.MarkdownDocument.Filename);
+                }
+            }
             kavaUi.Model.LastTopic = lastTopic;
+
+            
 
             // TODO: This doesn't seem to work correctly - saves, but also affects
             //       the new topic.
             // Save the previously active topic 
             //if (!dontSaveProject)
             //{
-                
+
             //    bool result = await SaveProjectFileForTopic(kavaUi.Model.LastTopic);
             //    if (result)
             //        kavaUi.Model.Window.ShowStatus("Topic saved.", 3000);
             //}
-            
-                
+
+
             kavaUi.Model.ActiveTopic = topic;
 
             // TODO: Move to function

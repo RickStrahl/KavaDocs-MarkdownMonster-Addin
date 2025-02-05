@@ -129,6 +129,7 @@ namespace DocMonster.Importer
                 Remarks = obj.Remarks,
                 Example = obj.Example,
                 SeeAlso = obj.SeeAlso,
+               
             };
             topic.Parent = parentTopic;
             topic.CreateRelativeSlugAndLink(topic);
@@ -156,6 +157,7 @@ namespace DocMonster.Importer
             //    var childTopic = ParseEvent(ev, parentTopic);
             //    parentTopic.Topics.Add(childTopic);
             //}
+            topic.SaveTopicFile();
             return topic;
         }
 

@@ -5,8 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocMonsterAddin.Controls"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:attachedProperties="http://schemas.fontawesome.com/icons/fonts/properties"
+             xmlns:fa6p="http://schemas.fontawesome.com/icons/fonts/properties"
              xmlns:interfaces1="clr-namespace:DocMonster.Model;assembly=DocMonster"
+             xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
 
              mc:Ignorable="d" 
              FontSize="14"             
@@ -42,11 +43,11 @@
 
             <StackPanel Orientation="Horizontal" Grid.Column="1">
 
-                <Button Name="ButtonTopicId" Margin="0 0 8 0"                                    
+                <Button Name="ButtonTopicId" Margin="0 0 11 0"                                    
                                    FontSize="11"                                    
                                    BorderBrush="Transparent"
                          BorderThickness="0"
-                        Foreground="{ DynamicResource BlueItem}"
+                        Foreground="Silver"
                                    Background="Transparent"
                                 Click="ButtonTopicId_Click"
                            ToolTip="Topic Id - click to copy to clipboard."
@@ -56,16 +57,20 @@
                     </Button.Content>
                 </Button>
 
+                <Button x:Name="ButtonSaveTopic" 
+                        Background="Transparent" BorderThickness="0" ToolTip="Save Topic"
+                        Command="{Binding DocMonsterModel.Commands.SaveProjectCommand}" >
+                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                        <fa6:ImageAwesome Icon="Duotone_CircleCheck" PrimaryColor="White" SecondaryColor="Forestgreen"  SecondaryOpacity="1"
+                                          Height="16" Margin="0 0 4 0"/>
 
-                <Button attachedProperties:FontAwesome.Icon="Solid_CircleCheck" Grid.Column="1" 
-                                    Background="Transparent" 
-                                    Foreground="ForestGreen" Padding="5,0,5,0"
-                                    Name="ButtonSaveTopic" BorderThickness="0"  FontSize="15"
-                                    ToolTip="Save Topic" BorderBrush="Transparent"
-                                    Command="{Binding DocMonsterModel.Commands.SaveProjectCommand}" />
+                        <TextBlock  FontWeight="normal">Save</TextBlock>
+                    </StackPanel>
+                </Button>
 
+                
                 <Button  Grid.Column="3"
-                                 attachedProperties:FontAwesome.Icon="Solid_CircleChevronRight" Background="Transparent" 
+                                 fa6p:FontAwesome.Icon="Solid_CircleChevronRight" Background="Transparent" 
 			                     Foreground="{DynamicResource BlueItem}" Padding="7,0,7,0"  
 			                     Name="ButtonClosePanel" BorderThickness="0" FontSize="15"
 			                     ToolTip="Close Kava Docs Topic Panel" BorderBrush="Transparent"
@@ -80,7 +85,7 @@
             <StackPanel Margin="5,10" Name="MainPanel">
 
                 <TextBox Name="TextTitle" 
-                         Text="{Binding DocMonsterModel.ActiveTopic.Title}" 
+                         Text="{Binding DocMonsterModel.ActiveTopic.Title, UpdateSourceTrigger=PropertyChanged}" 
                          Style="{StaticResource HeaderTextBoxStyle}"  
                          FontSize="17"                              
                          controls:TextBoxHelper.Watermark="Topic Title"  />
@@ -140,7 +145,7 @@
                         />
 
                 <Label  Margin="0,6,0,0">Notes:</Label>
-                <TextBox Text="{Binding DocMonsterModel.ActiveTopic.Remarks}"                              
+                <TextBox Text="{Binding DocMonsterModel.ActiveTopic.Remarks, UpdateSourceTrigger=PropertyChanged}"                              
                                  TextWrapping="Wrap"
                                  AcceptsTab="True"
                                  AcceptsReturn="True"                             

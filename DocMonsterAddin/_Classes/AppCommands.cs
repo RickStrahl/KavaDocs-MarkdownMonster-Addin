@@ -158,10 +158,15 @@ namespace DocMonsterAddin
 
         public void Command_SaveProject()
         {
-            SaveProjectCommand = new CommandBase((parameter, command) =>
+            SaveProjectCommand = new CommandBase(async (parameter, command) =>
             {
-                Model.ActiveMarkdownEditor?.GetMarkdown();
-                Model.ActiveProject?.SaveProject();
+                if (Model.ActiveMarkdownEditor != null && Model.ActiveProject != null)
+                {
+                    await Model.ActiveMarkdownEditor.GetMarkdown();
+                    Model.ActiveProject.SaveProject();
+
+                    Model.Addin.RefreshPreview();
+                }
 
                 Model.Window.ShowStatus("Project saved.", dmApp.Configuration.StatusMessageTimeout);
             });

@@ -535,6 +535,28 @@ namespace DocMonster.Model
                 basePath = Path.TrimEndingDirectorySeparator(Project.ProjectDirectory).Replace("\\", "//") + "/";                
             }
 
+            ScriptEvaluator script = null;
+            if (!model.Project.Settings.DontAllowNestedTopicBodyScripts &&
+                (html.Contains("{{") || html.Contains("<%")))
+            {
+                script = new ScriptEvaluator();
+                script.AllowedInstances.Add("Topic", topic);
+                script.AllowedInstances.Add("Project", topic.Project);
+                script.AllowedInstances.Add("Helpers", model.Helpers);
+                script.AllowedInstances.Add("Configuration", model.Configuration);
+
+
+                if (html.Contains("{{"))
+                    html = script.Evaluate(html, true);
+
+                if (html.Contains("&lt;%"))
+                {
+                    script.Delimiters.StartDelim = "&lt;%"; // will be encoded
+                    script.Delimiters.EndDelim = "%&gt;";
+                    html = script.Evaluate(html, true);
+                }
+            }
+
             html = html
                         .Replace("=\"/", "=\"" + basePath)
 
@@ -549,27 +571,7 @@ namespace DocMonster.Model
 
 
 
-            ScriptEvaluator script = null;
-            if (!model.Project.Settings.DontAllowNestedTopicBodyScripts &&
-                (html.Contains("{{") || html.Contains("<%")))
-            {
-                script = new ScriptEvaluator();
-                script.AllowedInstances.Add("Topic", topic);
-                script.AllowedInstances.Add("Project", topic.Project);
-                script.AllowedInstances.Add("Helpers", model.Helpers);
-                script.AllowedInstances.Add("Configuration", model.Configuration);
-                
-
-                if (html.Contains("{{"))
-                    html = script.Evaluate(html, true);
-
-                if (html.Contains("&lt;%"))
-                {
-                    script.Delimiters.StartDelim = "&lt;%"; // will be encoded
-                    script.Delimiters.EndDelim = "%&gt;";
-                    html = script.Evaluate(html, true);
-                }
-            }
+           
 
 
             OnAfterRender(html, renderMode);
