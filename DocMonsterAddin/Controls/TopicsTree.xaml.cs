@@ -179,7 +179,7 @@ namespace DocMonsterAddin.Controls
             var lastTopic = kavaUi.Model.ActiveTopic;
             if (lastTopic != null)
             {
-                lastTopic.TopicState.IsSelected = false;
+                lastTopic.TopicState.IsSelected = false;               
                 if (editor != null)
                 {
                     var md = await editor.GetMarkdown();

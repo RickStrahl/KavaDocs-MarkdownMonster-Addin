@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Input;
 using DocMonster.Model;
 using MarkdownMonster;
-using MarkdownMonster.Utilities;
 using MarkdownMonster.Windows;
 
 namespace DocMonsterAddin.Controls
@@ -26,24 +25,13 @@ namespace DocMonsterAddin.Controls
             Model = new TopicEditorModel();
             DataContext = Model;
             Loaded += TopicEditor_Loaded;
-
-            Model.DocMonsterModel.ActiveTopic.PropertyChanged += OnActiveTopicOnPropertyChanged;
-            Unloaded += (s, e) => Model.DocMonsterModel.ActiveTopic.PropertyChanged -= OnActiveTopicOnPropertyChanged;            
+        
         }
-
-        private DebounceDispatcher _debounce = new DebounceDispatcher();
-
-        private void OnActiveTopicOnPropertyChanged(object s, PropertyChangedEventArgs e)
-        {
-            _debounce.Debounce(800,(p)=>kavaUi.Model.Addin.RefreshPreview());
-        }
-
 
         private void TopicEditor_Loaded(object sender, RoutedEventArgs e)
         {            
             //kavaUi.AddinModel.PropertyChanged += AddinModel_PropertyChanged;            
         }
-
 
         #endregion
 

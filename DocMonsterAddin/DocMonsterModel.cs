@@ -87,8 +87,7 @@ namespace DocMonsterAddin
             get { return ActiveProject?.Topic; }
             set
             {
-
-                if (ActiveProject == null)
+                if (ActiveProject == null || ActiveTopic == value)
                     return;
 
                 ActiveProject.Topic = value;
