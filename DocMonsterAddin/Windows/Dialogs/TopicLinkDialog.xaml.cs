@@ -22,6 +22,7 @@ using MarkdownMonster;
 using MarkdownMonster.Utilities;
 using MarkdownMonster.Windows;
 using Westwind.Utilities;
+using Westwind.WebView.Wpf;
 
 namespace DocMonsterAddin.Windows.Dialogs
 {
@@ -33,6 +34,9 @@ namespace DocMonsterAddin.Windows.Dialogs
         public TopicsTree TreeTopics { get; set; }
 
         public TopicLinkModel Model { get; set; }
+
+        public WebViewHandler WebViewHandler { get; set; }
+
         public TopicLinkDialog(string linkText = null)
         {
 
@@ -47,6 +51,10 @@ namespace DocMonsterAddin.Windows.Dialogs
                 SelectedTopic = kavaUi.Model.ActiveTopic,
                 LinkText = linkText
             };
+
+            // Force use of the shared WebView Environment so we're using
+            // the shared runtime folder etc.
+            WebViewHandler = new WebViewHandler(WebView);
 
             // load asynchronously
             Task.Run(() =>
@@ -122,7 +130,7 @@ namespace DocMonsterAddin.Windows.Dialogs
             Model.SelectedTopic = topic;            
             var file = topic.RenderTopicFilename.Replace(".html", "_topic-link.html");
             topic.RenderTopicToFile(file, TopicRenderModes.Preview);
-            WebView.Source = new Uri(file);            
+            WebViewHandler.Navigate(new Uri(file),true);            
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

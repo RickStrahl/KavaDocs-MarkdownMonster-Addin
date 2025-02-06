@@ -86,11 +86,9 @@
 
         <GridSplitter Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Width="7" />
 
-        <wpf:WebView2 
-            x:Name="WebView" 
-            Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" 
+        <wpf:WebView2 x:Name="WebView" 
+            Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" 
             DefaultBackgroundColor="White" ZoomFactor="0.9">
-
         </wpf:WebView2>
 
         <Grid  Grid.Row="1" Grid.Column="0">

@@ -25,6 +25,8 @@
       <IncludeAssets>compile</IncludeAssets>
     </ProjectReference>
     <ProjectReference Include="..\DocMonster\DocMonster.csproj" />
+
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\icon_128.png" />
@@ -38,16 +40,8 @@
     <Content Include="ProjectTemplates\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Update="ProjectTemplates\Themes\**\*.*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <Content Include="version.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.Web.WebView2.Wpf">
-      <HintPath>C:\Users\rstrahl\.nuget\packages\microsoft.web.webview2\1.0.2903.40\lib_manual\net5.0-windows10.0.17763.0\Microsoft.Web.WebView2.Wpf.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>
