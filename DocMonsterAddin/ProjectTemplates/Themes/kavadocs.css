@@ -208,11 +208,14 @@ td, th  {
     }
 
     .detailtable .col-icon {
-        width: 45px;
+        width: 3.5em;
+    }
+    .detailtable .col-icon img {
+        width: 1.2em;
     }
 
     .detailtable .col-name {        
-        max-width: 200px;
+        max-width: 15em;
         overflow: hidden;
     }
     .detailtable .col-detail {             

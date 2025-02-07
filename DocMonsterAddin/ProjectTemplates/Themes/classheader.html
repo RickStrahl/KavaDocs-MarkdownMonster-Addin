@@ -26,8 +26,10 @@
 
 <h3 id="classmembers">Class Members</h3>
 
-{{ Helpers.ClassMemberTableHtml() }}
 
+<div style="margin-bottom: 1em">
+{{ Helpers.ClassMemberTableHtml() }}
+</div>
 
 
 {{% if (!string.IsNullOrEmpty(Topic.Example)) { }}
@@ -43,11 +45,12 @@
 
 {{% if (!string.IsNullOrEmpty(Topic.ClassInfo.Namespace)) { }}
     <b>Namespace:</b> {{ Topic.ClassInfo.Namespace }}
+    <br/>
 {{% } }}
 
 {{% if (!string.IsNullOrEmpty(Topic.ClassInfo.Assembly)) { }}
-    <b>Assembly:</b> {{ Topic.ClassInfo.Assembly }}
-    <br />
+    <p><b>Assembly:</b> {{ Topic.ClassInfo.Assembly }}</p>    
+    <br/>
 {{% } }}
 
 {{% if (!string.IsNullOrEmpty(Topic.SeeAlso))  { }}
@@ -56,10 +59,3 @@
 {{% } }}
 
 
-<ul>
-
-    {{% foreach (var t in Topic.Topics) { }}
-        <li>t.Title</li>
-    {{% } }}
-
-</ul>

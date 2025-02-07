@@ -214,7 +214,7 @@ namespace DocMonster.Windows.Dialogs
                 AppModel.ActiveProject.Topics.Add(Topic);                  
             }
 
-            Topic.Body = "*Type your " + Topic.Title + " text here.*";
+            Topic.Body = "";
             Topic.SaveTopicFile();
             AppModel.ActiveTopic = Topic;
 

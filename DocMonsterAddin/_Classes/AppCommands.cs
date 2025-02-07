@@ -334,10 +334,18 @@ namespace DocMonsterAddin
                 mmApp.Window.ShowStatusProgress("Deleting topic...");
                 await Task.Delay(40);
 
-                await mmApp.Window.Dispatcher.InvokeAsync(() =>
+                topic.IsExpanded = false;
+
+                var oldItemsource = Model.TopicsTree.TreeTopicBrowser.ItemsSource;
+                Model.TopicsTree.TreeTopicBrowser.ItemsSource = null; // prevent binding
+
+                await Task.Run(() =>
                 {
                     Model.ActiveProject.DeleteTopic(topic);
                 });
+
+                Model.TopicsTree.TreeTopicBrowser.ItemsSource = oldItemsource;
+
                 mmApp.Window.ShowStatus();
 
                 Model.ActiveProject.SaveProjectAsync();

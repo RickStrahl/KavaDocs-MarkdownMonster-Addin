@@ -225,10 +225,14 @@ namespace DocMonster.Importer
                 return null;
             }
 
+            types = types.OrderBy(t => t.Namespace).ThenBy(t => t.Name).ToList();
+
             try
             {
                 foreach (var type in types)
                 {
+                    // parse but dont' add to parent topic - we'll add to our list
+                    // and rearrange for namespaces
                     var topic = ParseClass(type, parentTopic, true);
                     topic.Parent = parentTopic;
                     topics.Add(topic);
@@ -244,8 +248,7 @@ namespace DocMonster.Importer
 
             // Namespace parsing
             var nsList = new List<DocTopic>();
-
-            var lastNs = string.Empty;
+            var lastNs = string.Empty;  // detect ns change
             foreach (var topic in topics)
             {
                 if (lastNs != topic.ClassInfo.Namespace)
@@ -254,23 +257,24 @@ namespace DocMonster.Importer
                     {
                         Title = $"{topic.ClassInfo.Namespace}",
                         DisplayType = "namespace",
-
                         ClassInfo = new ClassInfo
                         {
                             Assembly = topic.ClassInfo.Assembly,
                         }
                     };
+                    lastNs = topic.ClassInfo.Namespace;
+
                     foreach (var t in topics.Where(c => c.ClassInfo.Namespace == lastNs))
                     {
                         t.Parent = ns;
                         ns.Topics.Add(t);
                     }
                     nsList.Add(ns);
-                    lastNs = topic.ClassInfo.Namespace;
+                   
                 }
             }
-            topics = nsList;
 
+            // now add the top level namespaces
             foreach (var topic in nsList)
             {
                 parentTopic.Topics.Add(topic);

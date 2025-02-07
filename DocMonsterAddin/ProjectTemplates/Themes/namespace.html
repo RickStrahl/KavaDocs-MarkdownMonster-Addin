@@ -1,6 +1,5 @@
-{{% 
+{{%
     Script.Layout = "_kavadocs\\Themes\\_Layout.html";
- 
 }}
 <header class="content-title">
     <img src="~/_kavadocs/icons/{{ Topic.DisplayType }}.png">    
@@ -8,27 +7,31 @@
 </header>
 
 <div class="content-body" id="body">
-    {{% if (string.IsNullOrWhiteSpace(Topic.Body)) { }}
-        {{ Helpers.ChildTopicsList() }}        
-    {{% } else { }}
-        {{ Topic.MarkdownRaw(Topic.Body) }}    
-    {{% } }}
+{{ Topic.MarkdownRaw(Topic.Body) }}
 </div>
 
-{{% if (!string.IsNullOrEmpty(Topic.Remarks))  { }}
+
+{{% if (!string.IsNullOrEmpty(Topic.Remarks)) { }}
     <h3 class="outdent" id="remarks">Remarks</h3>
     {{! Topic.MarkdownRaw(Topic.Remarks) }}
 {{% } }}
 
-{{% if (!string.IsNullOrEmpty(Topic.Example))  { }}
+{{% if (!string.IsNullOrEmpty(Topic.Example)) { }}
     <h3 class="outdent" id="example">Example</h3>
     {{! Topic.MarkdownRaw(Topic.Example) }}
 {{% } }}
+
+<div style="margin-bottom: 1em">
+{{ Helpers.ChildTopicsList() }}
+</div>
+
+{{% if (!string.IsNullOrEmpty(Topic.ClassInfo.Assembly)) { }}
+    <p><b>Assembly:</b> {{ Topic.ClassInfo.Assembly }}</p>    
+    <br/>
+{{% } }}
+
 
 {{% if (!string.IsNullOrEmpty(Topic.SeeAlso))  { }}
     <h3 class="outdent" id="seealso">See also</h3>
     {{! HtmlUtils.DisplayMemo(Topic.SeeAlso) }}
 {{% } }}
-
-
- 

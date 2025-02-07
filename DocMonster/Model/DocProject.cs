@@ -437,6 +437,8 @@ namespace DocMonster.Model
                     DeleteTopic(childTopic);
                 }
             }
+
+            Topic.IsExpanded = false;
             
             topic.DeleteTopicFile();
 

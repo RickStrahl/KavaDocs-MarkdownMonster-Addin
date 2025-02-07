@@ -6,6 +6,7 @@ using System.Text;
 using DocMonster.Model;
 using Westwind.Scripting;
 using Westwind.Utilities;
+using static System.Net.WebRequestMethods;
 
 namespace DocMonster.Templates
 {
@@ -237,6 +238,53 @@ namespace DocMonster.Templates
         #endregion
 
         #region Formatting Helpers
+
+        /// <summary>
+        /// Formats the Inheritance Tree with 
+        /// </summary>
+        /// <returns></returns>
+        public RawString FormatInheritanceTree()
+        {
+            if (string.IsNullOrEmpty(Topic.ClassInfo.InheritanceTree))
+                return RawString.Empty;
+
+
+            StringBuilder sb = new StringBuilder();
+            var lines = StringUtils.GetLines(Topic.ClassInfo.InheritanceTree?.Trim());
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string spaces = string.Empty;
+                if (i > 0)
+                    spaces = StringUtils.Replicate("&nbsp;", i * 3);
+                    
+                if (i == lines.Length - 1)
+                {
+                    sb.AppendLine(spaces + "<b>" + WebUtility.HtmlEncode(lines[i]) + "</b><br/>");
+                }
+                else
+                {
+                    string href;
+                    if (lines[i].StartsWith("System.") || lines[i].StartsWith("Micosoft."))
+                    {
+                        href =
+                            $"{spaces}<a href=\"https://learn.microsoft.com/en-us/dotnet/api/{lines[i]}\"" +
+                                 "target=\"topic\">" +
+                                 WebUtility.HtmlEncode(lines[i]) +
+                                 "</a><br />";
+                    }
+                    else
+                    {
+                        href = $"{spaces}{WebUtility.HtmlEncode(lines[i])}<br/>";
+                    }
+
+                    sb.AppendLine(href);
+                }
+            }
+
+            return RawString.Raw(sb.ToString());                
+        }
+
+
         public string Json(object value)
         {
             if (value is string jsonString)
