@@ -265,8 +265,7 @@ namespace DocMonster.Model
                 if (!TopicState.NoAutoSave)
                     SaveTopicFile();
 
-                OnPropertyChanged();
-
+                OnPropertyChanged();                
             }
         }
         private string _body;
@@ -758,23 +757,23 @@ namespace DocMonster.Model
         {
             PreRenderAction?.Invoke(topic, renderMode);
 
-            if (string.IsNullOrEmpty(topic.Body))
-            {
-                if (topic.Topics != null && topic.Topics.Count > 0)
-                {
-                    var sb = new StringBuilder();
-                    sb.AppendLine("\n<div class='child-topics-list'>\n\n");
+            //if (string.IsNullOrEmpty(topic.Body))
+            //{
+            //    if (topic.Topics != null && topic.Topics.Count > 0)
+            //    {
+            //        var sb = new StringBuilder();
+            //        sb.AppendLine("\n<div class='child-topics-list'>\n\n");
 
-                    foreach (var subTopic in topic.Topics)
-                    {
-                        sb.AppendLine(
-                            $"* <img src=\"~/_kavadocs/icons/{subTopic.DisplayType}.png\" /> [{subTopic.Title}]({subTopic.Link})");
-                    }
+            //        foreach (var subTopic in topic.Topics)
+            //        {
+            //            sb.AppendLine(
+            //                $"* <img src=\"~/_kavadocs/icons/{subTopic.DisplayType}.png\" /> [{subTopic.Title}]({subTopic.Link})");
+            //        }
 
-                    sb.AppendLine("\n</div>\n\n");
-                    topic.Body = sb.ToString();
-                }
-            }
+            //        sb.AppendLine("\n</div>\n\n");
+            //        topic.Body = sb.ToString();
+            //    }
+            //}
 
             ProcessRenderDirectives(topic, renderMode);
         }

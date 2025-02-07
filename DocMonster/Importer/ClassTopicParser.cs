@@ -210,7 +210,6 @@ namespace DocMonster.Importer
         /// <returns></returns>
         public DocTopic ParseAssembly(string assemblyFile, DocTopic parentTopic, bool parseXmlDocs = true)
         {
-
             var parser = new Westwind.TypeImporter.TypeParser()
             {
                 ParseXmlDocumentation = parseXmlDocs,
@@ -243,47 +242,39 @@ namespace DocMonster.Importer
             if (parentTopic == null)
                 parentTopic = new DocTopic();
 
-
             // Namespace parsing
-            bool parseNamespaces = true;
             var nsList = new List<DocTopic>();
-            if (parseNamespaces)
+
+            var lastNs = string.Empty;
+            foreach (var topic in topics)
             {
-
-                var lastNs = string.Empty;
-                foreach (var topic in topics)
+                if (lastNs != topic.ClassInfo.Namespace)
                 {
-                    if (lastNs != topic.ClassInfo.Namespace)
+                    var ns = new DocTopic(_project)
                     {
-                        var ns = new DocTopic(_project)
-                        {
-                            Title = $"{topic.ClassInfo.Namespace}",
-                            DisplayType = "namespace",
+                        Title = $"{topic.ClassInfo.Namespace}",
+                        DisplayType = "namespace",
 
-                            ClassInfo = new ClassInfo
-                            {
-                                Assembly = topic.ClassInfo.Assembly,
-                            }
-                        };
-                        foreach (var t in topics.Where(c => c.ClassInfo.Namespace == lastNs))
+                        ClassInfo = new ClassInfo
                         {
-                            t.Parent = ns;
-                            ns.Topics.Add(t);
+                            Assembly = topic.ClassInfo.Assembly,
                         }
-                        nsList.Add(ns);
-                        lastNs = topic.ClassInfo.Namespace;
+                    };
+                    foreach (var t in topics.Where(c => c.ClassInfo.Namespace == lastNs))
+                    {
+                        t.Parent = ns;
+                        ns.Topics.Add(t);
                     }
-                }
-                topics = nsList;
-
-
-                foreach (var topic in nsList)
-                {
-                    parentTopic.Topics.Add(topic);
+                    nsList.Add(ns);
+                    lastNs = topic.ClassInfo.Namespace;
                 }
             }
+            topics = nsList;
 
-            
+            foreach (var topic in nsList)
+            {
+                parentTopic.Topics.Add(topic);
+            }
 
             return parentTopic;
         }
