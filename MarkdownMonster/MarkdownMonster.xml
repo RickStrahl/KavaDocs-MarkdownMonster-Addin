@@ -7873,6 +7873,11 @@
             code.
             </remarks>
         </member>
+        <member name="P:MarkdownMonster.mmApp.Window">
+            <summary>
+            Shortcut to the main app window
+            </summary>
+        </member>
         <member name="P:MarkdownMonster.mmApp.GlobalConfiguration">
             <summary>
             Explicit global configuration property, that unlike `Configuration`

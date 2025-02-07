@@ -331,7 +331,15 @@ namespace DocMonsterAddin
                 if (parentTopics != null)
                     topicIndex = parentTopics.IndexOf(topic);
 
-                Model.ActiveProject.DeleteTopic(topic);
+                mmApp.Window.ShowStatusProgress("Deleting topic...");
+                await Task.Delay(40);
+
+                await mmApp.Window.Dispatcher.InvokeAsync(() =>
+                {
+                    Model.ActiveProject.DeleteTopic(topic);
+                });
+                mmApp.Window.ShowStatus();
+
                 Model.ActiveProject.SaveProjectAsync();
 
                 var parent = topic.Parent;

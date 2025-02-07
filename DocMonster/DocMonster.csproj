@@ -7,14 +7,13 @@
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="FluentFTP" Version="52.0.0" />
-  </ItemGroup>
+ 
   <ItemGroup>
     <ProjectReference Include="d:\projects\MarkdownMonsterCode\MarkdownMonster\MarkdownMonster.csproj">
       <Private>false</Private>
       <IncludeAssets>compile</IncludeAssets>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\Westwind.TypeImporter\Westwind.TypeImporter.csproj" />
+    <PackageReference Include="FluentFTP" Version="52.0.0" />
+    <!--<ProjectReference Include="..\..\..\Libraries\Westwind.TypeImporter\Westwind.TypeImporter.csproj" />-->
   </ItemGroup>
 </Project>

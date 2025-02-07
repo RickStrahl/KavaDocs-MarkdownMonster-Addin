@@ -48,8 +48,9 @@ namespace DocMonsterAddin.Windows.Dialogs
                 ParentTopic = kavaUi.Model.ActiveTopic
             };
 
+            // TODO: Remove 
             Model.AssemblyPath =
-                @"C:\projects2010\Westwind.Utilities\Westwind.Utilities\bin\Release\net46\Westwind.Utilities.dll";
+                @"D:\projects\Libraries\Westwind.AI\Westwind.AI\bin\Release\.net9.0\Westwind.AI.dll";
                 
             DataContext = Model;
 
@@ -67,6 +68,10 @@ namespace DocMonsterAddin.Windows.Dialogs
         void TopicSelected(DocTopic topic)
         {
             Model.ParentTopic = topic;
+
+            // Force a refresh of the topic
+            Model.OnPropertyChanged("ParentTopic");
+            topic.OnPropertyChanged("Title");
         }
 
         private void Button_CancelClick(object sender, RoutedEventArgs e)
@@ -228,10 +233,22 @@ namespace DocMonsterAddin.Windows.Dialogs
 
         public AppModel AppModel { get; set; }
 
+
+
         /// <summary>
         /// Topic under which the class or Namespaces are imported
         /// </summary>
-        public DocTopic ParentTopic { get; set; }
+        public DocTopic ParentTopic
+        {
+            get => _parentTopic;
+            set
+            {
+                if (Equals(value, _parentTopic)) return;
+                _parentTopic = value;
+                OnPropertyChanged();
+            }
+        }
+        private DocTopic _parentTopic;
 
         /// <summary>
         /// The path to the assembly on disk. Automatically picks up the
@@ -294,7 +311,7 @@ namespace DocMonsterAddin.Windows.Dialogs
                 OnPropertyChanged(nameof(NoInheritedMembers));
             }
         }
-        private bool _noInheritedMembers;
+        private bool _noInheritedMembers = true;
 
 
         public ImportModes ImportMode
@@ -307,13 +324,13 @@ namespace DocMonsterAddin.Windows.Dialogs
                 OnPropertyChanged(nameof(ImportMode));
             }
         }
-        private ImportModes _ImportMode;
+        private ImportModes _ImportMode = ImportModes.PublicOnly;
 
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

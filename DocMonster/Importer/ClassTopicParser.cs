@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows;
 using DocMonster.Model;
@@ -46,7 +47,7 @@ namespace DocMonster.Importer
                     Scope = property.Scope,
                     IsStatic = property.Static,
                     Syntax = property.Syntax
-
+                    
                 },
 
                 Remarks = property.Remarks,
@@ -63,6 +64,38 @@ namespace DocMonster.Importer
 
             return topic;
         }
+        public DocTopic ParseEvent(ObjectEvent ev, DocTopic parentClassTopic)
+        {
+            var topic = new DocTopic(_project)
+            {
+                Title = parentClassTopic.ClassInfo.Classname + "." + ev.Name,
+                //ListTitle = property.Name,                
+                DisplayType = "classevent",
+
+                ClassInfo = new ClassInfo
+                {
+                    MemberName = ev.Name,
+                    Signature = ev.Signature,
+                    Scope = ev.Scope,
+                    IsStatic = ev.Static,
+                    Syntax = ev.Syntax, 
+                },
+
+                Remarks = ev.Remarks,
+                Example = ev.Example,
+                SeeAlso = ev.SeeAlso,
+
+                Parent = parentClassTopic,
+                ParentId = parentClassTopic?.Id
+            };
+
+            topic.Parent = parentClassTopic;
+            topic.CreateRelativeSlugAndLink(topic);
+            topic.Body = ev.HelpText;
+
+            return topic;
+        }
+
 
         public DocTopic ParseMethod(ObjectMethod method, DocTopic parentClassTopic)
         {
@@ -98,12 +131,10 @@ namespace DocMonster.Importer
 
             parentClassTopic?.Topics.Add(topic);
 
-            
-
             return topic;
         }
 
-        public DocTopic ParseClass(DotnetObject obj, DocTopic parentTopic)
+        public DocTopic ParseClass(DotnetObject obj, DocTopic parentTopic, bool dontAddToParent = false)
         {
             var topic = new DocTopic(_project)
             {
@@ -131,26 +162,31 @@ namespace DocMonster.Importer
                 SeeAlso = obj.SeeAlso,
                
             };
-            topic.Parent = parentTopic;
             topic.CreateRelativeSlugAndLink(topic);
             topic.Body = obj.HelpText;
 
-            parentTopic?.Topics.Add(topic);
+            topic.Parent = parentTopic;
+            if(!dontAddToParent)
+                parentTopic?.Topics.Add(topic);
 
-            foreach (var meth in obj.Methods.Where(m=> m.IsConstructor))
+            // Contructors
+            foreach (var meth in obj.Constructors)
             {
                 var childTopic = ParseMethod(meth,topic);
-                parentTopic.Topics.Add(childTopic);
+                
+                topic.Topics.Add(childTopic);
             }
-            foreach (var meth in obj.Methods.Where(m => !m.IsConstructor).OrderBy(m=> m.Name))
+            // Methods
+            foreach (var meth in obj.Methods.OrderBy(m=> !m.IsInherited).OrderBy(m=> m.Name))
             {
                 var childTopic = ParseMethod(meth, topic);
-                parentTopic.Topics.Add(childTopic);
+                topic.Topics.Add(childTopic);
             }
-            foreach (var prop in obj.Properties.OrderBy(p=> p.Name))
+            // Properties
+            foreach (var prop in obj.Properties.OrderBy(m => !m.IsInherited).OrderBy(p=> p.Name))
             {
                 var childTopic = ParseProperty(prop, topic);
-                parentTopic.Topics.Add(childTopic);
+                topic.Topics.Add(childTopic);
             }
             //foreach (var ev in obj.Events)
             //{
@@ -174,6 +210,7 @@ namespace DocMonster.Importer
         /// <returns></returns>
         public DocTopic ParseAssembly(string assemblyFile, DocTopic parentTopic, bool parseXmlDocs = true)
         {
+
             var parser = new Westwind.TypeImporter.TypeParser()
             {
                 ParseXmlDocumentation = parseXmlDocs,
@@ -183,10 +220,9 @@ namespace DocMonster.Importer
 
             var topics = new List<DocTopic>();
 
-            var types = parser.GetAllTypes(assemblyFile);
+            var types = parser.GetAllTypes(assemblyFile); //.OrderBy(t => t.Namespace).OrderBy(t => t.Name);
             if (types == null || types.Count < 1)
             {
-
                 return null;
             }
 
@@ -194,7 +230,7 @@ namespace DocMonster.Importer
             {
                 foreach (var type in types)
                 {
-                    var topic = ParseClass(type, parentTopic);
+                    var topic = ParseClass(type, parentTopic, true);
                     topic.Parent = parentTopic;
                     topics.Add(topic);
                 }
@@ -207,7 +243,47 @@ namespace DocMonster.Importer
             if (parentTopic == null)
                 parentTopic = new DocTopic();
 
-            parentTopic.Topics = new System.Collections.ObjectModel.ObservableCollection<DocTopic>(topics);
+
+            // Namespace parsing
+            bool parseNamespaces = true;
+            var nsList = new List<DocTopic>();
+            if (parseNamespaces)
+            {
+
+                var lastNs = string.Empty;
+                foreach (var topic in topics)
+                {
+                    if (lastNs != topic.ClassInfo.Namespace)
+                    {
+                        var ns = new DocTopic(_project)
+                        {
+                            Title = $"{topic.ClassInfo.Namespace}",
+                            DisplayType = "namespace",
+
+                            ClassInfo = new ClassInfo
+                            {
+                                Assembly = topic.ClassInfo.Assembly,
+                            }
+                        };
+                        foreach (var t in topics.Where(c => c.ClassInfo.Namespace == lastNs))
+                        {
+                            t.Parent = ns;
+                            ns.Topics.Add(t);
+                        }
+                        nsList.Add(ns);
+                        lastNs = topic.ClassInfo.Namespace;
+                    }
+                }
+                topics = nsList;
+
+
+                foreach (var topic in nsList)
+                {
+                    parentTopic.Topics.Add(topic);
+                }
+            }
+
+            
 
             return parentTopic;
         }

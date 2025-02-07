@@ -320,6 +320,9 @@ namespace DocMonster.Windows.Dialogs
 
         private void UpdateSlugAndLink()
         {
+            if (Topic == null)
+                return;
+
             if (string.IsNullOrEmpty(Topic.Title))
             {
                 Topic.Slug = null;
@@ -347,6 +350,12 @@ namespace DocMonster.Windows.Dialogs
                 Topic.Link = baseRoute + Topic.Link;
                 Topic.Slug = baseRoute + Topic.Slug;
             }
+        }
+
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            UpdateSlugAndLink();
         }
     }
 }

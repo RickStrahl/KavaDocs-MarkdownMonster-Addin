@@ -13,9 +13,9 @@
              Title="Import .NET Library"
             Icon="..\..\Assets\icon_128.png"
             mc:Ignorable="d" 
-                      
-             Height="550" Width="800"
-             >
+   
+             Height="640" Width="800">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -63,35 +63,45 @@
                 <TextBlock FontWeight="DemiBold" FontSize="18" >Import .NET Library</TextBlock>
             </StackPanel>
 
-            <StackPanel Margin="0,30,20,20" Grid.Column="1">
+            <Grid Margin="0 30 20 0" Grid.Column="1" HorizontalAlignment="Stretch">
 
-                <Label Margin="0,10,0,0">Assembly to Import</Label>
-                <Grid >
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="auto" />
-                    </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                    <TextBox Grid.Column="0" Text="{Binding AssemblyPath}"></TextBox>
-                    <Button Grid.Column="1" Name="ButtonGetDirectory" 
+                <StackPanel Grid.Row="0">
+                    <Label Margin="0,10,0,0">Assembly to Import</Label>
+                    <Grid >
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Grid.Column="0" Text="{Binding AssemblyPath}"></TextBox>
+                        <Button Grid.Column="1" Name="ButtonGetDirectory" 
                             Margin="3,0,0,0" Width="30"
                             Click="ButtonGetDirectory_Click">...</Button>
-                </Grid>
+                    </Grid>
 
-                <CheckBox Margin="0,10,0,0" IsChecked="{Binding NoInheritedMembers}">Don't import inherited Members</CheckBox>
+                    <CheckBox Margin="0,10,0,0" IsChecked="{Binding NoInheritedMembers}">Don't import inherited Members</CheckBox>
 
-                <Label Margin="0,10,0,0">Class or Classes to import (optional)</Label>
-                <TextBox Text="{Binding ClassList}"></TextBox>
-
-
-                <Label Margin="0,20,0,0">Parent Topic</Label>
+                    <Label Margin="0,10,0,0">Class or Classes to import (optional - comma delimited)</Label>
+                    <TextBox Text="{Binding ClassList}"></TextBox>
 
 
-                <kavaDocsAddinControls:TopicPicker x:Name="TopicPicker" Grid.Column="0"  Height="180" />
+                    <Label Margin="0,15,0,0">Parent Topic</Label>
+                    <TextBlock Margin="0 0 0 0" 
+                           FontWeight="SemiBold" Foreground="SteelBlue" FontSize="17"
+                           Text="{Binding ParentTopic.Title}" />
 
-            </StackPanel>
+                </StackPanel>
+                
+                <kavaDocsAddinControls:TopicPicker x:Name="TopicPicker" Grid.Row="1"  />
 
+            </Grid>
 
 
         </Grid>

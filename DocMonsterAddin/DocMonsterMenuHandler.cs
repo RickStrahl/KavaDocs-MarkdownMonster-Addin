@@ -209,7 +209,7 @@ namespace DocMonsterAddin
 
             mi = new MenuItem
             {
-                Header = "Activate _KavaDocs",
+                Header = "Activate _Documentation Monster",
                 InputGestureText = "Alt-V-K"
             };
             mi.Click += (s, e) =>

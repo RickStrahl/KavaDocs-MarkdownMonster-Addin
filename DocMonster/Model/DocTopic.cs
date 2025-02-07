@@ -1547,7 +1547,7 @@ namespace DocMonster.Model
 
         public override string ToString()
         {
-            return $"{Id} - {Title}";
+            return $"{Id} - {Title} - {Topics.Count}";
         }
 
         #region INotifyPropertyChanged
@@ -1605,7 +1605,7 @@ namespace DocMonster.Model
 
         public override string ToString()
         {
-            return Signature ?? Classname ?? base.ToString();
+            return $"{Signature} {Classname} {Namespace}";
         }
     }
 

@@ -34,6 +34,7 @@ namespace KavaDocsAddinControls
             project.GetTopicTree();
 
             Model = new TopicsTreeModel(project);
+
             
             
             DataContext = Model;

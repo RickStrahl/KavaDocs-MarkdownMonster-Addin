@@ -74,7 +74,10 @@ namespace DocMonsterAddin
             sub.Click += (s, e) =>
             {
                 var path = Path.Combine(Model.ActiveProject.ProjectDirectory, $"_kavadocs\\Themes\\{Model.ActiveTopic?.DisplayType}.html");
-                ShellUtils.OpenFileInExplorer(path);
+                if (!File.Exists(path))
+                    ShellUtils.OpenFileInExplorer(path);
+                else
+                    ShellUtils.ShellExecute(path, "EDIT");
             };
             mi.Items.Add(sub);
 
