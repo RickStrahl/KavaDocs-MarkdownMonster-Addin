@@ -470,7 +470,7 @@ namespace DocMonster.Model
         /// <returns></returns>
         /// <remarks>
         /// Note: This DOES NOT save the topic to disk tree to disk.
-        /// The tree has to be explicitly updated
+        /// The project  has to be explicitly saved to save topics to file
         /// </remarks>
         public bool SaveTopic(DocTopic topic = null)
         {
@@ -488,6 +488,9 @@ namespace DocMonster.Model
                 if (!string.IsNullOrEmpty(titleLine) && titleLine.Length > 2)
                     topic.Title = titleLine.Trim().Substring(2);
             }
+
+            if (topic.TopicState.IsDirty)
+                topic.Updated = DateTime.UtcNow.Date;
 
             if (loadTopic == null)
             {

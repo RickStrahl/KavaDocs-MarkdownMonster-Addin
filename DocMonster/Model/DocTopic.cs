@@ -370,7 +370,7 @@ namespace DocMonster.Model
 
 
         [YamlIgnore]
-        public DateTime Updated { get; set; }
+        public DateTime Updated { get; set; } = DateTime.UtcNow.Date;
 
 
         [YamlIgnore]
@@ -1126,7 +1126,8 @@ namespace DocMonster.Model
         /// <summary>
         /// Saves body field content to a Markdown file with the slug as a name
         /// </summary>
-        /// <param name="markdownText"></param>
+        /// <param name="markdownText">optionally provide the markdown text for the Body text.
+        /// otherwise .Body is used</param>
         /// <returns></returns>
         public bool SaveTopicFile(string markdownText = null)
         {
@@ -1139,18 +1140,17 @@ namespace DocMonster.Model
                         markdownText = Body;
                 }
             }
-
-            // Yaml serialization
-            var serializer = new SerializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                .Build();
-            markdownText = StripYaml(markdownText);
+            markdownText = StripYaml(markdownText?.Trim());
 
             if (string.IsNullOrEmpty(Title))
                 Title = GetTitleHeader(markdownText);
 
             if (Project != null && Project.Settings.StoreYamlInTopics)
             {
+                // Yaml serialization
+                var serializer = new SerializerBuilder()
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .Build();
                 string yaml = serializer.Serialize(this);
                 markdownText = $"---\n{yaml}---\n{markdownText}";
             }
@@ -1160,33 +1160,27 @@ namespace DocMonster.Model
             {
                 file = GetExternalFilename();
 
-                if (string.IsNullOrEmpty(markdownText))
+                // write empty file - so we always have accurate data
+                if (markdownText == null)
+                    markdownText = string.Empty;
+
+                for (int i = 0; i < 4; i++)
+                {
                     try
                     {
-                        File.Delete(file);
-                    }
-                    catch { }
-                else
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        try
-                        {
-                            var path = Path.GetDirectoryName(file);
-                            if (!Directory.Exists(path))
-                                Directory.CreateDirectory(path);
+                        var path = Path.GetDirectoryName(file);
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
 
-                            File.WriteAllText(file, markdownText, Encoding.UTF8);
-                            break;
-                        }
-                        catch
-                        {
-                            _body = markdownText;
-                            if (i > 3)
-                                return false;
-                        }
+                        File.WriteAllText(file, markdownText, Encoding.UTF8);
+                        break;
+                    }
+                    catch
+                    {
+                        _body = markdownText;                      
                     }
                 }
+
             }
             else
                 return false;
@@ -1601,6 +1595,16 @@ namespace DocMonster.Model
 
         [JsonIgnore]
         public bool IsEmpty => string.IsNullOrEmpty(Classname) && string.IsNullOrEmpty(MemberName);
+
+        public string GetBaseMethodSignature()
+        {
+            string sig = Signature ?? string.Empty;
+            int at = sig.IndexOf("(");
+            if (at > 0)
+               sig = sig.Substring(0, at);
+
+            return sig;
+        }
 
         public override string ToString()
         {

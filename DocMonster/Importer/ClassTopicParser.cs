@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+
 using System.Linq;
 using System.Windows;
 using DocMonster.Model;
@@ -107,7 +107,7 @@ namespace DocMonster.Importer
 
                 ClassInfo = new ClassInfo
                 {
-                    MemberName = method.Name,
+                    MemberName = method.IsConstructor ? "Constructor" : method.Name,
                     Signature = method.Signature,
                     Exceptions = method.Exceptions,
                     Scope = method.Scope,
@@ -129,18 +129,25 @@ namespace DocMonster.Importer
             topic.CreateRelativeSlugAndLink(topic);
             topic.Body = method.HelpText;
 
-            parentClassTopic?.Topics.Add(topic);
-
             return topic;
         }
 
         public DocTopic ParseClass(DotnetObject obj, DocTopic parentTopic, bool dontAddToParent = false)
         {
+
+            string type = "classheader";
+            string typeText  = "Class";
+            if (obj.Type != "class")
+            {
+                type = obj.Type;
+                typeText = Westwind.Utilities.StringUtils.ProperCase(type);
+            }
+
             var topic = new DocTopic(_project)
             {
-                Title = $"{obj.FormattedName} Class",
+                Title = $"{obj.FormattedName} {typeText}",
                 //ListTitle = obj.FormattedName,
-                DisplayType = "classheader",
+                DisplayType = type,
 
                 ClassInfo = new ClassInfo
                 {
@@ -169,24 +176,32 @@ namespace DocMonster.Importer
             if(!dontAddToParent)
                 parentTopic?.Topics.Add(topic);
 
+            
+            DocTopic lastTopic = null;
             // Contructors
             foreach (var meth in obj.Constructors)
             {
-                var childTopic = ParseMethod(meth,topic);
-                
-                topic.Topics.Add(childTopic);
+                lastTopic = ParseMethod(meth,topic);
+                topic.Topics.Add(lastTopic);
             }
+            string lastMethodSignature = "xxx";
             // Methods
             foreach (var meth in obj.Methods.OrderBy(m=> !m.IsInherited).OrderBy(m=> m.Name))
             {
-                var childTopic = ParseMethod(meth, topic);
-                topic.Topics.Add(childTopic);
+                // ignore overloads                
+                if (topic.ClassInfo.Signature.StartsWith(lastMethodSignature))
+                    continue;
+
+                lastMethodSignature = topic.ClassInfo.GetBaseMethodSignature();
+
+                lastTopic = ParseMethod(meth, topic);
+                topic.Topics.Add(lastTopic);
             }
             // Properties
             foreach (var prop in obj.Properties.OrderBy(m => !m.IsInherited).OrderBy(p=> p.Name))
             {
-                var childTopic = ParseProperty(prop, topic);
-                topic.Topics.Add(childTopic);
+                lastTopic = ParseProperty(prop, topic);
+                topic.Topics.Add(lastTopic);
             }
             //foreach (var ev in obj.Events)
             //{

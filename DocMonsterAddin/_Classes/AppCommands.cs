@@ -331,20 +331,16 @@ namespace DocMonsterAddin
                 if (parentTopics != null)
                     topicIndex = parentTopics.IndexOf(topic);
 
+                topic.IsExpanded = false;
+
                 mmApp.Window.ShowStatusProgress("Deleting topic...");
                 await Task.Delay(40);
 
-                topic.IsExpanded = false;
-
-                var oldItemsource = Model.TopicsTree.TreeTopicBrowser.ItemsSource;
-                Model.TopicsTree.TreeTopicBrowser.ItemsSource = null; // prevent binding
-
-                await Task.Run(() =>
+              
+                await mmApp.Window.Dispatcher.InvokeAsync(() =>
                 {
                     Model.ActiveProject.DeleteTopic(topic);
                 });
-
-                Model.TopicsTree.TreeTopicBrowser.ItemsSource = oldItemsource;
 
                 mmApp.Window.ShowStatus();
 
@@ -391,6 +387,8 @@ namespace DocMonsterAddin
         }
 
 
+        
+
 
         public CommandBase RefreshTreeCommand { get; set; }
 
@@ -427,7 +425,7 @@ namespace DocMonsterAddin
             ImportDotnetLibraryCommand = new CommandBase((parameter, command) =>
             {
                 var dlg = new ImportDotnetLibraryDialog();
-                dlg.ShowDialog();
+                dlg.Show();
 
             }, (p, c) => true);
         }

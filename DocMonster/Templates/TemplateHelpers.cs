@@ -212,9 +212,13 @@ namespace DocMonster.Templates
             if (at > 0)            
                 signature = signature.Substring(0, at);
 
-            var overloads = Project.GetTopics()
+            var topics = Topic.Parent?.Topics;
+            if (topics == null)
+                return RawString.Empty;
+
+            var overloads = topics
                 .Where(t => t.ClassInfo != null &&
-                            t.DisplayType == "classmethod" &&
+                            (t.DisplayType == "classmethod" || t.DisplayType == "classconstructor") &&
                             t.ClassInfo.Signature != null &&
                             t.ClassInfo.Signature.StartsWith(signature) &&
                             t.Id != Topic.Id)
@@ -235,6 +239,7 @@ namespace DocMonster.Templates
 
             return new RawString(sb);
         }
+        
         #endregion
 
         #region Formatting Helpers

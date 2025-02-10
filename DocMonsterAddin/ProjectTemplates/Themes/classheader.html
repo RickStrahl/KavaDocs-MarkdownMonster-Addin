@@ -14,7 +14,7 @@
 
 {{% if (!string.IsNullOrEmpty(Topic.ClassInfo.InheritanceTree)) { }}
     <small>
-        {{! HtmlUtils.DisplayMemo(Topic.ClassInfo.InheritanceTree) }}
+        {{ Helpers.FormatInheritanceTree() }}
     </small>
 {{% } }}
 

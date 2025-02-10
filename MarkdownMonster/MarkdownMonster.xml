@@ -4991,9 +4991,15 @@
         </member>
         <member name="M:MarkdownMonster.Utilities.GitHelper.UndoChanges(System.String)">
             <summary>
-            Removes any changes since the last commit on the current active local branch
+            Removes any changes since the last commit for the provided file
             </summary>
-            <param name="file"></param>
+            <param name="file">File name</param>
+        </member>
+        <member name="M:MarkdownMonster.Utilities.GitHelper.UndoAllChanges(System.String)">
+            <summary>
+            Removes all changes since the last commit on the current active local branch
+            </summary>        
+            <returns>True or false</returns>
         </member>
         <member name="M:MarkdownMonster.Utilities.GitHelper.CloneRepositoryCommandLine(System.String,System.String,System.Action{System.Object,System.Diagnostics.DataReceivedEventArgs},System.Int32)">
             <summary>

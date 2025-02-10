@@ -1,9 +1,11 @@
-﻿{{%
-    Script.Layout = "_kavadocs\\Themes\\_Layout.html";
+﻿
+{{%
+    Script.Layout = "_kavadocs\\Themes\\_layout.html";    
 }}
+
 <header class="content-title">
     <img src="~/_kavadocs/icons/{{Topic.DisplayType}}.png">    
-    {{Topic.Title }}
+    Constructor
 </header>
 
 <div class="content-body" id="body">
@@ -13,6 +15,7 @@
 {{% if(!string.IsNullOrEmpty(Topic.ClassInfo.Syntax)) { }}
 <pre class="syntaxbox" id="syntax">{{ Topic.ClassInfo.Syntax }}</pre>
 {{% } }}
+
 
 {{% if(!string.IsNullOrEmpty(Topic.ClassInfo.Returns)) { }}
 	{{ Topic.MarkdownRaw(Topic.ClassInfo.Returns) }}
@@ -43,4 +46,3 @@
     <h3 class="outdent" id="seealso">See also</h3>
     {{! HtmlUtils.DisplayMemo(Topic.SeeAlso) }}
 {{% } }}
-

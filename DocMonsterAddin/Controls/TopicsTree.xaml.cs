@@ -194,18 +194,17 @@ namespace DocMonsterAddin.Controls
             }
             kavaUi.Model.LastTopic = lastTopic;
 
-            
+
 
             // TODO: This doesn't seem to work correctly - saves, but also affects
             //       the new topic.
             // Save the previously active topic 
-            //if (!dontSaveProject)
-            //{
-
-            //    bool result = await SaveProjectFileForTopic(kavaUi.Model.LastTopic);
-            //    if (result)
-            //        kavaUi.Model.Window.ShowStatus("Topic saved.", 3000);
-            //}
+            if (!dontSaveProject && kavaUi.Model.LastTopic.TopicState.IsDirty)
+            {                
+                bool result = await SaveProjectFileForTopic(kavaUi.Model.LastTopic);
+                if (result)
+                    kavaUi.Model.Window.ShowStatus("Topic saved.", 3000);
+            }
 
 
             kavaUi.Model.ActiveTopic = topic;
@@ -219,9 +218,6 @@ namespace DocMonsterAddin.Controls
                 kavaUi.Model.RecentTopics =
                     new ObservableCollection<DocTopic>(kavaUi.Model.RecentTopics.Take(14));
 
-            //var file = topic.GetTopicFileName();
-            //var doc = new MarkdownDocument();
-            //doc.Load(file);
 
             // set topic state to selected and unchanged
             if (selectTopic)
@@ -478,7 +474,7 @@ namespace DocMonsterAddin.Controls
                     if (tvi == null)
                         return;
 
-                    HandleSelection();
+                    HandleSelection().FireAndForget();
                 }
 
             }, e, DispatcherPriority.Background, Dispatcher);            

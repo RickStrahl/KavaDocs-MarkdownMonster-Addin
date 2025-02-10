@@ -8,9 +8,10 @@
 </div>
 
 {{% if(!string.IsNullOrEmpty(Topic.ClassInfo.Syntax)) { }}
-<pre class="syntaxbox" id="syntax">@Topic.ClassInfo.Syntax</pre>
-{{ } }}
+<pre class="syntaxbox" id="syntax">{{ Topic.ClassInfo.Syntax }}</pre>
+{{% } }}
 
+{{ Helpers.InsertMethodOverloads() }}
 
 @if(!string.IsNullOrEmpty(Topic.ClassInfo.Returns)) {
 	@Topic.MarkdownRaw(Topic.ClassInfo.Returns)

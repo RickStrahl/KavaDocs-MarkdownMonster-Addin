@@ -62,7 +62,6 @@ namespace DocMonsterAddin.Windows.Dialogs
 
             WindowUtilities.CenterWindow(this, mmApp.Model.Window);
         }
-
         
 
         void TopicSelected(DocTopic topic)
@@ -76,7 +75,8 @@ namespace DocMonsterAddin.Windows.Dialogs
 
         private void Button_CancelClick(object sender, RoutedEventArgs e)
         {
-            Close();
+            Close();            
+            mmApp.Window.Activate();
         }
 
         public static object TopicsCollectionLock = new object();
@@ -127,6 +127,14 @@ namespace DocMonsterAddin.Windows.Dialogs
             Model.AddinModel.TopicsTree.Model.OnPropertyChanged(nameof(TopicsTreeModel.TopicTree));
 
             StatusBar.ShowStatusSuccess("Class import completed.",5000);
+
+            Close();
+
+            parentTopic.IsExpanded = true;
+
+            Model.AddinModel.TopicsTree.SelectTopic(parentTopic);
+            await Model.AddinModel.TopicsTree.OpenTopicInEditor(true);
+            Model.AddinModel.Addin.RefreshPreview();
 
             //var parser = new TypeParser() { ParseXmlDocumentation = true,
             //    NoInheritedMembers = Model.NoInheritedMembers,

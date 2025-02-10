@@ -21,11 +21,11 @@ namespace DocMonsterAddin
         public TreeviewContextMenuHandler()
         {
             Model = kavaUi.Model;
-        }        
+        }
 
         public ContextMenu CreateTreeviewContextMenu()
         {
-            var ctxMenu = new ContextMenu() {Name = "TopicContextMenu"};
+            var ctxMenu = new ContextMenu() { Name = "TopicContextMenu" };
             ctxMenu.DataContext = Model.TopicsTree.Model;
 
             var mi = new MenuItem
@@ -55,6 +55,21 @@ namespace DocMonsterAddin
                 Command = Model.Commands.OpenTopicFileExplicitlyCommand
             };
             ctxMenu.Items.Add(mi);
+
+            mi = new MenuItem
+            {
+                Name = "MenuOpenExternalTopicFile",
+                Header = "Open in Explorer",
+            };
+            mi.Click += (s, e) =>
+            {
+                var file = Model.ActiveTopic.GetTopicFileName();
+                if (File.Exists(file))
+                    ShellUtils.OpenFileInExplorer(file);
+            };
+            ctxMenu.Items.Add(mi);
+
+
 
             ctxMenu.Items.Add(new Separator());
 
