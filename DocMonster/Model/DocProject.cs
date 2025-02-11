@@ -18,6 +18,7 @@ using Westwind.Utilities;
 using MarkdownMonster;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Westwind.AI.Chat;
 
 namespace DocMonster.Model
 {
@@ -649,31 +650,59 @@ namespace DocMonster.Model
             if (topics == null || topics.Count < 1)
                 return;
 
+            var lastBaseSignature = "xxx";
+            DocTopic lastMethodTopic = null;
+            Dictionary<DocTopic, DocTopic> topicsToRemove = new();
             foreach (var topic in topics)
             {
-                if (string.IsNullOrEmpty(searchPhrase))
-                    topic.TopicState.IsHidden = false;
-                else if (!topic.Title.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase))
-                    topic.TopicState.IsHidden = true;
-                else
-                    topic.TopicState.IsHidden = false;
+                topic.TopicState.IsHidden = false;
 
-                // Make parent topics visible and expanded
-                if (!topic.TopicState.IsHidden)
-                {
-                    var parent = topic.Parent;
-                    while (parent != null)
+                // Method/ctor overloads are appended below
+                if (!topic.ClassInfo.IsEmpty)
+                {         
+                    var baseSignature = topic.ClassInfo.GetBaseMethodSignature();
+                    if ((topic.DisplayType == "classmethod" || topic.DisplayType == "classconstructor") &&
+                        lastBaseSignature == baseSignature)
                     {
-                        parent.TopicState.IsHidden = false;
-                        if (!string.IsNullOrEmpty(searchPhrase))
-                            parent.IsExpanded = true;
-                        parent = parent.Parent;
+                        topicsToRemove.Add(topic, topic.Parent);
+                        lastMethodTopic.Topics.Add(topic);
+                        topic.Parent = lastMethodTopic;                       
+                        continue;
                     }
+                    lastBaseSignature = baseSignature;
+                    lastMethodTopic = topic;                  
                 }
 
-                if (!nonRecursive)
+                    // Search handling
+                    if (string.IsNullOrEmpty(searchPhrase))
+                        topic.TopicState.IsHidden = false;
+                    else if (!topic.Title.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase))
+                        topic.TopicState.IsHidden = true;
+                    else
+                        topic.TopicState.IsHidden = false;
+
+                    // Make parent topics visible and expanded
+                    if (!topic.TopicState.IsHidden)
+                    {
+                        var parent = topic.Parent;
+                        while (parent != null)
+                        {
+                            parent.TopicState.IsHidden = false;
+                            if (!string.IsNullOrEmpty(searchPhrase))
+                                parent.IsExpanded = true;
+                            parent = parent.Parent;
+                        }
+                    }
+                              
+
+                if (!nonRecursive && topic.Topics.Count > 0)
                     FilterTopicsInTree(topic.Topics, searchPhrase, false);
             }
+
+            foreach(var tr in topicsToRemove)
+            {
+                tr.Value.Topics.Remove(tr.Key);
+            }    
         }
 
 

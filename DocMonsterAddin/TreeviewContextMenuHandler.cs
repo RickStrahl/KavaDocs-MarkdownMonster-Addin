@@ -167,14 +167,16 @@ namespace DocMonsterAddin
 
             // *** Misc
 
-            mi = new MenuItem
+            if (Model.ActiveTopic != null)
             {
-                Header = "Show File in Explorer",
-                Command = Model.Commands.ShowFileInExplorerCommand,
-                CommandParameter = Path.Combine(Model.ActiveTopic.Project.ProjectDirectory,Model.ActiveTopic.Link)
-            };
-            ctxMenu.Items.Add(mi);
-
+                mi = new MenuItem
+                {
+                    Header = "Show File in Explorer",
+                    Command = mmApp.Model.Commands.OpenInExplorerCommand,
+                    CommandParameter = Path.Combine(Model.ActiveTopic.Project.ProjectDirectory, Model.ActiveTopic.Link)
+                };
+                ctxMenu.Items.Add(mi);
+            }
 
             mi = new MenuItem
             {

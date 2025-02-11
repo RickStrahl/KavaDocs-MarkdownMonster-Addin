@@ -61,7 +61,6 @@ namespace DocMonsterAddin
             Command_StartPreviewWebServer();
 
             // Shell
-            Command_ShowFileInExplorer();
             Command_UpdateScriptsAndTemplates();
 
             // Views
@@ -262,30 +261,6 @@ namespace DocMonsterAddin
 
         #endregion
 
-
-        #region ShellCommands
-
-        public CommandBase ShowFileInExplorerCommand { get; set; }
-
-        void Command_ShowFileInExplorer()
-        {
-            ShowFileInExplorerCommand = new CommandBase((parameter, command) =>
-            {
-                var file = parameter as string;
-
-                if (string.IsNullOrEmpty(file))
-                    return;
-
-                if (File.Exists(file))
-                    ShellUtils.OpenFileInExplorer(file);
-
-                var path = Path.GetDirectoryName(file);
-                ShellUtils.OpenFileInExplorer(path);
-
-            }, (p, c) => true);
-        }
-
-        #endregion
 
 
         #region Topic Commands

@@ -140,7 +140,9 @@ namespace DocMonster.Model
                 if (DisplayType == "classheader")
                     return ClassInfo?.Classname ?? Title;
 
-                if (DisplayType == "classproperty" || DisplayType == "classmethod" || DisplayType == "classevent")
+                if (DisplayType == "classproperty" || DisplayType == "classmethod" ||
+                    DisplayType == "classevent" || DisplayType == "classfield" ||
+                    DisplayType == "classconstructor")
                     return ClassInfo?.MemberName ?? Title;
 
                 return Title;

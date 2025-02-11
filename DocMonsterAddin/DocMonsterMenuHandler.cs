@@ -10,6 +10,7 @@ using DocMonster.Configuration;
 using DocMonster.Model;
 using DocMonster.Windows.Dialogs;
 using DocMonsterAddin.WebServer;
+using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using Westwind.Utilities;
 
@@ -191,11 +192,28 @@ namespace DocMonsterAddin
 
             mic = new MenuItem()
             {
-                Header = "Kava Docs Settings",
+                Header = "Application Settings",
             };
-            mic.Click += MenuKavaDocsSettings_Click;
+            mic.Click += MenuDocumentationMonsterApplicationSettings;
             mi.Items.Add(mic);
 
+
+
+            mic = new MenuItem()
+            {
+                Header = "Cleanup Project Folder"
+            };
+            mic.Click += CleanupProjectFolder_Click;
+            mi.Items.Add(mic);
+
+            mic = new MenuItem()
+            {
+                Header = "Open Project Folder in Explorer",
+                Command = mmApp.Model.Commands.OpenInExplorerCommand,
+                CommandParameter = Model.ActiveProject?.ProjectDirectory
+            };
+            
+            mi.Items.Add(mic);
 
             // insert Item after MainMenuEdit item on Main menu
             Model.Addin.AddMenuItem(topMi, "MainMenuTools", addMode: AddMenuItemModes.AddAfter );
@@ -277,9 +295,24 @@ namespace DocMonsterAddin
             form.Show();
         }
 
-        private void MenuKavaDocsSettings_Click(object sender, RoutedEventArgs e)
+        private void MenuDocumentationMonsterApplicationSettings(object sender, RoutedEventArgs e)
         {
             kavaUi.MarkdownMonsterModel.Window.OpenTab(System.IO.Path.Combine(kavaUi.MarkdownMonsterModel.Configuration.CommonFolder, "docmonsteraddin.json"));
+        }
+
+
+        private void CleanupProjectFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (Model.ActiveProject == null)
+            {
+                Model.Addin.ShowStatusError("There is no project to clean up.");
+                return;
+            }
+
+            FileUtils.DeleteFiles(Model.ActiveProject.ProjectDirectory, "~*.*", true);
+            Model.Addin.ShowStatus($"Temporary files have been deleted from the project folder.");
+
+
         }
     }
 }

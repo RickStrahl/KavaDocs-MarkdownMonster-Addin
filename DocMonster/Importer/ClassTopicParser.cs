@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using DocMonster.Model;
 using Westwind.TypeImporter;
+using Westwind.Utilities;
 
 namespace DocMonster.Importer
 {
@@ -33,21 +34,22 @@ namespace DocMonster.Importer
         }
 
         public DocTopic ParseProperty(ObjectProperty property, DocTopic parentClassTopic)
-        {
+        {            
             var topic = new DocTopic(_project)
             {
                 Title = parentClassTopic.ClassInfo.Classname + "." + property.Name,                
                 //ListTitle = property.Name,                
-                DisplayType = "classproperty",
+                //DisplayType = property.PropertyMode == PropertyModes.Field  ? "classfield" : "classproperty",
 
+                
                 ClassInfo = new ClassInfo
                 {
+                    Classname = property.Classname,
                     MemberName = property.Name,
                     Signature = property.Signature,
                     Scope = property.Scope,
                     IsStatic = property.Static,
-                    Syntax = property.Syntax
-                    
+                    Syntax = property.Syntax                   
                 },
 
                 Remarks = property.Remarks,
@@ -58,12 +60,18 @@ namespace DocMonster.Importer
                 ParentId = parentClassTopic?.Id
             };
 
+            if (property.PropertyMode == PropertyModes.Field)
+                topic.DisplayType = "classfield";
+            else
+                topic.DisplayType = "classproperty";
+
             topic.Parent = parentClassTopic;
             topic.CreateRelativeSlugAndLink(topic);
-            topic.Body = property.HelpText;
+            topic.Body = property.HelpText;            
 
             return topic;
         }
+
         public DocTopic ParseEvent(ObjectEvent ev, DocTopic parentClassTopic)
         {
             var topic = new DocTopic(_project)
@@ -74,6 +82,7 @@ namespace DocMonster.Importer
 
                 ClassInfo = new ClassInfo
                 {
+                    Classname = ev.Classname,
                     MemberName = ev.Name,
                     Signature = ev.Signature,
                     Scope = ev.Scope,
@@ -107,6 +116,7 @@ namespace DocMonster.Importer
 
                 ClassInfo = new ClassInfo
                 {
+                    Classname = method.Classname,
                     MemberName = method.IsConstructor ? "Constructor" : method.Name,
                     Signature = method.Signature,
                     Exceptions = method.Exceptions,
@@ -169,10 +179,11 @@ namespace DocMonster.Importer
                 SeeAlso = obj.SeeAlso,
                
             };
+
+            topic.Parent = parentTopic;
             topic.CreateRelativeSlugAndLink(topic);
             topic.Body = obj.HelpText;
 
-            topic.Parent = parentTopic;
             if(!dontAddToParent)
                 parentTopic?.Topics.Add(topic);
 
@@ -181,24 +192,24 @@ namespace DocMonster.Importer
             // Contructors
             foreach (var meth in obj.Constructors)
             {
+                
                 lastTopic = ParseMethod(meth,topic);
                 topic.Topics.Add(lastTopic);
             }
-            string lastMethodSignature = "xxx";
             // Methods
             foreach (var meth in obj.Methods.OrderBy(m=> !m.IsInherited).OrderBy(m=> m.Name))
             {
-                // ignore overloads                
-                if (topic.ClassInfo.Signature.StartsWith(lastMethodSignature))
-                    continue;
-
-                lastMethodSignature = topic.ClassInfo.GetBaseMethodSignature();
-
                 lastTopic = ParseMethod(meth, topic);
                 topic.Topics.Add(lastTopic);
             }
             // Properties
             foreach (var prop in obj.Properties.OrderBy(m => !m.IsInherited).OrderBy(p=> p.Name))
+            {
+                lastTopic = ParseProperty(prop, topic);
+                topic.Topics.Add(lastTopic);
+            }
+            // Properties
+            foreach (var prop in obj.Fields.OrderBy(m => !m.IsInherited).OrderBy(p => p.Name))
             {
                 lastTopic = ParseProperty(prop, topic);
                 topic.Topics.Add(lastTopic);
@@ -212,12 +223,6 @@ namespace DocMonster.Importer
             return topic;
         }
 
-
-        public DocTopic ParseNamespace(DocTopic parentTopic)
-        {
-
-            return null;
-        }
 
         /// <summary>
         /// Parses an entire assembly
@@ -246,6 +251,9 @@ namespace DocMonster.Importer
             {
                 foreach (var type in types)
                 {
+                    // TODO: Namespace parsing has to happen HERE to properly handle the folder layout
+
+
                     // parse but dont' add to parent topic - we'll add to our list
                     // and rearrange for namespaces
                     var topic = ParseClass(type, parentTopic, true);
@@ -275,9 +283,13 @@ namespace DocMonster.Importer
                         ClassInfo = new ClassInfo
                         {
                             Assembly = topic.ClassInfo.Assembly,
-                        }
+                        },
+                        Parent = parentTopic,                       
                     };
+                                       
+                    ns.CreateRelativeSlugAndLink(ns);                    
                     lastNs = topic.ClassInfo.Namespace;
+                    
 
                     foreach (var t in topics.Where(c => c.ClassInfo.Namespace == lastNs))
                     {
