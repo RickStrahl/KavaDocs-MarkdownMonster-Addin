@@ -8203,7 +8203,7 @@
             X offset to the position of the splitter
             </summary>
         </member>
-        <member name="P:MarkdownMonster.WindowPositionConfiguration.RightSidebardWidth">
+        <member name="P:MarkdownMonster.WindowPositionConfiguration.RightSidebarWidth">
             <summary>
             Determines the width of the right side bar
             </summary>

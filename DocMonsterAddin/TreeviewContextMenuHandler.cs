@@ -98,8 +98,8 @@ namespace DocMonsterAddin
 
             sub = new MenuItem
             {
-                Header = "Edit Layout Template (__layout.cshtml)",
-                CommandParameter = "_layout.cshtml"
+                Header = "Edit Layout Template (_Layout.html)",
+                CommandParameter = "_Layout.html"
             };
             sub.Click += On_OpenStaticScriptFile;
             mi.Items.Add(sub);
