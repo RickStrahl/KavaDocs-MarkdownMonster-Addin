@@ -58,7 +58,7 @@
             <CheckBox IsChecked="{Binding OpenInBrowser}">Open in Browser</CheckBox>
             <TextBox Margin="25 5 0 15" FontSize="13" Text="{Binding BrowserUrl }" />
 
-            <CheckBox IsChecked="{Binding OpenFolder}">Open Folder</CheckBox>
+            <CheckBox IsChecked="{Binding OpenFolder}">Open Folder in Explorer</CheckBox>
             <TextBlock Margin="25 5 0 0" FontSize="13" Foreground="Silver" Text="{Binding Project.OutputDirectory }" />
 
 

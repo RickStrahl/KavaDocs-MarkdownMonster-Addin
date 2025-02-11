@@ -96,18 +96,11 @@
             </TextBlock>
 
             <CheckBox IsChecked="{Binding Project.Settings.Upload.OpenWebSite}">Open Web Site when complete</CheckBox>
-            <TextBox FontSize="12" Padding="3 3"           x:Name="WebSiteUrl"           
+            <TextBox FontSize="12" Padding="3 0"           x:Name="WebSiteUrl"           
                      MinHeight="24" Foreground="Silver" MouseDoubleClick="WebSiteUrl_OnMouseDoubleClick"
             Margin="27 7 0 0" Text="{Binding Project.Settings.Upload.WebSiteUrl }" 
                      controls:TextBoxHelper.Watermark="https://docs.mysite.com/" />
-            
-            <TextBlock Margin="27 7 0 10" 
-                       TextWrapping="Wrap"
-                       FontSize="12" FontStyle="Italic">
-                If checked deletes any files on the server that are not in the local folder.
-            </TextBlock>
-
-
+        
 
         <StackPanel Margin="0,20,20,20">
 

@@ -116,7 +116,6 @@ namespace DocMonster.Utilities
             {
                 string find = "](images/";
 
-                
                 if (!topic.Body.Contains(find) || topic.Parent == null)
                     return;
 
@@ -134,6 +133,10 @@ namespace DocMonster.Utilities
                 string replace = "](" + new StringBuilder().Insert(0, "../", foldersDown) + "images/";
 
                 topic.Body = topic.Body.Replace(find, replace);
+
+                // Specific Topic Replacements
+                topic.Body = topic.Body.Replace("<%= ChildTopicsList() %>", "{{ Helpers.ChildTopicsList() }}");
+
             });
 
             

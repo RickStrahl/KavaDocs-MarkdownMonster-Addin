@@ -199,7 +199,8 @@ namespace DocMonsterAddin.Controls
             // TODO: This doesn't seem to work correctly - saves, but also affects
             //       the new topic.
             // Save the previously active topic 
-            if (!dontSaveProject && kavaUi.Model.LastTopic.TopicState.IsDirty)
+            if (!dontSaveProject &&
+                kavaUi.Model.LastTopic != null &&  kavaUi.Model.LastTopic.TopicState.IsDirty)
             {                
                 bool result = await SaveProjectFileForTopic(kavaUi.Model.LastTopic);
                 if (result)
