@@ -249,16 +249,35 @@ namespace DocMonster.Importer
 
             try
             {
+
+                var nsList = new List<DocTopic>();
+                var lastNs = string.Empty;  // detect ns change
+                DocTopic ns = null;
                 foreach (var type in types)
                 {
                     // TODO: Namespace parsing has to happen HERE to properly handle the folder layout
+                    if (lastNs != type.Namespace)
+                    {
+                        ns = new DocTopic(_project)
+                        {
+                            Title = $"{type.Namespace}",
+                            DisplayType = "namespace",
+                            ClassInfo = new ClassInfo
+                            {
+                                Assembly = type.Assembly,
+                            },
+                            Parent = parentTopic,
+                        };
 
-
+                        ns.CreateRelativeSlugAndLink();
+                        lastNs = type.Namespace;
+                        parentTopic.Topics.Add(ns);
+                    }
                     // parse but dont' add to parent topic - we'll add to our list
                     // and rearrange for namespaces
-                    var topic = ParseClass(type, parentTopic, true);
-                    topic.Parent = parentTopic;
-                    topics.Add(topic);
+                     var topic = ParseClass(type, ns, true);
+                    topic.Parent = ns;
+                    ns.Topics.Add(topic);
                 }
             }
             catch (Exception ex)
@@ -269,43 +288,43 @@ namespace DocMonster.Importer
             if (parentTopic == null)
                 parentTopic = new DocTopic();
 
-            // Namespace parsing
-            var nsList = new List<DocTopic>();
-            var lastNs = string.Empty;  // detect ns change
-            foreach (var topic in topics)
-            {
-                if (lastNs != topic.ClassInfo.Namespace)
-                {
-                    var ns = new DocTopic(_project)
-                    {
-                        Title = $"{topic.ClassInfo.Namespace}",
-                        DisplayType = "namespace",
-                        ClassInfo = new ClassInfo
-                        {
-                            Assembly = topic.ClassInfo.Assembly,
-                        },
-                        Parent = parentTopic,                       
-                    };
+            //// Namespace parsing
+            //var nsList = new List<DocTopic>();
+            //var lastNs = string.Empty;  // detect ns change
+            //foreach (var topic in topics)
+            //{
+            //    if (lastNs != topic.ClassInfo.Namespace)
+            //    {
+            //        var ns = new DocTopic(_project)
+            //        {
+            //            Title = $"{topic.ClassInfo.Namespace}",
+            //            DisplayType = "namespace",
+            //            ClassInfo = new ClassInfo
+            //            {
+            //                Assembly = topic.ClassInfo.Assembly,
+            //            },
+            //            Parent = parentTopic,                       
+            //        };
                                        
-                    ns.CreateRelativeSlugAndLink(ns);                    
-                    lastNs = topic.ClassInfo.Namespace;
+            //        ns.CreateRelativeSlugAndLink(ns);                    
+            //        lastNs = topic.ClassInfo.Namespace;
                     
 
-                    foreach (var t in topics.Where(c => c.ClassInfo.Namespace == lastNs))
-                    {
-                        t.Parent = ns;
-                        ns.Topics.Add(t);
-                    }
-                    nsList.Add(ns);
+            //        foreach (var t in topics.Where(c => c.ClassInfo.Namespace == lastNs))
+            //        {
+            //            t.Parent = ns;
+            //            ns.Topics.Add(t);
+            //        }
+            //        nsList.Add(ns);
                    
-                }
-            }
+            //    }
+            //}
 
-            // now add the top level namespaces
-            foreach (var topic in nsList)
-            {
-                parentTopic.Topics.Add(topic);
-            }
+            //// now add the top level namespaces
+            //foreach (var topic in nsList)
+            //{
+            //    parentTopic.Topics.Add(topic);
+            //}
 
             return parentTopic;
         }

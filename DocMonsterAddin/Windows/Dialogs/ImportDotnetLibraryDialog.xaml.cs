@@ -131,8 +131,10 @@ namespace DocMonsterAddin.Windows.Dialogs
             Close();
 
             parentTopic.IsExpanded = true;
-
+            
             Model.AddinModel.TopicsTree.SelectTopic(parentTopic);
+            Model.AddinModel.TopicsTree.SetSearchText(".");
+            Dispatcher.Invoke(() => Model.AddinModel.TopicsTree.SetSearchText(""));
             await Model.AddinModel.TopicsTree.OpenTopicInEditor(true);
             Model.AddinModel.Addin.RefreshPreview();
 
