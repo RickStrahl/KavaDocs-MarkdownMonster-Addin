@@ -193,7 +193,7 @@ var helpBuilder = null;
 
         $tocContent.find("a").each(function () {       
             var href = $(this).attr("href");
-            if (href && !href.startsWith("http")) 
+            if (href && !href.startsWith("http") && !href.startsWith("mailto:") && !href.startsWith("javascript:"))
                 this.href = helpBuilder.basePath + href;                            
 
             console.log("toc: " + this.href);
@@ -229,7 +229,6 @@ var helpBuilder = null;
             var topic = getUrlEncodedKey("topic");
             a$ = get$Link(topic);  // getUrlEncodedKey("topic");
 
-            debugger
             if (a$ && a$.length > 0) {
                 var id = a$[0].id;                
                 //expandTopic(id);

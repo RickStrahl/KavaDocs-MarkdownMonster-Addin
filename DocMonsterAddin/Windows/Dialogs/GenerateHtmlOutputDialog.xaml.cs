@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using DocMonster.Model;
 using DocMonster.Utilities;
+using DocMonsterAddin.WebServer;
 using MahApps.Metro.Controls;
 using MarkdownMonster;
 using MarkdownMonster.Utilities;
@@ -58,6 +59,9 @@ namespace DocMonsterAddin.Windows.Dialogs
 
             if (Model.OpenInBrowser)
             {
+                if(!Model.DontStartInternalWebServer)
+                    Model.Model.Addin.StartWebServer();
+
                 ShellUtils.GoUrl(Model.BrowserUrl);
                 mmApp.Model.Window.ShowStatusSuccess("Project output has been generated.");
             }
@@ -89,6 +93,8 @@ namespace DocMonsterAddin.Windows.Dialogs
     {
         private DocProject _project = kavaUi.Model.ActiveProject;
 
+        public DocMonsterModel Model = kavaUi.Model;
+
         public DocProject Project
         {
             get => _project;
@@ -97,6 +103,7 @@ namespace DocMonsterAddin.Windows.Dialogs
                 if (Equals(value, _project)) return;
                 _project = value;
                 OnPropertyChanged();
+                
             }
         }
 
@@ -139,6 +146,13 @@ namespace DocMonsterAddin.Windows.Dialogs
         }
         private string _browserUrl;
 
+        
+        public bool DontStartInternalWebServer
+        {
+            get => Model.Configuration.DontStartInternalWebServer;
+            set => Model.Configuration.DontStartInternalWebServer = value;
+        }
+
 
         public bool IsComplete
         {
@@ -147,7 +161,8 @@ namespace DocMonsterAddin.Windows.Dialogs
             {
                 if (value == _isComplete) return;
                 _isComplete = value;
-                OnPropertyChanged();             
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ShowStartWebServer));
             }
         }
         private bool _isComplete;
@@ -164,12 +179,32 @@ namespace DocMonsterAddin.Windows.Dialogs
             }
         }
         private bool _isRunning;
-        
+
+        private bool _showStartWebServer;
+
+        public bool ShowStartWebServer
+        {
+            get {
+                if (!IsComplete ||
+                    Model?.ActiveProject == null ||
+                    SimpleHttpServer.Current != null &&
+                    SimpleHttpServer.Current.IsRunning)
+                    return false;
+
+                return true;
+            }
+            set
+            {
+                if (value == _showStartWebServer) return;
+                _showStartWebServer = value;
+                OnPropertyChanged();
+            }
+        }
 
 
         public GenerateHtmlModel()
         {
-            BrowserUrl = $"http://localhost:{kavaUi.Configuration.WebServerPort}{kavaUi.Model.ActiveProject.Settings.RelativeBaseUrl}";
+            BrowserUrl = $"http://localhost:{kavaUi.Configuration.LocalWebServerPort}{kavaUi.Model.ActiveProject.Settings.RelativeBaseUrl}";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

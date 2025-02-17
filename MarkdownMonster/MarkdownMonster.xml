@@ -7160,9 +7160,16 @@
         </member>
         <member name="P:MarkdownMonster.Configuration.EditorConfiguration.EnableBulletAutoCompletion">
             <summary>
-            If enabled prefills bullets and auto-numbers. Disabled
-            by default because it has some side effects that
-            are not desired by some.
+            If enabled, pressing ENTER in a bullet list
+            creates a new bullet or numbered bullet at the same
+            outline level. Disabled by default.
+            </summary>
+        </member>
+        <member name="P:MarkdownMonster.Configuration.EditorConfiguration.EnableBulletTabIndentation">
+            <summary>
+            When enable, pressing tab in a bullet creates a new
+            bullet or numbered bullet item that is indented one
+            level below. Disabled by default.
             </summary>
         </member>
         <member name="P:MarkdownMonster.Configuration.EditorConfiguration.AdditionalToolbarIcons">

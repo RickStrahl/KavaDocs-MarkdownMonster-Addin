@@ -215,6 +215,14 @@ namespace DocMonsterAddin
             
             mi.Items.Add(mic);
 
+            mic = new MenuItem()
+            {
+                Header = "Backup Project",
+                Command = kavaUi.Model.Commands.BackupProjectCommand
+            };
+
+            mi.Items.Add(mic);
+
             // insert Item after MainMenuEdit item on Main menu
             Model.Addin.AddMenuItem(topMi, "MainMenuTools", addMode: AddMenuItemModes.AddAfter );
             KavaDocsMenuItem = topMi;

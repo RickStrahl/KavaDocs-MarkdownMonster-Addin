@@ -57,6 +57,13 @@
                     </Button.Content>
                 </Button>
 
+                <Button  
+                         fa6p:FontAwesome.Icon="Solid_ArrowUpRightFromSquare" Background="Transparent" 
+                         Height="17" Foreground="{DynamicResource BlueItem}" Padding="7,0,7,0"  
+                          BorderThickness="0" FontSize="15"
+                         ToolTip="Open topic in Web browser. Uses the WebSite Base Url and Site relative root." BorderBrush="Transparent"
+                         Command="{Binding DocMonsterModel.Commands.OpenTopicInWebBrowserCommand}" />
+                
                 <Button x:Name="ButtonSaveTopic" 
                         Background="Transparent" BorderThickness="0" ToolTip="Save Topic"
                         Command="{Binding DocMonsterModel.Commands.SaveProjectCommand}" >

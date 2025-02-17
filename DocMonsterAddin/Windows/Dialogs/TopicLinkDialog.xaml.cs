@@ -107,10 +107,15 @@ namespace DocMonsterAddin.Windows.Dialogs
         /// <param name="searchText"></param>
         private async Task ParseSearchText(string searchText)
         {
+            if (mmApp.Model.ActiveEditor == null) return;
+
             if (!string.IsNullOrEmpty(searchText)) {
                 Model.SearchText = searchText;
                 return;
             }
+
+            
+
 
             var selection = await mmApp.Model.ActiveEditor.GetSelection();
             if (string.IsNullOrEmpty(selection)) return;

@@ -7,6 +7,7 @@ using System.Net;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using MarkdownMonster;
 using Westwind.Utilities;
 
 namespace DocMonsterAddin.WebServer
@@ -52,8 +53,11 @@ namespace DocMonsterAddin.WebServer
         /// Optional parameter of an object that has a Process method that gets passed a context 
         /// and returns true if the request is handled or false if default processing should occur
         /// </param>
-        public static bool StartHttpServerOnThread(string path, int port=8080, object requestHandler = null, bool verbose = false)
-        {            
+        public static bool StartHttpServerOnThread(string path, int port=8080, string virtualPath = "/", object requestHandler = null, bool verbose = false)
+        {
+            if (string.IsNullOrEmpty(virtualPath))
+                path = "/";
+
             try
             {
                 // make sure we're not already running
@@ -69,9 +73,17 @@ namespace DocMonsterAddin.WebServer
                 return false;
             }
 
-            var t = new Thread(StartHttpServerThread);
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start(new ServerStartParameters {Path = path, Port = port, RequestHandler = requestHandler, Verbose = verbose });
+            try
+            {
+                var t = new Thread(StartHttpServerThread);
+                t.SetApartmentState(ApartmentState.STA);
+                t.Start(new ServerStartParameters { Path = path, Port = port, VirtualPath = virtualPath, RequestHandler = requestHandler, Verbose = verbose });
+            }
+            catch
+            {
+
+                return false;
+            }
 
             return true;          
         }
@@ -98,7 +110,7 @@ namespace DocMonsterAddin.WebServer
                     StopHttpServerOnThread();
 
                 var httpParms = parms as ServerStartParameters;
-                Current = new SimpleHttpServer(httpParms.Path, httpParms.Port)
+                Current = new SimpleHttpServer(httpParms.Path, httpParms.Port, httpParms.VirtualPath)
                 {
                     Verbose = httpParms.Verbose
                 };
@@ -107,8 +119,7 @@ namespace DocMonsterAddin.WebServer
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message,"Html Help Builder: Error loading HTTP Service",
-                    MessageBoxButtons.OK,MessageBoxIcon.Error);
+                mmApp.Window.ShowStatusError("Error loading HTTP Service: " + ex.Message);                    
             }
         }
 
@@ -127,8 +138,10 @@ namespace DocMonsterAddin.WebServer
             var si = new ProcessStartInfo()
             {
                 FileName = "netsh.exe",
-                Arguments = "http add urlacl url=\"http://*:" + port + $"{path}\" user={username}",
-                WindowStyle = ProcessWindowStyle.Normal,                 
+                // netsh http add urlacl url=http://*:5010/ user=Interactive
+                Arguments = $"http add urlacl url=http://*:{port}{path} user={username}",
+                WindowStyle = ProcessWindowStyle.Normal,
+                UseShellExecute=true,
                 Verb = "runas"                
             };
             var process = System.Diagnostics.Process.Start(si);
@@ -149,7 +162,7 @@ namespace DocMonsterAddin.WebServer
             var si = new ProcessStartInfo()
             {
                 FileName = "netsh.exe",
-                Arguments = "http delete urlacl url=\"http://*:" + port + $"{path}\"",
+                Arguments = $"http delete urlacl url=\"http://*:{port}{path}\"",
                 WindowStyle = ProcessWindowStyle.Hidden,
                 Verb = "runas"  
             };
@@ -247,6 +260,9 @@ namespace DocMonsterAddin.WebServer
         }
 
 
+        public string VirtualPath { get; set; } = "/";
+
+
         public bool Verbose { get; set; }
 
         /// <summary>
@@ -262,16 +278,16 @@ namespace DocMonsterAddin.WebServer
         /// </summary>
         /// <param name="path">Directory path to serve.</param>
         /// <param name="port">Port of the server.</param>
-        public SimpleHttpServer(string path, int port = 8080)
+        public SimpleHttpServer(string path, int port = 8080, string virtualPath = "/")
         {
-            Initialize(path, port);
+            Initialize(path, port, virtualPath);
         }
 
         /// <summary>
         /// Construct server with an available port.
         /// </summary>
         /// <param name="path">Directory path to serve.</param>
-        public SimpleHttpServer(string path)
+        public SimpleHttpServer(string path, string virtualPath = "/")
         {
             // Find an open port and bind to it
             TcpListener listener = new TcpListener(IPAddress.Loopback, 0);
@@ -279,7 +295,8 @@ namespace DocMonsterAddin.WebServer
             int port = ((IPEndPoint) listener.LocalEndpoint).Port;
             listener.Stop();
 
-            Initialize(path, port);
+            if (!Initialize(path, port, virtualPath))
+                throw new Exception(ErrorMessage);
         }
 
         /// <summary>
@@ -301,11 +318,14 @@ namespace DocMonsterAddin.WebServer
             try
             {
                 _listener = new HttpListener();
-                _listener.Prefixes.Add("http://*:" + _port + "/");
+                var serverUrl = $"http://*:{_port}{VirtualPath}";
+                _listener.Prefixes.Add(serverUrl);
                 _listener.Start();
+                IsRunning = true;
             }
-            catch 
+            catch(Exception ex)
             {
+                ErrorMessage = ex.Message;
                 return;
             }
 
@@ -333,7 +353,19 @@ namespace DocMonsterAddin.WebServer
         /// <param name="context"></param>
         private void Process(HttpListenerContext context)
         {
-            string filename = context.Request.Url.LocalPath?.Replace("/","\\");            
+            string path = context.Request.Url.LocalPath;
+            if (string.IsNullOrEmpty(path))
+                path = "";
+
+
+            else if (VirtualPath != "/" && 
+                (path.StartsWith(VirtualPath, StringComparison.OrdinalIgnoreCase) ))
+            {                
+                path = path.Substring( VirtualPath.Length -1);
+            }
+
+            
+            string filename = path.Replace("/","\\");            
 
             if (Verbose)
                 Console.WriteLine(context.Request.HttpMethod + " " + filename);
@@ -399,13 +431,30 @@ namespace DocMonsterAddin.WebServer
             context.Response.OutputStream.Close();
         }
 
-        private void Initialize(string path, int port)
+        private bool Initialize(string path, int port, string virtualPath)
         {
             _rootDirectory = path;
             _port = port;
-            _serverThread = new Thread(Listen);
-            _serverThread.Start();
+            VirtualPath = virtualPath;
+
+            try
+            {
+                _serverThread = new Thread(Listen);
+                if (_serverThread == null)
+                    return false;
+
+                _serverThread.Start();
+            }
+            catch(Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return false;
+            }
+
+            return true;
         }
+
+        public string ErrorMessage { get; set; }
     }
 
     /// <summary>
@@ -415,6 +464,7 @@ namespace DocMonsterAddin.WebServer
     {
         public string Path { get; set; }
         public int Port { get; set; }
+        public string VirtualPath { get; set; } = "/";
 
         public bool Verbose { get; set; }
 
@@ -424,5 +474,6 @@ namespace DocMonsterAddin.WebServer
         /// or false (to fall through and handle as files)
         /// </summary>
         public object RequestHandler { get; set; }
+
     }
 }

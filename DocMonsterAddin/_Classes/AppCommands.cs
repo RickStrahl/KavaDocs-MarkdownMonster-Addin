@@ -59,6 +59,8 @@ namespace DocMonsterAddin
             Command_Settings();
             Command_ProjectSettings();
             Command_StartPreviewWebServer();
+            Command_BackupProject();
+
 
             // Shell
             Command_UpdateScriptsAndTemplates();
@@ -66,6 +68,7 @@ namespace DocMonsterAddin
             // Views
             Command_PreviewBrowser();
             Command_CloseRightSidebarCommand();
+            Command_OpenInWebBrowser();
 
             // Editing
             Command_LinkTopicDialog();
@@ -161,9 +164,9 @@ namespace DocMonsterAddin
             {
                 if (Model.ActiveMarkdownEditor != null && Model.ActiveProject != null)
                 {
-                    await Model.ActiveMarkdownEditor.GetMarkdown();
-                    Model.ActiveProject.SaveProject();
 
+                    await Model.ActiveMarkdownEditor.GetMarkdown();    
+                    Model.ActiveProject.SaveProject();
                     Model.Addin.RefreshPreview();
                 }
 
@@ -199,6 +202,32 @@ namespace DocMonsterAddin
                     dmApp.Configuration.StatusMessageTimeout);
             });
         }
+
+
+        public CommandBase BackupProjectCommand { get; set; }
+
+        void Command_BackupProject()
+        {
+            BackupProjectCommand = new CommandBase((parameter, command) =>
+            {
+                if (Model.ActiveProject == null)
+                {
+                    mmApp.Window.ShowStatusError("No project found to backup.");
+                    return;
+                }
+
+                var folderName = FileUtils.SafeFilename(Model.ActiveProject.Title);
+                 var backupfolder = Path.Combine(kavaUi.Configuration.DocumentsFolder, "Backups", folderName, "Backup_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm")) ;
+                if (!Directory.Exists(backupfolder))
+                    Directory.CreateDirectory(backupfolder);
+
+                FileUtils.CopyDirectory(Model.ActiveProject.ProjectDirectory, backupfolder, recursive: true);
+
+                mmApp.Window.ShowStatusSuccess("Project backed up to: " + backupfolder,15_000);
+
+            }, (p, c) => true);
+        }
+
 
         #endregion
 
@@ -435,6 +464,32 @@ namespace DocMonsterAddin
                 
             });
         }
+
+
+        public CommandBase OpenTopicInWebBrowserCommand { get; set; }
+
+        void Command_OpenInWebBrowser()
+        {
+            OpenTopicInWebBrowserCommand = new CommandBase((parameter, command) =>
+            {
+                var settings = Model.ActiveProject.Settings;
+
+                if (Model.ActiveTopic == null) return;
+
+                if (string.IsNullOrEmpty(settings.WebSiteBaseUrl))
+                {
+                    mmApp.Window.ShowStatusError("Please configure your Web Site Base Url in project settings...");
+                    return;
+                }
+
+                var url = Model.ActiveProject.Settings.WebSiteBaseUrl +
+                          Model.ActiveProject.Settings.RelativeBaseUrl.TrimStart('/') +
+                          Model.ActiveTopic.Slug + ".html";
+
+                ShellUtils.GoUrl(url);
+            }, (p, c) => true);
+        }
+
         #endregion
 
         #region Editing

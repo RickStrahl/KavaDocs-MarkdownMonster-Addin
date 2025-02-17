@@ -18,17 +18,17 @@ h1,h2,h3,h4,h5,h6, .byline,.content-title {
   font-family: Trebuchet, 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
 }
 h1 {
-    font-size: 1.8em;
+    font-size: 1.65em;
     margin-top: 1em;
     margin-bottom: 0.15em;
 }
 h2 {
-    font-size: 1.5em;
+    font-size: 1.3em;
     margin-top: 1em;
     margin-bottom: 0.15em;
 }
 h3 {
-    font-size: 1.35em;    
+    font-size: 1.2em;    
     margin-top: 1em;
     margin-bottom: 0.15em;
 }
@@ -73,12 +73,12 @@ img {
 	max-width: 100%;
 }
 blockquote {
-    background: #f9f9f9;
+    background: #f5f5f5;
     font-size: 1em;
     opacity: 0.85;
     padding: 8px 20px 10px;
     margin: 1.3em ;
-    border-left: 4px #ddd solid;
+    border-left: 0.4em #aaa solid;
 }
 blockquote h3, blockquote h4, blockquote h5 {
     margin-top: 0;
@@ -181,8 +181,11 @@ hr{
     margin-top: 1px; 
     font-size: 0.9em;
     font-style: italic;   
-    font-weight: bold;
+    font-weight: 500;
     color: cornsilk;
+}
+.byline img {
+    height: 1em;
 }
 td, th  {
     padding: 5px;
@@ -255,7 +258,7 @@ td, th  {
     flex: 0 0 auto;  /* don't grow | shrink */
 }
 .banner-logo {
-	height: 58px; 
+	height: 4em; 
 	margin-right: 10px;
 	display: block;
 	float: left;

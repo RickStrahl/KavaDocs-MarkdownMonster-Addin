@@ -1,11 +1,13 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using DocMonster;
 using DocMonster.Annotations;
 using DocMonster.Configuration;
@@ -245,10 +247,7 @@ namespace DocMonsterAddin
         {     
             if (kavaUi.Configuration.AutoOpen)
                 OnExecute(null);
-            
-            AddKeyboardShortcut("Alt+K", DocMonsterModel.Commands.LinkTopicDialogCommand);
-            
-
+   
             return Task.CompletedTask;
         }
 
@@ -373,16 +372,67 @@ namespace DocMonsterAddin
         public void StartWebServer()
         {
             if (DocMonsterModel?.ActiveProject == null) return;
-   
-            var result = SimpleHttpServer.StartHttpServerOnThread(DocMonsterModel.ActiveProject.OutputDirectory, Configuration.WebServerPort);
+
+            var project = DocMonsterModel.ActiveProject;
+            var settings = project.Settings;
+            var virtualPath = settings.RelativeBaseUrl;
+
+            var result = SimpleHttpServer.StartHttpServerOnThread(DocMonsterModel.ActiveProject.OutputDirectory, Configuration.LocalWebServerPort, virtualPath);
+            if (result)
+            {
+                Thread.Sleep(500);
+                result = mmApp.Window.Dispatcher.Invoke(()=> SimpleHttpServer.Current.IsRunning, DispatcherPriority.ApplicationIdle);                
+            }
+
             
             if (!result)
             {
-                Model.Window.ShowStatusError("Preview Web Server was not started.");                
-                return;
+                var regString = $"netsh http add urlacl url=\"http://*:{Configuration.LocalWebServerPort}{virtualPath}\" user=Interactive";
+                string msg = $"""
+                Unable to start local Web Service on port {Configuration.LocalWebServerPort}.
+                
+                This means either the port is already in use
+                by another application, or you are lacking permissions
+                to listen on this port.
+                
+                You can use 'netsh http show urlacl' to check
+                for port permissions in the permissions list or
+                add the port with (requires elevation):
+                
+                {regString}
+                (copied to clipboard...)
+
+                Do you want to run this command now and retry the Web Server?
+                """;
+
+                ClipboardHelper.SetText(regString);
+
+                if (MessageBox.Show(msg, "Unable to start Web Server", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    if (SimpleHttpServer.RegisterHttpPort(Configuration.LocalWebServerPort, virtualPath))
+                    {
+                        MessageBox.Show("You have to restart Markdown Monster in order for the\n" +
+                                                     "Http Server Port Registration to be recognized." ,
+                                                     "Restart Application",
+                                                     MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Unable to register Http port.", "Unable to start Web Server", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+               
+
+                }
+                else
+                {
+
+                    return;
+                }
             }
 
-            ShellUtils.GoUrl("http://localhost:" + Configuration.WebServerPort);
+            ShellUtils.GoUrl($"http://localhost:{Configuration.LocalWebServerPort}{virtualPath}");
         }
 
         public void StopWebServer()
@@ -393,6 +443,7 @@ namespace DocMonsterAddin
         #endregion
 
         #region Interception Hooks
+        private bool _firstLoad = true;
 
         public override Task OnExecute(object sender)
         {
@@ -403,6 +454,13 @@ namespace DocMonsterAddin
             }
 
             InitializeKavaDocs();  // will check if already loaded
+
+            if (_firstLoad)
+            {
+                AddKeyboardShortcut("Alt+K", DocMonsterModel.Commands.LinkTopicDialogCommand);
+                _firstLoad = false;
+            }
+
             return Task.CompletedTask;
         }
 
@@ -596,7 +654,6 @@ namespace DocMonsterAddin
         /// <returns></returns>
         public override Task<string> OnModifyPreviewHtml(string renderedHtml, string markdownHtml)
         {
-
             // default rendering if specified
             if (DocMonsterModel == null ||
                 kavaUi.Configuration.TopicRenderMode == TopicRenderingModes.MarkdownDefault)
@@ -616,24 +673,28 @@ namespace DocMonsterAddin
             if (doc == null)
                 return Task.FromResult(renderedHtml);
 
-
             //topic.Body = await mmApp.Model.ActiveEditor.GetMarkdown();
+            
+            //var outputFile = Path.Combine(topic.Project.OutputDirectory, topic.SlugFilePath);
+            //topic.Project.Settings.ActiveRenderMode = HtmlRenderModes.Html;
+            //topic.TopicState.IsPreview = false;
+            //topic.RenderTopicToFile(outputFile, TopicRenderModes.Html);
+
             topic.Project.Settings.ActiveRenderMode = HtmlRenderModes.Preview;
             topic.TopicState.IsPreview = true;
+            topic.TopicState.IsToc = false;
+            renderedHtml = topic.RenderTopic(TopicRenderModes.Preview);
 
-           
-                renderedHtml = topic.RenderTopic( TopicRenderModes.Preview);
+            //topic.TopicState.IsPreview = false;
+            //topic.RenderTopicToFile(renderMode: TopicRenderModes.Html);
 
-                //topic.TopicState.IsPreview = false;
-                //topic.RenderTopicToFile(renderMode: TopicRenderModes.Html);
-                
-                //var url = "http://localhost:5200/docs/" + topic.Slug + ".html";
-                //ShellUtils.GoUrl(url);
-                //var handler = Model.Window.PreviewBrowser as WebViewPreviewControl;
-                //handler.Background = Brushes.White;
-                //Model.Window.Dispatcher.Delay(100,() =>                 
-                //handler.Navigate(url), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
-            
+            //var url = "http://localhost:5200/docs/" + topic.Slug + ".html";
+            //ShellUtils.GoUrl(url);
+            //var handler = Model.Window.PreviewBrowser as WebViewPreviewControl;
+            //handler.Background = Brushes.White;
+            //Model.Window.Dispatcher.Delay(100,() =>                 
+            //handler.Navigate(url), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+
 
 
             return Task.FromResult(renderedHtml); //return base.OnModifyPreviewHtml(renderedHtml, markdownHtml);

@@ -11,8 +11,7 @@
         Title="Project Settings"
         TitleCharacterCasing="Normal"                      
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"                      
-        WindowStartupLocation="CenterOwner"        
-                       
+        WindowStartupLocation="CenterOwner"                                      
         IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
         Width="700" Height="450" MinWidth="640" MinHeight="320">
     <Window.Resources>
@@ -22,37 +21,51 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
 
         <ToolBarPanel>
+            <ToolBarPanel.Resources>
+                <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" TargetType="Button">
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Padding" Value="6,4"/>
+                    <Setter Property="FontSize" Value="17" />
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.2" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ToolBarPanel.Resources>
             <StackPanel Orientation="Horizontal">
                 <ToolBar>
                     <Button Name="ButtonSave" 
                         HorizontalAlignment="Left"   IsDefault="True" Click="Button_SaveSettings"  >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome  Icon="Solid_CircleCheck" Height="21" PrimaryColor="ForestGreen"   />
-                            <TextBlock Margin="5,0,5,0" >Save Project Settings</TextBlock>
+                            <fa6:ImageAwesome  Icon="Solid_CircleCheck" Height="18" PrimaryColor="ForestGreen"   />
+                            <TextBlock Margin="5,0,5,0" >
+                                <AccessText>_Save Project Settings</AccessText></TextBlock>
                         </StackPanel>
                     </Button>
 
                     <Button Name="ButtonCancel" 
                         HorizontalAlignment="Left" IsCancel="True" Click="Button_Cancel" >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome Icon="Solid_XMark" PrimaryColor="Firebrick" Height="20"/>
+                            <fa6:ImageAwesome Icon="Solid_XMark" PrimaryColor="Firebrick" Height="17"/>
                             <TextBlock Margin="5,0,5,0">Cancel</TextBlock>
                         </StackPanel>
                     </Button>
                 
                     <Button Name="ButtonUpdateProjectTemplate" HorizontalAlignment="Left"   IsDefault="True" Click="Button_UpdateProjectTemplate" Margin="20,0"  >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome  Icon="DuoTone_CircleArrowRight"  PrimaryColor="White" SecondaryColor="DarkGoldenrod"  SecondaryOpacity="1" Height="22"/>
+                            <fa6:ImageAwesome  Icon="DuoTone_CircleArrowRight"  PrimaryColor="White" SecondaryColor="DarkGoldenrod"  SecondaryOpacity="1" Height="19"/>
                             <TextBlock Margin="10,0,0,0" FontSize="14">Update Project Template</TextBlock>
                         </StackPanel>
                     </Button>
                     <Button Name="ButtonOpenProjectFile" HorizontalAlignment="Left" Click="Button_OpenProjectFile"  >
                         <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome  Icon="Solid_FolderOpen"   PrimaryColor="DarkGoldenrod"  Height="20" />
+                            <fa6:ImageAwesome  Icon="Solid_FolderOpen"   PrimaryColor="DarkGoldenrod"  Height="16" />
                             <TextBlock Margin="10,0,0,0" FontSize="14">View Project File</TextBlock>
                         </StackPanel>
                     </Button>
@@ -97,7 +110,7 @@
                     <StackPanel>
                         <Label Margin="0,10,0,0">Website Root Url</Label>
                         <TextBox Name="TextWebSiteBaseUrl" Text="{Binding Project.Settings.WebSiteBaseUrl}" 
-                                 ToolTip="The full Http base Url to the online documentation once published. Used to jump to online topics. "
+                                 ToolTip="The Http Root Web Site Url to the online documentation Web site once published. Do not specify a relative path."
                                  controls:TextBoxHelper.Watermark="https://mysite.com/docs"
                                  />
                     </StackPanel>
@@ -116,6 +129,38 @@
 
                 </StackPanel>
             </StackPanel>
+
+      
         </Grid>
+
+        <StatusBar  Grid.Row="2" Height="30"  VerticalAlignment="Bottom" HorizontalAlignment="Stretch" FontSize="14">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+
+                            <ColumnDefinition Width="Auto"  />
+                            <ColumnDefinition Width="Auto"  />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0" Margin="2,1,0,0">
+                <fa6:ImageAwesome Name="StatusIcon" Icon="Solid_Circle" PrimaryColor="ForestGreen" Height="15"/>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1">
+                <TextBlock Name="StatusText" x:FieldModifier="public" HorizontalAlignment="Left">Ready</TextBlock>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="2">
+                <TextBlock Name="StatusText2" FontSize="11" x:FieldModifier="public" HorizontalAlignment="Right" 
+                           Foreground="Silver"
+                           Text="{Binding Project.Filename}" Margin="0 0 3 0">
+
+                </TextBlock>
+            </StatusBarItem>
+
+        </StatusBar>
     </Grid>
 </controls:MetroWindow>

@@ -233,7 +233,7 @@ Kava Docs requires a new project folder. Please choose another folder for your n
             else
             {
 
-                ProjectCreator.Filename = FileUtils.CamelCaseSafeFilename(ProjectCreator.Title) + ".kavadocs";
+                ProjectCreator.Filename = FileUtils.CamelCaseSafeFilename(ProjectCreator.Title) + ".docs.json";
                 ProjectCreator.ProjectFolder = System.IO.Path.Combine(dmApp.Configuration.DocumentsFolder,
                     FileUtils.SafeFilename(ProjectCreator.Title));
             }

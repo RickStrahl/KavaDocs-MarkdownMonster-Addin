@@ -58,7 +58,7 @@ namespace DocMonster.Windows.Dialogs
             Window = window;
             AppModel = kavaUi.Model;
 
-            Project = AppModel.ActiveProject;
+            Project = AppModel.ActiveProject;            
 
             DataContext = this;
             

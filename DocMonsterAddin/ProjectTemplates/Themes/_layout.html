@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     
@@ -25,7 +25,6 @@
     <script src="~/_kavadocs/themes/scripts/kavadocs.js"></script>
     {{% if(Topic.TopicState.IsPreview) { }}
         <script src="~/_kavadocs/themes/scripts/preview.js" />
-    	<!-- <script src="{{ System.IO.Path.Combine(System.Environment.CurrentDirectory,"PreviewThemes\\scripts\\preview.js") }}"></script> -->
     {{% } }}
 
 
@@ -59,7 +58,8 @@
          
             	<div class="projectname"> {{ Project.Title }}</div>
 
-            <div class="byline">
+            <div class="byline">                
+                <img src="~/_kavadocs/icons/{{ Topic.DisplayType }}.png">
                 {{ Topic.Title }}
             </div>
         </div>

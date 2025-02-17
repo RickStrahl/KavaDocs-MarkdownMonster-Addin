@@ -17,7 +17,7 @@
                        Style="{StaticResource mmWindow}"
                            WindowStartupLocation="CenterOwner"                                   
                            IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
-                           Width="800" Height="630" MinWidth="640" MinHeight="320">
+                           Width="800" Height="525" MinWidth="640" MinHeight="320">
     <controls:MetroWindow.Resources>
         <windows:InvertedBooleanConverter x:Key="InvertedBooleanConverter" />
     </controls:MetroWindow.Resources>
@@ -55,8 +55,47 @@
 
             <TextBlock Margin="0 10 0 10" Style="{DynamicResource HeaderTextBlockStyle}">Output</TextBlock>
 
-            <CheckBox IsChecked="{Binding OpenInBrowser}">Open in Browser</CheckBox>
+            <Grid  HorizontalAlignment="Stretch">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <CheckBox IsChecked="{Binding OpenInBrowser}">Open in Browser
+                    <CheckBox.ToolTip>
+                        <TextBlock>                            
+                            Preview the generated HTML output in your Web browser.
+                            <LineBreak />
+                            <LineBreak/>                        
+                            By default uses a local Web Server, but the server may have
+                            <LineBreak/>
+                            to be configured the first time you run it.
+                        </TextBlock>
+                    </CheckBox.ToolTip>
+                </CheckBox>
+                <CheckBox Grid.Column="1"  HorizontalAlignment="Right"
+                          IsChecked="{Binding DontStartInternalWebServer}">
+
+                    Don't start internal Web server
+                    <CheckBox.ToolTip>
+                        <TextBlock>
+                            By default we'll launch a local Windows Web server (http.sys).
+                        <LineBreak />
+                        <LineBreak/>                        
+                        Uncheck this checkbox if you use a custom Web Server or
+                            <LineBreak/>
+                        custom Url to preview your generated output.
+
+                        </TextBlock>
+                    </CheckBox.ToolTip>
+                   
+                </CheckBox>
+            </Grid>
+            
             <TextBox Margin="25 5 0 15" FontSize="13" Text="{Binding BrowserUrl }" />
+
+            
+            
 
             <CheckBox IsChecked="{Binding OpenFolder}">Open Folder in Explorer</CheckBox>
             <TextBlock Margin="25 5 0 0" FontSize="13" Foreground="Silver" Text="{Binding Project.OutputDirectory }" />
@@ -100,6 +139,7 @@
                     </Button>
                 </Grid>
             </StackPanel>
+
         </StackPanel>
     </Grid>
 </controls:MetroWindow>
