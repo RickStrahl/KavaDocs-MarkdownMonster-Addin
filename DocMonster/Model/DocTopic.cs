@@ -168,6 +168,12 @@ namespace DocMonster.Model
         }
         private string _slug;
 
+        [JsonIgnore]
+        public string SlugFilePath => Slug.Replace("/", "\\") + ".html";
+		
+		[JsonIgnore]
+		public string SlugUrlFilePath => Slug + ".html";
+
 
         /// <summary>
         /// Optional link if it's different than the RenderTopicFilename
@@ -353,6 +359,13 @@ namespace DocMonster.Model
             }
         }
         private bool _Incomplete;
+
+
+        /// <summary>
+        /// If true is rendered but it not referenced in the Table of
+        /// contents or other navigation elements.
+        /// </summary>
+        public bool DontRenderTopic { get; set; }
 
 
         [YamlIgnore]
@@ -1447,12 +1460,14 @@ namespace DocMonster.Model
             if (mode == HtmlRenderModes.None)
                 mode = TopicState.IsPreview ? HtmlRenderModes.Preview : HtmlRenderModes.Html;
 
-            var relBasePath = GetRelativeRootBasePath();
-            
-            if (link == null)
-                link = relBasePath + Slug.TrimEnd('/') + ".html";                         
-                    
 
+            if (link == null)
+            {
+                var relBasePath = "/"; // GetRelativeRootBasePath(); // "/";      // This will get fixed up in render
+                                            // GetRelativeRootBasePath();
+                link = relBasePath + Slug.TrimEnd('/') + ".html";
+            }
+                     
             // Plain HTML
             if (mode == HtmlRenderModes.Html || mode == HtmlRenderModes.Preview)
                 link = $"<a href=\"{link}{anchorString}\" {attributes}>{linkText}</a>";

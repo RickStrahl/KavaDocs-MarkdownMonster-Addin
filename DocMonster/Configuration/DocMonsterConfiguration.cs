@@ -27,7 +27,7 @@ namespace DocMonster.Configuration
         public DocMonsterConfiguration()
         {
             
-            DocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Kava Docs");         
+            DocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Documentation Monster");         
             RecentProjects = new ObservableCollection<RecentProjectItem>();
             HomeFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);            
         }
@@ -82,6 +82,20 @@ namespace DocMonster.Configuration
         /// </summary>
         public bool AutoOpen { get; set; }
 
+        /// <summary>
+        /// If set to a non-zero value, automatically backs up the entire project
+        /// to a backup folder, minus the wwwroot folder.
+        ///
+        /// The number specifies how many backups are created in a rolling backup.
+        /// </summary>
+        public int AutomaticBackupCount { get; set; } = 5;
+
+
+        /// <summary>
+        /// It true any topics that are edited are closed once you navigate
+        /// off the topic in the topic browser. Creates more jumpy UI but
+        /// keeps the document count simpler with less open files.
+        /// </summary>
         public bool CloseTopicsOnDeselection { get; set; }
 
         /// <summary>
@@ -93,7 +107,12 @@ namespace DocMonster.Configuration
         /// <summary>
         /// The preview WebServer port used for previews
         /// </summary>
-        public int WebServerPort { get; set; } = 5080;
+        public int LocalWebServerPort { get; set; } = 5210;
+
+        /// <summary>
+        /// If true won't use the internal Web Server
+        /// </summary>
+        public bool DontStartInternalWebServer { get; set; }
 
 
         public string LastProjectCompany

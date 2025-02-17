@@ -13,16 +13,10 @@ var helpBuilder = null;
         tocExpandAll: tocExpandAll,
         tocExpandTop: tocExpandTop,
         tocCollapseAll: tocCollapseAll,
-        highlightCode:  function () {   
-            var pres = document.querySelectorAll("pre>code");
-            for (var i = 0; i < pres.length; i++) {
-                hljs.highlightBlock(pres[i]);
-            }
-          
-            // $('pre>code').each(function (i, block) {
-            //     hljs.highlightBlock(block);                             
-            // });           
-        },
+        tocClearSearchBox: tocClearSearchBox,
+        highlightCode: highlightCode,
+        updateDocumentOutline: updateDocumentOutline,
+        refreshDocument: refreshDocument,
         configureAceEditor: null // set in aceConfig
     };    
     
@@ -87,7 +81,8 @@ var helpBuilder = null;
 
             // handle back/forward navigation so URL updates
             window.onpopstate = function (event) {
-                if (history.state.URL)
+                debugger;
+                if (history.state?.URL)
                     loadTopicAjax(history.state.URL);
             }             
             
@@ -95,6 +90,11 @@ var helpBuilder = null;
         setTimeout(function() { 
             helpBuilder.highlightCode();
             CreateHeaderLinks();
+        },10);
+
+        setTimeout(function() {
+            helpBuilder.refreshDocument();
+            scrollSpy();                        
         },10);
     }
 
@@ -159,9 +159,11 @@ var helpBuilder = null;
                 var $banner = $html.find(".banner");
                 if ($banner.length > 0);
                 $(".banner").html($banner.html());
+                
+                helpBuilder.refreshDocument();
 
-                helpBuilder.highlightCode();
-                CreateHeaderLinks();
+                $(".main-content").scroll(debounce(scrollSpy,100));
+                scrollSpy();
             });
             return false;  // don't allow click
         }
@@ -187,7 +189,7 @@ var helpBuilder = null;
         if (!html) {
             hideSidebar();
             return;
-        }
+        } 
 
         var $tocContent = $("<div>" + getBodyFromHtmlDocument(html) + "</div>").find(".toc-content");
 
@@ -221,7 +223,8 @@ var helpBuilder = null;
             expandTopic($(this).find("~div a").prop("id") );
         });
 
-      
+        $("#toc").on("click","#SearchBoxClearButton",helpBuilder.tocClearSearchBox);
+
         // topic selection and expansion of active tree
         setTimeout(()=> {
             tocCollapseAll();  
@@ -361,8 +364,44 @@ var helpBuilder = null;
                 return;
             }
         });
-        return id;
+        return id;        
     }
+
+    function tocClearSearchBox() {  
+        var val = $("#SearchBox").val();       
+        if (!val)
+            return;  // already empty
+    
+        $("#SearchBox").val("");
+        clearSearchPane();
+
+        // make all visible
+        $(".toc li").show();
+
+        tocExpandAll();
+                
+        setTimeout(function() {
+            // make sure we preserve selection
+            var $el = $(".selected");
+            var id = '';
+            if ($el.length > 0)
+                id = $el[0].id;
+            
+            if (id)
+                expandParents(id,false);
+
+            $("#SearchBox")[0].focus();
+        },150);
+    }
+    function clearSearchPane() {
+        var $toc = $(".toc.topic-tree")
+        var $searchPane = $(".toc.search-results");
+
+        $toc.show();
+        $searchPane.hide();
+        $searchPane.html('');
+    }
+
     function tocCollapseAll() {
         var $uls = $("ul.toc li ul:visible");        
         $uls.each(function () {            
@@ -425,6 +464,17 @@ var helpBuilder = null;
             url = url + "?" + query;
         return url;
     }
+
+    function highlightCode() {   
+        var pres = document.querySelectorAll("pre>code");
+        for (var i = 0; i < pres.length; i++) {
+            hljs.highlightBlock(pres[i]);
+        }
+
+        if (window.highlightJsBadge)
+            window.highlightJsBadge();
+    }
+
     function CreateHeaderLinks() {
         var $h3 = $(".content-body>h2,.content-body>h3,.content-body>h4,.content-body>h1");
 
@@ -462,6 +512,134 @@ var helpBuilder = null;
 
     }
 
+    function updateDocumentOutline(){
+        var navbar$ = $(".topic-outline-content");                       
+        navbar$.html("");
+
+        var headers$ = $(".content-pane").find("h1,h2,h3,h4");
+        
+        if (headers$.length < 2)
+        {                   
+            $(".content-pane").removeClass("topic-outline-visible");
+            $(".topic-outline-header").hide(false);
+            return;
+        }                
+        for (var index = 0; index < headers$.length; index++) {
+            var el = headers$[index];
+            var id = el.id;
+            if (!id) {
+                el.id = safeId(el.innerText);
+                id = el.id
+            }
+                
+            var space = "";
+            if (el.nodeName == "H1")
+                space = "outline-level1";
+            else if (el.nodeName == "H2")
+                space = "outline-level2";
+            else if (el.nodeName == "H3")
+                space = "outline-level3";
+            else if (el.nodeName == "H4")
+                space = "outline-level4";
+            var a$ = $("<a></a>")
+                .prop("href", "#" + id)
+                .text(el.innerText);
+            if (space)
+                a$.addClass(space);
+
+            navbar$.append(a$);
+        } 
+
+        $(".content-pane").addClass("topic-outline-visible");
+        $(".topic-outline-header").show(true);                    
+    }
+
+      /* 
+        Updates the document with post-processing scripts.
+        Called when page reloads.
+    */
+        function refreshDocument() {
+            helpBuilder.highlightCode();
+            
+            timeToRead();
+            CreateHeaderLinks();
+            
+            helpBuilder.updateDocumentOutline();            
+        }
+
+
+        function scrollSpy() {        
+            var headers$ = $(".topic-outline-content>a");        
+            if(headers$.length < 1)
+                return;
+    
+            for (var index = 0; index < headers$.length; index++) {
+                const hd$ = $(headers$[index]);
+                var id = hd$.attr('href');
+    
+                var id$;
+                try{
+                     id$ = $(id);
+                }catch(ex) {
+                    continue;
+                }
+                if(id$.length < 1)
+                    continue;
+    
+                if(id$.isInViewport())
+                {                
+                    $(".topic-outline-content *").removeClass("active");
+                    hd$.addClass("active");
+                    break;
+                }
+            }
+        }
+
+        $.fn.isInViewport = function() {
+            var elementTop = $(this).offset().top;
+            var elementBottom = elementTop + $(this).outerHeight();
+            var viewportTop = $(window).scrollTop();
+            var viewportBottom = viewportTop + $(window).height();
+            return elementBottom > viewportTop && elementTop < viewportBottom;
+        };  
+
+         /*
+     *  timeToRead()
+     * 
+     *  Time To Read figures writes out the `Time To Read` text at the top
+     *  of the document by injecting it into the `#TimeToRead` element at 
+     *  the top of content templates.
+     * 
+     *  This function delegates to `localizedReadingTimeText()` to localize
+     *  the text displayed optionally which can be overridden with a custom
+     *  global (at window.) `localizedReadingTimeText()` function to provide
+     *  additional localizations.
+    */    
+    function timeToRead() {
+        ttr$ = $("#TimeToRead");
+        if (ttr$.length == 0)
+            return;
+        
+        var content = $('.content-pane').text();
+        
+        var regExWords = /\s+/gi;
+        var wordCount = content.replace(regExWords, ' ').split(' ').length;     
+        var wordsPerMinute = 250;   //  assumed avg reading speed
+        
+        // figure out minutes to read
+        var minutes = 0;
+        if (wordCount >= wordsPerMinute)
+           minutes = wordCount / wordsPerMinute;           
+        minutes = minutes.toFixed(0);
+        
+        // Language: en, fr, de, es etc. and then localize if possible to browser langauge
+        var lang = navigator.language.substr(0,2);        
+        var readingTimeText = localizedReadingTimeText(minutes, lang);
+        
+        if (readingTimeText)
+            ttr$.html('<span><i class="fa fa-clock-o"></i> '+ readingTimeText +'</span>');
+    }  
+
 })();
 
 if(helpBuilder.isLocalUrl())
@@ -478,6 +656,10 @@ function updatedocumentcontent(html,pragmaLine) {
         setTimeout(function() {
             scrolltopragmaline(pragmaLine);
         });       
+
+    
+    // refresh syntax coloring and header links
+    helpBuilder.refreshDocument();
 }
 
 function scrolltopragmaline(lineno) {

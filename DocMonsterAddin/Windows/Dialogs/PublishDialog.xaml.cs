@@ -42,7 +42,9 @@ namespace DocMonsterAddin.Windows.Dialogs
             Model = new PublishDialogModel(project ?? kavaUi.Model.ActiveProject);
             DataContext = Model;
             Status = new StatusBarHelper(StatusText, StatusIcon);
-            
+
+            if (Model.Project != null)
+                TextPassword.Password = Model.Project.Settings.Upload.Password;
         }
 
         private async void Button_Publish(object sender, RoutedEventArgs e)
@@ -122,6 +124,11 @@ namespace DocMonsterAddin.Windows.Dialogs
         {
             if (!string.IsNullOrEmpty(Model.Project?.Settings?.Upload?.WebSiteUrl))
                 ShellUtils.GoUrl(Model.Project.Settings.Upload.WebSiteUrl);
+        }
+
+        private void TextPassword_KeyUp(object sender, KeyEventArgs e)
+        {
+            Model.Project.Settings.Upload.Password = TextPassword.Password;
         }
     }
 

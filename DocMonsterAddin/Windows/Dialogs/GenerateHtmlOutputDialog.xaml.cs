@@ -46,16 +46,31 @@ namespace DocMonsterAddin.Windows.Dialogs
 
         private async void Button_GenerateOutput(object sender, RoutedEventArgs e)
         {
-            Model.IsComplete = false;
-            await Task.Run(() =>
+
+            try
             {
+                mmApp.Model.Window.ShowStatusProgress("Generating Html output...");
+
+
                 Model.IsComplete = false;
-                Model.IsRunning = true;
-                var output = new HtmlOutputGenerator(Model.Project);                
-                output.Generate();
-                Model.IsRunning = false;
-                Model.IsComplete = true;
-            });
+                await Task.Run(() =>
+                {
+                    Model.IsComplete = false;
+                    Model.IsRunning = true;
+                    var output = new HtmlOutputGenerator(Model.Project);
+                    output.Generate();
+                    Model.IsRunning = false;
+                    Model.IsComplete = true;
+                });
+            }
+            catch(Exception ex)
+            {
+                mmApp.Window.ShowStatusError("Html output generation failed: " + ex.Message);
+            }
+            finally
+            {
+                mmApp.Window.ShowStatusSuccess("Html output has been generated.");
+            }
 
             if (Model.OpenInBrowser)
             {

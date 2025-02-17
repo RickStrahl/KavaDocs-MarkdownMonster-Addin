@@ -81,10 +81,11 @@
 
                 <StackPanel Grid.Column="1" Margin="10 0 0 0">
                     <Label>Password</Label>
-                    <TextBox Margin="0 0 0 4" 
+                    <!--<TextBox Margin="0 0 0 4"
                              Text="{Binding Project.Settings.Upload.Password}"
                              
-                              />
+                              />-->
+                    <PasswordBox x:Name="TextPassword" KeyUp="TextPassword_KeyUp" Padding="4 5.5"/>
                 </StackPanel>
             </Grid>
 

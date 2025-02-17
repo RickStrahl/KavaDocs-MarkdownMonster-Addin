@@ -186,7 +186,7 @@ namespace DocMonster.Ftp
             try
             {
                 FtpClient.Config.EncryptionMode = FtpEncryptionMode.Explicit;
-                //FtpClient.Config.SocketKeepAlive = false;
+                //FtpClient.Config.SocketKeepAlive = false;                
                 FtpClient.Config.ClientCertificates.Add(new X509Certificate(certificateFile));
             }
             catch (Exception ex)

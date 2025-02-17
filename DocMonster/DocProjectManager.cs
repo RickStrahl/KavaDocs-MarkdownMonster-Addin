@@ -4,11 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DocMonster.Configuration;
 using DocMonster.Model;
 using DocMonster.Properties;
 using DocMonster.Utilities;
+using MarkdownMonster.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Westwind.Utilities;
 
 namespace DocMonster
 {
@@ -66,18 +69,29 @@ namespace DocMonster
         {
             try
 			{
+                DocProject project;
 				using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
 				{
 					using (var reader = new StreamReader(stream))
 					using (var jsonTextReader = new JsonTextReader(reader))
 					{
-						var project = Serializer.Deserialize<DocProject>(jsonTextReader);
+						project = Serializer.Deserialize<DocProject>(jsonTextReader);
 						project.Filename = filename;
-					    return project;
 					}
-				}
 
-			}
+                    if (DocMonsterConfiguration.Current.AutomaticBackupCount >0)
+                    {
+                        Task.Run(()=> project.BackupProject(automaticBackup: true)).FireAndForget();
+                    }
+
+
+                    return project;
+
+
+                }
+
+
+            }
 			catch (Exception ex)
 			{
 				SetError($"{DocumentationMonsterResources.FailedToLoadHelpFile}: {ex.GetBaseException().Message}");

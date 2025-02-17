@@ -126,7 +126,10 @@ namespace DocMonster.Utilities
         public void GenerateHtml()
         {
             Project.WalkTopicsHierarchy( Project.Topics, (topic,project)=>
-            {                
+            {
+                if (topic.DontRenderTopic)
+                    return;
+
                 topic.Project = project;
                 topic.TopicState.IsPreview = false;  // so topics can see           
                 topic.RenderTopicToFile();
@@ -166,6 +169,8 @@ namespace DocMonster.Utilities
             string file = Path.Combine(Project.ProjectDirectory,"_kavadocs","Themes", "TableOfContents.html");
             string html = rootTopic.RenderTopic(renderMode: TopicRenderModes.Html);            
             File.WriteAllText(Path.Combine(OutputPath, "TableOfContents.html"),html);
+
+            rootTopic.TopicState.IsToc = false;
         }
 
         public void RenderTocLevel(IList<DocTopic> topics, StringBuilder sb, int level = 0 )
@@ -175,6 +180,9 @@ namespace DocMonster.Utilities
 
             foreach (var topic in topics)
             {
+                if (topic.DontRenderTopic)
+                    continue;
+
                 string pad = string.Empty;
 
                 if(topic.IsLink && !string.IsNullOrEmpty(topic.Body))

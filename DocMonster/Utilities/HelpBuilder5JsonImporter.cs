@@ -114,6 +114,12 @@ namespace DocMonster.Utilities
             // fix up image links relative to hierarchy
             project.WalkTopicsHierarchy(project.Topics, (topic, proj) =>
             {
+
+                // Specific Topic Replacements
+                if (!string.IsNullOrEmpty(topic.Body))
+                        topic.Body = topic.Body.Replace("<%= ChildTopicsList() %>", "{{ Helpers.ChildTopicsList() }}");
+
+
                 string find = "](images/";
 
                 if (!topic.Body.Contains(find) || topic.Parent == null)
@@ -130,13 +136,9 @@ namespace DocMonster.Utilities
                 if (foldersDown < 1)
                     return;
                 
-                string replace = "](" + new StringBuilder().Insert(0, "../", foldersDown) + "images/";
+                string replace = "](" + new StringBuilder().Insert(0, "/", foldersDown) + "images/";
 
                 topic.Body = topic.Body.Replace(find, replace);
-
-                // Specific Topic Replacements
-                topic.Body = topic.Body.Replace("<%= ChildTopicsList() %>", "{{ Helpers.ChildTopicsList() }}");
-
             });
 
             

@@ -213,19 +213,39 @@
                                  TextWrapping="Wrap"                              
                                  Height="120" />
 
-                <Grid Margin="0,15,0,0">
-                    <Grid.ColumnDefinitions>
+                <WrapPanel Margin="0,5,0,0" ItemWidth="155" ItemHeight="30">
+                    <!--<Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>-->
 
-                    <CheckBox IsChecked="{Binding DocMonsterModel.ActiveTopic.IsLink}">Topic is a link</CheckBox>
-                    <CheckBox IsChecked="{Binding DocMonsterModel.ActiveTopic.Incomplete}" Grid.Column="1">Incomplete</CheckBox>
-                </Grid>
+                    <CheckBox IsChecked="{Binding DocMonsterModel.ActiveTopic.IsLink}" ToolTip="If set the body content should be a link that navigates in the Table of Contents">Topic is a link</CheckBox>
+                    <CheckBox IsChecked="{Binding DocMonsterModel.ActiveTopic.Incomplete}"  ToolTip="If set topic is marked as Incomplete">Incomplete</CheckBox>
+                    <CheckBox IsChecked="{Binding DocMonsterModel.ActiveTopic.DontRenderTopic}">Don't render Topic
+                        <CheckBox.ToolTip>
+                            <TextBlock>
+                                If set this topic isn't rendered into the output folder and 
+                                is not displayed in the Table of Contents. 
+                                <LineBreak />
+                                <LineBreak />
+                                No output is generated for this topic and 
+                                it is essentially a development only topic.
+                                <LineBreak />
+                                <LineBreak />
+                                Very useful for notes and instructions, but also for keeping
+                                template content to paste into other topics.
+                            </TextBlock>
+                        </CheckBox.ToolTip>
+                            
+                    </CheckBox>
+                </WrapPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
                     <Label>Sort order:</Label>
-                    <TextBox Name="TextSortOrder" Width="52" Height="28" Padding="10 2" Text="{Binding DocMonsterModel.ActiveTopic.SortOrder}"></TextBox>
+                    <TextBox Name="TextSortOrder" Width="52" Height="28" TextAlignment="Right"
+                             Margin="6 -3 0 0" Padding="10 2" 
+                             Text="{Binding DocMonsterModel.ActiveTopic.SortOrder}"></TextBox>
                 </StackPanel>
 
 

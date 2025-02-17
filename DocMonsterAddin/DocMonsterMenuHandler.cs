@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using DocMonster.Configuration;
 using DocMonster.Model;
 using DocMonster.Windows.Dialogs;
 using DocMonsterAddin.WebServer;
+using FluentFTP.Helpers;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using Westwind.Utilities;
@@ -198,6 +200,7 @@ namespace DocMonsterAddin
             mi.Items.Add(mic);
 
 
+            mi.Items.Add(new Separator());
 
             mic = new MenuItem()
             {
@@ -215,13 +218,32 @@ namespace DocMonsterAddin
             
             mi.Items.Add(mic);
 
+            mi.Items.Add(new Separator());
+
             mic = new MenuItem()
             {
                 Header = "Backup Project",
                 Command = kavaUi.Model.Commands.BackupProjectCommand
             };
-
             mi.Items.Add(mic);
+
+            mic = new MenuItem()
+            {
+                Header = "Open Backup Folder",                
+            };
+            mic.Click += (s, e) =>
+            {                
+                var backupfolder = System.IO.Path.Combine(kavaUi.Configuration.DocumentsFolder, "Backups");                                
+                if (Model.ActiveProject != null )
+                {
+                    var folderName = FileUtils.SafeFilename(Model.ActiveProject.Title);
+                    backupfolder = System.IO.Path.Combine(backupfolder, folderName);
+                }
+                if(Directory.Exists(backupfolder))
+                    ShellUtils.OpenFileInExplorer(backupfolder);
+            };
+            mi.Items.Add(mic);
+
 
             // insert Item after MainMenuEdit item on Main menu
             Model.Addin.AddMenuItem(topMi, "MainMenuTools", addMode: AddMenuItemModes.AddAfter );

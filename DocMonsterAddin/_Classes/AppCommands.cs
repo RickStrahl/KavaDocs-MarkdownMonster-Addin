@@ -550,8 +550,6 @@ namespace DocMonsterAddin
         {
             BuildHtmlCommand = new CommandBase((parameter, command) =>
             {
-                mmApp.Model.Window.ShowStatusProgress("Generating project to Html output...");
-
                 var window = new GenerateHtmlOutputDialog(Model.ActiveProject);
                 window.Show();
 

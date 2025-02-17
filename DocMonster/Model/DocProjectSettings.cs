@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using DocMonster.Configuration;
+using DocMonster.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Westwind.Utilities;
@@ -74,6 +76,37 @@ namespace DocMonster.Model
 
         public bool DontAllowNestedTopicBodyScripts { get; set; }
 
+   
+
+
+
+        /// <summary>
+        /// The Web Site's base URL to navigate to the home page.
+        /// This will be an online URL like https://docs.west-wind.com.
+        /// 
+        /// If there's a subfolder, specify it in RelativeBaseUrl.
+        /// 
+        ///
+        /// Url will auto-terminate with a trailing slash
+        /// </summary>
+        public string WebSiteBaseUrl
+        {
+            get => _webSiteBaseUrl;
+            set
+            {
+                if (value == _webSiteBaseUrl) return;
+                _webSiteBaseUrl = value;
+                if (!string.IsNullOrEmpty(_webSiteBaseUrl))
+                    _webSiteBaseUrl = StringUtils.TerminateString(_webSiteBaseUrl, "/");
+                OnPropertyChanged();
+            }
+        }
+        private string _webSiteBaseUrl;
+
+
+
+
+
         /// <summary>
         /// The project's relative base Url. Typically this is "/"
         /// If you need something different set it in this property
@@ -98,34 +131,11 @@ namespace DocMonster.Model
         }
         private string _relativeBaseUrl = "/";
 
-
-
-        /// <summary>
-        /// The Web Site's base URL to navigate to the home page.
-        /// This will be an online URL like https://docs.west-wind.com
-        /// or https://markdownmonster.west-wind.com/docs/
-        ///
-        /// Url will auto-terminate with a trailing slash
-        /// </summary>
-        public string WebSiteBaseUrl
-        {
-            get => _webSiteBaseUrl;
-            set
-            {
-                if (value == _webSiteBaseUrl) return;
-                _webSiteBaseUrl = value;
-                if (!string.IsNullOrEmpty(_webSiteBaseUrl))
-                    _webSiteBaseUrl = StringUtils.TerminateString(_webSiteBaseUrl, "/");
-                OnPropertyChanged();
-            }
-        }
-        private string _webSiteBaseUrl;
-
         public UploadSettings Upload { get; set; } = new UploadSettings();  
 
 
         public event PropertyChangedEventHandler PropertyChanged;
-
+        
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -157,6 +167,10 @@ namespace DocMonster.Model
         }
         private string _uploadFtpPath;
 
+        /// <summary>
+        /// The Web Site Root Url - Should be be the base of the
+        /// site. 
+        /// </summary>
         public string WebSiteUrl { get; set; }
 
         public bool OpenWebSite { get; set;  } 

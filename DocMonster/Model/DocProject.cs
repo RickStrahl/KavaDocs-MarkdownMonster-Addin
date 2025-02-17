@@ -19,6 +19,7 @@ using MarkdownMonster;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Westwind.AI.Chat;
+using System.Linq.Expressions;
 
 namespace DocMonster.Model
 {
@@ -988,9 +989,13 @@ namespace DocMonster.Model
             if (topics == null)
                 topics = new ObservableCollection<DocTopic>();
 
-            var query = topics.Where(t => t.ParentId == topic.Id);
+            string topicId = topic.Id;
+            if (topicId == "_INDEX")
+                topicId = "INDEX";
 
-            if (Settings.AutoSortTopics)
+            var query = topics.Where(t => t.ParentId == topicId);
+
+            if (!Settings.AutoSortTopics)
             {
                 query = query
                     .OrderByDescending(t => t.SortOrder)
@@ -1181,8 +1186,64 @@ namespace DocMonster.Model
 
         #endregion
 
+        #region Tools and Backup
 
-        
+        public bool BackupProject(string backupfolder = null, bool automaticBackup = false )
+        {
+            var folderName = FileUtils.SafeFilename(Title);
+            var config = DocMonsterConfiguration.Current;
+            var internalBackupFolder = Path.Combine(config.DocumentsFolder, "Backups",          
+                folderName,
+                automaticBackup ? "Automatic" : string.Empty,
+                "Backup_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm"));
+
+            if (string.IsNullOrEmpty(backupfolder))
+            {
+                backupfolder = internalBackupFolder;
+            }
+            
+
+            try
+            {
+                if (!Directory.Exists(backupfolder))
+                    Directory.CreateDirectory(backupfolder);
+
+                FileUtils.CopyDirectory(ProjectDirectory, backupfolder, recursive: true);
+            }
+            catch {
+                SetError("Couldn't create backup copy in " + backupfolder);
+                return false;
+            }
+
+            try
+            {
+                Directory.Delete(Path.Combine(backupfolder, "wwwroot"), true);
+                
+                FileUtils.DeleteFiles(backupfolder, "~*.*", true);
+
+                // delete old folders
+                if (automaticBackup && backupfolder == internalBackupFolder)
+                {
+                    var path = Path.Combine(config.DocumentsFolder, "Backups", "Automatic");
+                    var di = new DirectoryInfo(path);
+                    var dirs = di.GetDirectories("Business_*.").OrderByDescending(d => d.LastWriteTimeUtc).Skip(config.AutomaticBackupCount);
+                    foreach (var dir in dirs)
+                    {
+                        dir.Delete(true);
+                    }
+                }
+            }
+            catch { }
+
+            
+
+
+            return true;
+        }
+
+        #endregion
+
+
 
 
 
