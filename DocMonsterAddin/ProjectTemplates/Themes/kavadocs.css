@@ -385,9 +385,7 @@ table {
  .topic-outline {
     display: none;
 }
-@media(min-width: 1500px){     
-
-   
+@media(min-width: 1100px){     
     .topic-outline {        
         position: fixed;                
         display: block;
@@ -443,7 +441,14 @@ table {
         margin-right: 275px;        
     }
 } 
-
+@media(min-width: 1400px) {     
+    .topic-outline {
+        width: 400px;
+    }
+    .content-pane.topic-outline-visible {        
+        margin-right: 375px;        
+    }
+}
 /* entire content area between header and footer */
 .content-pane {    
     padding: 0 10px;
@@ -568,7 +573,7 @@ code.line-highlight {
 
 
 
-@media(min-width: 1300px) {        
+@media(min-width: 1100px) {        
     html, body {
         font-size: 1.05em;
         line-height: 1.6;
