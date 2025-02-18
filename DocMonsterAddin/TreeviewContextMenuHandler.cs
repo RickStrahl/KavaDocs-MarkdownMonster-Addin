@@ -92,7 +92,7 @@ namespace DocMonsterAddin
                 if (!File.Exists(path))
                     ShellUtils.OpenFileInExplorer(path);
                 else
-                    ShellUtils.ShellExecute(path, "EDIT");
+                    mmFileUtils.OpenExternalEditor(path);
             };
             mi.Items.Add(sub);
 

@@ -239,7 +239,58 @@ namespace DocMonster.Templates
 
             return new RawString(sb);
         }
-        
+
+        /// <summary>
+        /// Returns a list of see also topics as an Html list
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public RawString FixupSeeAlsoLinks(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return RawString.Empty;
+
+            var sb = new StringBuilder();
+            var lines = StringUtils.GetLines(text);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                sb.AppendLine("<div>" + ParseTopicIdIntoHref(lines[i]) + "</div>");                
+            }
+
+            return RawString.Raw(sb.ToString());
+        }
+
+        /// <summary>
+        /// Parses a topic Id into a link
+        /// </summary>
+        /// <param name="topicId"></param>
+        /// <returns></returns>
+        public string ParseTopicIdIntoHref(string topicId)
+        {
+            if (string.IsNullOrEmpty(topicId))
+                return topicId;
+
+            var tcs = new System.Threading.CancellationTokenSource();
+            DocTopic matchTopic = null;
+            Project.WalkTopicsHierarchy(Project.Topics, (topic, level, cancel) =>
+            {
+                if (string.Equals(topic.Id, topicId, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(topic.Slug, topicId, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(topic.Title, topicId, StringComparison.OrdinalIgnoreCase))
+                {
+                    matchTopic = topic;
+                    tcs.Cancel();
+                }
+            }, tcs.Token);
+
+            if (matchTopic != null)
+                return matchTopic.GetTopicLink(matchTopic.Title);
+
+            // return as is
+            return topicId;
+        }
+
+     
         #endregion
 
         #region Formatting Helpers

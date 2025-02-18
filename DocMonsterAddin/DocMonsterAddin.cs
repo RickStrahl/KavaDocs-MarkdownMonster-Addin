@@ -459,6 +459,8 @@ namespace DocMonsterAddin
             {
                 AddKeyboardShortcut("Alt+K", DocMonsterModel.Commands.LinkTopicDialogCommand);
                 _firstLoad = false;
+                AddKeyboardShortcut("Alt+T", DocMonsterModel.Commands.TopicBrowserCommand);
+                _firstLoad = false;
             }
 
             return Task.CompletedTask;

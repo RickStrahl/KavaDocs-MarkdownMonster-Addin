@@ -11,6 +11,9 @@ namespace DocMonster.MarkdownParser;
 /// * @icon-regular-home - renders `far fa-home`
 /// * @icon-duotone-home - renders `fad fa-home`
 /// * @icon-solid-home - renders `fas fa-home`
+///
+/// * @icon-spinner-spin  -  spinning icon (-spin must be **last**)
+/// * @icon-home:steelblue   - specify color and spin
 /// </summary>
 public class FontAwesomeRenderExtension : IMarkdownRenderExtension
 {
@@ -54,21 +57,19 @@ public class FontAwesomeRenderExtension : IMarkdownRenderExtension
 
 
             string color = null;
-            if (iconblock.Contains("color:"))
+            var idx = icon.IndexOf("-color:");
+
+            if (idx > 0)
             {
-                var idx = icon.IndexOf("color:");
-               
-                if (idx > 0)
+                var extr = Westwind.Utilities.StringUtils.ExtractString(icon, "-color:", "-", caseSensitive: false, allowMissingEndDelimiter: true, returnDelimiters: true);
+                color = Westwind.Utilities.StringUtils.ExtractString(extr, "-color:", "-", caseSensitive: false, allowMissingEndDelimiter: true, returnDelimiters: false);
+                if (!string.IsNullOrEmpty(color))
                 {
-                    var extr = Westwind.Utilities.StringUtils.ExtractString(icon, "color:", "-", caseSensitive: false, allowMissingEndDelimiter: true, returnDelimiters: true);
-                    color  = Westwind.Utilities.StringUtils.ExtractString(extr, "color:", "-", caseSensitive: false, allowMissingEndDelimiter: true, returnDelimiters: false);
-                  if (!string.IsNullOrEmpty(color))
-                    {
-                        color = $";color: {color}";
-                        icon= icon.Replace(extr, string.Empty);
-                    }
+                    color = $";color: {color}";
+                    icon = icon.Replace(extr, string.Empty);
                 }
             }
+            
 
             if (iconblock.EndsWith("-spin"))
                 icon = icon.Replace("-spin", " fa-spin");

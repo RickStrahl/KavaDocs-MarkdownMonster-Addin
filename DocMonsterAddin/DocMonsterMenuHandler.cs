@@ -11,6 +11,7 @@ using DocMonster.Configuration;
 using DocMonster.Model;
 using DocMonster.Windows.Dialogs;
 using DocMonsterAddin.WebServer;
+using DocMonsterAddin.Windows.Dialogs;
 using FluentFTP.Helpers;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
@@ -89,11 +90,12 @@ namespace DocMonsterAddin
                 Header = "Topic Operations",
             };
             topMi.Items.Add(mi);
-
+         
             var mic = new MenuItem()
             {
                 Header = "_Link to another Topic",
-                Command = Model.Commands.LinkTopicDialogCommand
+                Command = Model.Commands.LinkTopicDialogCommand,
+                InputGestureText = "Alt-K"
             };
             mi.Items.Add(mic);
 
@@ -103,6 +105,15 @@ namespace DocMonsterAddin
                 Command = Model.Commands.ImportDotnetLibraryCommand
             };
             mi.Items.Add(mic);
+
+            mi = new MenuItem()
+            {
+                Header = "Topic Browser",
+                InputGestureText = "Alt-T",
+                Command = Model.Commands.TopicBrowserCommand
+            };            
+            topMi.Items.Add(mi);
+
 
             topMi.Items.Add(new Separator());
             

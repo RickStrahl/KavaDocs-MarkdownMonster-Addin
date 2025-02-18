@@ -37,7 +37,10 @@ namespace DocMonsterAddin.Windows.Dialogs
 
         public WebViewHandler WebViewHandler { get; set; }
 
-        public TopicLinkDialog(string linkText = null)
+
+        public StatusBarHelper Status { get;  }
+
+        public TopicLinkDialog(string linkText = null, bool isTopicPickerMode = false)
         {
 
             _ = ParseSearchText(linkText);
@@ -49,8 +52,14 @@ namespace DocMonsterAddin.Windows.Dialogs
                 Project = kavaUi.Model.ActiveProject,
                 EmbeddingType = "Topic Id",
                 SelectedTopic = kavaUi.Model.ActiveTopic,
-                LinkText = linkText
+                LinkText = linkText,
+                IsTopicPickerMode = isTopicPickerMode
             };
+
+            if (isTopicPickerMode)
+                Title = "Topic Picker";
+
+            Status = new StatusBarHelper(StatusText, StatusIcon);
 
             // Force use of the shared WebView Environment so we're using
             // the shared runtime folder etc.
@@ -62,15 +71,20 @@ namespace DocMonsterAddin.Windows.Dialogs
                 // Load a separate copy so we don't navigate the original instance
                 var project = DocProjectManager.Current.LoadProject(kavaUi.Model.ActiveProject.Filename);
                 Dispatcher.Invoke(() =>
-                {                    
-                    Model.Project = project;                    
-                    
+                {
+                    Model.Project = project;
+
                     var model = new TopicsTreeModel(project);
                     model.SelectionHandler = (topic, isComplete) =>
                     {
                         SelectTopicAndDisplay(topic);
                         if (isComplete)
-                            Button_Click(ButtonOk, null);
+                        {
+                            if (isTopicPickerMode)
+                                Button_Click(ButtonCopyTopicToClipboard, null);
+                            else
+                                Button_Click(ButtonOk, null);
+                        }
 
                         return true; // don't navigate further
                     };
@@ -83,23 +97,23 @@ namespace DocMonsterAddin.Windows.Dialogs
                     TreeTopics.SetSearchText(Model.SearchText, true);
 
                     var topic = TreeTopics.Model.FindTopicInTreeByText(null, Model.SearchText);
-                    topic = topic ?? TreeTopics.Model.FilteredTopicTree.FirstOrDefault();                    
+                    topic = topic ?? TreeTopics.Model.FilteredTopicTree.FirstOrDefault();
                     if (topic != null)
                     {
                         SelectTopicAndDisplay(topic);
                         TreeTopics.SelectTopic(topic);
                     }
-                                   
-                },System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+
+                }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
             });
 
             WindowUtilities.CenterWindow(this, mmApp.Model.Window);
 
-            DataContext = Model;                      
+            DataContext = Model;
         }
 
 
-        
+
 
         /// <summary>
         /// Parses search Text if not provided from Clipboard
@@ -114,9 +128,6 @@ namespace DocMonsterAddin.Windows.Dialogs
                 return;
             }
 
-            
-
-
             var selection = await mmApp.Model.ActiveEditor.GetSelection();
             if (string.IsNullOrEmpty(selection)) return;
 
@@ -125,17 +136,29 @@ namespace DocMonsterAddin.Windows.Dialogs
         }
 
         public void SelectTopicAndDisplay(DocTopic topic = null)
-        {            
+        {
             if (topic == null)
                 topic = kavaUi.Model.ActiveTopic;
 
             if (string.IsNullOrEmpty(topic?.RenderTopicFilename))
                 return;
 
-            Model.SelectedTopic = topic;            
+            var oldTitle = Model.SelectedTopic.Title;
+
+            // if empty or 'default' replace with new text - if custom title - leave it alone
+            if (string.IsNullOrEmpty(Model.LinkText) || Model.LinkText == oldTitle)
+            {
+                Model.LinkText = topic.Title;
+            }
+
+            Model.SelectedTopic = topic;
+
+
+            Model.TopicLink = GetTopicLink();
+
             var file = topic.RenderTopicFilename.Replace(".html", "_topic-link.html");
             topic.RenderTopicToFile(file, TopicRenderModes.Preview);
-            WebViewHandler.Navigate(new Uri(file),true);            
+            WebViewHandler.Navigate(new Uri(file), true);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -147,9 +170,8 @@ namespace DocMonsterAddin.Windows.Dialogs
 
             if (sender == ButtonOk)
             {
-                
-                var topic = Model.SelectedTopic;
 
+                var topic = Model.SelectedTopic;
                 string html = null;
                 if (Model.EmbeddingType.StartsWith("Topic", StringComparison.OrdinalIgnoreCase))
                     html = $"[{Model.LinkText}](dm-topic://{topic.Id})";
@@ -158,24 +180,53 @@ namespace DocMonsterAddin.Windows.Dialogs
                 else if (Model.EmbeddingType.Equals("Relative Link"))
                 {
                     var currentTopic = kavaUi.Model.ActiveTopic;
-                    var relPath = GetRelativePath("/" + currentTopic.Slug.TrimStart('/'), "/" + topic.Slug.TrimStart('/'))+ ".html";
+                    var relPath = GetRelativePath("/" + currentTopic.Slug.TrimStart('/'), "/" + topic.Slug.TrimStart('/')) + ".html";
                     html = $"[{Model.LinkText}]({relPath})";
                 }
-                
+
                 else if (Model.EmbeddingType.Equals("Title", StringComparison.OrdinalIgnoreCase))
                     html = $"[{Model.LinkText}](dm-title://{topic.Title.Replace(" ", "%20")})";
 
 
                 Close();
 
-                mmApp.Model.ActiveEditor.SetSelectionAndFocus(html).FireAndForget();                
+                mmApp.Model.ActiveEditor.SetSelectionAndFocus(html).FireAndForget();
             }
             else if (sender == ButtonCancel)
-            {                
+            {
                 Close();
 
                 mmApp.Model.Window.Activate();
             }
+            else if (sender == ButtonCopyTopicToClipboard)
+            {
+                if (Model.SelectedTopic == null) return;
+
+                var text = GetTopicLink();
+                if (!string.IsNullOrEmpty(text))
+                {
+                    ClipboardHelper.SetText(text);
+                    Status.ShowStatusSuccess("Link copied to clipboard",4000);
+                }
+            }
+        }
+
+        public string GetTopicLink()
+        {
+            string text = null;
+            var topic = Model.SelectedTopic;
+
+            if (Model.EmbeddingType.StartsWith("Topic", StringComparison.OrdinalIgnoreCase))
+                text = topic.Id;
+            else if (Model.EmbeddingType.Equals("Slug", StringComparison.OrdinalIgnoreCase) ||
+                     Model.EmbeddingType.Contains("Link", StringComparison.OrdinalIgnoreCase))                     
+                text = topic.Slug;
+            else if (Model.EmbeddingType.Equals("Title", StringComparison.OrdinalIgnoreCase))
+                text = topic.Title;
+            else
+                text = topic.Id;
+
+            return text;
         }
 
         string GetRelativePath(string fromPath, string toPath)
@@ -184,10 +235,38 @@ namespace DocMonsterAddin.Windows.Dialogs
             Uri toUri = new Uri("file://" + toPath);
             return fromUri.MakeRelativeUri(toUri).ToString();
         }
+
+        private void StatusTextTopicLink_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(Model.TopicLink))
+            {
+                Clipboard.SetText(Model.TopicLink);
+                mmApp.Window.ShowStatusSuccess("Link copied to clipboard");
+            }                
+        }
     }
 
     public class TopicLinkModel : INotifyPropertyChanged
-    {        
+    {
+        /// <summary>
+        /// If true the dialog is in Topic Picker Mode which
+        /// simple browses topics and allows for copying of the
+        /// Id to the clipboard.
+        ///
+        /// You can also read the Model.TopicLink property to get
+        /// the currently selected id.
+        /// </summary>
+        public bool IsTopicPickerMode
+        {
+            get => _isTopicPickerMode;
+            set
+            {
+                if (value == _isTopicPickerMode) return;
+                _isTopicPickerMode = value;
+                OnPropertyChanged();
+            }
+        }
+        private bool _isTopicPickerMode;
 
         public DocTopic SelectedTopic
         {
@@ -215,7 +294,18 @@ namespace DocMonsterAddin.Windows.Dialogs
         private DocProject _project;
 
 
-        
+        public string TopicLink
+        {
+            get => _topicLink;
+            set
+            {
+                if (value == _topicLink) return;
+                _topicLink = value;
+                OnPropertyChanged();
+            }
+        }
+        private string _topicLink;
+
 
         /// <summary>
         /// Topic Id, Link, Title
@@ -251,7 +341,7 @@ namespace DocMonsterAddin.Windows.Dialogs
         }
         private string _linkText;
 
-        public string[] EmbeddingTypes { get; set; } = ["Topic Id", "Link", "Relative Link", "Title"];
+        public string[] EmbeddingTypes { get; set; } = ["Topic Id", "Slug", "Relative Link", "Title"];
 
         #region INotifiyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

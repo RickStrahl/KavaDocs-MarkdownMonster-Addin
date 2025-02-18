@@ -72,6 +72,7 @@ namespace DocMonsterAddin
 
             // Editing
             Command_LinkTopicDialog();
+            Command_TopicBrowser();
 
             // Build
             Command_BuildHtml();
@@ -501,43 +502,20 @@ namespace DocMonsterAddin
             {
                 var window = new TopicLinkDialog();
                 window.Show();
-
-
-                //var form = new PasteTopicBookmark();
-                //form.Owner = mmApp.Model.Window;
-                //form.ShowDialog();
-
-                //if (!form.Cancelled && form.SelectedTopic != null && mmApp.Model.ActiveEditor != null)
-                //{
-                //    var selText = await mmApp.Model.ActiveEditor.GetSelection();
-                //    var link = form.SelectedTopic.Link;
-                //    if (string.IsNullOrEmpty(link))
-                //        link = form.SelectedTopic.Slug;
-
-                //    string origLink = link;
-
-                //    if (!File.Exists(link))
-                //    {
-                //        if (!link.EndsWith(".md"))
-                //            link += ".md";
-
-                //        if (!File.Exists(link))
-                //        {
-                //            if (!link.EndsWith(".html"))
-                //                link += ".html";
-                //            if (!File.Exists(link))
-                //                link = origLink;
-                //        }
-                //    }
-
-                //    if (string.IsNullOrEmpty(selText))
-                //        selText = form.SelectedTopic.Title;
-
-                //    string md = $"[{selText}]({link})";
-
-                //    await mmApp.Model.ActiveEditor.SetSelectionAndFocus(md);
-                //}
             });
+        }
+
+
+
+        public CommandBase TopicBrowserCommand { get; set; }
+
+        void Command_TopicBrowser()
+        {
+            TopicBrowserCommand = new CommandBase((parameter, command) =>
+            {
+                var window = new TopicLinkDialog(isTopicPickerMode: true);
+                window.Show();
+            },(p, c) => true);
         }
 
         #endregion

@@ -4924,7 +4924,7 @@
             <param name="url"></param>
             <returns></returns>
         </member>
-        <member name="M:MarkdownMonster.Utilities.FileSaver.SaveBitmapAndLinkInEditor(System.Drawing.Bitmap,MarkdownMonster.MarkdownDocumentEditor,System.String,System.Boolean,System.Boolean)">
+        <member name="M:MarkdownMonster.Utilities.FileSaver.SaveBitmapAndLinkInEditor(System.Drawing.Bitmap,MarkdownMonster.MarkdownDocumentEditor,System.String,System.Boolean,System.Boolean,System.Boolean)">
              <summary>
              Saves a bitmap image to file using a standard mechanism that
              prompts for a filename (unless you pass one in), optionally
@@ -6633,6 +6633,13 @@
         <member name="P:MarkdownMonster.ApplicationConfiguration.DefaultCodeSyntax">
             <summary>
             Default code syntax displayed in the Paste Code dialog
+            </summary>
+        </member>
+        <member name="P:MarkdownMonster.ApplicationConfiguration.ExternalEditorPath">
+            <summary>
+            Allows you to specify an internal editor to open files
+            externally. There are a few tasks like HTML editing that
+            are better suited to external editors.
             </summary>
         </member>
         <member name="P:MarkdownMonster.ApplicationConfiguration.WebBrowserPreviewExecutable">
@@ -8494,6 +8501,11 @@
             The last Image Folder used for this document
             </summary>
         </member>
+        <member name="P:MarkdownMonster.MarkdownDocument.LastImageUseRelativePath">
+            <summary>
+            Saved setting for saving image with relative paths
+            </summary>
+        </member>
         <member name="P:MarkdownMonster.MarkdownDocument.CurrentText">
             <summary>
             Holds the actively edited Markdown text
@@ -9971,6 +9983,14 @@
             <param name="basePath"></param>
             <returns>Normalized file name, or null if the file is not found or can't resolve</returns>
         </member>
+        <member name="M:MarkdownMonster.mmFileUtils.ResolvePath(System.String,System.String,System.Boolean)">
+            <summary>
+            Resolves a relative file path to a base file or directory absolute path
+            </summary>
+            <param name="baseFilePath">Base file or folder which relativeFile is relative to</param>
+            <param name="relativeFile">The path to resolve</param>
+            <returns></returns>
+        </member>
         <member name="M:MarkdownMonster.mmFileUtils.GetChecksumFromFile(System.String)">
             <summary>
             Creates an MD5 checksum of a file
@@ -10155,6 +10175,13 @@
             </summary>
             <param name="folder"></param>
             <returns>false if process couldn't be started - most likely invalid link</returns>
+        </member>
+        <member name="M:MarkdownMonster.mmFileUtils.OpenExternalEditor(System.String,System.String)">
+            <summary>
+            Opens a file in the configured External Editor
+            </summary>
+            <param name="fileToEdit">File to edit</param>
+            <param name="editorExe">Optionally pass in an editor Exe - if not passed default configured value is used.</param>
         </member>
         <member name="M:MarkdownMonster.mmFileUtils.ShowExternalBrowser(System.String)">
             <summary>

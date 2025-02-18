@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -1014,6 +1015,8 @@ namespace DocMonster.Model
             return Slug;
         }
 
+        
+
 
         /// <summary>
         /// Creates or updates a slug based on the current topic
@@ -1111,6 +1114,12 @@ namespace DocMonster.Model
                 if (file == null)
                     file = GetExternalFilename();
 
+                // TODO: FIGURE OUT WHY INDEX TOPIC IS LOSING CONTENT
+                //if (file.Contains("index.", StringComparison.OrdinalIgnoreCase) ||
+                //    Slug.Equals("West-Wind-WebSurge"))
+                //{
+                //    int x = 1;
+                //}
                 for (int i = 0; i < 4; i++)
                 {
                     try
@@ -1175,6 +1184,7 @@ namespace DocMonster.Model
             {
                 file = GetExternalFilename();
 
+             
                 // write empty file - so we always have accurate data
                 if (markdownText == null)
                     markdownText = string.Empty;
@@ -1187,6 +1197,16 @@ namespace DocMonster.Model
                         if (!Directory.Exists(path))
                             Directory.CreateDirectory(path);
 
+                        // TODO: Figure out why the index topic sometimes is blank when saving
+                        if (file.Contains("index.", StringComparison.OrdinalIgnoreCase) ||
+                            Slug.Equals("West-Wind-WebSurge") &&
+                            string.IsNullOrWhiteSpace(markdownText))
+                        {
+                            // file has content entry does not - delete
+                            var fi = new FileInfo(file);
+                            if (fi.Length > 0)
+                                return false;                            
+                        }
                         File.WriteAllText(file, markdownText, Encoding.UTF8);
                         break;
                     }
@@ -1399,6 +1419,26 @@ namespace DocMonster.Model
             return file;
         }
 
+
+        /// <summary>
+        /// Returns an HREF link to the topic based on the slug.
+        /// Link is prefixed with `/` by default
+        /// </summary>        
+        /// <param name="noLeadingSlash">If true doesn't render the leading slash</param>
+        /// <param name="attributes">Any additional attributes</param>
+        /// <param name="externalLink">if true adds target=_blank</param>
+        /// <returns></returns>
+        public string GetTopicHrefLink(bool noLeadingSlash = false, string attributes = null, bool externalLink = false)
+        {
+            string target = string.Empty;
+            if (externalLink)
+                target = " target=\"_blank\"";
+
+            string slash = noLeadingSlash ? "" : "/";
+
+            return $"<a href=\"{slash}{Slug.TrimEnd('/')}.html\"{target} {attributes}>{Title}</a>";
+        }
+
         /// <summary>
         /// Determines whether a display is a header topic
         /// </summary>
@@ -1460,12 +1500,22 @@ namespace DocMonster.Model
             if (mode == HtmlRenderModes.None)
                 mode = TopicState.IsPreview ? HtmlRenderModes.Preview : HtmlRenderModes.Html;
 
-
+            
             if (link == null)
             {
-                var relBasePath = "/"; // GetRelativeRootBasePath(); // "/";      // This will get fixed up in render
-                                            // GetRelativeRootBasePath();
-                link = relBasePath + Slug.TrimEnd('/') + ".html";
+                if (mode == HtmlRenderModes.Preview)
+                {
+                    link = $"dm-topic://{Id}";
+                }
+                else
+                {
+                    // render / for path and let Render expand properly
+                    //var relBasePath = "/"; //  GetRelativeRootBasePath(); // "/";      // This will get fixed up in render
+                    // GetRelativeRootBasePath();
+                    link = "/" +
+                          Slug.TrimEnd('/') +
+                          (mode == HtmlRenderModes.Preview ? ".md" : ".html");
+                }
             }
                      
             // Plain HTML
