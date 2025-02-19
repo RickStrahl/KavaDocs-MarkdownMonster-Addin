@@ -26,4 +26,9 @@ public class RenderTemplateModel
     public DocMonsterConfiguration Configuration { get; set; }
     public TemplateHelpers Helpers {get; set; }
     public bool IsPreview { get; set;  }
+
+    /// <summary>
+    /// The base path rendered into the page
+    /// </summary>
+    public string PageBasePath { get; set; }
 }

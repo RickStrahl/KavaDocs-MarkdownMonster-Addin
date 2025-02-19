@@ -127,8 +127,11 @@ namespace DocMonsterAddin
         
         }
 
-        
 
+        public override Task<string> OnSaveImage(object image)
+        {
+            return base.OnSaveImage(image);
+        } 
 
         /// <summary>
         /// Attach the addin to Markdown Monster

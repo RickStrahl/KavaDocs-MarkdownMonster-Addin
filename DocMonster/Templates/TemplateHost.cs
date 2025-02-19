@@ -92,7 +92,9 @@ namespace DocMonster.Templates
 
             Script.ScriptEngine.ObjectInstance = null; // make sure we don't cache
 
-            var basePath = model.Project.ProjectDirectory;            
+            
+            string basePath = model.Project.ProjectDirectory;
+            model.PageBasePath = System.IO.Path.GetDirectoryName(model.Topic.RenderTopicFilename);
 
             string result = Script.ExecuteScriptFile(templateFile, model, basePath: basePath);
 

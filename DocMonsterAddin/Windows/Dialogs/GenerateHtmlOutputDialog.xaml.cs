@@ -20,6 +20,7 @@ using DocMonsterAddin.WebServer;
 using MahApps.Metro.Controls;
 using MarkdownMonster;
 using MarkdownMonster.Utilities;
+using MarkdownMonster.Windows;
 using Westwind.Utilities;
 
 namespace DocMonsterAddin.Windows.Dialogs
@@ -31,6 +32,9 @@ namespace DocMonsterAddin.Windows.Dialogs
     {
         public GenerateHtmlModel Model { get; }
 
+        StatusBarHelper Status { get; set; }
+
+
         public GenerateHtmlOutputDialog(DocProject project = null)
         {
             InitializeComponent();
@@ -41,15 +45,18 @@ namespace DocMonsterAddin.Windows.Dialogs
             if (project != null)
                 Model.Project = project;
 
+            Status = new StatusBarHelper(StatusText, StatusIcon);
+
             DataContext = Model;            
         }
 
+        
         private async void Button_GenerateOutput(object sender, RoutedEventArgs e)
         {
 
             try
             {
-                mmApp.Model.Window.ShowStatusProgress("Generating Html output...");
+                Status.ShowStatusProgress("Generating Html output...");
 
 
                 Model.IsComplete = false;
@@ -65,11 +72,11 @@ namespace DocMonsterAddin.Windows.Dialogs
             }
             catch(Exception ex)
             {
-                mmApp.Window.ShowStatusError("Html output generation failed: " + ex.Message);
+                Status.ShowStatusError("Html output generation failed: " + ex.Message);
             }
             finally
             {
-                mmApp.Window.ShowStatusSuccess("Html output has been generated.");
+               Status.ShowStatusSuccess("Html output has been generated.");
             }
 
             if (Model.OpenInBrowser)
@@ -78,7 +85,6 @@ namespace DocMonsterAddin.Windows.Dialogs
                     Model.Model.Addin.StartWebServer();
 
                 ShellUtils.GoUrl(Model.BrowserUrl);
-                mmApp.Model.Window.ShowStatusSuccess("Project output has been generated.");
             }
             if (Model.OpenFolder)
             {

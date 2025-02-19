@@ -17,32 +17,36 @@
                        Style="{StaticResource mmWindow}"
                            WindowStartupLocation="CenterOwner"                                   
                            IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
-                           Width="800" Height="525" MinWidth="640" MinHeight="320">
+                           Width="800" Height="525" MinWidth="750" MinHeight="320">
     <controls:MetroWindow.Resources>
         <windows:InvertedBooleanConverter x:Key="InvertedBooleanConverter" />
     </controls:MetroWindow.Resources>
-        
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
 
-        <StackPanel Margin="25,20,40,0">
-            <Image Source="../../Assets/Icon_128.png"                   
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Margin="25,20,40,0">
+                <Image Source="../../Assets/Icon_128.png"                   
                    Width="200" VerticalAlignment="Top" />
 
-            <Separator Margin="0,15,0,10" />
-            <TextBlock FontWeight="DemiBold" FontSize="20" >Generate Html Output</TextBlock>
-        </StackPanel>
+                <Separator Margin="0,15,0,10" />
+                <TextBlock FontWeight="DemiBold" FontSize="20" >Generate Html Output</TextBlock>
+            </StackPanel>
 
-        <StackPanel Grid.Column="1" Margin="15 10 20 0">
-            <TextBlock Margin="0 0 0 10" Style="{DynamicResource HeaderTextBlockStyle}">Generation</TextBlock>
+            <StackPanel Grid.Column="1" Margin="15 20 20 0">
+                <Label>Relative Base Url</Label>
+                <TextBox Text="{Binding Project.Settings.RelativeBaseUrl}" controls:TextBoxHelper.Watermark="/ or /docs/" />
 
-            <Label>Relative Base Url</Label>
-            <TextBox Text="{Binding Project.Settings.RelativeBaseUrl}" controls:TextBoxHelper.Watermark="/ or /docs/" />
-
-            <TextBlock Margin="5 7 10 10" 
+                <TextBlock Margin="5 7 10 10" 
                        TextWrapping="Wrap"
                        FontSize="12" FontStyle="Italic">
                 This path determines where referencing `/` and `~/` links  return to
@@ -50,35 +54,35 @@
                 your Html in a subfolder it may be something like `/docs/` or `/help/`
                 in which case you can specify those subfolders. Any root links will
                 in templates and topics will be fixed up with this path.
-            </TextBlock>
+                </TextBlock>
 
 
-            <TextBlock Margin="0 10 0 10" Style="{DynamicResource HeaderTextBlockStyle}">Output</TextBlock>
+                <TextBlock Margin="0 10 0 10" Style="{DynamicResource HeaderTextBlockStyle}">Output</TextBlock>
 
-            <Grid  HorizontalAlignment="Stretch">
+                <Grid  HorizontalAlignment="Stretch">
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <CheckBox IsChecked="{Binding OpenInBrowser}">Open in Browser
-                    <CheckBox.ToolTip>
-                        <TextBlock>                            
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <CheckBox IsChecked="{Binding OpenInBrowser}">Open in Browser
+                        <CheckBox.ToolTip>
+                            <TextBlock>                            
                             Preview the generated HTML output in your Web browser.
                             <LineBreak />
                             <LineBreak/>                        
                             By default uses a local Web Server, but the server may have
                             <LineBreak/>
                             to be configured the first time you run it.
-                        </TextBlock>
-                    </CheckBox.ToolTip>
-                </CheckBox>
-                <CheckBox Grid.Column="1"  HorizontalAlignment="Right"
+                            </TextBlock>
+                        </CheckBox.ToolTip>
+                    </CheckBox>
+                    <CheckBox Grid.Column="1"  HorizontalAlignment="Right"
                           IsChecked="{Binding DontStartInternalWebServer}">
 
-                    Don't start internal Web server
-                    <CheckBox.ToolTip>
-                        <TextBlock>
+                        Don't start internal Web server
+                        <CheckBox.ToolTip>
+                            <TextBlock>
                             By default we'll launch a local Windows Web server (http.sys).
                         <LineBreak />
                         <LineBreak/>                        
@@ -86,60 +90,94 @@
                             <LineBreak/>
                         custom Url to preview your generated output.
 
-                        </TextBlock>
-                    </CheckBox.ToolTip>
-                   
-                </CheckBox>
-            </Grid>
-            
-            <TextBox Margin="25 5 0 15" FontSize="13" Text="{Binding BrowserUrl }" />
+                            </TextBlock>
+                        </CheckBox.ToolTip>
 
-            
-            
+                    </CheckBox>
+                </Grid>
 
-            <CheckBox IsChecked="{Binding OpenFolder}">Open Folder in Explorer</CheckBox>
-            <TextBlock Margin="25 5 0 0" FontSize="13" Foreground="Silver" Text="{Binding Project.OutputDirectory }" />
+                <TextBox Margin="25 5 0 15" FontSize="13" Text="{Binding BrowserUrl }" />
 
 
 
-            <StackPanel Margin="0,20,0,0" Grid.Column="1">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
 
-                    <Button Name="ButtonCreateTopic" Margin="0,20" Height="40" FontSize="15" Width="130"
+                <CheckBox IsChecked="{Binding OpenFolder}">Open Folder in Explorer</CheckBox>
+                <TextBlock Margin="25 5 0 0" FontSize="13" Foreground="Silver" Text="{Binding Project.OutputDirectory }" />
+
+
+
+                <StackPanel Margin="0,20,0,0" Grid.Column="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Name="ButtonCreateTopic" Margin="0,20" Height="40" FontSize="15" Width="130"
                         HorizontalAlignment="Left"
                         IsDefault="True" 
                         IsEnabled="{Binding IsRunning, Converter={StaticResource InvertedBooleanConverter}}"
                         Click="Button_GenerateOutput" Grid.Column="0">
-                        <StackPanel Orientation="Horizontal">
-                            <fa6:ImageAwesome  Icon="Solid_Gear" PrimaryColor="#FF0E7E28"  Height="18" />
-                            <TextBlock Margin="10,0,0,0">Generate</TextBlock>
-                        </StackPanel>
-                    </Button>
+                            <StackPanel Orientation="Horizontal">
+                                <fa6:ImageAwesome  Icon="Solid_Gear" PrimaryColor="#FF0E7E28"  Height="18" />
+                                <TextBlock Margin="10,0,0,0">Generate</TextBlock>
+                            </StackPanel>
+                        </Button>
 
-                    <Button Name="ButtonCancel" Margin="10,20" Height="40" FontSize="15" Width="130" 
+                        <Button Name="ButtonCancel" Margin="10,20" Height="40" FontSize="15" Width="130" 
                         HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" Grid.Column="1">
-                        <StackPanel Orientation="Horizontal" >
-                            <fa6:ImageAwesome Icon="Solid_XMark" PrimaryColor="DarkRed" Height="15" />
-                            <TextBlock Margin="10,0,0,0">Cancel</TextBlock>
-                        </StackPanel>
-                    </Button>
+                            <StackPanel Orientation="Horizontal" >
+                                <fa6:ImageAwesome Icon="Solid_XMark" PrimaryColor="DarkRed" Height="15" />
+                                <TextBlock Margin="10,0,0,0">Cancel</TextBlock>
+                            </StackPanel>
+                        </Button>
 
-                    <Button Name="ButtonPublish" Margin="70 20" Height="40" FontSize="15" Width="130"                             
+                        <Button Name="ButtonPublish" Margin="70 20" Height="40" FontSize="15" Width="130"                             
                             controls:VisibilityHelper.IsVisible="{Binding IsComplete}" HorizontalAlignment="Right"
                             Click="Button_PublishClick" Grid.Column="2">
-                        <StackPanel Orientation="Horizontal" >
-                            <fa6:ImageAwesome  Icon="Duotone_CloudArrowUp" PrimaryColor="Goldenrod" SecondaryColor="#222" SecondaryOpacity="1"  Height="20" />
-                            <TextBlock Margin="10,0,0,0">Publish</TextBlock>
-                        </StackPanel>
-                    </Button>
-                </Grid>
+                            <StackPanel Orientation="Horizontal" >
+                                <fa6:ImageAwesome  Icon="Duotone_CloudArrowUp" PrimaryColor="Goldenrod" SecondaryColor="#222" SecondaryOpacity="1"  Height="20" />
+                                <TextBlock Margin="10,0,0,0">Publish</TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+
             </StackPanel>
 
-        </StackPanel>
+
+
+        </Grid>
+        <StatusBar Grid.Row="1" Grid.ColumnSpan="2"  Height="30"  VerticalAlignment="Bottom" HorizontalAlignment="Stretch" FontSize="14">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+
+                            <ColumnDefinition Width="Auto"  />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0" Margin="2,1,0,0">
+                <fa6:ImageAwesome Name="StatusIcon" Icon="Solid_Circle" PrimaryColor="ForestGreen" Height="15"/>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1">
+                <TextBlock Name="StatusText" x:FieldModifier="public" HorizontalAlignment="Left">Ready</TextBlock>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="2">
+                <TextBlock Name="StatusTextTopicLink" Foreground="SteelBlue"                                                        
+                           x:FieldModifier="public" 
+                           TextAlignment="Right"                           
+                           FontSize="11"
+                           Margin="0 0 5 0"
+                           HorizontalAlignment="Right"/>
+            </StatusBarItem>
+        </StatusBar>
+
     </Grid>
+
 </controls:MetroWindow>
