@@ -143,7 +143,7 @@ namespace DocMonsterAddin.Windows.Dialogs
             if (string.IsNullOrEmpty(topic?.RenderTopicFilename))
                 return;
 
-            var oldTitle = Model.SelectedTopic.Title;
+            var oldTitle = Model.SelectedTopic?.Title;
 
             // if empty or 'default' replace with new text - if custom title - leave it alone
             if (string.IsNullOrEmpty(Model.LinkText) || Model.LinkText == oldTitle)

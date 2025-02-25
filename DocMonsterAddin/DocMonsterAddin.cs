@@ -136,7 +136,7 @@ namespace DocMonsterAddin
         /// <summary>
         /// Attach the addin to Markdown Monster
         /// </summary>
-        public void InitializeKavaDocs()
+        public void InitializeDocumentationMonster()
         {
             if (!IsAddinInitialized)
             {
@@ -171,7 +171,7 @@ namespace DocMonsterAddin
         /// <summary>
         /// Remove the Addin from Markdown Monster
         /// </summary>
-        public void UninitializeKavaDocs()
+        public void UninitializeDocumentationMonster()
         {
             if (IsAddinInitialized)
             {                
@@ -452,11 +452,11 @@ namespace DocMonsterAddin
         {
             if (IsAddinInitialized)
             {
-                UninitializeKavaDocs();
+                UninitializeDocumentationMonster();
                 return Task.CompletedTask;
             }
 
-            InitializeKavaDocs();  // will check if already loaded
+            InitializeDocumentationMonster();  // will check if already loaded
 
             if (_firstLoad)
             {
@@ -525,7 +525,7 @@ namespace DocMonsterAddin
                 var topic = Model.ActiveEditor.GetProperty<DocTopic>(Constants.EditorPropertyNames.KavaDocsTopic);
                 if (topic != null)
                 {
-                    InitializeKavaDocs(); // will check if already loaded
+                    InitializeDocumentationMonster(); // will check if already loaded
                     OnTopicFilesSaved(topic, doc);
                     return Task.CompletedTask;
                 }                
@@ -622,7 +622,7 @@ namespace DocMonsterAddin
         {
             if (url.StartsWith("dm-", StringComparison.OrdinalIgnoreCase) || url.StartsWith("vfps://", StringComparison.OrdinalIgnoreCase))
             {
-                var topic = DocMonsterModel.ActiveProject.LoadTopic(url);
+                var topic = DocMonsterModel.ActiveProject.LookupTopic(url);
                 if (topic == null)
                     return true;  // no browser bad navigation - nothing happens here
 
@@ -632,7 +632,7 @@ namespace DocMonsterAddin
                 {
                     Tree.SelectTopic(topic);
                     await OpenTopicInEditor(topic);
-                });
+                }).FireAndForget();
 
                 return true;
             }            
@@ -679,11 +679,11 @@ namespace DocMonsterAddin
                 return Task.FromResult(renderedHtml);
 
             //topic.Body = await mmApp.Model.ActiveEditor.GetMarkdown();
-            
-            //var outputFile = Path.Combine(topic.Project.OutputDirectory, topic.SlugFilePath);
-            //topic.Project.Settings.ActiveRenderMode = HtmlRenderModes.Html;
-            //topic.TopicState.IsPreview = false;
-            //topic.RenderTopicToFile(outputFile, TopicRenderModes.Html);
+
+            var outputFile = Path.Combine(topic.Project.OutputDirectory, topic.SlugFilePath);
+            topic.Project.Settings.ActiveRenderMode = HtmlRenderModes.Html;
+            topic.TopicState.IsPreview = false;
+            topic.RenderTopicToFile(outputFile, TopicRenderModes.Html);
 
             topic.Project.Settings.ActiveRenderMode = HtmlRenderModes.Preview;
             topic.TopicState.IsPreview = true;

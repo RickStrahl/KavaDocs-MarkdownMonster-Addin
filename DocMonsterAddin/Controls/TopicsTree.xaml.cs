@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using DocMonster.Annotations;
 using DocMonster.Model;
 using DocMonster.Utilities;
 using DocMonster.Windows.Dialogs;
@@ -121,7 +122,7 @@ namespace DocMonsterAddin.Controls
         /// <param name="topic"></param>
         public void SelectTopic(DocTopic topic)
         {
-            var lastTopic = kavaUi.Model.ActiveTopic;
+            var lastTopic = Model.DocMonsterModel.ActiveTopic;
 
             var foundTopic = Model.FindTopicInTree(null, topic);
             if (foundTopic != null)
@@ -182,12 +183,18 @@ namespace DocMonsterAddin.Controls
                 lastTopic.TopicState.IsSelected = false;               
                 if (editor != null)
                 {
-                    var md = await editor.GetMarkdown();
-                    if (md != null)
+                    // TODO: Make sure Topic is the same!
+                    var editorTopic = editor.GetProperty<DocTopic>(Constants.EditorPropertyNames.KavaDocsTopic);
+                    if (editorTopic != null && editorTopic.Id == lastTopic.Id)
                     {
-                        if(lastTopic.SaveTopicFile(md))
-                           await editor.SetDirty(false);
+                        var md = await editor.GetMarkdown();
+                        if (md != null)
+                        {
+                            if (lastTopic.SaveTopicFile(md))
+                                await editor.SetDirty(false);
+                        }
                     }
+
                     if (Model.DocMonsterModel.Configuration.CloseTopicsOnDeselection)
                         await mmApp.Model.Window.CloseTab(editor.MarkdownDocument.Filename);
                 }
@@ -207,7 +214,7 @@ namespace DocMonsterAddin.Controls
                     kavaUi.Model.Window.ShowStatus("Topic saved.", 3000);
             }
 
-
+            // Now actually assign the model
             kavaUi.Model.ActiveTopic = topic;
 
             // TODO: Move to function
@@ -225,7 +232,9 @@ namespace DocMonsterAddin.Controls
                 topic.TopicState.IsSelected = true;
             topic.TopicState.IsDirty = false;
 
-            Dispatcher.InvokeAsync(() => OpenTopicInEditor().FireAndForget(), DispatcherPriority.Normal);
+            //await OpenTopicInEditor();
+
+            await Dispatcher.InvokeAsync(() => OpenTopicInEditor().FireAndForget(), DispatcherPriority.Normal);
 
             return true;
         }

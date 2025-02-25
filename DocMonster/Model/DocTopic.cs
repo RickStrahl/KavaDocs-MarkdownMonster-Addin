@@ -729,7 +729,7 @@ namespace DocMonster.Model
                     if (href == null)
                         continue;
 
-                    if (string.IsNullOrEmpty(href) || href.StartsWith("http://") || href.StartsWith("https://"))                    
+                    if (string.IsNullOrEmpty(href) || href.StartsWith("http://") || href.StartsWith("https://") || href.StartsWith("mailto:"))                    
                         continue;
 
                     if (href.EndsWith(".md", StringComparison.InvariantCultureIgnoreCase))
@@ -741,7 +741,7 @@ namespace DocMonster.Model
                     if((href.StartsWith("dm-") && href.Contains("://"))||
                         href.StartsWith("vfps://",StringComparison.OrdinalIgnoreCase))
                     {
-                        var topic = Project.LoadTopic(href);
+                        var topic = Project.LookupTopic(href);
 
                         string hreflink;
                         if (topic == null)

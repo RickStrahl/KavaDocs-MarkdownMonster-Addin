@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0-windows</TargetFramework>
-    <Version>0.1</Version>
-    <FileVersion>0.1</FileVersion>
+    <Version>0.1.1</Version>    
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWPF>true</UseWPF>
@@ -26,7 +25,8 @@
     </ProjectReference>
     <ProjectReference Include="..\DocMonster\DocMonster.csproj" />
 
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
+    <!--<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />-->
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3065.39" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\icon_128.png" />

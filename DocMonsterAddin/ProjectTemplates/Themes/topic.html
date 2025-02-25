@@ -1,13 +1,14 @@
-﻿
+
 {{%
     Script.Layout = "_kavadocs\\Themes\\_layout.html";    
 }}
-
 
 <header class="content-title">
     <img src="~/_kavadocs/icons/{{ Model.Topic.DisplayType }}.png">
     {{ Model.Topic.Title }}
 </header>
+
+{{ Script.RenderPartial("_kavadocs\\Themes\\Under-Construction-Partial.html", Model) }}
 
 <div class="content-body" id="body">
     {{% if (Topic.IsLink && Topic.Body.Trim().StartsWith("http") ) { }}        
@@ -31,7 +32,6 @@
 
 
 {{% if (!string.IsNullOrEmpty(Model.Topic.Remarks)) {  }}
- 
     <h3 class="outdent" id="remarks">Remarks</h3>
     {{ Model.Topic.MarkdownRaw(Model.Topic.Remarks) }}
 {{% } }}
@@ -42,8 +42,8 @@
 {{% } }}
 
 {{% if (!string.IsNullOrEmpty(Model.Topic.SeeAlso)) { }}
-{
-    <h3 class="outdent" id="seealso">See also</h3>
-    {{ Model.Topic.SeeAlso }}
-
+    <h4 class="outdent" id="seealso">See also</h4>
+    <div class="see-also-container">
+        {{ Helpers.FixupSeeAlsoLinks(Topic.SeeAlso) }}
+    </div>
 {{% } }}

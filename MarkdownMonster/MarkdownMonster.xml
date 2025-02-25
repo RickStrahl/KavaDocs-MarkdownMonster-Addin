@@ -3427,6 +3427,32 @@
             https://stackoverflow.com/a/30729291
             </summary>
             <param name="bmp">Initial bitmap</param>
+            <returns>Bitmap Source</returns>
+        </member>
+        <member name="M:MarkdownMonster.Windows.WindowUtilities.BitmapToBitmapSourceSafe(System.Drawing.Bitmap)">
+             <summary>
+             THis is a safe version of the above operation that
+             is more memory intensive.
+            
+             This version has less failures converting images
+             but it's more memory intensive and less efficient
+             as it doesn't work on the native image.
+             </summary>
+             <param name="bmp"></param>
+             <returns></returns>
+        </member>
+        <member name="M:MarkdownMonster.Windows.WindowUtilities.ConvertPixelFormat(System.Drawing.Imaging.PixelFormat)">
+            <summary>
+            Converts System.Drawing to System.Windows Pixel format
+            </summary>
+            <param name="systemDrawingFormat">System.Drawing based PixelFormat</param>
+            <returns>System.Windows based PixelFormat</returns>
+        </member>
+        <member name="M:MarkdownMonster.Windows.WindowUtilities.ConvertPixelFormat(System.Windows.Media.PixelFormat)">
+            <summary>
+            Converts System.Windows Pixel format to System.Drawing Pixel format
+            </summary>
+            <param name="wpfFormat"></param>
             <returns></returns>
         </member>
         <member name="M:MarkdownMonster.Windows.WindowUtilities.BrushToColor(System.Windows.Media.Brush)">
@@ -7165,18 +7191,13 @@
              Defaults to off as it adds a bit of processing overhead.
              </summary>
         </member>
-        <member name="P:MarkdownMonster.Configuration.EditorConfiguration.EnableBulletAutoCompletion">
+        <member name="P:MarkdownMonster.Configuration.EditorConfiguration.EnableListAutoCompletion">
             <summary>
-            If enabled, pressing ENTER in a bullet list
+            If enabled, pressing Enter in a bullet list
             creates a new bullet or numbered bullet at the same
-            outline level. Disabled by default.
-            </summary>
-        </member>
-        <member name="P:MarkdownMonster.Configuration.EditorConfiguration.EnableBulletTabIndentation">
-            <summary>
-            When enable, pressing tab in a bullet creates a new
-            bullet or numbered bullet item that is indented one
-            level below. Disabled by default.
+            outline level. Pressing Tab/Shift-Tab expands the indentation
+            level and renumbers numbered lists.
+            Requires document reload.        
             </summary>
         </member>
         <member name="P:MarkdownMonster.Configuration.EditorConfiguration.AdditionalToolbarIcons">
@@ -9706,18 +9727,23 @@
         </member>
         <member name="T:MarkdownMonster.ClipboardHelper">
             <summary>
-            Helper to  encode and set HTML fragment to clipboard.<br/>
-            See <br/>
-            <seealso  cref="M:MarkdownMonster.ClipboardHelper.CreateDataObject(System.String,System.String)"/>.
-             </summary>
-            <remarks>
-            The MIT License  (MIT) Copyright (c) 2014 Arthur Teplitzki.
-            https://gist.github.com/ArthurHub/10729205
-             </remarks>
+            Clipboard Support Functions that provide safe access to the clipboard
+            </summary>
         </member>
         <member name="F:MarkdownMonster.ClipboardHelper.RetyAttempts">
             <summary>
             Number of retry attempts when clipboard access fails
+            </summary>
+        </member>
+        <member name="F:MarkdownMonster.ClipboardHelper.Header">
+            Helper to  encode and set HTML fragment to clipboard.<br/>
+            The MIT License  (MIT) Copyright (c) 2014 Arthur Teplitzki.
+            https://gist.github.com/ArthurHub/10729205
+            <summary>
+            The string contains index references to  other spots in the string, so we need placeholders so we can compute the  offsets. <br/>
+            The  <![CDATA[<<<<<<<]]>_ strings are just placeholders.  We'll back-patch them actual values afterwards. <br/>
+            The string layout  (<![CDATA[<<<]]>) also ensures that it can't appear in the body  of the html because the <![CDATA[<]]> <br/>
+            character must be escaped. <br/>
             </summary>
         </member>
         <member name="F:MarkdownMonster.ClipboardHelper.StartFragment">

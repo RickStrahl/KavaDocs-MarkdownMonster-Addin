@@ -31,7 +31,7 @@ h3 {
     font-size: 1.3em;    
 }
 h4 {
-    font-size: 1.08em;
+    font-size: 1.12em;
 }
 h5, h6 { 
     font-size: 1.04em;
@@ -100,15 +100,17 @@ a, b, strong {
 }
 blockquote {
     background: #ecf5ff;
-    font-size: 1.02rem;    
+    font-size: 1.04em;    
     padding: 10px 20px;
     margin: 1.3em;
     border-left: 8px #507bac solid;
     border-radius: 4px 0 0 4px;
 }
+    blockquote h4 { font-size: 1.3em }
     blockquote *:first-child { margin-top: 0; }
     blockquote *:last-child { margin-bottom: 0; }
-hr{
+
+hr {
     margin: 12px 0;    
 }
 .content-body a {
@@ -213,6 +215,24 @@ hr{
 .byline img {
     width: 16px;
 }
+.see-also-container {
+    margin: 0 1em;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    font-size: 0.8em;    
+    font-weight: normal;
+}
+.see-also-container>div {
+    margin: 0.5em 0.3em;
+}
+.see-also-container>div:after {
+    content: " •"
+}
+.see-also-container>div:last-child:after {
+    content: none
+}
+
 td, th  {
     padding: 5px;
     vertical-align: top;
@@ -297,7 +317,7 @@ table {
     }
 .banner {    
     border: 0;    
-    padding: 10px 12px;
+    padding: 0.4em 0.8em;
     background: #434343;
     color: white;
     flex: 0 0 auto;  /* don't grow | shrink */
@@ -345,15 +365,20 @@ table {
     }
 
 .splitter {
-    flex: 0 0 auto; 
-    background: url('../images/vsizegrip.png') center center no-repeat #535353;
-    width: 13px;
+    flex: 0 0 auto;
+    background:  #444;    
+    width: 5px;
     cursor: col-resize;    
 }
 .sidebar-toggle {
     color: white;
     cursor: pointer;
-    padding: 3px;
+    padding: 0.4em;
+    margin-left: -0.7em;
+    font-size: 16px;
+}
+.sidebar-toggle:hover {
+    color: steelblue;    
 }
 .main-content {    
     flex: 1 1 auto;  /* grow & shrink horizontally */
@@ -488,7 +513,8 @@ table {
 .toc .selected {    
         background: steelblue;
         color: white;
-        padding: 0.25em 0.50em 0.35em 0.3em;       
+        padding: 0.25em 0.50em 0.35em 0.3em;     
+        border: none;  
 }
 .toc-content {
     background: #636363;
@@ -525,8 +551,16 @@ table {
     .toc-content{
         white-space: nowrap;
     }    
-    .toc-content a, .toc-content a:visited, .toc-content a:hover, .toc-content a:focus {
-        color:  #f5f5f5;        
+    .toc-content a,  .toc-content a:visited {
+        color: #eee;
+        text-decoration: none;
+    }
+   .toc-content a:hover, .toc-content a:focus {
+        color:  white;
+        outline: none;   
+    }
+    .toc-content a:active {
+        border: none;
     }
 
     .toc .fa {

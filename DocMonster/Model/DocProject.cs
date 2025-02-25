@@ -124,7 +124,15 @@ namespace DocMonster.Model
 
         #region Related Entities
 
-        [JsonIgnore] public DocTopic Topic { get; set; }
+        
+        [JsonIgnore]
+        public DocTopic Topic
+        {
+            get => _topic;
+            set { _topic = value;  }
+        }
+        private DocTopic _topic;
+
 
         /// <summary>
         /// Topic list
@@ -255,15 +263,15 @@ namespace DocMonster.Model
         }
 
 
-
         /// <summary>
         /// Generic Topic loader that works with 
         /// Loads a topic by topic id, or by dm-topic://, dm-slug:// or dm-title://
         /// link.
         /// </summary>
         /// <param name="topicId">Topic Id or dm:// link</param>
+        /// <param name="dontAssignProjectTopic">If true doesn't assign the Topic property</param>
         /// <returns>Topic or null</returns>
-        public DocTopic LoadTopic(string topicId)
+        public DocTopic LoadTopic(string topicId, bool dontAssignProjectTopic = false)
         {
             if (string.IsNullOrEmpty(topicId))
                 return null;
@@ -285,7 +293,7 @@ namespace DocMonster.Model
 
             else if (topicId.StartsWith("vfps://", StringComparison.OrdinalIgnoreCase))
             {
-                if (topicId.Contains("/topic/"))
+                if (topicId.Contains("/topic/")) 
                 {
                     topicId = topicId.Replace("vfps://topic/", string.Empty, StringComparison.OrdinalIgnoreCase);
                     if (topicId.StartsWith('_'))
@@ -301,11 +309,16 @@ namespace DocMonster.Model
                 topic = LoadTopicBySlug(topicId, true);
             }
 
-            Topic = topic;
-            if (topic == null)
-                return null;
+            if (!dontAssignProjectTopic)
+                Topic = topic;
 
-            return AfterTopicLoaded(Topic);
+            if (topic == null)
+            {
+                SetError("Topic not found.");
+                return null;
+            }
+
+            return AfterTopicLoaded(topic);
         }
 
         public DocTopic LoadTopicById(string topicId)
@@ -395,8 +408,7 @@ namespace DocMonster.Model
         protected DocTopic AfterTopicLoaded(DocTopic topic)
         {
             if (topic == null)
-            {
-                Topic = null;
+            {                
                 SetError("Topic not found.");
                 return null;
             }
@@ -422,11 +434,13 @@ namespace DocMonster.Model
         #region Topic Crud
 
         /// <summary>
-        /// Removes an item from collection
+        /// Deletes a topic and its child topics. Optionally allows deleting
+        /// just the child topics.
         /// </summary>
-        /// <param name="topic"></param>
+        /// <param name="topic">Topic to delete with child topics</param>
+        /// <param name="childTopicsOnly">If true only delete child topics</param>
         /// <returns></returns>
-        public void DeleteTopic(DocTopic topic)
+        public void DeleteTopic(DocTopic topic, bool childTopicsOnly = false)
         {
             if (topic == null)
                 return;

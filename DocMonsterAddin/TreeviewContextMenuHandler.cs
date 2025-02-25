@@ -46,6 +46,19 @@ namespace DocMonsterAddin
             };
             ctxMenu.Items.Add(mi);
 
+            if (Model.ActiveTopic.Topics.Count > 0)
+            {
+                mi = new MenuItem
+                {
+                    Name = "MenuDeleteChildTopics",
+                    Header = "Delete Child Topics",                    
+                    Command = Model.Commands.DeleteTopicCommand,
+                    CommandParameter = "ChildTopics"
+                };
+                ctxMenu.Items.Add(mi);
+            }
+
+
             ctxMenu.Items.Add(new Separator());
 
             mi = new MenuItem
@@ -84,16 +97,10 @@ namespace DocMonsterAddin
 
             var sub = new MenuItem
             {
-                Header = "Edit Topic Template",                
+                Header = "Edit Topic Template",
+                CommandParameter = $"{Model.ActiveTopic?.DisplayType}.html"
             };
-            sub.Click += (s, e) =>
-            {
-                var path = Path.Combine(Model.ActiveProject.ProjectDirectory, $"_kavadocs\\Themes\\{Model.ActiveTopic?.DisplayType}.html");
-                if (!File.Exists(path))
-                    ShellUtils.OpenFileInExplorer(path);
-                else
-                    mmFileUtils.OpenExternalEditor(path);
-            };
+            sub.Click += On_OpenStaticScriptFile;            
             mi.Items.Add(sub);
 
             sub = new MenuItem
@@ -198,13 +205,19 @@ namespace DocMonsterAddin
                 "_kavadocs\\Themes\\",
                 relativeFile);
 
-            if (File.Exists(file))
-                ShellUtils.GoUrl(file);
+            //if (File.Exists(file))
+            //    ShellUtils.GoUrl(file);
 
-            if (Directory.Exists(file))
+            //if (Directory.Exists(file))
+            //    ShellUtils.OpenFileInExplorer(file);
+
+            //var path = Path.Combine(Model.ActiveProject.ProjectDirectory, $"_kavadocs\\Themes\\{Model.ActiveTopic?.DisplayType}.html");
+            if (!File.Exists(file))
                 ShellUtils.OpenFileInExplorer(file);
-            
-                      
+            else
+                mmFileUtils.OpenExternalEditor(file);
+
+
         }
 
     }

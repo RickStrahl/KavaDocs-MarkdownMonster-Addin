@@ -131,6 +131,8 @@ namespace DocMonster.Model
         }
         private string _relativeBaseUrl = "/";
 
+        public string SupportEmail { get; set; } = "support@yoursite.com";
+
         public UploadSettings Upload { get; set; } = new UploadSettings();  
 
 

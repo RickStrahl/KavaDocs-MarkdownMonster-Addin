@@ -9,7 +9,7 @@
                            xmlns:windows="clr-namespace:MarkdownMonster.Windows;assembly=MarkdownMonster"
                            mc:Ignorable="d"
                            Icon="../../Assets/Icon_128.png"                    
-                           Title="Generate Html Output"
+                           Title="Ftp Project Publishing"
                            TitleCharacterCasing="Normal"    
                            FontSize="16"
                            WindowStyle="SingleBorderWindow" ResizeMode="CanResize"
@@ -109,7 +109,7 @@
                     <Button Name="ButtonCreateTopic" Margin="0,20" Height="40" FontSize="15" Width="130"
                             HorizontalAlignment="Left"   IsDefault="True" Click="Button_Publish"
                             
-                            IsEnabled="{Binding IsRunning, Converter={StaticResource InvertedBooleanConverter}}">
+                            IsEnabled="{Binding IsUploading, Converter={StaticResource InvertedBooleanConverter}}">
                         <StackPanel Orientation="Horizontal">
                             <fa6:ImageAwesome  Icon="Duotone_CloudArrowUp" PrimaryColor="Goldenrod" SecondaryColor="#222" SecondaryOpacity="1"  Height="20" />
                             <TextBlock Margin="10,0,0,0">Publish</TextBlock>
@@ -117,7 +117,8 @@
                     </Button>
 
                     <Button Name="ButtonCancel" Margin="10,20" Height="40" FontSize="15" Width="130" 
-                            HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick" >
+                            HorizontalAlignment="Left" IsCancel="True" Click="Button_CancelClick"
+                            IsEnabled="{Binding IsUploading, Converter={StaticResource InvertedBooleanConverter}}">
                         <StackPanel Orientation="Horizontal" >
                             <fa6:ImageAwesome Icon="Solid_XMark" PrimaryColor="DarkRed" Height="15" />
                             <TextBlock Margin="10,0,0,0">Exit</TextBlock>

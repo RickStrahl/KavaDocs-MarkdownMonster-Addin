@@ -7,6 +7,8 @@
     {{ Topic.Title }}
 </header>
 
+{{ Script.RenderPartial("_kavadocs\\Themes\\Under-Construction-Partial.html", Model) }}
+
 <div class="content-body" id="body">
     {{% if (string.IsNullOrWhiteSpace(Topic.Body)) { }}
         {{ Helpers.ChildTopicsList() }}        
@@ -25,10 +27,14 @@
     {{! Topic.MarkdownRaw(Topic.Example) }}
 {{% } }}
 
-{{% if (!string.IsNullOrEmpty(Topic.SeeAlso))  { }}
-    <h3 class="outdent" id="seealso">See also</h3>
-    {{! HtmlUtils.DisplayMemo(Topic.SeeAlso) }}
+
+{{% if (!string.IsNullOrEmpty(Model.Topic.SeeAlso)) { }}
+    <h4 class="outdent" id="seealso">See also</h4>
+    <div class="see-also-container">
+        {{ Helpers.FixupSeeAlsoLinks(Topic.SeeAlso) }}
+    </div>
 {{% } }}
+
 
 
  

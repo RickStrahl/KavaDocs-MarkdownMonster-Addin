@@ -3,7 +3,7 @@
 <head>
     
     {{% if(Topic.TopicState.IsPreview) { }}
-    <base href="{{ BasePath }}" />
+    <base href="{{ Model.PageBasePath }}" />
     {{% } }}
     <meta charset="utf-8" />    
     <title>{{ Topic.Title }} - {{ Project.Title }}</title>
@@ -51,7 +51,7 @@
     <div class="flex-master">
         <div class="banner">
 
-            <div class="pull-right sidebar-toggle">
+            <div class="pull-left sidebar-toggle">
                 <i class="fa fa-bars"
                    title="Show or hide the topics list"></i>
             </div>
@@ -94,7 +94,11 @@
                     &copy; {{ Project.Owner }}, {{ DateTime.Now.Year }} &bull;
                     Updated: {{ Topic.Updated.ToString("yyyy-MM-dd") }}
                     <br />
-                    <a href="mailto:support@yoursite.com?subject={{ Topic.Title }} ({{Topic.Id}}&body=Topic: {{ Project.Title }} - http://yoursite.com/docs/{{ Topic.Id }}.htm">Comment or report problem with topic</a>
+                    {{%      
+                        string mailBody = $"Project: {Project.Title}\nTopic: {Topic.Title}\n\nUrl:\n{ Project.Settings.WebSiteBaseUrl.TrimEnd('/') + Project.Settings.RelativeBaseUrl }{ Topic.Id }.html";
+                        mailBody = WebUtility.UrlEncode(mailBody).Replace("+", "%20");                        
+                    }}
+                    <a href="mailto:{{ Project.Settings.SupportEmail }}?subject=Support: {{ Project.Title }} - {{ Topic.Title }}&body={{ mailBody }}">Comment or report problem with topic</a>
                 </small>
                 <br class="clearfix" />
                 <br />

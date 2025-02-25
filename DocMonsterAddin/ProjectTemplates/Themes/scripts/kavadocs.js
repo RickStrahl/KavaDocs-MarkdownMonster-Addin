@@ -264,11 +264,12 @@ var helpBuilder = null;
 
         function searchFilterFunc(target) {
             target.each(function () {
-                var $a = $(this).find(">a");
+                var $a = $(this).find("div>a");             
                 if ($a.length > 0) {
-                    var url = $a.attr('href');
-                    if (!url.startsWith("file:") && !url.startsWith("http")) {
-                        expandParents(url.replace(/.htm/i, ""), true);
+                    const url = $a.attr('href');  
+                    const id = $a.attr('id');                         
+                    if (!url.startsWith("file:") && !url.startsWith("http")) {                        
+                        expandParents($a[0].id, true);
                     }
                 }
 
@@ -409,6 +410,8 @@ var helpBuilder = null;
             var $href = $el.prev().find("a");
             var id = $href[0].id;
             expandTopic(id);
+            
+            //setTimeout(()=> expandTopic(id));
         });
     }
     function tocExpandAll() {
@@ -416,7 +419,8 @@ var helpBuilder = null;
             var $el = $(this);
             var $href = $el.prev().find("a");
             var id = $href[0].id;
-            expandTopic(id);
+            setTimeout(()=> expandTopic(id));
+            //expandTopic(id);
         });
     }
     function tocExpandTopLevel(){

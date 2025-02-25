@@ -135,7 +135,7 @@ namespace DocMonster.Utilities
                 topic.RenderTopicToFile();
             });
 
-            var rootTopic = Project.LoadTopic("index");
+            var rootTopic = Project.LookupTopic("index";
             if (rootTopic == null && Project.Topics.Count > 0)
                 rootTopic = Project.Topics[0];
             if (rootTopic == null)
@@ -154,7 +154,7 @@ namespace DocMonster.Utilities
             if (string.IsNullOrEmpty(OutputPath))
                 OutputPath = Project.OutputDirectory;
 
-            var rootTopic = Project.LoadTopic("index");
+            var rootTopic = Project.LoadTopic("index", true);
             if (rootTopic == null)
                 rootTopic = Project.Topics[0];
             rootTopic.Project = Project;

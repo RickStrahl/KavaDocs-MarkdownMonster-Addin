@@ -209,7 +209,7 @@ namespace DocMonsterAddin
 
         void Command_BackupProject()
         {
-            BackupProjectCommand = new CommandBase((parameter, command) =>
+            BackupProjectCommand = new CommandBase(async (parameter, command) =>
             {
                 if (Model.ActiveProject == null)
                 {
@@ -222,10 +222,19 @@ namespace DocMonsterAddin
                 if (!Directory.Exists(backupfolder))
                     Directory.CreateDirectory(backupfolder);
 
-                FileUtils.CopyDirectory(Model.ActiveProject.ProjectDirectory, backupfolder, recursive: true);
-
-                mmApp.Window.ShowStatusSuccess("Project backed up to: " + backupfolder,15_000);
-
+                try
+                {
+                    mmApp.Window.ShowStatusProgress("Backing up project...");
+                    await Task.Run(() =>
+                    {
+                        FileUtils.CopyDirectory(Model.ActiveProject.ProjectDirectory, backupfolder, recursive: true);
+                    });
+                    mmApp.Window.ShowStatusSuccess("Project backed up to: " + backupfolder, 15_000);
+                }
+                catch(Exception ex)
+                {
+                    mmApp.Window.ShowStatusError($"Project backup failed: {ex.Message}");
+                }                
             }, (p, c) => true);
         }
 
@@ -310,23 +319,43 @@ namespace DocMonsterAddin
         
 
 
-
+        /// <summary>
+        /// Parameters:
+        /// "ChildTopicsOnly"
+        /// </summary>
         public CommandBase DeleteTopicCommand { get; set; }
 
         public void Command_DeleteTopic()
         {
+            
             DeleteTopicCommand = new CommandBase( async (parameter, command) =>
             {
                 if (!mmApp.Model.IsEditorActive)
                     return;
 
+                bool childTopicsOnly = false;
+                string parm = parameter as string;
+                if (parm == "ChildTopicsOnly")
+                    childTopicsOnly = true;
+
                 var topic = Model.ActiveTopic;
                 if (topic == null)
                     return;
-                if (MessageBox.Show($"You are about to delete topic\r\n\r\n{topic.Title}\r\n\r\nAre you sure?",
-                        "Delete Topic",
-                        MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.Yes) == MessageBoxResult.No)
-                    return;
+
+                if (childTopicsOnly)
+                {
+                    if (MessageBox.Show($"You are about to delete child topics of \r\n\r\n{topic.Title}\r\n\r\nAre you sure?",
+                            "Delete Child Topics",
+                            MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.Yes) == MessageBoxResult.No)
+                        return;
+                }
+                else
+                {
+                    if (MessageBox.Show($"You are about to delete topic\r\n\r\n{topic.Title}\r\n\r\nAre you sure?",
+                            "Delete Topic",
+                            MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.Yes) == MessageBoxResult.No)
+                        return;
+                }
 
 
                 var parentTopics = topic.Parent?.Topics;
@@ -344,7 +373,7 @@ namespace DocMonsterAddin
               
                 await mmApp.Window.Dispatcher.InvokeAsync(() =>
                 {
-                    Model.ActiveProject.DeleteTopic(topic);
+                    Model.ActiveProject.DeleteTopic(topic, childTopicsOnly);
                 });
 
                 mmApp.Window.ShowStatus();
@@ -370,8 +399,7 @@ namespace DocMonsterAddin
 
                 if (newTopic != null)
                 {
-                    Model.TopicsTree.HandleSelection(newTopic, dontSaveProject: true);
-         
+                    await Model.TopicsTree.HandleSelection(newTopic, dontSaveProject: true);         
                 }
             });
         }

@@ -77,7 +77,7 @@ namespace DocMonsterAddin
                 OnPropertyChanged(nameof(IsProjectActive));
             }
         }
-
+        private DocProject _activeProject;
 
         /// <summary>
         /// The currently Active Topic
@@ -87,19 +87,18 @@ namespace DocMonsterAddin
             get { return ActiveProject?.Topic; }
             set
             {
-                if (ActiveProject == null || ActiveTopic == value)
+                if (ActiveProject == null || ActiveProject.Topic == value)
                     return;
 
                 ActiveProject.Topic = value;
 
                 // always load the topic file
-                ActiveTopic?.LoadTopicFile();
+                ActiveProject.Topic?.LoadTopicFile();
 
                 OnPropertyChanged();
             }
         }
 
-        private DocProject _activeProject;
 
         public DocProjectManager ProjectManager => DocProjectManager.Current;
 
