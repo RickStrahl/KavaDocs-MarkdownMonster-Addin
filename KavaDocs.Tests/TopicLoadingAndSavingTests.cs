@@ -23,7 +23,7 @@ namespace DocumentationMonster.Core.Tests
 
             Assert.IsNotNull(project);
 
-            var topic = project.LoadTopicByTitle("Step 3 - Finish and configure Web Connection for SQL tables");
+            var topic = project.LookupTopicByTitle("Step 3 - Finish and configure Web Connection for SQL tables");
 
             if (project.ErrorMessage != null)
                 Console.WriteLine(project.ErrorMessage);
@@ -43,7 +43,7 @@ namespace DocumentationMonster.Core.Tests
 
             Assert.IsNotNull(project);
 
-            var topic = project.LoadTopicByTitle("Step 3 - Finish and configure Web Connection for SQL tables");
+            var topic = project.LookupTopicByTitle("Step 3 - Finish and configure Web Connection for SQL tables");
 
             if (project.ErrorMessage != null)
                 Console.WriteLine(project.ErrorMessage);

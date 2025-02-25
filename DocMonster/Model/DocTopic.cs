@@ -9,6 +9,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using DocMonster.Annotations;
 using DocMonster.Configuration;
 using DocMonster.Templates;
@@ -1114,12 +1115,12 @@ namespace DocMonster.Model
                 if (file == null)
                     file = GetExternalFilename();
 
-                // TODO: FIGURE OUT WHY INDEX TOPIC IS LOSING CONTENT
-                //if (file.Contains("index.", StringComparison.OrdinalIgnoreCase) ||
-                //    Slug.Equals("West-Wind-WebSurge"))
-                //{
-                //    int x = 1;
-                //}
+                if (!File.Exists(file))
+                {
+                    _body = string.Empty;
+                    return true;
+                }
+
                 for (int i = 0; i < 4; i++)
                 {
                     try
@@ -1129,13 +1130,14 @@ namespace DocMonster.Model
                     }
                     catch
                     {
-                        if (i > 3)
+                        Thread.Sleep(5);
+                        if (i > 2)
+                        {
+                            _body = string.Empty;
                             return false;
+                        }
                     }
                 }
-
-                if (string.IsNullOrEmpty(_body))
-                    return false;
 
                 // normalize line feeds
                 _body = _body.Replace("\r\n", "\n");

@@ -102,7 +102,7 @@ namespace Westwind.HtmlHelpBuilder.Tests
         {
             var project = DocProject.LoadProject(@"c:\temp\wconnect_help\wconnect_help.json");
 
-            var topic = project.LoadTopicByTitle("West Wind Web Connection");
+            var topic = project.LookupTopicByTitle("West Wind Web Connection");
             Assert.IsTrue(topic != null, project.ErrorMessage);
 
             Console.WriteLine(topic.Body);

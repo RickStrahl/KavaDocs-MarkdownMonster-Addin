@@ -264,9 +264,21 @@ namespace DocMonster.Model
 
 
         /// <summary>
+        /// Looks up a topic and returns the object, without updating the project's
+        /// .Topic property.
+        /// </summary>
+        /// <param name="topicId">Topic Id or dm:// link</param>
+        /// <returns>Topic instance or null if not found</returns>
+        public DocTopic LookupTopic(string topicId) => LoadTopic(topicId, true);
+        
+
+        /// <summary>
         /// Generic Topic loader that works with 
         /// Loads a topic by topic id, or by dm-topic://, dm-slug:// or dm-title://
         /// link.
+        ///
+        /// This method by default loads the .Topic property unless you set
+        /// dontAssignProjectTopic=true.
         /// </summary>
         /// <param name="topicId">Topic Id or dm:// link</param>
         /// <param name="dontAssignProjectTopic">If true doesn't assign the Topic property</param>
@@ -280,16 +292,16 @@ namespace DocMonster.Model
 
             DocTopic topic = null;
             if (topicId.StartsWith('_') || topicId.Equals("index",StringComparison.OrdinalIgnoreCase))
-                topic = LoadTopicById(topicId);
+                topic = LookupTopicById(topicId);
 
             else if (topicId.StartsWith("dm-topic://", StringComparison.OrdinalIgnoreCase))
-                topic = LoadTopicById(topicId.Replace("dm-topic://", string.Empty));
+                topic = LookupTopicById(topicId.Replace("dm-topic://", string.Empty));
 
             else if (topicId.StartsWith("dm-slug://", StringComparison.OrdinalIgnoreCase))
-                topic = LoadTopicBySlug(topicId.Replace("dm-slug://", string.Empty));
+                topic = LookupTopicBySlug(topicId.Replace("dm-slug://", string.Empty));
 
             else if (topicId.StartsWith("dm-title://", StringComparison.OrdinalIgnoreCase))
-                topic = LoadTopicByTitle(topicId.Replace("dm-title://", string.Empty));
+                topic = LookupTopicByTitle(topicId.Replace("dm-title://", string.Empty));
 
             else if (topicId.StartsWith("vfps://", StringComparison.OrdinalIgnoreCase))
             {
@@ -297,16 +309,16 @@ namespace DocMonster.Model
                 {
                     topicId = topicId.Replace("vfps://topic/", string.Empty, StringComparison.OrdinalIgnoreCase);
                     if (topicId.StartsWith('_'))
-                        topic = LoadTopicById(topicId);
+                        topic = LookupTopicById(topicId);
                     else
-                        topic = LoadTopicByTitle(topicId);
+                        topic = LookupTopicByTitle(topicId);
                 }
             }
 
             // fallback to slug and/title
             if (topic == null)
             {
-                topic = LoadTopicBySlug(topicId, true);
+                topic = LookupTopicBySlug(topicId, true);
             }
 
             if (!dontAssignProjectTopic)
@@ -321,7 +333,12 @@ namespace DocMonster.Model
             return AfterTopicLoaded(topic);
         }
 
-        public DocTopic LoadTopicById(string topicId)
+        /// <summary>
+        /// Loads a topic 
+        /// </summary>
+        /// <param name="topicId"></param>
+        /// <returns></returns>
+        public DocTopic LookupTopicById(string topicId)
         {
             DocTopic match = null;
 
@@ -348,7 +365,7 @@ namespace DocMonster.Model
         /// <param name="title">Title to search for</param>
         /// <param name="alsoSearchBySlug">Search for title in slug also. Title first</param>
         /// <returns></returns>
-        public DocTopic LoadTopicByTitle(string title, bool alsoSearchBySlug = false)
+        public DocTopic LookupTopicByTitle(string title, bool alsoSearchBySlug = false)
         {
             DocTopic match = null;
             using var tokenSource = new CancellationTokenSource();
@@ -377,7 +394,7 @@ namespace DocMonster.Model
         /// <param name="slug">Slug to search for</param>
         /// <param name="alsoSearchByTitle">If true searches both by slug *and* title - slug searched first</param>
         /// <returns>topic or null</returns>
-        public DocTopic LoadTopicBySlug(string slug, bool alsoSearchByTitle = false)
+        public DocTopic LookupTopicBySlug(string slug, bool alsoSearchByTitle = false)
         {
             DocTopic match = null;
 
@@ -396,12 +413,15 @@ namespace DocMonster.Model
                 }
             });
 
+
             match = AfterTopicLoaded(match);
             return match;
         }
 
         /// <summary>
         /// Common code that performs after topic loading logic
+        /// - sets TopicState to a clean
+        /// - loads Body from topic file
         /// </summary>
         /// <param name="topic"></param>
         /// <returns></returns>
@@ -419,12 +439,11 @@ namespace DocMonster.Model
             topic.TopicState.OldLink = null;
             topic.TopicState.OldSlug = null;
 
-            topic.LoadTopicFile(); // load disk content
-            //if (!topic.LoadTopicFile()) // load disk content
-            //{
-            //    SetError("Topic body content not found.");
-            //    return null;
-            //}
+            if (!topic.LoadTopicFile()) // load disk content
+            {
+                SetError("Couldn't load topic content from file.");
+                return null;
+            }
 
             return topic;
         }
